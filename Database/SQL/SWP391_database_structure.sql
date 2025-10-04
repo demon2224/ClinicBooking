@@ -1,0 +1,210 @@
+USE master
+GO
+
+--- DROP DATABASE IF EXIST WITHOUT ANY OBTRUCTION
+IF EXISTS (SELECT name FROM master.dbo.sysdatabases WHERE name = 'ClinicBookingDatabase')
+BEGIN
+	--- SET THE CONNECTION TO DATABASE ONLY THIS SQL FILE AND DROP THE DATABASE
+	ALTER DATABASE ClinicBookingDatabase
+	SET SINGLE_USER
+	WITH ROLLBACK IMMEDIATE
+	DROP DATABASE ClinicBookingDatabase
+END
+
+--- CREATE A NEW DATABASE
+CREATE DATABASE ClinicBookingDatabase
+GO
+
+--- USE THE NEW DATABASE JUST CREATED
+USE ClinicBookingDatabase
+GO
+
+--- ROLE TABLE
+CREATE TABLE "Role" (
+	RoleID INT PRIMARY KEY IDENTITY(1,1),
+	RoleName NVARCHAR(50) UNIQUE NOT NULL
+);
+
+--- USER TABLE
+CREATE TABLE "User" (
+	UserID INT PRIMARY KEY IDENTITY(1,1),
+	RoleID INT FOREIGN KEY REFERENCES "Role"(RoleID) NOT NULL DEFAULT 1,
+);
+
+--- ACCOUNT TABLE
+CREATE TABLE Account (
+	UserAccountID INT PRIMARY KEY REFERENCES "User"(UserID),
+	AccountName NVARCHAR(255) NOT NULL UNIQUE,
+	AccountPassword NVARCHAR(255) NOT NULL,
+	DayCreated DATETIME DEFAULT GETDATE(),
+	Avatar VARCHAR(255),
+	Bio TEXT
+);
+
+--- PROFILE TABLE
+CREATE TABLE "Profile" (
+	UserProfileID INT PRIMARY KEY REFERENCES "User"(UserID),
+	FirstName NVARCHAR(255) NOT NULL,
+	LastName NVARCHAR(255) NOT NULL,
+	DOB DATE,
+	Gender BIT DEFAULT 0,
+	UserAddress TEXT,
+	PhoneNumber VARCHAR(15) UNIQUE,
+	Email VARCHAR(50)
+);
+
+CREATE TABLE Patient (
+	Patient INT PRIMARY KEY REFERENCES "User"(UserID),
+	JobStatusID INT FOREIGN KEY REFERENCES JobStatus(JobStatusID),
+	SpecialtyID INT FOREIGN KEY REFERENCES Specialty(SpecialtyID),
+	YearExperience INT
+);
+
+
+CREATE TABLE JobStatus (
+	JobStatusID INT PRIMARY KEY IDENTITY(1,1),
+	JobStatusDescription NVARCHAR(50) UNIQUE NOT NULL DEFAULT 1
+);
+
+CREATE TABLE Specialty (
+	SpecialtyID INT PRIMARY KEY IDENTITY(1,1),
+	SpecialtyName NVARCHAR(50)
+);
+
+CREATE TABLE Doctor (
+	DoctorID INT PRIMARY KEY REFERENCES "User"(UserID),
+	JobStatusID INT FOREIGN KEY REFERENCES JobStatus(JobStatusID),
+	SpecialtyID INT FOREIGN KEY REFERENCES Specialty(SpecialtyID),
+	YearExperience INT
+);
+
+CREATE TABLE Degree (
+	DegreeID INT PRIMARY KEY IDENTITY(1,1),
+	DegreeName VARCHAR(255)
+);
+
+CREATE TABLE DoctorDegree (
+	DoctorID INT FOREIGN KEY REFERENCES Doctor(DoctorID),
+	DegreeID INT FOREIGN KEY REFERENCES Degree(DegreeID),
+	PRIMARY KEY (DoctorID, DegreeID),
+	DateEarn DATE,
+	Grantor VARCHAR(255)
+);
+
+CREATE TABLE Receptionist (
+	ReceptionistID INT PRIMARY KEY REFERENCES "User"(UserID),
+	JobStatusID INT FOREIGN KEY REFERENCES JobStatus(JobStatusID)
+);
+
+CREATE TABLE Pharmacist (
+	PharmacistID INT PRIMARY KEY REFERENCES "User"(UserID),
+	JobStatusID INT FOREIGN KEY REFERENCES JobStatus(JobStatusID)
+);
+
+CREATE TABLE DoctorReview (
+	DoctorReviewID INT PRIMARY KEY IDENTITY(1,1),
+	UserID INT FOREIGN KEY REFERENCES "User"(UserID) NOT NULL,
+	DoctorID INT FOREIGN KEY REFERENCES Doctor(DoctorID) NOT NULL,
+	Content TEXT,
+	RateScore INT,
+	DateCreate DATETIME DEFAULT GETDATE()
+);
+
+CREATE TABLE AppointmentStatus (
+	AppointmentStatusID INT PRIMARY KEY IDENTITY(1,1),
+	AppointmentStatusName VARCHAR(50) UNIQUE NOT NULL
+);
+
+CREATE TABLE Appointment (
+	AppointmentID INT PRIMARY KEY IDENTITY(1,1),
+	UserID INT FOREIGN KEY REFERENCES "User"(UserID) NOT NULL,
+	DoctorID INT FOREIGN KEY REFERENCES Doctor(DoctorID) NOT NULL,
+	AppointmentStatusID INT FOREIGN KEY REFERENCES AppointmentStatus(AppointmentStatusID) DEFAULT 1,
+	DateCreate DATETIME DEFAULT GETDATE(),
+	DateBegin DATETIME,
+	DateEnd DATETIME,
+	Note TEXT
+);
+
+CREATE TABLE PrescriptionStatus (
+	PrescriptionStatusID INT PRIMARY KEY IDENTITY(1,1),
+	PrescriptionStatusName VARCHAR(50) UNIQUE NOT NULL
+);
+
+CREATE TABLE Prescription (
+	PrescriptionID INT PRIMARY KEY IDENTITY(1,1),
+	UserID INT FOREIGN KEY REFERENCES "User"(UserID) NOT NULL,
+	DoctorID INT FOREIGN KEY REFERENCES Doctor(DoctorID) NOT NULL,
+	PrescriptionStatusID INT FOREIGN KEY REFERENCES PrescriptionStatus(PrescriptionStatusID) DEFAULT 1,
+	DateCreate DATETIME DEFAULT GETDATE(),
+	Note TEXT
+);
+
+CREATE TABLE MedicineType (
+	MedicineTypeID INT PRIMARY KEY IDENTITY(1,1),
+	MedicineTypeName VARCHAR(50) UNIQUE NOT NULL
+);
+
+CREATE TABLE MedicineStatus (
+	MedicineStatusID INT PRIMARY KEY IDENTITY(1,1),
+	MedicineStatusName VARCHAR(50) UNIQUE NOT NULL
+);
+
+CREATE TABLE Medicine (
+	MedicineID INT PRIMARY KEY IDENTITY(1,1),
+	MedicineType INT FOREIGN KEY REFERENCES MedicineType(MedicineTypeID) NOT NULL,
+	MedicineStatusID INT FOREIGN KEY REFERENCES MedicineStatus(MedicineStatusID) DEFAULT 1,
+	MedicineName VARCHAR(200),
+	MedicineCode VARCHAR(100),
+	Quantity INT DEFAULT 0,
+	Price DECIMAL(20,2) DEFAULT 0,
+	DateCreate DATETIME DEFAULT GETDATE()
+);
+
+CREATE TABLE PrescriptionItem (
+	PrescriptionID INT FOREIGN KEY REFERENCES Prescription(PrescriptionID),
+	MedicineID INT FOREIGN KEY REFERENCES Medicine(MedicineID),
+	PRIMARY KEY (PrescriptionID, MedicineID),
+	Dosage DECIMAL(20,2) NOT NULL,
+	Instruction TEXT NOT NULL
+);
+
+CREATE TABLE StockTransaction (
+	StockTransactionID INT PRIMARY KEY IDENTITY(1,1),
+	MedicineID INT FOREIGN KEY REFERENCES Medicine(MedicineID),
+	Quantity INT DEFAULT 0,
+	DateImport DATETIME DEFAULT GETDATE(),
+	DateExpire DATETIME
+);
+
+CREATE TABLE ConsultationFee (
+    ConsultationFeeID INT PRIMARY KEY IDENTITY(1,1),
+    DoctorID INT FOREIGN KEY REFERENCES Doctor(DoctorID),
+    Fee DECIMAL(20,2) DEFAULT 0 NOT NULL
+);
+
+CREATE TABLE MedicalRecord (
+	MedicalRecordID INT PRIMARY KEY IDENTITY(1,1),
+    AppointmentID INT FOREIGN KEY REFERENCES Appointment(AppointmentID) NOT NULL,
+	PrescriptionID INT FOREIGN KEY REFERENCES Prescription(PrescriptionID),
+    Symptoms TEXT,
+    PreliminaryDiagnosis TEXT,
+    Note TEXT,
+    DateCreate DATETIME DEFAULT GETDATE()
+);
+
+CREATE TABLE PaymentType (
+	PaymentTypeID INT PRIMARY KEY IDENTITY(1,1),
+	PaymentTypeName VARCHAR(50)
+);
+
+CREATE TABLE Invoice (
+    InvoiceID INT PRIMARY KEY IDENTITY(1,1),
+	MedicalRecordID INT FOREIGN KEY REFERENCES MedicalRecord(MedicalRecordID) NOT NULL,
+	ConsultationFeeID INT FOREIGN KEY REFERENCES ConsultationFee(ConsultationFeeID) NOT NULL,
+	PrescriptionID INT FOREIGN KEY REFERENCES Prescription(PrescriptionID),
+    InvoiceStatus BIT DEFAULT 0,
+    DateCreate DATETIME DEFAULT GETDATE(),
+	DatePay DATETIME,
+	PaymentTypeID INT FOREIGN KEY REFERENCES PaymentType(PaymentTypeID)
+);
