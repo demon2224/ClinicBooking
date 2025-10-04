@@ -53,14 +53,6 @@ CREATE TABLE "Profile" (
 	Email VARCHAR(50)
 );
 
-CREATE TABLE Patient (
-	Patient INT PRIMARY KEY REFERENCES "User"(UserID),
-	JobStatusID INT FOREIGN KEY REFERENCES JobStatus(JobStatusID),
-	SpecialtyID INT FOREIGN KEY REFERENCES Specialty(SpecialtyID),
-	YearExperience INT
-);
-
-
 CREATE TABLE JobStatus (
 	JobStatusID INT PRIMARY KEY IDENTITY(1,1),
 	JobStatusDescription NVARCHAR(50) UNIQUE NOT NULL DEFAULT 1
