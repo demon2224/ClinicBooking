@@ -125,8 +125,7 @@ CREATE TABLE PrescriptionStatus (
 
 CREATE TABLE Prescription (
 	PrescriptionID INT PRIMARY KEY IDENTITY(1,1),
-	UserID INT FOREIGN KEY REFERENCES "User"(UserID) NOT NULL,
-	DoctorID INT FOREIGN KEY REFERENCES Doctor(DoctorID) NOT NULL,
+	AppointmentID INT FOREIGN KEY REFERENCES Appointment(AppointmentID) NOT NULL,
 	PrescriptionStatusID INT FOREIGN KEY REFERENCES PrescriptionStatus(PrescriptionStatusID) DEFAULT 1,
 	DateCreate DATETIME DEFAULT GETDATE(),
 	Note TEXT
@@ -157,21 +156,22 @@ CREATE TABLE PrescriptionItem (
 	PrescriptionID INT FOREIGN KEY REFERENCES Prescription(PrescriptionID),
 	MedicineID INT FOREIGN KEY REFERENCES Medicine(MedicineID),
 	PRIMARY KEY (PrescriptionID, MedicineID),
-	Dosage DECIMAL(20,2) NOT NULL,
+	Dosage INT NOT NULL CHECK(Dosage > 0),
 	Instruction TEXT NOT NULL
 );
 
 CREATE TABLE StockTransaction (
 	StockTransactionID INT PRIMARY KEY IDENTITY(1,1),
 	MedicineID INT FOREIGN KEY REFERENCES Medicine(MedicineID),
-	Quantity INT DEFAULT 0,
+	Quantity INT DEFAULT 0 CHECK (Quantity > 0),
 	DateImport DATETIME DEFAULT GETDATE(),
 	DateExpire DATETIME
 );
 
 CREATE TABLE ConsultationFee (
-    ConsultationFeeID INT PRIMARY KEY IDENTITY(1,1),
+	ConsultationFeeID INT PRIMARY KEY IDENTITY(1,1),
     DoctorID INT FOREIGN KEY REFERENCES Doctor(DoctorID),
+	SpecialtyID INT FOREIGN KEY REFERENCES Specialty(SpecialtyID),
     Fee DECIMAL(20,2) DEFAULT 0 NOT NULL
 );
 
@@ -180,7 +180,7 @@ CREATE TABLE MedicalRecord (
     AppointmentID INT FOREIGN KEY REFERENCES Appointment(AppointmentID) NOT NULL,
 	PrescriptionID INT FOREIGN KEY REFERENCES Prescription(PrescriptionID),
     Symptoms TEXT,
-    PreliminaryDiagnosis TEXT,
+    Diagnosis TEXT,
     Note TEXT,
     DateCreate DATETIME DEFAULT GETDATE()
 );
@@ -195,8 +195,8 @@ CREATE TABLE Invoice (
 	MedicalRecordID INT FOREIGN KEY REFERENCES MedicalRecord(MedicalRecordID) NOT NULL,
 	ConsultationFeeID INT FOREIGN KEY REFERENCES ConsultationFee(ConsultationFeeID) NOT NULL,
 	PrescriptionID INT FOREIGN KEY REFERENCES Prescription(PrescriptionID),
+	PaymentTypeID INT FOREIGN KEY REFERENCES PaymentType(PaymentTypeID) NOT NULL,
     InvoiceStatus BIT DEFAULT 0,
     DateCreate DATETIME DEFAULT GETDATE(),
-	DatePay DATETIME,
-	PaymentTypeID INT FOREIGN KEY REFERENCES PaymentType(PaymentTypeID)
+	DatePay DATETIME
 );
