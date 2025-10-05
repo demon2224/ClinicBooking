@@ -1,5 +1,5 @@
 # Build output
-/ClinicBooking/target/
+/ClinicBooking/target/*
 build/
 dist/
 nbbuild/
