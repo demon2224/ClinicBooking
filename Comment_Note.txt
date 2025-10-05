@@ -1,0 +1,21 @@
+Summary
+<type>(scope): <short summary>
+
+Description:
+Ghi nhỏ lại chi tiết những phần mình đã làm
+
+<type>:
+- feat: Thêm tính năng mới
+- fix: sửa lỗi logic, UI
+- refactor: chỉnh cấu trúc code
+- test: viết test hoặc sửa test(hiện tại chưa dùng)
+- style: đổi format code, căng lề liên quan đến giao diện code
+- chore: thay đổi ko liên quan đến tính năng như update .gitignore, config, build script, sql
+
+(scope): feature mà ảnh hưởng
+
+<short summary>: thông tin ngắn
+
+VD: feat(login): implement UC-01 Login as Patient
+- Create LoginController in controller package to process the login of user.
+- Create AuthFilter in filter to validate the user access to the web.
