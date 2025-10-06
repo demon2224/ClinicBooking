@@ -136,15 +136,10 @@ CREATE TABLE MedicineType (
 	MedicineTypeName VARCHAR(50) UNIQUE NOT NULL
 );
 
-CREATE TABLE MedicineStatus (
-	MedicineStatusID INT PRIMARY KEY IDENTITY(1,1),
-	MedicineStatusName VARCHAR(50) UNIQUE NOT NULL
-);
-
 CREATE TABLE Medicine (
 	MedicineID INT PRIMARY KEY IDENTITY(1,1),
 	MedicineType INT FOREIGN KEY REFERENCES MedicineType(MedicineTypeID) NOT NULL,
-	MedicineStatusID INT FOREIGN KEY REFERENCES MedicineStatus(MedicineStatusID) DEFAULT 1,
+	MedicineStatus BIT DEFAULT 0,
 	MedicineName VARCHAR(200),
 	MedicineCode VARCHAR(100),
 	Quantity INT DEFAULT 0,
