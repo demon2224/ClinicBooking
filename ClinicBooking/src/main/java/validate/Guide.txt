@@ -1,0 +1,3 @@
+Chứa các lớp để validate đầu vào của người dùng.
+
+Vd: Class MedicineImportValidate để xử lí đầu vào của khi mà nhập thuốc.

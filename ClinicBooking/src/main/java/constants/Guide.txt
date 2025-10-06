@@ -1,0 +1,5 @@
+Chứa các class dữ liệu hằng số để gửi thông báo ra người dùng.
+
+Vd: Class PaymentConstants
+
+thì có public static String SUCCESS_PAYMENT_MSG = "Thanh toán thành công";
