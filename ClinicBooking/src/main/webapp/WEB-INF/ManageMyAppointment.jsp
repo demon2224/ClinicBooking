@@ -227,22 +227,22 @@
                 .main-content {
                     padding: 1rem;
                 }
-                
+
                 .page-header {
                     padding: 1.5rem;
                 }
-                
+
                 .section-header {
                     flex-direction: column;
                     gap: 1rem;
                     align-items: stretch;
                 }
-                
+
                 .appointment-header {
                     flex-direction: column;
                     gap: 1rem;
                 }
-                
+
                 .appointment-actions {
                     flex-wrap: wrap;
                 }
@@ -274,7 +274,7 @@
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle active">Portal</a>
                             <ul class="dropdown-menu">
-                                <li><a href="${pageContext.request.contextPath}/manage-appointments" class="active">Manage My Appointments</a></li>
+                                <li><a href="${pageContext.request.contextPath}/manage-my-appointments" class="active">Manage My Appointments</a></li>
                                 <li><a href="#">Manage My Medical Records</a></li>
                                 <li><a href="#">Manage My Prescriptions</a></li>
                                 <li><a href="#">Manage My Invoices</a></li>
@@ -498,10 +498,10 @@
             });
 
             // Appointment actions
-            document.addEventListener('DOMContentLoaded', function() {
+            document.addEventListener('DOMContentLoaded', function () {
                 // Cancel appointment confirmation
                 document.querySelectorAll('.btn-cancel').forEach(button => {
-                    button.addEventListener('click', function(e) {
+                    button.addEventListener('click', function (e) {
                         e.preventDefault();
                         if (confirm('Are you sure you want to cancel this appointment?')) {
                             // Handle cancellation logic here
@@ -512,7 +512,7 @@
 
                 // Reschedule appointment
                 document.querySelectorAll('.btn-reschedule').forEach(button => {
-                    button.addEventListener('click', function(e) {
+                    button.addEventListener('click', function (e) {
                         e.preventDefault();
                         alert('Reschedule functionality will be implemented soon!');
                     });
@@ -520,7 +520,7 @@
 
                 // View appointment details
                 document.querySelectorAll('.btn-view').forEach(button => {
-                    button.addEventListener('click', function(e) {
+                    button.addEventListener('click', function (e) {
                         e.preventDefault();
                         alert('View details functionality will be implemented soon!');
                     });
@@ -528,7 +528,7 @@
 
                 // Book new appointment
                 document.querySelectorAll('.btn-new-appointment').forEach(button => {
-                    button.addEventListener('click', function(e) {
+                    button.addEventListener('click', function (e) {
                         e.preventDefault();
                         alert('Book new appointment functionality will be implemented soon!');
                     });

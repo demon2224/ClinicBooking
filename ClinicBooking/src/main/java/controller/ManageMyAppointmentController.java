@@ -15,7 +15,7 @@ import jakarta.servlet.http.HttpServletResponse;
  *
  * @author Le Anh Tuan - CE180905
  */
-@WebServlet(name = "ManageMyAppointmentController", urlPatterns = {"/manage-appointments"})
+@WebServlet(name = "ManageMyAppointmentController", urlPatterns = {"/manage-my-appointments"})
 public class ManageMyAppointmentController extends HttpServlet {
 
     /**
@@ -30,7 +30,7 @@ public class ManageMyAppointmentController extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        
+
         // Forward to ManageMyAppointment.jsp
         request.getRequestDispatcher("/WEB-INF/ManageMyAppointment.jsp").forward(request, response);
     }

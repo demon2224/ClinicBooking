@@ -56,7 +56,7 @@
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle">Portal</a>
                             <ul class="dropdown-menu">
-                                <li><a href="${pageContext.request.contextPath}/manage-appointments">Manage My Appointments</a></li>
+                                <li><a href="${pageContext.request.contextPath}/manage-my-appointments">Manage My Appointments</a></li>
                                 <li><a href="#">Manage My Medical Records</a></li>
                                 <li><a href="#">Manage My Prescriptions</a></li>
                                 <li><a href="#">Manage My Invoices</a></li>
