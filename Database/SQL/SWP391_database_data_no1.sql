@@ -24,7 +24,7 @@ BEGIN
 		DELETE FROM AppointmentStatus;
 	INSERT INTO AppointmentStatus(AppointmentStatusName)
 	VALUES
-		('Peding'),('Approved'),('Completed'),('Canceled');
+		('Pending'),('Approved'),('Completed'),('Canceled');
 	
 	IF EXISTS (SELECT 1 FROM PrescriptionStatus)
 		DBCC CHECKIDENT (PrescriptionStatus, RESEED, 0);
