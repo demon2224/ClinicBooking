@@ -11,13 +11,24 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import dao.DoctorDAO;
+import model.Doctor;
+import java.util.List;
 
 /**
  *
- * @author KhangNMCE190728
+ * @author Nguyen Minh Khang - CE190728
  */
 @WebServlet(name = "DoctorListController", urlPatterns = {"/doctor-list"})
 public class DoctorListController extends HttpServlet {
+
+    private DoctorDAO doctorDAO;
+
+    @Override
+    public void init() throws ServletException {
+        super.init();
+        doctorDAO = new DoctorDAO();
+    }
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
@@ -44,7 +55,8 @@ public class DoctorListController extends HttpServlet {
         }
     }
 
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
+    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the
+    // + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
      *
@@ -56,6 +68,29 @@ public class DoctorListController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        try {
+            String specialtyParam = request.getParameter("specialty");
+            String statusParam = request.getParameter("status");
+
+            List<Doctor> doctors;
+
+            if (specialtyParam != null && !specialtyParam.isEmpty()) {
+                int specialtyId = Integer.parseInt(specialtyParam);
+                doctors = doctorDAO.getDoctorsBySpecialty(specialtyId);
+            } else if ("available".equalsIgnoreCase(statusParam)) {
+                doctors = doctorDAO.getAvailableDoctors();
+            } else {
+                doctors = doctorDAO.getAllDoctors();
+            }
+
+            request.setAttribute("doctors", doctors);
+            request.setAttribute("totalDoctors", doctors.size());
+
+        } catch (Exception e) {
+            request.setAttribute("errorMessage", "Error loading doctor list: " + e.getMessage());
+            e.printStackTrace();
+        }
+
         request.getRequestDispatcher("/WEB-INF/DoctorList.jsp").forward(request, response);
     }
 
