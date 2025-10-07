@@ -1,3 +1,4 @@
 D:\FA25 05\ClinicBooking\ClinicBooking\src\main\java\controller\DoctorListController.java
-D:\FA25 05\ClinicBooking\ClinicBooking\src\main\java\controller\HomepageController.java
+D:\FA25 05\ClinicBooking\ClinicBooking\src\main\java\filter\DefaultHomeFilter.java
+D:\FA25 05\ClinicBooking\ClinicBooking\src\main\java\controller\HomePageController.java
 D:\FA25 05\ClinicBooking\ClinicBooking\src\main\java\controller\ManageMyAppointmentController.java
