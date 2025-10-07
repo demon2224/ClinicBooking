@@ -5,6 +5,9 @@
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<fmt:setLocale value="en_US" />
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -164,6 +167,77 @@
                 color: #dc2626;
             }
 
+            .status-completed {
+                background: #dbeafe;
+                color: #1d4ed8;
+            }
+
+            .appointment-patient {
+                color: #475569;
+                font-size: 0.9rem;
+                margin-bottom: 0.25rem;
+            }
+
+            .alert {
+                padding: 1rem;
+                margin-bottom: 1rem;
+                border-radius: 0.375rem;
+                font-weight: 500;
+            }
+
+            .alert-success {
+                background: #dcfce7;
+                color: #166534;
+                border: 1px solid #bbf7d0;
+            }
+
+            .alert-error {
+                background: #fee2e2;
+                color: #dc2626;
+                border: 1px solid #fecaca;
+            }
+
+            .text-muted {
+                color: #64748b;
+                font-size: 0.9rem;
+            }
+
+            .empty-state {
+                text-align: center;
+                padding: 3rem 2rem;
+                color: #64748b;
+            }
+
+            .empty-state i {
+                font-size: 3rem;
+                margin-bottom: 1rem;
+                color: #cbd5e1;
+            }
+
+            .empty-state h3 {
+                margin: 0 0 0.5rem 0;
+                color: #1e293b;
+            }
+
+            .alert {
+                padding: 1rem;
+                margin-bottom: 1rem;
+                border-radius: 0.375rem;
+                font-weight: 500;
+            }
+
+            .alert-success {
+                background: #dcfce7;
+                color: #166534;
+                border: 1px solid #bbf7d0;
+            }
+
+            .alert-error {
+                background: #fee2e2;
+                color: #dc2626;
+                border: 1px solid #fecaca;
+            }
+
             .appointment-actions {
                 display: flex;
                 gap: 0.5rem;
@@ -309,8 +383,21 @@
             <!-- Page Header -->
             <div class="page-header">
                 <h1><i class="fas fa-calendar-check"></i> Manage My Appointments</h1>
-                <p>View, schedule, and manage all your medical appointments</p>
+                <p>View and manage your medical appointments</p>
+                <c:if test="${not empty userName}">
+                    <p class="text-muted">Welcome, ${userName}</p>
+                </c:if>
+                <c:if test="${not empty appointments}">
+                    <p class="text-muted">You have ${appointments.size()} appointment(s)</p>
+                </c:if>
             </div>
+
+            <!-- Message Display -->
+            <c:if test="${not empty message}">
+                <div class="alert alert-${messageType}">
+                    ${message}
+                </div>
+            </c:if>
 
             <!-- Appointments Section -->
             <div class="appointments-section">
@@ -323,125 +410,86 @@
                 </div>
 
                 <div class="appointments-content">
-                    <!-- Sample Appointment Cards -->
-                    <div class="appointment-card">
-                        <div class="appointment-header">
-                            <div class="appointment-info">
-                                <div class="appointment-date">
-                                    <i class="fas fa-calendar"></i>
-                                    Monday, October 15, 2025 at 10:30 AM
-                                </div>
-                                <div class="appointment-doctor">
-                                    <i class="fas fa-user-md"></i>
-                                    Dr. Sarah Johnson
-                                </div>
-                                <div class="appointment-specialty">
-                                    <i class="fas fa-stethoscope"></i>
-                                    Cardiology - Regular Checkup
-                                </div>
+                    <c:choose>
+                        <c:when test="${empty appointments}">
+                            <!-- Empty State -->
+                            <div class="empty-state">
+                                <i class="fas fa-calendar-times"></i>
+                                <h3>No Appointments Found</h3>
+                                <p>You don't have any appointments scheduled yet.</p>
+                                <a href="#" class="btn-new-appointment" style="margin-top: 1rem;">
+                                    <i class="fas fa-plus"></i>
+                                    Book Your First Appointment
+                                </a>
                             </div>
-                            <div class="appointment-status status-confirmed">
-                                Confirmed
-                            </div>
-                        </div>
-                        <div class="appointment-actions">
-                            <a href="#" class="btn-action btn-view">
-                                <i class="fas fa-eye"></i>
-                                View Details
-                            </a>
-                            <a href="#" class="btn-action btn-reschedule">
-                                <i class="fas fa-edit"></i>
-                                Reschedule
-                            </a>
-                            <a href="#" class="btn-action btn-cancel">
-                                <i class="fas fa-times"></i>
-                                Cancel
-                            </a>
-                        </div>
-                    </div>
-
-                    <div class="appointment-card">
-                        <div class="appointment-header">
-                            <div class="appointment-info">
-                                <div class="appointment-date">
-                                    <i class="fas fa-calendar"></i>
-                                    Wednesday, October 20, 2025 at 2:00 PM
+                        </c:when>
+                        <c:otherwise>
+                            <!-- Display Appointments -->
+                            <c:forEach var="appointment" items="${appointments}">
+                                <div class="appointment-card">
+                                    <div class="appointment-header">
+                                        <div class="appointment-info">
+                                            <div class="appointment-date">
+                                                <i class="fas fa-calendar"></i>
+                                                <fmt:formatDate value="${appointment.dateBegin}" 
+                                                               pattern="EEEE, MMMM dd, yyyy 'at' hh:mm a" />
+                                            </div>
+                                            <div class="appointment-doctor">
+                                                <i class="fas fa-user-md"></i>
+                                                Dr. ${appointment.doctorName != null ? appointment.doctorName : 'Unknown Doctor'}
+                                            </div>
+                                            <div class="appointment-specialty">
+                                                <i class="fas fa-stethoscope"></i>
+                                                ${appointment.specialtyName != null ? appointment.specialtyName : 'General'} 
+                                                <c:if test="${not empty appointment.note}"> - ${appointment.note}</c:if>
+                                            </div>
+                                        </div>
+                                        <div class="appointment-status 
+                                             <c:choose>
+                                                 <c:when test="${appointment.appointmentStatusID == 2}">status-confirmed</c:when>
+                                                 <c:when test="${appointment.appointmentStatusID == 1}">status-pending</c:when>
+                                                 <c:when test="${appointment.appointmentStatusID == 4}">status-cancelled</c:when>
+                                                 <c:when test="${appointment.appointmentStatusID == 3}">status-completed</c:when>
+                                                 <c:otherwise>status-pending</c:otherwise>
+                                             </c:choose>">
+                                            ${appointment.statusName != null ? appointment.statusName : 'Unknown'}
+                                        </div>
+                                    </div>
+                                    <div class="appointment-actions">
+                                        <a href="#" class="btn-action btn-view">
+                                            <i class="fas fa-eye"></i>
+                                            View Details
+                                        </a>
+                                        <c:if test="${appointment.appointmentStatusID != 4 && appointment.appointmentStatusID != 3}">
+                                            <a href="#" class="btn-action btn-reschedule">
+                                                <i class="fas fa-edit"></i>
+                                                Reschedule
+                                            </a>
+                                            <a href="#" class="btn-action btn-cancel" 
+                                               data-appointment-id="${appointment.appointmentID}">
+                                                <i class="fas fa-times"></i>
+                                                Cancel
+                                            </a>
+                                        </c:if>
+                                    </div>
                                 </div>
-                                <div class="appointment-doctor">
-                                    <i class="fas fa-user-md"></i>
-                                    Dr. Michael Chen
-                                </div>
-                                <div class="appointment-specialty">
-                                    <i class="fas fa-eye"></i>
-                                    Ophthalmology - Eye Examination
-                                </div>
-                            </div>
-                            <div class="appointment-status status-pending">
-                                Pending
-                            </div>
-                        </div>
-                        <div class="appointment-actions">
-                            <a href="#" class="btn-action btn-view">
-                                <i class="fas fa-eye"></i>
-                                View Details
-                            </a>
-                            <a href="#" class="btn-action btn-reschedule">
-                                <i class="fas fa-edit"></i>
-                                Reschedule
-                            </a>
-                            <a href="#" class="btn-action btn-cancel">
-                                <i class="fas fa-times"></i>
-                                Cancel
-                            </a>
-                        </div>
-                    </div>
-
-                    <div class="appointment-card">
-                        <div class="appointment-header">
-                            <div class="appointment-info">
-                                <div class="appointment-date">
-                                    <i class="fas fa-calendar"></i>
-                                    Friday, October 8, 2025 at 9:15 AM
-                                </div>
-                                <div class="appointment-doctor">
-                                    <i class="fas fa-user-md"></i>
-                                    Dr. Emily Davis
-                                </div>
-                                <div class="appointment-specialty">
-                                    <i class="fas fa-tooth"></i>
-                                    Dentistry - Routine Cleaning
-                                </div>
-                            </div>
-                            <div class="appointment-status status-cancelled">
-                                Cancelled
-                            </div>
-                        </div>
-                        <div class="appointment-actions">
-                            <a href="#" class="btn-action btn-view">
-                                <i class="fas fa-eye"></i>
-                                View Details
-                            </a>
-                        </div>
-                    </div>
-
-                    <!-- Empty State (uncomment to show when no appointments) -->
-                    <!--
-                    <div class="empty-state">
-                        <i class="fas fa-calendar-times"></i>
-                        <h3>No Appointments Found</h3>
-                        <p>You don't have any appointments scheduled yet.</p>
-                        <a href="#" class="btn-new-appointment" style="margin-top: 1rem;">
-                            <i class="fas fa-plus"></i>
-                            Book Your First Appointment
-                        </a>
-                    </div>
-                    -->
+                            </c:forEach>
+                        </c:otherwise>
+                    </c:choose>
                 </div>
             </div>
         </main>
 
         <!-- JavaScript for interactivity -->
         <script>
+            // Cancel appointment function
+            function cancelAppointment(appointmentId) {
+                if (confirm('Are you sure you want to cancel this appointment?')) {
+                    // Send request to cancel appointment
+                    window.location.href = '${pageContext.request.contextPath}/manage-my-appointments?action=cancel&appointmentId=' + appointmentId;
+                }
+            }
+
             // Dropdown menu functionality
             document.addEventListener('DOMContentLoaded', function () {
                 const dropdowns = document.querySelectorAll('.dropdown');
@@ -503,9 +551,10 @@
                 document.querySelectorAll('.btn-cancel').forEach(button => {
                     button.addEventListener('click', function (e) {
                         e.preventDefault();
+                        const appointmentId = this.getAttribute('data-appointment-id');
                         if (confirm('Are you sure you want to cancel this appointment?')) {
-                            // Handle cancellation logic here
-                            alert('Appointment cancelled successfully!');
+                            // Send cancel request
+                            window.location.href = '${pageContext.request.contextPath}/manage-my-appointments?action=cancel&appointmentId=' + appointmentId;
                         }
                     });
                 });
