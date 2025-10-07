@@ -7,7 +7,6 @@ package controller;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -19,7 +18,6 @@ import java.util.List;
  *
  * @author Nguyen Minh Khang - CE190728
  */
-@WebServlet(name = "DoctorListController", urlPatterns = {"/doctor-list"})
 public class DoctorListController extends HttpServlet {
 
     private DoctorDAO doctorDAO;
@@ -31,7 +29,8 @@ public class DoctorListController extends HttpServlet {
     }
 
     /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
+     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
+     * methods.
      *
      * @param request servlet request
      * @param response servlet response

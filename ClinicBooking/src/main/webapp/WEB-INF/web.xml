@@ -43,6 +43,15 @@
         <url-pattern>/doctor-list</url-pattern>
     </servlet-mapping>
 
+    <servlet>
+        <servlet-name>DoctorDashboardController</servlet-name>
+        <servlet-class>controller.DoctorDashboardController</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>DoctorDashboardController</servlet-name>
+        <url-pattern>/doctor-dashboard</url-pattern>
+    </servlet-mapping>
     <!-- DefaultHomeFilter -->
     <filter>
         <filter-name>DefaultHomeFilter</filter-name>

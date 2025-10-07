@@ -6,7 +6,6 @@ package controller;
 
 import java.io.IOException;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -15,7 +14,6 @@ import jakarta.servlet.http.HttpServletResponse;
  *
  * @author Le Anh Tuan - CE180905
  */
-@WebServlet(name = "HomePageController", urlPatterns = {"/home"})
 public class HomePageController extends HttpServlet {
 
     /**

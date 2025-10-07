@@ -11,16 +11,14 @@ import jakarta.servlet.FilterConfig;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
-import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * Default Home Filter - Redirects root requests to /home
- * 
+ *
  * @author Le Anh Tuan - CE180905
  */
-@WebFilter(filterName = "DefaultHomeFilter", urlPatterns = {"/"})
 public class DefaultHomeFilter implements Filter {
 
     /**
@@ -37,20 +35,20 @@ public class DefaultHomeFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response,
             FilterChain chain)
             throws IOException, ServletException {
-        
+
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         HttpServletResponse httpResponse = (HttpServletResponse) response;
-        
+
         String requestURI = httpRequest.getRequestURI();
         String contextPath = httpRequest.getContextPath();
-        
+
         // Check if the request is for the root path
         if (requestURI.equals(contextPath + "/") || requestURI.equals(contextPath)) {
             // Redirect to /home
             httpResponse.sendRedirect(contextPath + "/home");
             return;
         }
-        
+
         // Continue with the filter chain for other requests
         chain.doFilter(request, response);
     }

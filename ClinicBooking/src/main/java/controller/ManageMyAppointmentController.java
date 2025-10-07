@@ -9,7 +9,6 @@ import model.Appointment;
 import java.io.IOException;
 import java.util.List;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -19,7 +18,6 @@ import jakarta.servlet.http.HttpSession;
  *
  * @author Le Anh Tuan - CE180905
  */
-@WebServlet(name = "ManageMyAppointmentController", urlPatterns = {"/manage-my-appointments"})
 public class ManageMyAppointmentController extends HttpServlet {
 
     private AppointmentDAO appointmentDAO;
