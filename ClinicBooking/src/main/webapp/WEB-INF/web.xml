@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="3.1" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd">
+
+    <!-- Application Display Name -->
+    <display-name>Clinic Booking System</display-name>
+
+    <!-- Welcome File List -->
+    <welcome-file-list>
+        <welcome-file>index.jsp</welcome-file>
+        <welcome-file>home</welcome-file>
+    </welcome-file-list>
+
+    <!-- HomePageController -->
+    <servlet>
+        <servlet-name>HomePageController</servlet-name>
+        <servlet-class>controller.HomePageController</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>HomePageController</servlet-name>
+        <url-pattern>/home</url-pattern>
+    </servlet-mapping>
+
+    <!-- ManageMyAppointmentController -->
+    <servlet>
+        <servlet-name>ManageMyAppointmentController</servlet-name>
+        <servlet-class>controller.ManageMyAppointmentController</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>ManageMyAppointmentController</servlet-name>
+        <url-pattern>/manage-my-appointments</url-pattern>
+    </servlet-mapping>
+
+    <!-- DoctorListController -->
+    <servlet>
+        <servlet-name>DoctorListController</servlet-name>
+        <servlet-class>controller.DoctorListController</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>DoctorListController</servlet-name>
+        <url-pattern>/doctor-list</url-pattern>
+    </servlet-mapping>
+
+    <!-- DefaultHomeFilter -->
+    <filter>
+        <filter-name>DefaultHomeFilter</filter-name>
+        <filter-class>filter.DefaultHomeFilter</filter-class>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>DefaultHomeFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <session-config>
+        <session-timeout>
+            30
+        </session-timeout>
+    </session-config>
+</web-app>
