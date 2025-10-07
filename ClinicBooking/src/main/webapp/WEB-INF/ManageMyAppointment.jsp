@@ -269,7 +269,7 @@
                             <a href="#">About</a>
                         </li>
                         <li>
-                            <a href="#">Doctors</a>
+                            <a href="${pageContext.request.contextPath}/doctor-list">Doctors</a>
                         </li>
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle active">Portal</a>
