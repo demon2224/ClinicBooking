@@ -13,6 +13,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import model.User;
 
 /**
  *
@@ -42,10 +43,7 @@ public class ManageMyAppointmentController extends HttpServlet {
 
         HttpSession session = request.getSession();
         String action = request.getParameter("action");
-
-        // Hardcoded UserID for Hoang Vo (UserID = 12)
-        int userId = 12; // Hoang Vo
-
+        int userId = ((User) request.getSession().getAttribute("user")).getUserID();
         if ("cancel".equals(action)) {
             handleCancelAppointment(request, response);
             return;
