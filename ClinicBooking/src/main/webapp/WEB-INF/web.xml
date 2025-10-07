@@ -42,7 +42,8 @@
         <servlet-name>DoctorListController</servlet-name>
         <url-pattern>/doctor-list</url-pattern>
     </servlet-mapping>
-
+    
+    <!-- DoctorDashboardController -->
     <servlet>
         <servlet-name>DoctorDashboardController</servlet-name>
         <servlet-class>controller.DoctorDashboardController</servlet-class>
