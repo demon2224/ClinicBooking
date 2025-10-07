@@ -15,8 +15,8 @@ import jakarta.servlet.http.HttpServletResponse;
  *
  * @author Le Anh Tuan - CE180905
  */
-@WebServlet(name = "HomePageController", urlPatterns = {"/home"})
-public class HomePageController extends HttpServlet {
+@WebServlet(name = "HomepageController", urlPatterns = {"/home"})
+public class HomepageController extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -31,8 +31,8 @@ public class HomePageController extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
 
-        // Forward to HomePage.jsp
-        request.getRequestDispatcher("/WEB-INF/HomePage.jsp").forward(request, response);
+        // Forward to Homepage.jsp
+        request.getRequestDispatcher("/WEB-INF/Homepage.jsp").forward(request, response);
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
