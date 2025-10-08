@@ -456,7 +456,7 @@
                                         </div>
                                     </div>
                                     <div class="appointment-actions">
-                                        <a href="#" class="btn-action btn-view">
+                                        <a href="${pageContext.request.contextPath}/my-appointment-detail?id=${appointment.appointmentID}" class="btn-action btn-view">
                                             <i class="fas fa-eye"></i>
                                             View Details
                                         </a>
@@ -564,14 +564,6 @@
                     button.addEventListener('click', function (e) {
                         e.preventDefault();
                         alert('Reschedule functionality will be implemented soon!');
-                    });
-                });
-
-                // View appointment details
-                document.querySelectorAll('.btn-view').forEach(button => {
-                    button.addEventListener('click', function (e) {
-                        e.preventDefault();
-                        alert('View details functionality will be implemented soon!');
                     });
                 });
 
