@@ -16,6 +16,16 @@
         <servlet-name>HomePageController</servlet-name>
         <url-pattern>/home</url-pattern>
     </servlet-mapping>
+    <!-- ReceptionistDashboardController -->
+    <servlet-mapping>
+        <servlet-name>ReceptionistDashboardController</servlet-name>
+        <url-pattern>/receptionist-dashboard</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>ReceptionistDashboardController</servlet-name>
+        <servlet-class>controller.ReceptionistDashboardController</servlet-class>
+    </servlet>
+    
     <!-- ManageMyAppointmentController -->
     <servlet>
         <servlet-name>ManageMyAppointmentController</servlet-name>
