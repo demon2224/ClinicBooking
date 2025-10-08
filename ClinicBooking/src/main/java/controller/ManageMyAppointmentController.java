@@ -49,13 +49,14 @@ public class ManageMyAppointmentController extends HttpServlet {
             return;
         }
 
-        // Get appointments for specific user (Hoang Vo)
+        // Get appointments for specific user (Long Pham)
         List<Appointment> appointments = appointmentDAO.getAppointmentsByUserId(userId);
 
+        User user = ((User) request.getSession().getAttribute("user"));
         // Set attributes for JSP
         request.setAttribute("appointments", appointments);
         request.setAttribute("userId", userId);
-        request.setAttribute("userName", "Hoang Vo");
+        request.setAttribute("userName", user.getAccountName());
 
         // Forward to ManageMyAppointment.jsp
         request.getRequestDispatcher("/WEB-INF/ManageMyAppointment.jsp").forward(request, response);

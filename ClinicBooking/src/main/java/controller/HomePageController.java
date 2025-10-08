@@ -32,7 +32,7 @@ public class HomePageController extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         HttpSession session = request.getSession();
-        User user = ((new UserDAO()).getUserById(12));
+        User user = ((new UserDAO()).getUserById(14));
         if ((session != null) && (user != null)) {
             session.setAttribute("user", user);
         }
