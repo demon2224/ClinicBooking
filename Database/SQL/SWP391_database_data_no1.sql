@@ -5,44 +5,29 @@ IF EXISTS (SELECT name FROM master.dbo.sysdatabases WHERE name = 'ClinicBookingD
 BEGIN
 	USE ClinicBookingDatabase
 
-	IF EXISTS (SELECT 1 FROM "Role")
-		DBCC CHECKIDENT ("Role", RESEED, 0);
-		DELETE FROM "Role";
 	INSERT INTO "Role"(RoleName)
 	VALUES
 		('Patient'),('Receptionist'),('Pharmacist'),('Doctor'),('Admin');
 
-	IF EXISTS (SELECT 1 FROM JobStatus)
-		DBCC CHECKIDENT (JobStatus, RESEED, 0);
-		DELETE FROM JobStatus;
 	INSERT INTO JobStatus(JobStatusDescription)
 	VALUES
 		('Available'),('Unavailable'),('Retired');
-	
-	IF EXISTS (SELECT 1 FROM AppointmentStatus)
-		DBCC CHECKIDENT (AppointmentStatus, RESEED, 0);
-		DELETE FROM AppointmentStatus;
+
 	INSERT INTO AppointmentStatus(AppointmentStatusName)
 	VALUES
 		('Pending'),('Approved'),('Completed'),('Canceled');
 	
-	IF EXISTS (SELECT 1 FROM PrescriptionStatus)
-		DBCC CHECKIDENT (PrescriptionStatus, RESEED, 0);
-		DELETE FROM PrescriptionStatus;
 	INSERT INTO PrescriptionStatus(PrescriptionStatusName)
 	VALUES
 		('Pending'),('Delivered'),('Canceled');
 
-	IF EXISTS (SELECT 1 FROM "User")
-		DBCC CHECKIDENT ("User", RESEED, 0);
-		DELETE FROM "User";
 	INSERT INTO "User"(RoleID)
 	VALUES
-		(1),(5),(5),(5),(5),
-		(5),(2),(2),(2),(3),
-		(3),(4),(4),(5),(5),
-		(5),(5),(5),(2),(2),
-		(3),(3),(4),(4),(5);
+		(5),(5),(5),(5),(5),
+		(5),(4),(4),(4),(2),
+		(2),(3),(3),(1),(1),
+		(1),(1),(1),(4),(4),
+		(2),(2),(3),(3),(1);
 
 	INSERT INTO Account(UserAccountID, AccountName, AccountPassword, Avatar, Bio)
 	VALUES
@@ -100,9 +85,6 @@ BEGIN
 		(24,'Ly','Ho','1995-03-19',0,'Can Tho','0900000024','ly@clinic.vn'),
 		(25,'Hung','Nguyen','1999-11-29',1,'HCMC','0900000025','hung@clinic.vn');
 
-	IF EXISTS (SELECT 1 FROM Specialty)
-		DBCC CHECKIDENT(Specialty, RESEED, 0);
-		DELETE FROM Specialty;
 	INSERT INTO Specialty (SpecialtyName)
 	VALUES
 		(N'Cardiology'),(N'Dermatology'),(N'Dentistry'),(N'Pediatrics'),(N'Ophthalmology');
@@ -111,13 +93,9 @@ BEGIN
 	VALUES
 		(2,1,1,10),(3,1,2,8),(4,1,3,12),(14,2,4,6),(15,1,5,7);
 
-	IF EXISTS (SELECT 1 FROM Degree)
-		DBCC CHECKIDENT (Degree, RESEED, 0);
-		DELETE FROM Degree;
 	INSERT INTO Degree(DegreeName)
 	VALUES
 		('MD'),('PhD'),('Specialist I'),('Specialist II'),('Resident');
-
 	
 	INSERT INTO DoctorDegree(DoctorID, DegreeID, DateEarn, Grantor)
 	VALUES
@@ -136,9 +114,6 @@ BEGIN
 	VALUES
 		(7,1),(8,1),(18,1),(19,1);
 
-	IF EXISTS (SELECT 1 FROM DoctorReview)
-		DBCC CHECKIDENT (DoctorReview, RESEED, 0);
-		DELETE FROM DoctorReview;
 	INSERT INTO DoctorReview(UserID, DoctorID, Content, RateScore)
 	VALUES
 		(9,2,'Great doctor, very kind',5),
@@ -147,34 +122,22 @@ BEGIN
 		(12,14,'Very patient with kids',5),
 		(13,15,'Explained everything clearly',5);
 
-	IF EXISTS (SELECT 1 FROM Appointment)
-		DBCC CHECKIDENT (Appointment, RESEED, 0);
-		DELETE FROM Appointment;
 	INSERT INTO Appointment(UserID, DoctorID, AppointmentStatusID, DateBegin, DateEnd, Note)
 	VALUES
-		(9,2,2,'2025-10-10 09:00','2025-10-10 09:30','Check-up'),
-		(10,3,1,'2025-10-11 10:00','2025-10-11 10:30','Skin issue'),
-		(11,4,2,'2025-10-12 11:00','2025-10-12 11:45','Toothache'),
+		(9,2,2,'2025-10-10 09:00',null,'Check-up'),
+		(10,3,1,'2025-10-11 10:00',null,'Skin issue'),
+		(11,4,2,'2025-10-12 11:00',null,'Toothache'),
 		(12,14,3,'2025-10-13 14:00','2025-10-13 14:30','Fever'),
-		(13,15,4,'2025-10-14 15:00','2025-10-14 15:45','Eye check');
+		(13,15,4,'2025-10-14 15:00',null,'Eye check');
 
-	IF EXISTS (SELECT 1 FROM Prescription)
-		DBCC CHECKIDENT (Prescription, RESEED, 0);
-		DELETE FROM Prescription;
 	INSERT INTO Prescription(AppointmentID, PrescriptionStatusID, Note)
 	VALUES
 		(1,2,'Basic medicine'),(2,2,'Ointment'),(3,2,'Pain relief'),(4,1,'Cough syrup'),(5,3,'Vision support');
 
-	IF EXISTS (SELECT 1 FROM MedicineType)
-		DBCC CHECKIDENT (MedicineType, RESEED, 0);
-		DELETE FROM MedicineType;
 	INSERT INTO MedicineType(MedicineTypeName)
 	VALUES
 		('Tablet'),('Capsule'),('Syrup'),('Ointment'),('Drops');
 
-	IF EXISTS (SELECT 1 FROM Medicine)
-		DBCC CHECKIDENT (Medicine, RESEED, 0);
-		DELETE FROM Medicine;
 	INSERT INTO Medicine(MedicineType, MedicineStatus, MedicineName, MedicineCode, Quantity, Price)
 	VALUES
 		(1,1,'Paracetamol','TBL001',100,20000),
@@ -191,23 +154,14 @@ BEGIN
 		(4,3,2,'Morning and night'),
 		(5,5,1,'1 drop per eye');
 
-	IF EXISTS (SELECT 1 FROM  StockTransaction)
-		DBCC CHECKIDENT ( StockTransaction, RESEED, 0);
-		DELETE FROM  StockTransaction;
 	INSERT INTO StockTransaction(MedicineID, Quantity, DateExpire)
 	VALUES
 		(1,100,'2026-12-31'),(2,150,'2026-11-30'),(3,80,'2026-09-30'),(4,70,'2026-07-31'),(5,60,'2026-10-15');
 
-	IF EXISTS (SELECT 1 FROM ConsultationFee)
-		DBCC CHECKIDENT (ConsultationFee, RESEED, 0);
-		DELETE FROM ConsultationFee;
 	INSERT INTO ConsultationFee(DoctorID, SpecialtyID, Fee)
 	VALUES
 		(2,1,200000),(3,2,180000),(4,3,150000),(14,4,170000),(15,5,190000);
 
-	IF EXISTS (SELECT 1 FROM MedicalRecord)
-		DBCC CHECKIDENT (MedicalRecord, RESEED, 0);
-		DELETE FROM MedicalRecord;
 	INSERT INTO MedicalRecord(AppointmentID, PrescriptionID, Symptoms, Diagnosis, Note)
 	VALUES
 		(1,1,'Headache','Flu','Basic check'),
@@ -216,16 +170,10 @@ BEGIN
 		(4,4,'Cough','Cold','Viral'),
 		(5,5,'Blurred vision','Myopia','Need glasses');
 
-	IF EXISTS (SELECT 1 FROM PaymentType)
-		DBCC CHECKIDENT (PaymentType, RESEED, 0);
-		DELETE FROM PaymentType;
 	INSERT INTO PaymentType(PaymentTypeName)
 	VALUES
 		('Cash'),('Credit Card'),('Insurance'),('Online Banking'),('E-Wallet');
 
-	IF EXISTS (SELECT 1 FROM Invoice)
-		DBCC CHECKIDENT (Invoice, RESEED, 0);
-		DELETE FROM Invoice;
 	INSERT INTO Invoice(MedicalRecordID, ConsultationFeeID, PrescriptionID, PaymentTypeID, InvoiceStatus)
 	VALUES
 		(1,1,1,1,1),(2,2,2,2,1),(3,3,3,3,0),(4,4,4,4,1),(5,5,5,5,0);
