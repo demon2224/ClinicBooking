@@ -91,7 +91,7 @@ BEGIN
 
 	INSERT INTO Doctor(DoctorID, JobStatusID, SpecialtyID, YearExperience)
 	VALUES
-		(7,1,1,10),(8,1,2,8),(9,1,3,12),(14,2,4,6),(15,1,5,7);
+		(7,1,1,10),(8,1,2,8),(9,1,3,12),(19,2,4,6),(20,1,5,7);
 
 	INSERT INTO Degree(DegreeName)
 	VALUES
@@ -103,8 +103,8 @@ BEGIN
 		(7,3,'2015-06-01','Hanoi Health Dept'),
 		(8,1,'2011-07-22','Can Tho University'),
 		(9,1,'2009-09-01','Hue Medical University'),
-		(15,2,'2014-03-15','Hanoi Medical University'),
-		(14,1,'2013-01-01','Danang Medical University');
+		(20,2,'2014-03-15','Hanoi Medical University'),
+		(19,1,'2013-01-01','Danang Medical University');
 
 	INSERT INTO Receptionist(ReceptionistID, JobStatusID)
 	VALUES
@@ -119,16 +119,16 @@ BEGIN
 		(9,7,'Great doctor, very kind',5),
 		(10,8,'Helpful and professional',4),
 		(11,9,'Fast service',4),
-		(12,14,'Very patient with kids',5),
-		(13,15,'Explained everything clearly',5);
+		(12,19,'Very patient with kids',5),
+		(13,20,'Explained everything clearly',5);
 
 	INSERT INTO Appointment(UserID, DoctorID, AppointmentStatusID, DateBegin, DateEnd, Note)
 	VALUES
 		(9,7,2,'2025-10-10 09:00',null,'Check-up'),
 		(10,8,1,'2025-10-11 10:00',null,'Skin issue'),
 		(11,9,2,'2025-10-12 11:00',null,'Toothache'),
-		(12,14,3,'2025-10-13 14:00','2025-10-13 14:30','Fever'),
-		(13,15,4,'2025-10-14 15:00',null,'Eye check');
+		(12,19,3,'2025-10-13 14:00','2025-10-13 14:30','Fever'),
+		(13,20,4,'2025-10-14 15:00',null,'Eye check');
 
 	INSERT INTO Prescription(AppointmentID, PrescriptionStatusID, Note)
 	VALUES
@@ -160,7 +160,7 @@ BEGIN
 
 	INSERT INTO ConsultationFee(DoctorID, SpecialtyID, Fee)
 	VALUES
-		(7,1,200000),(8,2,180000),(9,3,150000),(14,4,170000),(15,5,190000);
+		(7,1,200000),(8,2,180000),(9,3,150000),(19,4,170000),(20,5,190000);
 
 	INSERT INTO MedicalRecord(AppointmentID, PrescriptionID, Symptoms, Diagnosis, Note)
 	VALUES
