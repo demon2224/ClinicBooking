@@ -20,27 +20,19 @@ import java.util.List;
  */
 public class DoctorListController extends HttpServlet {
 
-    private DoctorDAO doctorDAO;
-
-    @Override
-    public void init() throws ServletException {
-        super.init();
-        doctorDAO = new DoctorDAO();
-    }
-
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
      *
-     * @param request servlet request
+     * @param request  servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * @throws IOException      if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        try ( PrintWriter out = response.getWriter()) {
+        try (PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
             out.println("<!DOCTYPE html>");
             out.println("<html>");
@@ -59,31 +51,81 @@ public class DoctorListController extends HttpServlet {
     /**
      * Handles the HTTP <code>GET</code> method.
      *
-     * @param request servlet request
+     * @param request  servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * @throws IOException      if an I/O error occurs
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
+            DoctorDAO doctorDAO = new DoctorDAO();
+
+            // Get search and filter parameters
+            String searchName = request.getParameter("searchName");
             String specialtyParam = request.getParameter("specialty");
-            String statusParam = request.getParameter("status");
+            String experienceParam = request.getParameter("minExperience");
+
+            // Parse parameters
+            Integer specialtyId = null;
+            Integer minExperience = null;
+
+            if (specialtyParam != null && !specialtyParam.isEmpty()) {
+                try {
+                    specialtyId = Integer.parseInt(specialtyParam);
+                } catch (NumberFormatException e) {
+                    // Ignore invalid input
+                }
+            }
+
+            if (experienceParam != null && !experienceParam.isEmpty()) {
+                try {
+                    minExperience = Integer.parseInt(experienceParam);
+                } catch (NumberFormatException e) {
+                    // Ignore invalid input
+                }
+            }
 
             List<Doctor> doctors;
 
-            if (specialtyParam != null && !specialtyParam.isEmpty()) {
-                int specialtyId = Integer.parseInt(specialtyParam);
-                doctors = doctorDAO.getDoctorsBySpecialty(specialtyId);
-            } else if ("available".equalsIgnoreCase(statusParam)) {
-                doctors = doctorDAO.getAvailableDoctors();
+            // Check if any search/filter criteria is provided
+            boolean hasSearchCriteria = (searchName != null && !searchName.trim().isEmpty())
+                    || specialtyId != null || minExperience != null;
+
+            if (hasSearchCriteria) {
+                // Use search method - always filter to only Available doctors (JobStatusID = 1)
+                doctors = doctorDAO.searchDoctors(searchName, specialtyId, 1, minExperience);
             } else {
-                doctors = doctorDAO.getAllDoctors();
+                // Get only available doctors
+                doctors = doctorDAO.getAvailableDoctors();
             }
 
+            // Set avatar path for each doctor
+            for (Doctor doctor : doctors) {
+                if (doctor.getAvatar() != null && !doctor.getAvatar().isEmpty()) {
+                    // If avatar path exists in DB, use it
+                    if (!doctor.getAvatar().startsWith("assests/")) {
+                        doctor.setAvatar("assests/img/" + doctor.getAvatar());
+                    }
+                } else {
+                    // If no avatar, use default image 0.png
+                    doctor.setAvatar("assests/img/0.png");
+                }
+            }
+
+            // Get all specialties for dropdown filter
+            List<String[]> specialties = doctorDAO.getAllSpecialties();
+
+            // Set attributes for JSP
             request.setAttribute("doctors", doctors);
             request.setAttribute("totalDoctors", doctors.size());
+            request.setAttribute("specialties", specialties);
+
+            // Keep search parameters to maintain state
+            request.setAttribute("searchName", searchName);
+            request.setAttribute("selectedSpecialty", specialtyParam);
+            request.setAttribute("minExperience", experienceParam);
 
         } catch (Exception e) {
             request.setAttribute("errorMessage", "Error loading doctor list: " + e.getMessage());
@@ -96,10 +138,10 @@ public class DoctorListController extends HttpServlet {
     /**
      * Handles the HTTP <code>POST</code> method.
      *
-     * @param request servlet request
+     * @param request  servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * @throws IOException      if an I/O error occurs
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
