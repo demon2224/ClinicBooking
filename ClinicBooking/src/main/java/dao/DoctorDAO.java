@@ -42,40 +42,21 @@ public class DoctorDAO extends DBContext {
                 + "INNER JOIN JobStatus js ON d.JobStatusID = js.JobStatusID "
                 + "WHERE u.RoleID = 4";
 
-        Connection conn = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-
         try {
-            conn = getConnection();
-            ps = conn.prepareStatement(sql);
-            rs = ps.executeQuery();
-
-            // Populate the list with Doctor objects
-            while (rs.next()) {
-                Doctor doctor = new Doctor();
-                doctor.setDoctorID(rs.getInt("DoctorID"));
-                doctor.setFirstName(rs.getString("FirstName"));
-                doctor.setLastName(rs.getString("LastName"));
-                doctor.setEmail(rs.getString("Email"));
-                doctor.setPhoneNumber(rs.getString("PhoneNumber"));
-                doctor.setAvatar(rs.getString("Avatar"));
-                doctor.setBio(rs.getString("Bio"));
-                doctor.setSpecialtyName(rs.getString("SpecialtyName"));
-                doctor.setJobStatusDescription(rs.getString("JobStatusDescription"));
-                doctor.setYearExperience(rs.getInt("YearExperience"));
-                doctor.setUserID(rs.getInt("DoctorID")); // UserID = DoctorID based on database structure
-                doctor.setJobStatusID(rs.getInt("JobStatusID"));
-                doctor.setSpecialtyID(rs.getInt("SpecialtyID"));
-                doctors.add(doctor); // Add to the list
+            ResultSet rs = executeSelectQuery(sql);
+            if (rs != null) {
+                // Populate the list with Doctor objects
+                while (rs.next()) {
+                    Doctor doctor = createDoctorFromResultSet(rs);
+                    doctors.add(doctor);
+                }
+                closeResources(rs);
             }
         } catch (SQLException ex) {
             Logger.getLogger(DoctorDAO.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            closeResources(rs, ps, conn);
         }
 
-        return doctors; // Return the list of doctors
+        return doctors;
     }
 
     /**
@@ -98,49 +79,28 @@ public class DoctorDAO extends DBContext {
                 + "INNER JOIN JobStatus js ON d.JobStatusID = js.JobStatusID "
                 + "WHERE d.DoctorID = ? AND u.RoleID = 4";
 
-        Connection conn = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
         Doctor doctor = null;
-
         try {
-            conn = getConnection();
-            ps = conn.prepareStatement(sql);
-            ps.setInt(1, doctorId); // Set the doctor ID parameter
-            rs = ps.executeQuery();
-
-            if (rs.next()) {
-                doctor = new Doctor(); // Instantiate the Doctor object
-                doctor.setDoctorID(rs.getInt("DoctorID"));
-                doctor.setFirstName(rs.getString("FirstName"));
-                doctor.setLastName(rs.getString("LastName"));
-                doctor.setEmail(rs.getString("Email"));
-                doctor.setPhoneNumber(rs.getString("PhoneNumber"));
-                doctor.setAvatar(rs.getString("Avatar"));
-                doctor.setBio(rs.getString("Bio"));
-                doctor.setSpecialtyName(rs.getString("SpecialtyName"));
-                doctor.setJobStatusDescription(rs.getString("JobStatusDescription"));
-                doctor.setYearExperience(rs.getInt("YearExperience"));
-                doctor.setUserID(rs.getInt("UserID"));
-                doctor.setJobStatusID(rs.getInt("JobStatusID"));
-                doctor.setSpecialtyID(rs.getInt("SpecialtyID"));
+            Object[] params = { doctorId };
+            ResultSet rs = executeSelectQuery(sql, params);
+            if (rs != null && rs.next()) {
+                doctor = createDoctorFromResultSet(rs);
+                closeResources(rs);
             }
         } catch (SQLException ex) {
             Logger.getLogger(DoctorDAO.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            closeResources(rs, ps, conn);
         }
 
-        return doctor; // Return the doctor or null if not found
+        return doctor;
     }
 
     /**
-     * Retrieves doctors by their specialty ID.
+     * Retrieves doctors by their specialty name.
      *
-     * @param specialtyId The ID of the specialty.
+     * @param specialtyName The name of the specialty.
      * @return A list of Doctor objects.
      */
-    public List<Doctor> getDoctorsBySpecialty(int specialtyId) {
+    public List<Doctor> getDoctorsBySpecialty(String specialtyName) {
         List<Doctor> doctors = new ArrayList<>();
         String sql = "SELECT d.DoctorID, d.YearExperience, d.JobStatusID, d.SpecialtyID, "
                 + "p.FirstName, p.LastName, p.PhoneNumber, p.Email, "
@@ -153,42 +113,23 @@ public class DoctorDAO extends DBContext {
                 + "INNER JOIN Account a ON u.UserID = a.UserAccountID "
                 + "INNER JOIN Specialty s ON d.SpecialtyID = s.SpecialtyID "
                 + "INNER JOIN JobStatus js ON d.JobStatusID = js.JobStatusID "
-                + "WHERE d.SpecialtyID = ? AND u.RoleID = 4";
-
-        Connection conn = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
+                + "WHERE s.SpecialtyName = ? AND u.RoleID = 4";
 
         try {
-            conn = getConnection();
-            ps = conn.prepareStatement(sql);
-            ps.setInt(1, specialtyId); // Set the specialty ID parameter
-            rs = ps.executeQuery();
-
-            while (rs.next()) {
-                Doctor doctor = new Doctor(); // Create Doctor object
-                doctor.setDoctorID(rs.getInt("DoctorID"));
-                doctor.setFirstName(rs.getString("FirstName"));
-                doctor.setLastName(rs.getString("LastName"));
-                doctor.setEmail(rs.getString("Email"));
-                doctor.setPhoneNumber(rs.getString("PhoneNumber"));
-                doctor.setAvatar(rs.getString("Avatar"));
-                doctor.setBio(rs.getString("Bio"));
-                doctor.setSpecialtyName(rs.getString("SpecialtyName"));
-                doctor.setJobStatusDescription(rs.getString("JobStatusDescription"));
-                doctor.setYearExperience(rs.getInt("YearExperience"));
-                doctor.setUserID(rs.getInt("DoctorID")); // UserID = DoctorID based on database structure
-                doctor.setJobStatusID(rs.getInt("JobStatusID"));
-                doctor.setSpecialtyID(rs.getInt("SpecialtyID"));
-                doctors.add(doctor);
+            Object[] params = { specialtyName };
+            ResultSet rs = executeSelectQuery(sql, params);
+            if (rs != null) {
+                while (rs.next()) {
+                    Doctor doctor = createDoctorFromResultSet(rs);
+                    doctors.add(doctor);
+                }
+                closeResources(rs);
             }
         } catch (SQLException ex) {
             Logger.getLogger(DoctorDAO.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            closeResources(rs, ps, conn);
         }
 
-        return doctors; // Return the list of doctors
+        return doctors;
     }
 
     /**
@@ -211,51 +152,32 @@ public class DoctorDAO extends DBContext {
                 + "INNER JOIN JobStatus js ON d.JobStatusID = js.JobStatusID "
                 + "WHERE d.JobStatusID = 1 AND u.RoleID = 4";
 
-        Connection conn = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-
         try {
-            conn = getConnection();
-            ps = conn.prepareStatement(sql);
-            rs = ps.executeQuery();
-
-            while (rs.next()) {
-                Doctor doctor = new Doctor();
-                doctor.setDoctorID(rs.getInt("DoctorID"));
-                doctor.setFirstName(rs.getString("FirstName"));
-                doctor.setLastName(rs.getString("LastName"));
-                doctor.setEmail(rs.getString("Email"));
-                doctor.setPhoneNumber(rs.getString("PhoneNumber"));
-                doctor.setAvatar(rs.getString("Avatar"));
-                doctor.setBio(rs.getString("Bio"));
-                doctor.setSpecialtyName(rs.getString("SpecialtyName"));
-                doctor.setJobStatusDescription(rs.getString("JobStatusDescription"));
-                doctor.setYearExperience(rs.getInt("YearExperience"));
-                doctor.setUserID(rs.getInt("DoctorID")); // UserID = DoctorID based on database structure
-                doctor.setJobStatusID(rs.getInt("JobStatusID"));
-                doctor.setSpecialtyID(rs.getInt("SpecialtyID"));
-                doctors.add(doctor);
+            ResultSet rs = executeSelectQuery(sql);
+            if (rs != null) {
+                while (rs.next()) {
+                    Doctor doctor = createDoctorFromResultSet(rs);
+                    doctors.add(doctor);
+                }
+                closeResources(rs);
             }
         } catch (SQLException ex) {
             Logger.getLogger(DoctorDAO.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            closeResources(rs, ps, conn);
         }
 
-        return doctors; // Return the list of available doctors
+        return doctors;
     }
 
     /**
      * Search doctors by name, specialty, job status, and minimum year experience.
      *
      * @param searchName    The doctor's name to search for (can be partial match).
-     * @param specialtyId   The specialty ID to filter (0 or null for all).
+     * @param specialtyName The specialty name to filter (null or empty for all).
      * @param jobStatusId   The job status ID to filter (0 or null for all).
      * @param minExperience Minimum years of experience (0 or null for all).
      * @return A list of Doctor objects matching the search criteria.
      */
-    public List<Doctor> searchDoctors(String searchName, Integer specialtyId, Integer jobStatusId,
+    public List<Doctor> searchDoctors(String searchName, String specialtyName, Integer jobStatusId,
             Integer minExperience) {
         List<Doctor> doctors = new ArrayList<>();
         StringBuilder sql = new StringBuilder(
@@ -272,69 +194,41 @@ public class DoctorDAO extends DBContext {
                         + "INNER JOIN JobStatus js ON d.JobStatusID = js.JobStatusID "
                         + "WHERE u.RoleID = 4");
 
+        // Build parameters list dynamically
+        List<Object> paramsList = new ArrayList<>();
+
         // Add search conditions dynamically
         if (searchName != null && !searchName.trim().isEmpty()) {
             sql.append(" AND (p.FirstName LIKE ? OR p.LastName LIKE ?)");
+            String searchPattern = "%" + searchName.trim() + "%";
+            paramsList.add(searchPattern);
+            paramsList.add(searchPattern);
         }
-        if (specialtyId != null && specialtyId > 0) {
-            sql.append(" AND d.SpecialtyID = ?");
+        if (specialtyName != null && !specialtyName.trim().isEmpty()) {
+            sql.append(" AND s.SpecialtyName = ?");
+            paramsList.add(specialtyName.trim());
         }
         if (jobStatusId != null && jobStatusId > 0) {
             sql.append(" AND d.JobStatusID = ?");
+            paramsList.add(jobStatusId);
         }
         if (minExperience != null && minExperience > 0) {
             sql.append(" AND d.YearExperience >= ?");
+            paramsList.add(minExperience);
         }
 
-        Connection conn = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-
         try {
-            conn = getConnection();
-            ps = conn.prepareStatement(sql.toString());
-
-            int paramIndex = 1;
-
-            // Set parameters dynamically
-            if (searchName != null && !searchName.trim().isEmpty()) {
-                String searchPattern = "%" + searchName.trim() + "%";
-                ps.setString(paramIndex++, searchPattern);
-                ps.setString(paramIndex++, searchPattern);
-            }
-            if (specialtyId != null && specialtyId > 0) {
-                ps.setInt(paramIndex++, specialtyId);
-            }
-            if (jobStatusId != null && jobStatusId > 0) {
-                ps.setInt(paramIndex++, jobStatusId);
-            }
-            if (minExperience != null && minExperience > 0) {
-                ps.setInt(paramIndex++, minExperience);
-            }
-
-            rs = ps.executeQuery();
-
-            while (rs.next()) {
-                Doctor doctor = new Doctor();
-                doctor.setDoctorID(rs.getInt("DoctorID"));
-                doctor.setFirstName(rs.getString("FirstName"));
-                doctor.setLastName(rs.getString("LastName"));
-                doctor.setEmail(rs.getString("Email"));
-                doctor.setPhoneNumber(rs.getString("PhoneNumber"));
-                doctor.setAvatar(rs.getString("Avatar"));
-                doctor.setBio(rs.getString("Bio"));
-                doctor.setSpecialtyName(rs.getString("SpecialtyName"));
-                doctor.setJobStatusDescription(rs.getString("JobStatusDescription"));
-                doctor.setYearExperience(rs.getInt("YearExperience"));
-                doctor.setUserID(rs.getInt("DoctorID"));
-                doctor.setJobStatusID(rs.getInt("JobStatusID"));
-                doctor.setSpecialtyID(rs.getInt("SpecialtyID"));
-                doctors.add(doctor);
+            Object[] params = paramsList.toArray();
+            ResultSet rs = executeSelectQuery(sql.toString(), params);
+            if (rs != null) {
+                while (rs.next()) {
+                    Doctor doctor = createDoctorFromResultSet(rs);
+                    doctors.add(doctor);
+                }
+                closeResources(rs);
             }
         } catch (SQLException ex) {
             Logger.getLogger(DoctorDAO.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            closeResources(rs, ps, conn);
         }
 
         return doctors;
@@ -349,27 +243,43 @@ public class DoctorDAO extends DBContext {
         List<String[]> specialties = new ArrayList<>();
         String sql = "SELECT SpecialtyID, SpecialtyName FROM Specialty ORDER BY SpecialtyName";
 
-        Connection conn = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-
         try {
-            conn = getConnection();
-            ps = conn.prepareStatement(sql);
-            rs = ps.executeQuery();
-
-            while (rs.next()) {
-                String[] specialty = new String[2];
-                specialty[0] = String.valueOf(rs.getInt("SpecialtyID"));
-                specialty[1] = rs.getString("SpecialtyName");
-                specialties.add(specialty);
+            ResultSet rs = executeSelectQuery(sql);
+            if (rs != null) {
+                while (rs.next()) {
+                    String[] specialty = new String[2];
+                    specialty[0] = String.valueOf(rs.getInt("SpecialtyID"));
+                    specialty[1] = rs.getString("SpecialtyName");
+                    specialties.add(specialty);
+                }
+                closeResources(rs);
             }
         } catch (SQLException ex) {
             Logger.getLogger(DoctorDAO.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            closeResources(rs, ps, conn);
         }
 
         return specialties;
+    }
+
+    /**
+     * Helper method to create Doctor object from ResultSet
+     * Reuses code to avoid duplication
+     */
+    private Doctor createDoctorFromResultSet(ResultSet rs) throws SQLException {
+        Doctor doctor = new Doctor();
+        doctor.setDoctorID(rs.getInt("DoctorID"));
+        doctor.setFirstName(rs.getString("FirstName"));
+        doctor.setLastName(rs.getString("LastName"));
+        doctor.setEmail(rs.getString("Email"));
+        doctor.setPhoneNumber(rs.getString("PhoneNumber"));
+        doctor.setAvatar(rs.getString("Avatar"));
+        doctor.setBio(rs.getString("Bio"));
+        doctor.setSpecialtyName(rs.getString("SpecialtyName"));
+        doctor.setJobStatusDescription(rs.getString("JobStatusDescription"));
+        doctor.setYearExperience(rs.getInt("YearExperience"));
+        doctor.setUserID(rs.getInt("DoctorID")); // UserID = DoctorID based on database structure
+        doctor.setJobStatusID(rs.getInt("JobStatusID"));
+        doctor.setSpecialtyID(rs.getInt("SpecialtyID"));
+        return doctor;
     }
 }
