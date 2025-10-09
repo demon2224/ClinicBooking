@@ -35,10 +35,10 @@ public class UserDAO extends DBContext {
                 + "LEFT JOIN Profile p ON u.UserID = p.UserProfileID "
                 + "LEFT JOIN Role r ON u.RoleID = r.RoleID "
                 + "WHERE u.UserID = ?";
-
+        ResultSet rs = null;
         try {
-            
-            ResultSet rs = executeSelectQuery(sql);
+            Object[] params = {userId};
+            rs = executeSelectQuery(sql, params);
 
             if (rs.next()) {
                 User user = new User();
@@ -54,7 +54,7 @@ public class UserDAO extends DBContext {
                 account.setDayCreated(rs.getObject("DayCreated", LocalDateTime.class));
                 account.setAvatar(rs.getString("Avatar"));
                 account.setBio(rs.getString("Bio"));
-                
+
                 user.setAccount(account);
 
                 // Profile table fields
@@ -66,7 +66,7 @@ public class UserDAO extends DBContext {
                 profile.setUserAddress(rs.getString("UserAddress"));
                 profile.setPhoneNumber(rs.getString("PhoneNumber"));
                 profile.setEmail(rs.getString("Email"));
-                
+
                 user.setProfile(profile);
 
                 // Additional fields
