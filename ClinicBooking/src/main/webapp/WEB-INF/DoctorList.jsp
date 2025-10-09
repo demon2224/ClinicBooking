@@ -198,7 +198,7 @@
 
                     .doctor-avatar {
                         width: 200px;
-                        height: 200px;                     
+                        height: 200px;
                         object-fit: cover;
                         margin: 0 auto 1.5rem;
                         border: 4px solid #f6f8fa;
@@ -497,8 +497,9 @@
 
                 <!-- Search and Filter Section -->
                 <div class="doctor-container">
-                    <form method="GET" action="${pageContext.request.contextPath}/doctor-list"
+                    <form method="POST" action="${pageContext.request.contextPath}/doctor-list"
                         class="search-filter-form">
+                        <input type="hidden" name="action" value="search">
                         <div class="search-bar-wrapper">
                             <!-- Search Input -->
                             <div class="search-input-group">
@@ -514,7 +515,7 @@
                                 <select name="specialty" class="filter-select">
                                     <option value="">All Specialties</option>
                                     <c:forEach var="spec" items="${specialties}">
-                                        <option value="${spec[0]}" ${selectedSpecialty eq spec[0] ? 'selected' : '' }>
+                                        <option value="${spec[1]}" ${selectedSpecialty eq spec[1] ? 'selected' : '' }>
                                             ${spec[1]}
                                         </option>
                                     </c:forEach>
