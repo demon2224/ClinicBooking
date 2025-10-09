@@ -313,4 +313,24 @@ public class AppointmentDAO extends DBContext {
 
         return appointments;
     }
+
+    public boolean approvedStatusAppointment(int appointmentId) {
+        String sql = "UPDATE Appointment SET AppointmentStatusID = 2 WHERE AppointmentID = ? AND AppointmentStatusID = 1 ";
+        Connection conn = null;
+        PreparedStatement stmt = null;
+
+        try {
+            conn = getConnection();
+            stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, appointmentId);
+
+            int rowsAffected = stmt.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        } finally {
+            closeResources(null, stmt, conn);
+        }
+    }
 }
