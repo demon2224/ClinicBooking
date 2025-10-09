@@ -61,6 +61,15 @@ public class DBContext {
             return null;
         }
     }
+    
+    /**
+     * Execute Select Query with no parameters
+     * @param query SQL query string
+     * @return ResultSet
+     */
+    public ResultSet executeSelectQuery(String query) {
+        return executeSelectQuery(query, null);
+    }
 
     /**
      * Execute INSERT/UPDATE/DELETE queries
@@ -126,5 +135,12 @@ public class DBContext {
         } catch (SQLException ex) {
             Logger.getLogger(DBContext.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+    
+    /**
+     * Close ResultSet, PreparedStatement, and Connection safely
+     */
+    public void closeResources(ResultSet rs) {
+        closeResources(rs, null, null);
     }
 }

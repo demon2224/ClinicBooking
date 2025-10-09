@@ -7,6 +7,9 @@ package dao;
 import model.User;
 import utils.DBContext;
 import java.sql.*;
+import java.time.LocalDateTime;
+import model.Account;
+import model.Profile;
 
 /**
  * User Data Access Object
@@ -33,15 +36,9 @@ public class UserDAO extends DBContext {
                 + "LEFT JOIN Role r ON u.RoleID = r.RoleID "
                 + "WHERE u.UserID = ?";
 
-        Connection conn = null;
-        PreparedStatement stmt = null;
-        ResultSet rs = null;
-
         try {
-            conn = getConnection();
-            stmt = conn.prepareStatement(sql);
-            stmt.setInt(1, userId);
-            rs = stmt.executeQuery();
+            
+            ResultSet rs = executeSelectQuery(sql);
 
             if (rs.next()) {
                 User user = new User();
@@ -51,20 +48,26 @@ public class UserDAO extends DBContext {
                 user.setRoleID(rs.getInt("RoleID"));
 
                 // Account table fields
-                user.setAccountName(rs.getString("AccountName"));
-                user.setAccountPassword(rs.getString("AccountPassword"));
-                user.setDayCreated(rs.getTimestamp("DayCreated"));
-                user.setAvatar(rs.getString("Avatar"));
-                user.setBio(rs.getString("Bio"));
+                Account account = new Account();
+                account.setAccountName(rs.getString("AccountName"));
+                account.setAccountPassword(rs.getString("AccountPassword"));
+                account.setDayCreated(rs.getObject("DayCreated", LocalDateTime.class));
+                account.setAvatar(rs.getString("Avatar"));
+                account.setBio(rs.getString("Bio"));
+                
+                user.setAccount(account);
 
                 // Profile table fields
-                user.setFirstName(rs.getString("FirstName"));
-                user.setLastName(rs.getString("LastName"));
-                user.setDob(rs.getDate("DOB"));
-                user.setGender(rs.getBoolean("Gender"));
-                user.setUserAddress(rs.getString("UserAddress"));
-                user.setPhoneNumber(rs.getString("PhoneNumber"));
-                user.setEmail(rs.getString("Email"));
+                Profile profile = new Profile();
+                profile.setFirstName(rs.getString("FirstName"));
+                profile.setLastName(rs.getString("LastName"));
+                profile.setDob(rs.getDate("DOB"));
+                profile.setGender(rs.getBoolean("Gender"));
+                profile.setUserAddress(rs.getString("UserAddress"));
+                profile.setPhoneNumber(rs.getString("PhoneNumber"));
+                profile.setEmail(rs.getString("Email"));
+                
+                user.setProfile(profile);
 
                 // Additional fields
                 user.setRoleName(rs.getString("RoleName"));
@@ -74,7 +77,7 @@ public class UserDAO extends DBContext {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            closeResources(rs, stmt, conn);
+            closeResources(rs);
         }
 
         return null;

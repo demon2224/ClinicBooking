@@ -4,9 +4,6 @@
  */
 package model;
 
-import java.sql.Date;
-import java.sql.Timestamp;
-
 /**
  * User Model Class
  * Represents a user in the system with account, profile, and role information
@@ -18,21 +15,9 @@ public class User {
     private int userID;
     private int roleID;
     
-    // Account table fields
-    private String accountName;
-    private String accountPassword;
-    private Timestamp dayCreated;
-    private String avatar;
-    private String bio;
+    private Account account;
     
-    // Profile table fields
-    private String firstName;
-    private String lastName;
-    private Date dob;
-    private boolean gender; // 0 = Female, 1 = Male
-    private String userAddress;
-    private String phoneNumber;
-    private String email;
+    private Profile profile;
     
     // Additional fields for display
     private String roleName;
@@ -42,12 +27,11 @@ public class User {
     public User() {
     }
 
-    public User(int userID, int roleID, String accountName, String firstName, String lastName) {
+    public User(int userID, int roleID, Account account, Profile profile) {
         this.userID = userID;
         this.roleID = roleID;
-        this.accountName = accountName;
-        this.firstName = firstName;
-        this.lastName = lastName;
+        this.account = account;
+        this.profile = profile;
     }
 
     // Getters and Setters
@@ -67,100 +51,20 @@ public class User {
         this.roleID = roleID;
     }
 
-    public String getAccountName() {
-        return accountName;
+    public Account getAccount() {
+        return account;
     }
 
-    public void setAccountName(String accountName) {
-        this.accountName = accountName;
+    public void setAccount(Account account) {
+        this.account = account;
     }
 
-    public String getAccountPassword() {
-        return accountPassword;
+    public Profile getProfile() {
+        return profile;
     }
 
-    public void setAccountPassword(String accountPassword) {
-        this.accountPassword = accountPassword;
-    }
-
-    public Timestamp getDayCreated() {
-        return dayCreated;
-    }
-
-    public void setDayCreated(Timestamp dayCreated) {
-        this.dayCreated = dayCreated;
-    }
-
-    public String getAvatar() {
-        return avatar;
-    }
-
-    public void setAvatar(String avatar) {
-        this.avatar = avatar;
-    }
-
-    public String getBio() {
-        return bio;
-    }
-
-    public void setBio(String bio) {
-        this.bio = bio;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public Date getDob() {
-        return dob;
-    }
-
-    public void setDob(Date dob) {
-        this.dob = dob;
-    }
-
-    public boolean isGender() {
-        return gender;
-    }
-
-    public void setGender(boolean gender) {
-        this.gender = gender;
-    }
-
-    public String getUserAddress() {
-        return userAddress;
-    }
-
-    public void setUserAddress(String userAddress) {
-        this.userAddress = userAddress;
-    }
-
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
-
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
+    public void setProfile(Profile profile) {
+        this.profile = profile;
     }
 
     public String getRoleName() {
@@ -172,8 +76,8 @@ public class User {
     }
 
     public String getFullName() {
-        if (firstName != null && lastName != null) {
-            return firstName + " " + lastName;
+        if ((profile.getFirstName() != null) && (profile.getLastName() != null)) {
+            return profile.getFirstName() + " " + profile.getLastName();
         }
         return fullName;
     }
@@ -184,7 +88,7 @@ public class User {
 
     // Utility methods
     public String getGenderString() {
-        return gender ? "Male" : "Female";
+        return profile.isGender() ? "Male" : "Female";
     }
 
     public boolean isPatient() {
@@ -207,16 +111,5 @@ public class User {
         return roleID == 5;
     }
 
-    @Override
-    public String toString() {
-        return "User{" +
-                "userID=" + userID +
-                ", roleID=" + roleID +
-                ", accountName='" + accountName + '\'' +
-                ", firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", email='" + email + '\'' +
-                ", phoneNumber='" + phoneNumber + '\'' +
-                '}';
-    }
+
 }
