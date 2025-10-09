@@ -5,6 +5,7 @@
 package controller;
 
 import dao.AppointmentDAO;
+import dao.UserDAO;
 import model.Appointment;
 import java.io.IOException;
 import java.util.List;
@@ -16,111 +17,112 @@ import jakarta.servlet.http.HttpSession;
 import model.User;
 
 /**
+ * Manage My Appointment Controller
  *
  * @author Le Anh Tuan - CE180905
  */
 public class ManageMyAppointmentController extends HttpServlet {
 
     private AppointmentDAO appointmentDAO;
+    private UserDAO userDAO;
 
     @Override
     public void init() throws ServletException {
+        userDAO = new UserDAO();
         appointmentDAO = new AppointmentDAO();
     }
 
     /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * Handles GET requests - Display appointments with search functionality
      */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
 
+        // Hardcoded UserID for Long Pham (UserID = 14)
         HttpSession session = request.getSession();
-        String action = request.getParameter("action");
-        int userId = ((User) request.getSession().getAttribute("user")).getUserID();
-        if ("cancel".equals(action)) {
-            handleCancelAppointment(request, response);
-            return;
+        User user = userDAO.getUserById(14);
+        session.setAttribute("user", user);
+        int userId = user.getUserID();
+
+        // Get search parameters
+        String searchQuery = request.getParameter("search");
+        String statusFilter = request.getParameter("status");
+
+        List<Appointment> appointments;
+
+        // Apply search and filter
+        if (searchQuery != null && !searchQuery.trim().isEmpty()) {
+            appointments = appointmentDAO.searchAppointmentsByUserId(userId, searchQuery);
+        } else if (statusFilter != null && !statusFilter.trim().isEmpty() && !statusFilter.equals("all")) {
+            int statusId = Integer.parseInt(statusFilter);
+            appointments = appointmentDAO.getAppointmentsByUserIdAndStatus(userId, statusId);
+        } else {
+            appointments = appointmentDAO.getAppointmentsByUserId(userId);
         }
 
-        // Get appointments for specific user (Long Pham)
-        List<Appointment> appointments = appointmentDAO.getAppointmentsByUserId(userId);
-
-        User user = ((User) request.getSession().getAttribute("user"));
         // Set attributes for JSP
         request.setAttribute("appointments", appointments);
-        request.setAttribute("userId", userId);
-        request.setAttribute("userName", user.getAccountName());
+        request.setAttribute("userId", user.getUserID());
+        request.setAttribute("userName", user.getAccount().getAccountName());
+        request.setAttribute("searchQuery", searchQuery);
+        request.setAttribute("statusFilter", statusFilter);
 
-        // Forward to ManageMyAppointment.jsp
+        // Forward to JSP
         request.getRequestDispatcher("/WEB-INF/ManageMyAppointment.jsp").forward(request, response);
     }
 
+    /**
+     * Handles POST requests - Process cancel appointment
+     */
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        String action = request.getParameter("action");
+
+        if ("cancel".equals(action)) {
+            handleCancelAppointment(request, response);
+        } else {
+            response.sendRedirect(request.getContextPath() + "/manage-my-appointments");
+        }
+    }
+
+    /**
+     * Handle appointment cancellation - Only allow cancelling pending
+     * appointments
+     */
     private void handleCancelAppointment(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
             int appointmentId = Integer.parseInt(request.getParameter("appointmentId"));
-            boolean success = appointmentDAO.cancelAppointment(appointmentId);
 
-            if (success) {
-                request.setAttribute("message", "Appointment cancelled successfully!");
-                request.setAttribute("messageType", "success");
+            // Check if appointment can be cancelled (only pending status = 1)
+            Appointment appointment = appointmentDAO.getAppointmentById(appointmentId);
+
+            if (appointment == null) {
+                request.getSession().setAttribute("errorMessage", "Appointment not found!");
+            } else if (appointment.getAppointmentStatusID() != 1) {
+                request.getSession().setAttribute("errorMessage", "Only pending appointments can be cancelled!");
             } else {
-                request.setAttribute("message", "Failed to cancel appointment!");
-                request.setAttribute("messageType", "error");
+                boolean success = appointmentDAO.cancelAppointment(appointmentId);
+
+                if (success) {
+                    request.getSession().setAttribute("successMessage", "Appointment cancelled successfully!");
+                } else {
+                    request.getSession().setAttribute("errorMessage", "Failed to cancel appointment!");
+                }
             }
         } catch (NumberFormatException e) {
-            request.setAttribute("message", "Invalid appointment ID!");
-            request.setAttribute("messageType", "error");
+            request.getSession().setAttribute("errorMessage", "Invalid appointment ID!");
         }
 
         // Redirect back to appointments list
         response.sendRedirect(request.getContextPath() + "/manage-my-appointments");
     }
 
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        processRequest(request, response);
-    }
-
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        processRequest(request, response);
-    }
-
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
     @Override
     public String getServletInfo() {
         return "Manage My Appointment Controller";
-    }// </editor-fold>
-
+    }
 }

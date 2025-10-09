@@ -199,4 +199,118 @@ public class AppointmentDAO extends DBContext {
         }
     }
 
+    /**
+     * Search appointments by user ID and search query (doctor name, specialty,
+     * note)
+     */
+    public List<Appointment> searchAppointmentsByUserId(int userId, String searchQuery) {
+        List<Appointment> appointments = new ArrayList<>();
+        String sql = "SELECT a.AppointmentID, a.UserID, a.DoctorID, a.AppointmentStatusID, "
+                + "a.DateCreate, a.DateBegin, a.DateEnd, a.Note, "
+                + "CONCAT(p.FirstName, ' ', p.LastName) as DoctorName, "
+                + "s.SpecialtyName, "
+                + "ast.AppointmentStatusName "
+                + "FROM Appointment a "
+                + "LEFT JOIN Doctor d ON a.DoctorID = d.DoctorID "
+                + "LEFT JOIN Profile p ON d.DoctorID = p.UserProfileID "
+                + "LEFT JOIN Specialty s ON d.SpecialtyID = s.SpecialtyID "
+                + "LEFT JOIN AppointmentStatus ast ON a.AppointmentStatusID = ast.AppointmentStatusID "
+                + "WHERE a.UserID = ? AND ("
+                + "CONCAT(p.FirstName, ' ', p.LastName) LIKE ? OR "
+                + "s.SpecialtyName LIKE ? OR "
+                + "a.Note LIKE ?) "
+                + "ORDER BY a.DateBegin DESC";
+
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+
+        try {
+            conn = getConnection();
+            stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, userId);
+            String searchPattern = "%" + searchQuery + "%";
+            stmt.setString(2, searchPattern);
+            stmt.setString(3, searchPattern);
+            stmt.setString(4, searchPattern);
+            rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                Appointment appointment = new Appointment();
+                appointment.setAppointmentID(rs.getInt("AppointmentID"));
+                appointment.setUserID(rs.getInt("UserID"));
+                appointment.setDoctorID(rs.getInt("DoctorID"));
+                appointment.setAppointmentStatusID(rs.getInt("AppointmentStatusID"));
+                appointment.setDateCreate(rs.getTimestamp("DateCreate"));
+                appointment.setDateBegin(rs.getTimestamp("DateBegin"));
+                appointment.setDateEnd(rs.getTimestamp("DateEnd"));
+                appointment.setNote(rs.getString("Note"));
+                appointment.setDoctorName(rs.getString("DoctorName"));
+                appointment.setStatusName(rs.getString("AppointmentStatusName"));
+                appointment.setSpecialtyName(rs.getString("SpecialtyName"));
+
+                appointments.add(appointment);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            closeResources(rs, stmt, conn);
+        }
+
+        return appointments;
+    }
+
+    /**
+     * Get appointments by user ID and status
+     */
+    public List<Appointment> getAppointmentsByUserIdAndStatus(int userId, int statusId) {
+        List<Appointment> appointments = new ArrayList<>();
+        String sql = "SELECT a.AppointmentID, a.UserID, a.DoctorID, a.AppointmentStatusID, "
+                + "a.DateCreate, a.DateBegin, a.DateEnd, a.Note, "
+                + "CONCAT(p.FirstName, ' ', p.LastName) as DoctorName, "
+                + "s.SpecialtyName, "
+                + "ast.AppointmentStatusName "
+                + "FROM Appointment a "
+                + "LEFT JOIN Doctor d ON a.DoctorID = d.DoctorID "
+                + "LEFT JOIN Profile p ON d.DoctorID = p.UserProfileID "
+                + "LEFT JOIN Specialty s ON d.SpecialtyID = s.SpecialtyID "
+                + "LEFT JOIN AppointmentStatus ast ON a.AppointmentStatusID = ast.AppointmentStatusID "
+                + "WHERE a.UserID = ? AND a.AppointmentStatusID = ? "
+                + "ORDER BY a.DateBegin DESC";
+
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+
+        try {
+            conn = getConnection();
+            stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, userId);
+            stmt.setInt(2, statusId);
+            rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                Appointment appointment = new Appointment();
+                appointment.setAppointmentID(rs.getInt("AppointmentID"));
+                appointment.setUserID(rs.getInt("UserID"));
+                appointment.setDoctorID(rs.getInt("DoctorID"));
+                appointment.setAppointmentStatusID(rs.getInt("AppointmentStatusID"));
+                appointment.setDateCreate(rs.getTimestamp("DateCreate"));
+                appointment.setDateBegin(rs.getTimestamp("DateBegin"));
+                appointment.setDateEnd(rs.getTimestamp("DateEnd"));
+                appointment.setNote(rs.getString("Note"));
+                appointment.setDoctorName(rs.getString("DoctorName"));
+                appointment.setStatusName(rs.getString("AppointmentStatusName"));
+                appointment.setSpecialtyName(rs.getString("SpecialtyName"));
+
+                appointments.add(appointment);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            closeResources(rs, stmt, conn);
+        }
+
+        return appointments;
+    }
 }
