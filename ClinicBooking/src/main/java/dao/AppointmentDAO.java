@@ -34,16 +34,11 @@ public class AppointmentDAO extends DBContext {
                 + "LEFT JOIN AppointmentStatus ast ON a.AppointmentStatusID = ast.AppointmentStatusID "
                 + "WHERE a.UserID = ? "
                 + "ORDER BY a.DateBegin DESC";
-
-        Connection conn = null;
-        PreparedStatement stmt = null;
         ResultSet rs = null;
 
         try {
-            conn = getConnection();
-            stmt = conn.prepareStatement(sql);
-            stmt.setInt(1, userId);
-            rs = stmt.executeQuery();
+            Object[] params = {userId};
+            rs = executeSelectQuery(sql, params);
 
             while (rs.next()) {
                 Appointment appointment = new Appointment();
@@ -64,7 +59,7 @@ public class AppointmentDAO extends DBContext {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            closeResources(rs, stmt, conn);
+            closeResources(rs);
         }
 
         return appointments;
@@ -89,14 +84,10 @@ public class AppointmentDAO extends DBContext {
                 + "LEFT JOIN AppointmentStatus ast ON a.AppointmentStatusID = ast.AppointmentStatusID "
                 + "ORDER BY a.DateBegin DESC";
 
-        Connection conn = null;
-        PreparedStatement stmt = null;
         ResultSet rs = null;
 
         try {
-            conn = getConnection();
-            stmt = conn.prepareStatement(sql);
-            rs = stmt.executeQuery();
+            rs = executeSelectQuery(sql);
 
             while (rs.next()) {
                 Appointment appointment = new Appointment();
@@ -118,7 +109,7 @@ public class AppointmentDAO extends DBContext {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            closeResources(rs, stmt, conn);
+            closeResources(rs);
         }
 
         return appointments;
@@ -140,16 +131,11 @@ public class AppointmentDAO extends DBContext {
                 + "LEFT JOIN AppointmentStatus ast ON a.AppointmentStatusID = ast.AppointmentStatusID "
                 + "WHERE a.AppointmentID = ?";
 
-        Connection conn = null;
-        PreparedStatement stmt = null;
         ResultSet rs = null;
 
         try {
-            conn = getConnection();
-            stmt = conn.prepareStatement(sql);
-            stmt.setInt(1, appointmentId);
-            rs = stmt.executeQuery();
-
+            Object[] params = {appointmentId};
+            rs = executeSelectQuery(sql, params);
             if (rs.next()) {
                 Appointment appointment = new Appointment();
                 appointment.setAppointmentID(rs.getInt("AppointmentID"));
@@ -169,7 +155,7 @@ public class AppointmentDAO extends DBContext {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            closeResources(rs, stmt, conn);
+            closeResources(rs);
         }
 
         return null;
@@ -278,16 +264,11 @@ public class AppointmentDAO extends DBContext {
                 + "WHERE a.UserID = ? AND a.AppointmentStatusID = ? "
                 + "ORDER BY a.DateBegin DESC";
 
-        Connection conn = null;
-        PreparedStatement stmt = null;
         ResultSet rs = null;
 
         try {
-            conn = getConnection();
-            stmt = conn.prepareStatement(sql);
-            stmt.setInt(1, userId);
-            stmt.setInt(2, statusId);
-            rs = stmt.executeQuery();
+            Object[] params = {userId, statusId};
+            rs = executeSelectQuery(sql, params);
 
             while (rs.next()) {
                 Appointment appointment = new Appointment();
@@ -308,7 +289,7 @@ public class AppointmentDAO extends DBContext {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            closeResources(rs, stmt, conn);
+            closeResources(rs);
         }
 
         return appointments;
