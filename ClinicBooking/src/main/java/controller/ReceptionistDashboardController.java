@@ -55,16 +55,53 @@ public class ReceptionistDashboardController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        //processRequest(request, response);
+
+        String action = request.getParameter("action");
+        String searchQuery = request.getParameter("searchQuery"); // Lấy giá trị search
         dao.AppointmentDAO dao = new dao.AppointmentDAO();
 
         try {
-            java.util.List<model.Appointment> appointmentList = dao.getAllAppointments();
+            if ("viewDetail".equals(action)) {
+                String idParam = request.getParameter("id");
+                if (idParam != null && !idParam.isEmpty()) {
+                    int appointmentId = Integer.parseInt(idParam);
+                    model.Appointment appointment = dao.getAppointmentByIdFull(appointmentId);
+                    if (appointment != null) {
+                        response.setContentType("application/json");
+                        response.setCharacterEncoding("UTF-8");
+                        String json = "{"
+                                + "\"doctorName\":\"" + appointment.getDoctorName() + "\","
+                                + "\"specialtyName\":\"" + appointment.getSpecialtyName() + "\","
+                                + "\"patientName\":\"" + appointment.getPatientName() + "\","
+                                + "\"statusName\":\"" + appointment.getStatusName() + "\","
+                                + "\"dateBegin\":\"" + appointment.getDateBegin() + "\","
+                                + "\"dateEnd\":\"" + appointment.getDateEnd() + "\","
+                                + "\"note\":\"" + (appointment.getNote() != null ? appointment.getNote() : "") + "\""
+                                + "}";
+                        response.getWriter().write(json);
+                        return;
+                    } else {
+                        response.sendError(HttpServletResponse.SC_NOT_FOUND, "Appointment not found");
+                        return;
+                    }
+                }
+            }
+
+            // Load danh sách appointment (search hoặc toàn bộ)
+            java.util.List<model.Appointment> appointmentList;
+            if (searchQuery != null && !searchQuery.trim().isEmpty()) {
+                appointmentList = dao.searchAppointments(searchQuery); // dùng hàm search mới
+            } else {
+                appointmentList = dao.getAllAppointments();
+            }
+
             request.setAttribute("appointmentList", appointmentList);
+            request.getRequestDispatcher("/WEB-INF/ReceptionistDashboard.jsp").forward(request, response);
+
         } catch (Exception e) {
             e.printStackTrace();
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Server error");
         }
-        request.getRequestDispatcher("/WEB-INF/ReceptionistDashboard.jsp").forward(request, response);
     }
 
     /**
@@ -93,6 +130,20 @@ public class ReceptionistDashboardController extends HttpServlet {
                 request.setAttribute("error", "Failed to cancel appointment.");
                 request.getRequestDispatcher("/WEB-INF/ReceptionistDashboard.jsp").forward(request, response);
             }
+        } else if ("approve".equals(action)) {
+            int appointmentId = Integer.parseInt(request.getParameter("appointmentId"));
+            System.out.println("Attempting to approve appointmentId=" + appointmentId);
+
+            boolean success = dao.approvedStatusAppointment(appointmentId);
+            System.out.println("Approve success=" + success);
+
+            if (success) {
+                response.sendRedirect(request.getContextPath() + "/receptionist-dashboard");
+            } else {
+                request.setAttribute("error", "Failed to approve appointment. (Maybe not pending?)");
+                request.getRequestDispatcher("/WEB-INF/ReceptionistDashboard.jsp").forward(request, response);
+            }
+
         } else {
             doGet(request, response); // fallback
         }

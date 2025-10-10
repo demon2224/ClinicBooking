@@ -8,10 +8,11 @@ import java.sql.Timestamp;
 
 /**
  * Appointment Model Class
- * 
+ *
  * @author Le Anh Tuan - CE180905
  */
 public class Appointment {
+
     private int appointmentID;
     private int userID;
     private int doctorID;
@@ -20,18 +21,20 @@ public class Appointment {
     private Timestamp dateBegin;
     private Timestamp dateEnd;
     private String note;
-    
+
     // Additional fields for display
     private String doctorName;
     private String statusName;
     private String patientName;
     private String specialtyName;
+    private int SpecialtyID;
+    
 
     public Appointment() {
     }
 
-    public Appointment(int appointmentID, int userID, int doctorID, int appointmentStatusID, 
-                      Timestamp dateCreate, Timestamp dateBegin, Timestamp dateEnd, String note) {
+    public Appointment(int appointmentID, int userID, int doctorID, int appointmentStatusID,
+            Timestamp dateCreate, Timestamp dateBegin, Timestamp dateEnd, String note) {
         this.appointmentID = appointmentID;
         this.userID = userID;
         this.doctorID = doctorID;
@@ -141,15 +144,15 @@ public class Appointment {
 
     @Override
     public String toString() {
-        return "Appointment{" +
-                "appointmentID=" + appointmentID +
-                ", userID=" + userID +
-                ", doctorID=" + doctorID +
-                ", appointmentStatusID=" + appointmentStatusID +
-                ", dateCreate=" + dateCreate +
-                ", dateBegin=" + dateBegin +
-                ", dateEnd=" + dateEnd +
-                ", note='" + note + '\'' +
-                '}';
+        return "Appointment{"
+                + "appointmentID=" + appointmentID
+                + ", userID=" + userID
+                + ", doctorID=" + doctorID
+                + ", appointmentStatusID=" + appointmentStatusID
+                + ", dateCreate=" + dateCreate
+                + ", dateBegin=" + dateBegin
+                + ", dateEnd=" + dateEnd
+                + ", note='" + note + '\''
+                + '}';
     }
 }
