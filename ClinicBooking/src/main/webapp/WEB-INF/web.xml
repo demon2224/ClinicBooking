@@ -60,6 +60,14 @@
         <servlet-name>DoctorDashboardController</servlet-name>
         <url-pattern>/doctor-dashboard</url-pattern>
     </servlet-mapping>
+    <servlet>
+        <servlet-name>DoctorDetailController</servlet-name>
+        <servlet-class>controller.DoctorDetailController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>DoctorDetailController</servlet-name>
+        <url-pattern>/doctor-detail</url-pattern>
+    </servlet-mapping>
     <!-- MyAppointmentDetailController -->
     <servlet>
         <servlet-name>MyAppointmentDetailController</servlet-name>
