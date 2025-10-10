@@ -36,6 +36,14 @@ public class HomePageController extends HttpServlet {
         if ((session != null) && (user != null)) {
             session.setAttribute("user", user);
         }
+        
+        // Redirect to Pharmcist Dashboard if the user is a pharmacist
+        // Temporary code. Remove later when the login complete and filer complete.
+        if (user.getRoleID() == 3) {
+            response.sendRedirect(request.getContextPath() + "/pharmacist-dashboard");
+            return;
+        }
+        
         // Forward to Homepage.jsp
         request.getRequestDispatcher("/WEB-INF/HomePage.jsp").forward(request, response);
     }

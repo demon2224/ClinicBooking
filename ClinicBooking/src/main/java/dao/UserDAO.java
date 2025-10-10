@@ -29,7 +29,7 @@ public class UserDAO extends DBContext {
         String sql = "SELECT u.UserID, u.RoleID, "
                 + "a.AccountName, a.AccountPassword, a.DayCreated, a.Avatar, a.Bio, "
                 + "p.FirstName, p.LastName, p.DOB, p.Gender, p.UserAddress, p.PhoneNumber, p.Email, "
-                + "r.RoleName "
+                + "r.RoleName, u.RoleID "
                 + "FROM [User] u "
                 + "LEFT JOIN Account a ON u.UserID = a.UserAccountID "
                 + "LEFT JOIN Profile p ON u.UserID = p.UserProfileID "
@@ -70,6 +70,7 @@ public class UserDAO extends DBContext {
                 user.setProfile(profile);
 
                 // Additional fields
+                user.setRoleID(rs.getInt("RoleID"));
                 user.setRoleName(rs.getString("RoleName"));
 
                 return user;
