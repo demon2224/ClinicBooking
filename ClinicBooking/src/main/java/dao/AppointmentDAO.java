@@ -9,6 +9,8 @@ import utils.DBContext;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import model.Doctor;
 
 /**
@@ -426,5 +428,39 @@ public class AppointmentDAO extends DBContext {
 
         return appointments;
     }
+
+    public List<Appointment> getAppointmentsByDoctorId(int doctorId) {
+        List<Appointment> list = new ArrayList<>();
+        String sql = "SELECT \n"
+                + "    p.FirstName + ' ' + p.LastName AS PatientName,\n"
+                + "    p.Email AS PatientEmail,\n"
+                + "    p.PhoneNumber AS PatientPhone,\n"
+                + "    a.DateBegin,\n"
+                + "    a.Note AS AppointmentNote,\n"
+                + "	ast.AppointmentStatusName AS Status\n"
+                + "FROM Appointment a\n"
+                + "INNER JOIN [User] u ON a.UserID = u.UserID\n"
+                + "INNER JOIN [Profile] p ON p.UserProfileID = u.UserID\n"
+                + "INNER JOIN AppointmentStatus ast ON ast.AppointmentStatusID = a.AppointmentStatusID\n"
+                + "LEFT JOIN Prescription pr ON pr.AppointmentID = a.AppointmentID\n"
+                + "LEFT JOIN MedicalRecord mr ON mr.AppointmentID = a.AppointmentID\n"
+                + "WHERE a.DoctorID = ?";
+        try {
+            Object[] params = {doctorId};
+            ResultSet rs = executeSelectQuery(sql, params);
+            if (rs != null) {
+                while (rs.next()) {
+                    Appointment appointment = new Appointment(rs.getString("PatientName"), rs.getString("PatientEmail"), rs.getString("PatientPhone"), rs.getTimestamp("DateBegin"), rs.getString("AppointmentNote"), rs.getString("Status"));
+                    list.add(appointment);
+                }
+                closeResources(rs);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(DoctorDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return list;
+    }
+
 
 }

@@ -29,6 +29,11 @@ public class Appointment {
     private String specialtyName;
     private int SpecialtyID;
     
+    private String patientEmail;
+    private String patientPhone;
+    private String appointmentStatusName;
+    
+    
 
     public Appointment() {
     }
@@ -45,6 +50,15 @@ public class Appointment {
         this.note = note;
     }
 
+    public Appointment(String patientName, String patientEmail, String patientPhone, Timestamp dateBegin, String note, String appointmentStatusName){
+        this.patientName = patientName;
+        this.patientEmail = patientEmail;
+        this.patientPhone = patientPhone;
+        this.dateBegin = dateBegin;
+        this.note = note;
+        this.appointmentStatusName = appointmentStatusName; 
+    }
+    
     // Getters and Setters
     public int getAppointmentID() {
         return appointmentID;
@@ -142,6 +156,32 @@ public class Appointment {
         this.specialtyName = specialtyName;
     }
 
+    public String getPatientEmail() {
+        return patientEmail;
+    }
+
+    public void setPatientEmail(String patientEmail) {
+        this.patientEmail = patientEmail;
+    }
+
+    public String getPatientPhone() {
+        return patientPhone;
+    }
+
+    public void setPatientPhone(String patientPhone) {
+        this.patientPhone = patientPhone;
+    }
+
+    public String getAppointmentStatusName() {
+        return appointmentStatusName;
+    }
+
+    public void setAppointmentStatusName(String appointmentStatusName) {
+        this.appointmentStatusName = appointmentStatusName;
+    }
+
+    
+    
     @Override
     public String toString() {
         return "Appointment{"

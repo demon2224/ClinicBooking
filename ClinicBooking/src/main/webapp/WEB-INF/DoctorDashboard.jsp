@@ -106,15 +106,16 @@
                             </tr>
                         </thead>
                         <tbody>
+                            <c:forEach var="myPatientAppointment" items="${myPatientAppointmentList}">
                             <tr>
-                                <td>Place Holder</td>
-                                 <td>Place Holder</td>
-                                  <td>Place Holder</td>
-                                   <td>Place Holder</td>
-                                    <td>Place Holder</td>
-                                     <td>Place Holder</td>
+                                <td>${myPatientAppointment.patientName}</td>
+                                 <td>${myPatientAppointment.patientEmail}</td>
+                                  <td>${myPatientAppointment.patientPhone}</td>
+                                  <td>${myPatientAppointment.dateBegin}</td>
+                                    <td>${myPatientAppointment.note}</td>
+                                     <td>${myPatientAppointment.appointmentStatusName}</td>
                             </tr>
-                            
+                            </c:forEach>
                         </tbody>
                     </table>
                 </div>

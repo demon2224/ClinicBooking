@@ -4,12 +4,15 @@
  */
 package controller;
 
+import dao.AppointmentDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.List;
+import model.Appointment;
 
 /**
  *
@@ -17,6 +20,8 @@ import jakarta.servlet.http.HttpServletResponse;
  */
 public class DoctorDashboardController extends HttpServlet {
 
+    
+    
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -56,7 +61,11 @@ public class DoctorDashboardController extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 //        processRequest(request, response);
-        request.getRequestDispatcher("/WEB-INF/DoctorDashboard.jsp").forward(request, response);
+          int doctorID = 7;
+    AppointmentDAO appointmentDAO = new AppointmentDAO();  
+    List<Appointment> appointmentList = appointmentDAO.getAppointmentsByDoctorId(doctorID);
+    request.setAttribute("myPatientAppointmentList", appointmentList);
+    request.getRequestDispatcher("/WEB-INF/DoctorDashboard.jsp").forward(request, response);
     }
 
     /**
