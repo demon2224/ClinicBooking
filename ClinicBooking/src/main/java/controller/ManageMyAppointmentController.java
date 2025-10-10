@@ -41,8 +41,7 @@ public class ManageMyAppointmentController extends HttpServlet {
 
         // Hardcoded UserID for Long Pham (UserID = 14)
         HttpSession session = request.getSession();
-        User user = userDAO.getUserById(14);
-        session.setAttribute("user", user);
+        User user = (User) session.getAttribute("user");
         int userId = user.getUserID();
 
         // Get search parameters
