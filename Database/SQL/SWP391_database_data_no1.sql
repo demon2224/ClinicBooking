@@ -138,7 +138,7 @@ BEGIN
 	VALUES
 		('Tablet'),('Capsule'),('Syrup'),('Ointment'),('Drops');
 
-	INSERT INTO Medicine(MedicineType, MedicineStatus, MedicineName, MedicineCode, Quantity, Price)
+	INSERT INTO Medicine(MedicineTypeID, MedicineStatus, MedicineName, MedicineCode, Quantity, Price)
 	VALUES
 		(1,1,'Paracetamol','TBL001',100,20000),
 		(2,1,'Amoxicillin','CAP002',150,30000),
@@ -154,7 +154,7 @@ BEGIN
 		(4,3,2,'Morning and night'),
 		(5,5,1,'1 drop per eye');
 
-	INSERT INTO StockTransaction(MedicineID, Quantity, DateExpire)
+	INSERT INTO MedicineStockTransaction(MedicineID, Quantity, DateExpire)
 	VALUES
 		(1,100,'2026-12-31'),(2,150,'2026-11-30'),(3,80,'2026-09-30'),(4,70,'2026-07-31'),(5,60,'2026-10-15');
 

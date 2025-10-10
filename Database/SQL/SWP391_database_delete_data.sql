@@ -38,9 +38,9 @@ BEGIN
 		DBCC CHECKIDENT (MedicalRecord, RESEED, 0);
 		DELETE FROM MedicalRecord;
 
-	IF EXISTS (SELECT 1 FROM StockTransaction)
-		DBCC CHECKIDENT (StockTransaction, RESEED, 0);
-		DELETE FROM StockTransaction;
+	IF EXISTS (SELECT 1 FROM MedicineStockTransaction)
+		DBCC CHECKIDENT (MedicineStockTransaction, RESEED, 0);
+		DELETE FROM MedicineStockTransaction;
 
 	IF EXISTS (SELECT 1 FROM PrescriptionItem)
 		DELETE FROM PrescriptionItem;

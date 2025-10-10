@@ -138,7 +138,7 @@ CREATE TABLE MedicineType (
 
 CREATE TABLE Medicine (
 	MedicineID INT PRIMARY KEY IDENTITY(1,1),
-	MedicineType INT FOREIGN KEY REFERENCES MedicineType(MedicineTypeID) NOT NULL,
+	MedicineTypeID INT FOREIGN KEY REFERENCES MedicineType(MedicineTypeID) NOT NULL,
 	MedicineStatus BIT DEFAULT 0,
 	MedicineName VARCHAR(200),
 	MedicineCode VARCHAR(100),
@@ -155,7 +155,7 @@ CREATE TABLE PrescriptionItem (
 	Instruction TEXT NOT NULL
 );
 
-CREATE TABLE StockTransaction (
+CREATE TABLE MedicineStockTransaction (
 	StockTransactionID INT PRIMARY KEY IDENTITY(1,1),
 	MedicineID INT FOREIGN KEY REFERENCES Medicine(MedicineID),
 	Quantity INT DEFAULT 0 CHECK (Quantity > 0),
