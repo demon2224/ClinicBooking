@@ -7,6 +7,10 @@
         <servlet-name>PharmacistDashboardController</servlet-name>
         <url-pattern>/pharmacist-dashboard</url-pattern>
     </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ManageMedicineController</servlet-name>
+        <url-pattern>/manage-medicine</url-pattern>
+    </servlet-mapping>
     <welcome-file-list>
         <welcome-file>index.jsp</welcome-file>
         <welcome-file>home</welcome-file>
@@ -18,7 +22,11 @@
     </servlet>
     <servlet>
         <servlet-name>PharmacistDashboardController</servlet-name>
-        <servlet-class>controller.PharmacistDashboardController</servlet-class>
+        <servlet-class>controller.phamacist.PharmacistDashboardController</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>ManageMedicineController</servlet-name>
+        <servlet-class>controller.phamacist.ManageMedicineController</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>HomePageController</servlet-name>
