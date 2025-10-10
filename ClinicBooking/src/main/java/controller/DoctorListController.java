@@ -4,6 +4,7 @@
  */
 package controller;
 
+import constants.DoctorListConstants;
 import java.io.IOException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -56,8 +57,9 @@ public class DoctorListController extends HttpServlet {
             if (experienceParam != null && !experienceParam.trim().isEmpty()) {
                 try {
                     minExperience = Integer.parseInt(experienceParam.trim());
-                    // Validate experience range (0-50 years is reasonable)
-                    if (minExperience < 0 || minExperience > 50) {
+                    // Validate experience range using constants
+                    if (minExperience < DoctorListConstants.MIN_EXPERIENCE_YEARS
+                            || minExperience > DoctorListConstants.MAX_EXPERIENCE_YEARS) {
                         minExperience = null; // Invalid range, ignore
                     }
                 } catch (NumberFormatException e) {
@@ -72,8 +74,7 @@ public class DoctorListController extends HttpServlet {
                     || selectedSpecialtyName != null || minExperience != null;
 
             if (hasSearchCriteria) {
-                // Execute search with criteria - filter only Available doctors (JobStatusID =
-                // 1)
+                // Execute search with criteria - filter only Available doctors
                 // Now using specialty name directly instead of converting to ID
                 doctors = doctorDAO.searchDoctors(searchName, selectedSpecialtyName, 1, minExperience);
             } else {
@@ -82,7 +83,7 @@ public class DoctorListController extends HttpServlet {
             }
 
             // Process doctor avatars - ensure proper image paths
-            processdoctorAvatars(doctors);
+            processDoctorAvatars(doctors);
 
             // Get all specialties for dropdown filter
             List<String[]> specialties = doctorDAO.getAllSpecialties();
@@ -98,11 +99,11 @@ public class DoctorListController extends HttpServlet {
             request.setAttribute("minExperience", experienceParam);
 
         } catch (Exception e) {
-            request.setAttribute("errorMessage", "Error loading doctor list: " + e.getMessage());
+            request.setAttribute("errorMessage", DoctorListConstants.ERROR_LOADING_DOCTORS + e.getMessage());
             e.printStackTrace();
         }
 
-        request.getRequestDispatcher("/WEB-INF/DoctorList.jsp").forward(request, response);
+        request.getRequestDispatcher(DoctorListConstants.DOCTOR_LIST_JSP).forward(request, response);
     }
 
     /**
@@ -132,7 +133,7 @@ public class DoctorListController extends HttpServlet {
 
         } catch (Exception e) {
             // Fallback: redirect to clean doctor list page on any error
-            response.sendRedirect(request.getContextPath() + "/doctor-list");
+            response.sendRedirect(request.getContextPath() + DoctorListConstants.DOCTOR_LIST_URL);
         }
     }
 
@@ -141,18 +142,18 @@ public class DoctorListController extends HttpServlet {
      *
      * @param doctors List of doctors to process
      */
-    private void processdoctorAvatars(List<Doctor> doctors) {
+    private void processDoctorAvatars(List<Doctor> doctors) {
         for (Doctor doctor : doctors) {
             String avatar = doctor.getAvatar();
 
             if (avatar != null && !avatar.trim().isEmpty()) {
                 // Ensure avatar has full path if it doesn't already
-                if (!avatar.startsWith("assests/")) {
-                    doctor.setAvatar("assests/img/" + avatar);
+                if (!avatar.startsWith(DoctorListConstants.AVATAR_PATH_PREFIX)) {
+                    doctor.setAvatar(DoctorListConstants.AVATAR_BASE_PATH + avatar);
                 }
             } else {
                 // Set default avatar for doctors without image
-                doctor.setAvatar("assests/img/0.png");
+                doctor.setAvatar(DoctorListConstants.DEFAULT_AVATAR);
             }
         }
     }
@@ -169,19 +170,19 @@ public class DoctorListController extends HttpServlet {
      */
     private String buildRedirectUrl(String contextPath, String searchName, String specialtyName, String experienceParam)
             throws IOException {
-        StringBuilder url = new StringBuilder(contextPath + "/doctor-list");
+        StringBuilder url = new StringBuilder(contextPath + DoctorListConstants.DOCTOR_LIST_URL);
         boolean hasParams = false;
 
         // Add search name parameter
         if (searchName != null && !searchName.trim().isEmpty()) {
-            url.append("?searchName=").append(URLEncoder.encode(searchName.trim(), "UTF-8"));
+            url.append("?searchName=").append(URLEncoder.encode(searchName.trim(), DoctorListConstants.URL_ENCODING));
             hasParams = true;
         }
 
         // Add specialty name parameter
         if (specialtyName != null && !specialtyName.trim().isEmpty()) {
             url.append(hasParams ? "&" : "?").append("specialty=")
-                    .append(URLEncoder.encode(specialtyName.trim(), "UTF-8"));
+                    .append(URLEncoder.encode(specialtyName.trim(), DoctorListConstants.URL_ENCODING));
             hasParams = true;
         }
 
@@ -189,7 +190,8 @@ public class DoctorListController extends HttpServlet {
         if (experienceParam != null && !experienceParam.trim().isEmpty()) {
             try {
                 int experience = Integer.parseInt(experienceParam.trim());
-                if (experience >= 0 && experience <= 50) {
+                if (experience >= DoctorListConstants.MIN_EXPERIENCE_YEARS
+                        && experience <= DoctorListConstants.MAX_EXPERIENCE_YEARS) {
                     url.append(hasParams ? "&" : "?").append("minExperience=").append(experience);
                 }
             } catch (NumberFormatException e) {
@@ -202,7 +204,7 @@ public class DoctorListController extends HttpServlet {
 
     @Override
     public String getServletInfo() {
-        return "Doctor List Controller - Handles search and filter functionality for available doctors";
+        return "Doctor List Controller";
     }
 
 }
