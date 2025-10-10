@@ -16,15 +16,17 @@ public class DoctorDegree {
     private int degreeID;
     private Date dateEarn;
     private String grantor;
+    private String degreeName;
 
     public DoctorDegree() {
     }
 
-    public DoctorDegree(int doctorID, int degreeID, Date dateEarn, String grantor) {
+    public DoctorDegree(int doctorID, int degreeID, Date dateEarn, String grantor, String degreeName) {
         this.doctorID = doctorID;
         this.degreeID = degreeID;
         this.dateEarn = dateEarn;
         this.grantor = grantor;
+        this.degreeName = degreeName;
     }
 
     public int getDoctorID() {
@@ -59,4 +61,11 @@ public class DoctorDegree {
         this.grantor = grantor;
     }
 
+    public String getDegreeName() {
+        return degreeName;
+    }
+
+    public void setDegreeName(String degreeName) {
+        this.degreeName = degreeName;
+    }
 }

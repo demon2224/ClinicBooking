@@ -19,7 +19,10 @@ public class DoctorListConstants {
     public static final String AVATAR_PATH_PREFIX = "assests/";
     // JSP and URL constants
     public static final String DOCTOR_LIST_JSP = "/WEB-INF/DoctorList.jsp";
+    public static final String DOCTOR_DETAIL_JSP = "/WEB-INF/DoctorDetail.jsp";
     public static final String DOCTOR_LIST_URL = "/doctor-list";
+    public static final String DOCTOR_DETAIL_URL = "/doctor-detail";
+
     // Encoding and error message
     public static final String URL_ENCODING = "UTF-8";
     public static final String ERROR_LOADING_DOCTORS = "Error loading doctor list: ";

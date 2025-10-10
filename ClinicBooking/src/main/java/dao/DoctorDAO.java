@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import model.ConsultationFee;
+import model.DoctorDegree;
 
 /**
  * Class for managing doctor data.
@@ -26,7 +28,9 @@ public class DoctorDAO extends DBContext {
      * @return List of Doctor objects.
      */
     public List<Doctor> getAllDoctors() {
+
         List<Doctor> doctors = new ArrayList<>();
+
         String sql = "SELECT d.DoctorID, d.YearExperience, d.JobStatusID, d.SpecialtyID, "
                 + "p.FirstName, p.LastName, p.PhoneNumber, p.Email, "
                 + "a.Avatar, a.Bio, "
@@ -64,6 +68,7 @@ public class DoctorDAO extends DBContext {
      * @return A Doctor object or null if not found.
      */
     public Doctor getDoctorById(int doctorId) {
+
         String sql = "SELECT d.DoctorID, d.YearExperience, d.JobStatusID, d.SpecialtyID, "
                 + "p.FirstName, p.LastName, p.PhoneNumber, p.Email, "
                 + "a.Avatar, a.Bio, "
@@ -99,7 +104,9 @@ public class DoctorDAO extends DBContext {
      * @return A list of Doctor objects.
      */
     public List<Doctor> getDoctorsBySpecialty(String specialtyName) {
+
         List<Doctor> doctors = new ArrayList<>();
+
         String sql = "SELECT d.DoctorID, d.YearExperience, d.JobStatusID, d.SpecialtyID, "
                 + "p.FirstName, p.LastName, p.PhoneNumber, p.Email, "
                 + "a.Avatar, a.Bio, "
@@ -136,7 +143,9 @@ public class DoctorDAO extends DBContext {
      * @return A list of available Doctor objects.
      */
     public List<Doctor> getAvailableDoctors() {
+
         List<Doctor> doctors = new ArrayList<>();
+
         String sql = "SELECT d.DoctorID, d.YearExperience, d.JobStatusID, d.SpecialtyID, "
                 + "p.FirstName, p.LastName, p.PhoneNumber, p.Email, "
                 + "a.Avatar, a.Bio, "
@@ -177,7 +186,9 @@ public class DoctorDAO extends DBContext {
      */
     public List<Doctor> searchDoctors(String searchName, String specialtyName, Integer jobStatusId,
             Integer minExperience) {
+
         List<Doctor> doctors = new ArrayList<>();
+
         StringBuilder sql = new StringBuilder(
                 "SELECT d.DoctorID, d.YearExperience, d.JobStatusID, d.SpecialtyID, "
                 + "p.FirstName, p.LastName, p.PhoneNumber, p.Email, "
@@ -238,7 +249,9 @@ public class DoctorDAO extends DBContext {
      * @return A list of specialty names and IDs.
      */
     public List<String[]> getAllSpecialties() {
+
         List<String[]> specialties = new ArrayList<>();
+
         String sql = "SELECT SpecialtyID, SpecialtyName FROM Specialty ORDER BY SpecialtyName";
 
         try {
@@ -260,10 +273,14 @@ public class DoctorDAO extends DBContext {
     }
 
     /**
-     * Helper method to create Doctor object from ResultSet Reuses code to avoid
-     * duplication
+     * Builds and returns a Doctor object from the current row of a ResultSet.
+     *
+     * @param rs the ResultSet positioned at the current doctor record
+     * @return a fully populated Doctor object created from the ResultSet data
+     * @throws SQLException if any SQL access or column retrieval error occurs
      */
     private Doctor createDoctorFromResultSet(ResultSet rs) throws SQLException {
+
         Doctor doctor = new Doctor();
         doctor.setDoctorID(rs.getInt("DoctorID"));
         doctor.setFirstName(rs.getString("FirstName"));
@@ -279,5 +296,42 @@ public class DoctorDAO extends DBContext {
         doctor.setJobStatusID(rs.getInt("JobStatusID"));
         doctor.setSpecialtyID(rs.getInt("SpecialtyID"));
         return doctor;
+    }
+
+    /**
+     * Retrieves all academic degrees earned by a specific doctor.
+     *
+     * @param doctorId the ID of the doctor whose degrees are being retrieved
+     * @return a list of DoctorDegree objects representing the doctor's degrees, or an
+     * empty list if none are found or an error occurs
+     */
+    public List<DoctorDegree> getDoctorDegrees(int doctorId) {
+
+        List<DoctorDegree> degrees = new ArrayList<>();
+
+        String sql = "SELECT dd.DoctorID, dd.DegreeID, dd.DateEarn, dd.Grantor, d.DegreeName "
+                + "FROM DoctorDegree dd INNER JOIN Degree d ON dd.DegreeID = d.DegreeID "
+                + "WHERE dd.DoctorID = ? ORDER BY dd.DateEarn DESC";
+
+        try {
+            Object[] params = {doctorId};
+            ResultSet rs = executeSelectQuery(sql, params);
+
+            if (rs != null) {
+                while (rs.next()) {
+                    DoctorDegree degree = new DoctorDegree();
+                    degree.setDoctorID(rs.getInt("DoctorID"));
+                    degree.setDegreeID(rs.getInt("DegreeID"));
+                    degree.setDateEarn(rs.getDate("DateEarn"));
+                    degree.setGrantor(rs.getString("Grantor"));
+                    degree.setDegreeName(rs.getString("DegreeName"));
+                    degrees.add(degree);
+                }
+            }
+            closeResources(rs);
+        } catch (SQLException ex) {
+            Logger.getLogger(DoctorDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return degrees;
     }
 }
