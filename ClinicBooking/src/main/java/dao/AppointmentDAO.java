@@ -431,7 +431,7 @@ public class AppointmentDAO extends DBContext {
 
     public List<Appointment> getAppointmentsByDoctorId(int doctorId) {
         List<Appointment> list = new ArrayList<>();
-        String sql = "SELECT \n"
+        String sql = "SELECT TOP 5\n"
                 + "    p.FirstName + ' ' + p.LastName AS PatientName,\n"
                 + "    p.Email AS PatientEmail,\n"
                 + "    p.PhoneNumber AS PatientPhone,\n"

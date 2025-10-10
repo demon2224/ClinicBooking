@@ -5,6 +5,8 @@
 package controller;
 
 import dao.AppointmentDAO;
+import dao.MedicalRecordDAO;
+import dao.PrescriptionDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -13,6 +15,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
 import model.Appointment;
+import model.MedicalRecord;
+import model.Prescription;
 
 /**
  *
@@ -63,8 +67,16 @@ public class DoctorDashboardController extends HttpServlet {
 //        processRequest(request, response);
           int doctorID = 7;
     AppointmentDAO appointmentDAO = new AppointmentDAO();  
+    MedicalRecordDAO medicalRecordDAO = new MedicalRecordDAO();
+    PrescriptionDAO prescriptionDAO = new PrescriptionDAO();
+    
+    List<MedicalRecord> medicalRecordList = medicalRecordDAO.getPatientMedicalRecordByDoctorId(doctorID);
     List<Appointment> appointmentList = appointmentDAO.getAppointmentsByDoctorId(doctorID);
+    List<Prescription> prescriptionList = prescriptionDAO.getPatientPrescriptionByDoctorId(doctorID);
+    
     request.setAttribute("myPatientAppointmentList", appointmentList);
+    request.setAttribute("myPatientMedicalRecordList", medicalRecordList);
+    request.setAttribute("myPatientPrescriptionList", prescriptionList);
     request.getRequestDispatcher("/WEB-INF/DoctorDashboard.jsp").forward(request, response);
     }
 
