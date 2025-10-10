@@ -67,7 +67,6 @@ public class MyAppointmentDetailController extends HttpServlet {
             request.setAttribute("appointment", appointment);
             request.setAttribute("patient", patient);
             request.setAttribute("doctor", doctor);
-
             // Forward to detail page
             request.getRequestDispatcher("/WEB-INF/MyAppointmentDetail.jsp").forward(request, response);
 

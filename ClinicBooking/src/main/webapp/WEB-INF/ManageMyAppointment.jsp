@@ -78,25 +78,6 @@
                 font-weight: 600;
             }
 
-            .btn-new-appointment {
-                background: white;
-                color: #175CDD;
-                padding: 0.75rem 1.5rem;
-                border: none;
-                border-radius: 0.375rem;
-                font-weight: 600;
-                text-decoration: none;
-                display: inline-flex;
-                align-items: center;
-                gap: 0.5rem;
-                transition: all 0.3s ease;
-            }
-
-            .btn-new-appointment:hover {
-                background: #f1f5f9;
-                transform: translateY(-1px);
-            }
-
             .appointments-content {
                 padding: 2rem;
             }
@@ -297,6 +278,179 @@
                 margin-bottom: 1rem;
             }
 
+            /* Search and Filter Styles */
+            .search-filter-section {
+                background: white;
+                border-radius: 0.5rem;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                margin-bottom: 2rem;
+                overflow: hidden;
+            }
+
+            .search-filter-content {
+                padding: 1.5rem 2rem;
+            }
+
+            .search-form {
+                width: 100%;
+            }
+
+            .search-row {
+                display: flex;
+                gap: 1rem;
+                align-items: center;
+                flex-wrap: nowrap;
+            }
+
+            .search-input-group {
+                position: relative;
+                flex: 2;
+                min-width: 300px;
+            }
+
+            .search-input-group i {
+                position: absolute;
+                left: 1rem;
+                top: 50%;
+                transform: translateY(-50%);
+                color: #9ca3af;
+            }
+
+            .search-input {
+                width: 100%;
+                padding: 0.75rem 1rem 0.75rem 2.5rem;
+                border: 1px solid #d1d5db;
+                border-radius: 0.375rem;
+                font-size: 0.9rem;
+                transition: all 0.3s ease;
+            }
+
+            .search-input:focus {
+                outline: none;
+                border-color: #175CDD;
+                box-shadow: 0 0 0 3px rgba(23, 92, 221, 0.1);
+            }
+
+            .filter-group {
+                min-width: 180px;
+            }
+
+            .filter-select {
+                width: 100%;
+                padding: 0.75rem 1rem;
+                border: 1px solid #d1d5db;
+                border-radius: 0.375rem;
+                font-size: 0.9rem;
+                background: white;
+                transition: all 0.3s ease;
+                cursor: pointer;
+            }
+
+            .filter-select:focus {
+                outline: none;
+                border-color: #175CDD;
+                box-shadow: 0 0 0 3px rgba(23, 92, 221, 0.1);
+            }
+
+            .btn-search, .btn-clear {
+                padding: 0.75rem 1.5rem;
+                border: none;
+                border-radius: 0.375rem;
+                font-weight: 500;
+                text-decoration: none;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                display: inline-flex;
+                align-items: center;
+                gap: 0.5rem;
+                font-size: 0.9rem;
+                white-space: nowrap;
+            }
+
+            .btn-search {
+                background: #175CDD;
+                color: white;
+            }
+
+            .btn-search:hover {
+                background: #1e40af;
+            }
+
+            .btn-clear {
+                background: #f1f5f9;
+                color: #475569;
+            }
+
+            .btn-clear:hover {
+                background: #e2e8f0;
+            }
+
+            /* Responsive Design */
+            @media (max-width: 768px) {
+                .search-row {
+                    flex-direction: column;
+                    gap: 1rem;
+                }
+
+                .search-input-group {
+                    min-width: unset;
+                    width: 100%;
+                }
+
+                .filter-group {
+                    min-width: unset;
+                    width: 100%;
+                }
+
+                .btn-search, .btn-clear {
+                    width: 100%;
+                    justify-content: center;
+                }
+            }
+
+            /* Alert Styles */
+            .alert {
+                padding: 1rem 1.5rem;
+                border-radius: 0.5rem;
+                margin-bottom: 1.5rem;
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+            }
+
+            .alert-success {
+                background: #dcfce7;
+                color: #166534;
+                border: 1px solid #bbf7d0;
+            }
+
+            .alert-error {
+                background: #fee2e2;
+                color: #dc2626;
+                border: 1px solid #fecaca;
+            }
+
+            /* Status Colors */
+            .status-approved {
+                background: #dcfce7;
+                color: #166534;
+            }
+
+            .status-pending {
+                background: #fef3c7;
+                color: #92400e;
+            }
+
+            .status-cancelled {
+                background: #fee2e2;
+                color: #dc2626;
+            }
+
+            .status-completed {
+                background: #dbeafe;
+                color: #1e40af;
+            }
+
             @media (max-width: 768px) {
                 .main-content {
                     padding: 1rem;
@@ -383,30 +537,59 @@
             <!-- Page Header -->
             <div class="page-header">
                 <h1><i class="fas fa-calendar-check"></i> Manage My Appointments</h1>
-                <p>View and manage your medical appointments</p>
+                <p>View and manage your appointments</p>
                 <c:if test="${not empty userName}">
-                    <p class="text-muted">Welcome, ${userName}</p>
+                    <p class="text-muted">Welcome, ${user.fullName}</p>
                 </c:if>
                 <c:if test="${not empty appointments}">
-                    <p class="text-muted">You have ${appointments.size()} appointment(s)</p>
+                    <p class="text-muted">You have ${appointments.size()} appointments</p>
                 </c:if>
             </div>
 
             <!-- Message Display -->
-            <c:if test="${not empty message}">
-                <div class="alert alert-${messageType}">
-                    ${message}
+            <c:if test="${not empty sessionScope.successMessage}">
+                <div class="alert alert-success">
+                    <i class="fas fa-check-circle"></i> ${sessionScope.successMessage}
                 </div>
+                <c:remove var="successMessage" scope="session"/>
             </c:if>
+
+            <c:if test="${not empty sessionScope.errorMessage}">
+                <div class="alert alert-error">
+                    <i class="fas fa-exclamation-circle"></i> ${sessionScope.errorMessage}
+                </div>
+                <c:remove var="errorMessage" scope="session"/>
+            </c:if>
+
+            <!-- Search and Filter Section -->
+            <div class="search-filter-section">
+                <div class="search-filter-content">
+                    <form method="GET" action="${pageContext.request.contextPath}/manage-my-appointments" class="search-form">
+                        <div class="search-row">
+                            <!-- Search Input -->
+                            <div class="search-input-group">
+                                <i class="fas fa-search"></i>
+                                <input type="text" name="search" placeholder="Search for Doctors by name..."
+                                       value="${searchQuery}" class="search-input">
+                            </div>
+                            <!-- Search Button -->
+                            <button type="submit" class="btn-search">
+                                <i class="fas fa-search"></i> Search
+                            </button>
+
+                            <!-- Clear Button -->
+                            <a href="${pageContext.request.contextPath}/manage-my-appointments" class="btn-clear">
+                                <i class="fas fa-times"></i> Clear
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
 
             <!-- Appointments Section -->
             <div class="appointments-section">
                 <div class="section-header">
                     <h2>My Appointments</h2>
-                    <a href="#" class="btn-new-appointment">
-                        <i class="fas fa-plus"></i>
-                        Book New Appointment
-                    </a>
                 </div>
 
                 <div class="appointments-content">
@@ -431,8 +614,8 @@
                                         <div class="appointment-info">
                                             <div class="appointment-date">
                                                 <i class="fas fa-calendar"></i>
-                                                <fmt:formatDate value="${appointment.dateBegin}" 
-                                                               pattern="EEEE, MMMM dd, yyyy 'at' hh:mm a" />
+                                                <fmt:formatDate value="${appointment.dateBegin}"
+                                                                pattern="EEEE, MMMM dd, yyyy 'at' hh:mm a" />
                                             </div>
                                             <div class="appointment-doctor">
                                                 <i class="fas fa-user-md"></i>
@@ -440,18 +623,18 @@
                                             </div>
                                             <div class="appointment-specialty">
                                                 <i class="fas fa-stethoscope"></i>
-                                                ${appointment.specialtyName != null ? appointment.specialtyName : 'General'} 
+                                                ${appointment.specialtyName != null ? appointment.specialtyName : 'General'}
                                                 <c:if test="${not empty appointment.note}"> - ${appointment.note}</c:if>
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="appointment-status 
-                                             <c:choose>
-                                                 <c:when test="${appointment.appointmentStatusID == 2}">status-confirmed</c:when>
-                                                 <c:when test="${appointment.appointmentStatusID == 1}">status-pending</c:when>
-                                                 <c:when test="${appointment.appointmentStatusID == 4}">status-cancelled</c:when>
-                                                 <c:when test="${appointment.appointmentStatusID == 3}">status-completed</c:when>
-                                                 <c:otherwise>status-pending</c:otherwise>
-                                             </c:choose>">
+                                            <div class="appointment-status
+                                            <c:choose>
+                                                <c:when test="${appointment.appointmentStatusID == 2}">status-approved</c:when>
+                                                <c:when test="${appointment.appointmentStatusID == 1}">status-pending</c:when>
+                                                <c:when test="${appointment.appointmentStatusID == 4}">status-cancelled</c:when>
+                                                <c:when test="${appointment.appointmentStatusID == 3}">status-completed</c:when>
+                                                <c:otherwise>status-pending</c:otherwise>
+                                            </c:choose>">
                                             ${appointment.statusName != null ? appointment.statusName : 'Unknown'}
                                         </div>
                                     </div>
@@ -460,16 +643,14 @@
                                             <i class="fas fa-eye"></i>
                                             View Details
                                         </a>
-                                        <c:if test="${appointment.appointmentStatusID != 4 && appointment.appointmentStatusID != 3}">
-                                            <a href="#" class="btn-action btn-reschedule">
-                                                <i class="fas fa-edit"></i>
-                                                Reschedule
-                                            </a>
-                                            <a href="#" class="btn-action btn-cancel" 
-                                               data-appointment-id="${appointment.appointmentID}">
+
+                                        <!-- Only show cancel button for pending appointments -->
+                                        <c:if test="${appointment.appointmentStatusID == 1}">
+                                            <button class="btn-action btn-cancel"
+                                                    data-appointment-id="${appointment.appointmentID}">
                                                 <i class="fas fa-times"></i>
                                                 Cancel
-                                            </a>
+                                            </button>
                                         </c:if>
                                     </div>
                                 </div>
@@ -552,26 +733,27 @@
                     button.addEventListener('click', function (e) {
                         e.preventDefault();
                         const appointmentId = this.getAttribute('data-appointment-id');
-                        if (confirm('Are you sure you want to cancel this appointment?')) {
-                            // Send cancel request
-                            window.location.href = '${pageContext.request.contextPath}/manage-my-appointments?action=cancel&appointmentId=' + appointmentId;
+                        if (confirm('Are you sure you want to cancel this appointment? This action cannot be undone.')) {
+                            // Create form to submit cancellation
+                            const form = document.createElement('form');
+                            form.method = 'POST';
+                            form.action = '${pageContext.request.contextPath}/manage-my-appointments';
+
+                            const actionInput = document.createElement('input');
+                            actionInput.type = 'hidden';
+                            actionInput.name = 'action';
+                            actionInput.value = 'cancel';
+
+                            const idInput = document.createElement('input');
+                            idInput.type = 'hidden';
+                            idInput.name = 'appointmentId';
+                            idInput.value = appointmentId;
+
+                            form.appendChild(actionInput);
+                            form.appendChild(idInput);
+                            document.body.appendChild(form);
+                            form.submit();
                         }
-                    });
-                });
-
-                // Reschedule appointment
-                document.querySelectorAll('.btn-reschedule').forEach(button => {
-                    button.addEventListener('click', function (e) {
-                        e.preventDefault();
-                        alert('Reschedule functionality will be implemented soon!');
-                    });
-                });
-
-                // Book new appointment
-                document.querySelectorAll('.btn-new-appointment').forEach(button => {
-                    button.addEventListener('click', function (e) {
-                        e.preventDefault();
-                        alert('Book new appointment functionality will be implemented soon!');
                     });
                 });
             });

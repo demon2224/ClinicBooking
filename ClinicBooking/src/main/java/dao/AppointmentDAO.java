@@ -181,7 +181,7 @@ public class AppointmentDAO extends DBContext {
             e.printStackTrace();
             return false;
         } finally {
-            closeResources(null, stmt, conn);
+            closeResources(null);
         }
     }
 
@@ -240,7 +240,7 @@ public class AppointmentDAO extends DBContext {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            closeResources(rs, stmt, conn);
+            closeResources(rs);
         }
 
         return appointments;
@@ -311,7 +311,7 @@ public class AppointmentDAO extends DBContext {
             e.printStackTrace();
             return false;
         } finally {
-            closeResources(null, stmt, conn);
+            closeResources(null);
         }
     }
 }
