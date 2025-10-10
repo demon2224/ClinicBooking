@@ -6,6 +6,7 @@
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <!DOCTYPE html>
 <html>
     <head>
@@ -79,9 +80,21 @@
         <div class="main-content">
             <nav class="navbar navbar-light">
                 <div class="container-fluid">
-                    <form class="d-flex w-50">
-                        <input class="form-control me-2" type="search" placeholder="Search here">
-                        <button class="btn btn-outline-primary" type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
+                    <form class="d-flex w-75" action="${pageContext.request.contextPath}/manage-my-patient-appointment" method="get">
+                        <input class="form-control me-2" type="text" name="keyword" 
+                               placeholder="Search by patient name..." value="${param.keyword}">
+
+                        <select class="form-select me-2" name="status">
+                            <option value="">All Status</option>
+                            <option value="Pending" ${param.status == 'Pending' ? 'selected' : ''}>Pending</option>
+                            <option value="Approved" ${param.status == 'Approved' ? 'selected' : ''}>Approved</option>
+                            <option value="Completed" ${param.status == 'Completed' ? 'selected' : ''}>Completed</option>
+                            <option value="Canceled" ${param.status == 'Canceled' ? 'selected' : ''}>Canceled</option>
+                        </select>
+
+                        <button class="btn btn-outline-primary" type="submit">
+                            <i class="fa-solid fa-magnifying-glass"></i> Search
+                        </button>
                     </form>
                     <div>
                         <button class="btn btn-submit" id="Logout" type="submit">Logout</button>
@@ -109,37 +122,45 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <c:forEach var="myPatientAppointment" items="${myPatientAppointmentList}">
+                                <c:forEach var="appointment" items="${myPatientAppointmentList}">
                                     <tr>
-                                        <td>${myPatientAppointment.patientName}</td>
-                                        <td>${myPatientAppointment.patientEmail}</td>
-                                        <td>${myPatientAppointment.patientPhone}</td>
-                                        <td>${myPatientAppointment.dateBegin}</td>
-                                        <td>${myPatientAppointment.note}</td>
-                                        <td>
-                                            <span class="badge
-                                                  <c:choose>
-                                                      <c:when test="${myPatientAppointment.statusName eq 'Pending'}">bg-warning text-dark</c:when>
-                                                      <c:when test="${myPatientAppointment.statusName eq 'Approved'}">bg-primary</c:when>
-                                                      <c:when test="${myPatientAppointment.statusName eq 'Completed'}">bg-success</c:when>
-                                                      <c:when test="${myPatientAppointment.statusName eq 'Canceled'}">bg-danger</c:when>
-                                                      <c:otherwise>bg-secondary</c:otherwise>
-                                                  </c:choose>">
-                                                ${myPatientAppointment.statusName}
-                                            </span>
-                                        </td>
-                                        <td>   
-                                            <button class="btn btn-sm btn-info text-white btn-view-detail">
-                                                <a href="${pageContext.request.contextPath}/my-patient-appointment-detail?appointmentID=${myPatientAppointment.appointmentID}" class="text-decoration-none" style="color: white;">
-                                                    <i class="fa-solid fa-eye"></i> View Detail</a>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                </c:forEach>       
+                                        <td>${appointment.patientName}</td>
+                                        <td>${appointment.patientEmail}</td>
+                                        <td>${appointment.patientPhone}</td>
+                                        <td><fmt:formatDate value="${appointment.dateBegin}" pattern="yyyy/MM/dd HH:mm"/></td>
+                                <td>${appointment.note}</td>
+                                <td>
+                                    <span class="badge
+                                          <c:choose>
+                                              <c:when test="${appointment.statusName eq 'Pending'}">bg-warning text-dark</c:when>
+                                              <c:when test="${appointment.statusName eq 'Approved'}">bg-primary</c:when>
+                                              <c:when test="${appointment.statusName eq 'Completed'}">bg-success</c:when>
+                                              <c:when test="${appointment.statusName eq 'Canceled'}">bg-danger</c:when>
+                                              <c:otherwise>bg-secondary</c:otherwise>
+                                          </c:choose>">
+                                        ${appointment.statusName}
+                                    </span>
+                                </td>
+                                <td>
+                                    <a href="${pageContext.request.contextPath}/my-patient-appointment-detail?appointmentID=${appointment.appointmentID}"
+                                       class="btn btn-sm btn-info text-white text-decoration-none">
+                                        <i class="fa-solid fa-eye"></i> View Detail
+                                    </a>
+                                </td>
+                                </tr>
+                            </c:forEach>
+
+                            <c:if test="${empty myPatientAppointmentList}">
+                                <tr><td colspan="7" class="text-center text-muted">No appointments found.</td></tr>
+                            </c:if>
+
                             </tbody>
                         </table>
                     </div>
-                </div>           
+                </div>       
+
+
+
             </div>
         </div>
     </body>

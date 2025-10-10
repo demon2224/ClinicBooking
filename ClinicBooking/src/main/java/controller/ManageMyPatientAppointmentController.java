@@ -20,7 +20,6 @@ import model.Appointment;
  */
 public class ManageMyPatientAppointmentController extends HttpServlet {
 
-    
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -61,11 +60,19 @@ public class ManageMyPatientAppointmentController extends HttpServlet {
             throws ServletException, IOException {
 //        processRequest(request, response);
         int doctorID = 7;
-       
+        String keyword = request.getParameter("keyword");
+        String status = request.getParameter("status");
         AppointmentDAO appointmentDAO = new AppointmentDAO();
-        List<Appointment> appointmentList = appointmentDAO.getAllAppointmentsByDoctorId(doctorID);
-        request.setAttribute("myPatientAppointmentList", appointmentList);
-        
+        List<Appointment> list;
+
+        if ((keyword != null && !keyword.trim().isEmpty())
+                || (status != null && !status.trim().isEmpty())) {
+            list = appointmentDAO.searchAppointmentsByDoctor(doctorID, keyword, status);
+        } else {
+            list = appointmentDAO.getAllAppointmentsByDoctorId(doctorID);
+        }
+
+        request.setAttribute("myPatientAppointmentList", list);
         request.getRequestDispatcher("/WEB-INF/ManageMyPatientAppointment.jsp").forward(request, response);
     }
 

@@ -546,4 +546,70 @@ public class AppointmentDAO extends DBContext {
         return appointment;
     }
 
+    public List<Appointment> searchAppointmentsByDoctor(int doctorId, String keyword, String status) {
+        List<Appointment> list = new ArrayList<>();
+
+        String sql = "SELECT \n"
+                + "    a.AppointmentID,\n"
+                + "    p.FirstName + ' ' + p.LastName AS PatientName,\n"
+                + "    p.Email AS PatientEmail,\n"
+                + "    p.PhoneNumber AS PatientPhone,\n"
+                + "    a.DateBegin,\n"
+                + "    a.Note AS AppointmentNote,\n"
+                + "    ast.AppointmentStatusName AS Status\n"
+                + "FROM Appointment a\n"
+                + "INNER JOIN [User] u ON a.UserID = u.UserID\n"
+                + "INNER JOIN [Profile] p ON p.UserProfileID = u.UserID\n"
+                + "INNER JOIN AppointmentStatus ast ON ast.AppointmentStatusID = a.AppointmentStatusID\n"
+                + "LEFT JOIN Prescription pr ON pr.AppointmentID = a.AppointmentID\n"
+                + "LEFT JOIN MedicalRecord mr ON mr.AppointmentID = a.AppointmentID\n"
+                + "WHERE a.DoctorID = ? ";
+
+    
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            sql += "AND (p.FirstName + ' ' + p.LastName LIKE ?) ";
+        }
+        if (status != null && !status.trim().isEmpty()) {
+            sql += "AND ast.AppointmentStatusName = ? ";
+        }
+
+        sql += "ORDER BY a.DateBegin DESC";
+
+        try {
+          
+            List<Object> paramsList = new ArrayList<>();
+            paramsList.add(doctorId);
+
+            if (keyword != null && !keyword.trim().isEmpty()) {
+                paramsList.add("%" + keyword.trim() + "%");
+            }
+            if (status != null && !status.trim().isEmpty()) {
+                paramsList.add(status.trim());
+            }
+
+            Object[] params = paramsList.toArray();
+
+            ResultSet rs = executeSelectQuery(sql, params);
+            if (rs != null) {
+                while (rs.next()) {
+                    Appointment appointment = new Appointment(
+                            rs.getString("PatientName"),
+                            rs.getString("PatientEmail"),
+                            rs.getString("PatientPhone"),
+                            rs.getTimestamp("DateBegin"),
+                            rs.getString("AppointmentNote"),
+                            rs.getString("Status"),
+                            rs.getInt("AppointmentID")
+                    );
+                    list.add(appointment);
+                }
+                closeResources(rs);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(AppointmentDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return list;
+    }
+
 }
