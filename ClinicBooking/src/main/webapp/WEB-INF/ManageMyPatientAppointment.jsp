@@ -5,9 +5,10 @@
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html>
-     <head>
+    <head>
         <meta charset="UTF-8">
         <title>Manage Patient Appointment</title>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
@@ -66,7 +67,7 @@
     </head>
     <body>
         <!-- Sidebar -->
-         <div class="sidebar">
+        <div class="sidebar">
             <h4 class="text-center mt-3 mb-4">CLINIC</h4>
             <a href="${pageContext.request.contextPath}/doctor-dashboard"><i class="fa-solid fa-gauge me-2"></i>Dashboard</a>
             <a href="${pageContext.request.contextPath}/manage-my-patient-appointment"><i class="fa-solid fa-calendar-days me-2"></i>Manage Appointment</a>
@@ -104,6 +105,7 @@
                                     <th>Date</th>
                                     <th>Note</th>
                                     <th>Status</th>
+                                    <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -114,9 +116,26 @@
                                         <td>${myPatientAppointment.patientPhone}</td>
                                         <td>${myPatientAppointment.dateBegin}</td>
                                         <td>${myPatientAppointment.note}</td>
-                                        <td>${myPatientAppointment.appointmentStatusName}</td>
+                                        <td>
+                                            <span class="badge
+                                                  <c:choose>
+                                                      <c:when test="${myPatientAppointment.statusName eq 'Pending'}">bg-warning text-dark</c:when>
+                                                      <c:when test="${myPatientAppointment.statusName eq 'Approved'}">bg-primary</c:when>
+                                                      <c:when test="${myPatientAppointment.statusName eq 'Completed'}">bg-success</c:when>
+                                                      <c:when test="${myPatientAppointment.statusName eq 'Canceled'}">bg-danger</c:when>
+                                                      <c:otherwise>bg-secondary</c:otherwise>
+                                                  </c:choose>">
+                                                ${myPatientAppointment.statusName}
+                                            </span>
+                                        </td>
+                                        <td>   
+                                            <button class="btn btn-sm btn-info text-white btn-view-detail">
+                                                <a href="${pageContext.request.contextPath}/my-patient-appointment-detail?appointmentID=${myPatientAppointment.appointmentID}" class="text-decoration-none" style="color: white;">
+                                                    <i class="fa-solid fa-eye"></i> View Detail</a>
+                                            </button>
+                                        </td>
                                     </tr>
-                                </c:forEach>
+                                </c:forEach>       
                             </tbody>
                         </table>
                     </div>

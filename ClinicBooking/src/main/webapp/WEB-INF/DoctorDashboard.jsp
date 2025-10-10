@@ -5,6 +5,7 @@
 --%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -78,10 +79,6 @@
         <div class="main-content">
             <nav class="navbar navbar-light">
                 <div class="container-fluid">
-                    <form class="d-flex w-50">
-                        <input class="form-control me-2" type="search" placeholder="Search here">
-                        <button class="btn btn-outline-primary" type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
-                    </form>
                     <div>
                         <button class="btn btn-submit" id="Logout" type="submit">Logout</button>
                     </div>
@@ -101,8 +98,8 @@
                                     <th>Name</th>
                                     <th>Email</th>
                                     <th>Phone</th>
-                                    <th>Date</th>
                                     <th>Note</th>
+                                    <th>Date</th>
                                     <th>Status</th>
                                 </tr>
                             </thead>
@@ -112,9 +109,22 @@
                                         <td>${myPatientAppointment.patientName}</td>
                                         <td>${myPatientAppointment.patientEmail}</td>
                                         <td>${myPatientAppointment.patientPhone}</td>
-                                        <td>${myPatientAppointment.dateBegin}</td>
                                         <td>${myPatientAppointment.note}</td>
-                                        <td>${myPatientAppointment.appointmentStatusName}</td>
+                                        <td>
+                                            <fmt:formatDate value="${myPatientAppointment.dateBegin}" pattern="yyyy/MM/dd HH:mm" />
+                                        </td>
+                                        <td>
+                                            <span class="badge
+                                                  <c:choose>
+                                                      <c:when test="${myPatientAppointment.statusName eq 'Pending'}">bg-warning text-dark</c:when>
+                                                      <c:when test="${myPatientAppointment.statusName eq 'Approved'}">bg-primary</c:when>
+                                                      <c:when test="${myPatientAppointment.statusName eq 'Completed'}">bg-success</c:when>
+                                                      <c:when test="${myPatientAppointment.statusName eq 'Canceled'}">bg-danger</c:when>
+                                                      <c:otherwise>bg-secondary</c:otherwise>
+                                                  </c:choose>">
+                                                ${myPatientAppointment.statusName}
+                                            </span>
+                                        </td>
                                     </tr>
                                 </c:forEach>
                             </tbody>
@@ -132,20 +142,34 @@
                             <thead>
                                 <tr>
                                     <th>Name</th>
-                                    <th>Appointment Date</th>
                                     <th>Diagnosis</th>
+                                    <th>Appointment Date</th>
+                                    <th>Record Create Date</th>   
                                     <th>Prescription Status</th>
-                                    <th>Record Create Date</th>                       
                                 </tr>
                             </thead>
                             <tbody>
                                 <c:forEach var="myPatientMedicalRecord" items="${myPatientMedicalRecordList}">
                                     <tr>
                                         <td>${myPatientMedicalRecord.patientName}</td>
-                                        <td>${myPatientMedicalRecord.appointmentDateBegin}</td>
                                         <td>${myPatientMedicalRecord.diagnosis}</td>
-                                        <td>${myPatientMedicalRecord.prescriptionStatusName}</td>
-                                        <td>${myPatientMedicalRecord.medicalRecordDateCreate}</td>
+                                        <td>
+                                            <fmt:formatDate value="${myPatientMedicalRecord.appointmentDateBegin}" pattern="yyyy/MM/dd HH:mm" />
+                                        </td>
+                                        <td>
+                                            <fmt:formatDate value="${myPatientMedicalRecord.medicalRecordDateCreate}" pattern="yyyy/MM/dd HH:mm" />
+                                        </td>
+                                        <td>
+                                            <span class="badge
+                                                  <c:choose>
+                                                      <c:when test="${myPatientMedicalRecord.prescriptionStatusName eq 'Pending'}">bg-warning text-dark</c:when>
+                                                      <c:when test="${myPatientMedicalRecord.prescriptionStatusName eq 'Delivered'}">bg-success</c:when>
+                                                      <c:when test="${myPatientMedicalRecord.prescriptionStatusName eq 'Canceled'}">bg-danger</c:when>
+                                                      <c:otherwise>bg-secondary</c:otherwise>
+                                                  </c:choose>">
+                                                ${myPatientMedicalRecord.prescriptionStatusName}
+                                            </span>
+                                        </td>
                                     </tr>
                                 </c:forEach>
 
@@ -164,20 +188,34 @@
                             <thead>
                                 <tr>
                                     <th>Name</th>
-                                    <th>Appointment Date</th>
-                                    <th>Prescription Note</th>
-                                    <th>Prescription Status</th>
+                                    <th>Prescription Note</th> 
+                                    <th>Appointment Date</th>                                                       
                                     <th>Prescription Date</th>
+                                    <th>Prescription Status</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <c:forEach var="myPatientPrescription" items="${myPatientPrescriptionList}">
                                     <tr>
                                         <td>${myPatientPrescription.patientName}</td>
-                                        <td>${myPatientPrescription.appointmentDateBegin}</td>
                                         <td>${myPatientPrescription.note}</td>
-                                        <td>${myPatientPrescription.prescriptionStatusName}</td>
-                                        <td>${myPatientPrescription.dateCreate}</td>
+                                        <td>
+                                            <fmt:formatDate value="${myPatientPrescription.appointmentDateBegin}" pattern="yyyy/MM/dd HH:mm" />
+                                        </td>                                   
+                                        <td>
+                                            <fmt:formatDate value="${myPatientPrescription.dateCreate}" pattern="yyyy/MM/dd HH:mm" />
+                                        </td>
+                                        <td>
+                                            <span class="badge
+                                                  <c:choose>
+                                                      <c:when test="${myPatientPrescription.prescriptionStatusName eq 'Pending'}">bg-warning text-dark</c:when>
+                                                      <c:when test="${myPatientPrescription.prescriptionStatusName eq 'Delivered'}">bg-success</c:when>
+                                                      <c:when test="${myPatientPrescription.prescriptionStatusName eq 'Canceled'}">bg-danger</c:when>
+                                                      <c:otherwise>bg-secondary</c:otherwise>
+                                                  </c:choose>">
+                                                ${myPatientPrescription.prescriptionStatusName}
+                                            </span>
+                                        </td>
                                     </tr>
                                 </c:forEach>
                             </tbody>

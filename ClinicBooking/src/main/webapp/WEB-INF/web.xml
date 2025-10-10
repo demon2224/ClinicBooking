@@ -85,14 +85,95 @@
         <servlet-name>MyAppointmentDetailController</servlet-name>
         <url-pattern>/my-appointment-detail</url-pattern>
     </servlet-mapping>
-        <!-- MyPatientAppointmentController -->
-        <servlet>
-        <servlet-name>ManageMyPatientAppointment</servlet-name>
-        <servlet-class>controller.ManageMyPatientAppointment</servlet-class>
+     <!-- MyPatientAppointmentDetailController -->
+    <servlet>
+        <servlet-name>MyPatientAppointmentDetailController</servlet-name>
+        <servlet-class>controller.MyPatientAppointmentDetailController</servlet-class>
     </servlet>
-      <servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>MyPatientAppointmentDetailController</servlet-name>
+        <url-pattern>/my-patient-appointment-detail</url-pattern>
+    </servlet-mapping>
+    <!-- MyPatientAppointmentController -->
+    <servlet>
+        <servlet-name>ManageMyPatientAppointment</servlet-name>
+        <servlet-class>controller.ManageMyPatientAppointmentController</servlet-class>
+    </servlet>
+    <servlet-mapping>
         <servlet-name>ManageMyPatientAppointment</servlet-name>
         <url-pattern>/manage-my-patient-appointment</url-pattern>
+        <welcome-file-list>
+            <welcome-file>index.jsp</welcome-file>
+            <welcome-file>home</welcome-file>
+        </welcome-file-list>
+        <servlet>
+            <servlet-name>HomePageController</servlet-name>
+            <servlet-class>controller.HomePageController</servlet-class>
+        </servlet>
+        <servlet>
+            <servlet-name>PharmacistDashboardController</servlet-name>
+            <servlet-class>controller.phamacist.PharmacistDashboardController</servlet-class>
+        </servlet>
+        <servlet>
+            <servlet-name>ManageMedicineController</servlet-name>
+            <servlet-class>controller.phamacist.ManageMedicineController</servlet-class>
+        </servlet>
+        <servlet-mapping>
+            <servlet-name>HomePageController</servlet-name>
+            <url-pattern>/home</url-pattern>
+        </servlet-mapping>
+        <servlet>
+            <servlet-name>ReceptionistDashboardController</servlet-name>
+            <servlet-class>controller.ReceptionistDashboardController</servlet-class>
+        </servlet>
+        <servlet-mapping>
+            <servlet-name>ReceptionistDashboardController</servlet-name>
+            <url-pattern>/receptionist-dashboard</url-pattern>
+        </servlet-mapping>
+        <servlet>
+            <servlet-name>ManageMyAppointmentController</servlet-name>
+            <servlet-class>controller.ManageMyAppointmentController</servlet-class>
+        </servlet>
+        <servlet-mapping>
+            <servlet-name>ManageMyAppointmentController</servlet-name>
+            <url-pattern>/manage-my-appointments</url-pattern>
+        </servlet-mapping>
+        <servlet>
+            <servlet-name>DoctorListController</servlet-name>
+            <servlet-class>controller.DoctorListController</servlet-class>
+        </servlet>
+        <servlet-mapping>
+            <servlet-name>DoctorListController</servlet-name>
+            <url-pattern>/doctor-list</url-pattern>
+        </servlet-mapping>
+        <servlet>
+            <servlet-name>DoctorDashboardController</servlet-name>
+            <servlet-class>controller.DoctorDashboardController</servlet-class>
+        </servlet>
+        <servlet-mapping>
+            <servlet-name>DoctorDashboardController</servlet-name>
+            <url-pattern>/doctor-dashboard</url-pattern>
+        </servlet-mapping>
+        <servlet>
+            <servlet-name>DoctorDetailController</servlet-name>
+            <servlet-class>controller.DoctorDetailController</servlet-class>
+        </servlet>
+        <servlet-mapping>
+            <servlet-name>DoctorDetailController</servlet-name>
+            <url-pattern>/doctor-detail</url-pattern>
+        </servlet-mapping>
+        <servlet>
+            <servlet-name>MyAppointmentDetailController</servlet-name>
+            <servlet-class>controller.MyAppointmentDetailController</servlet-class>
+        </servlet>
+        <servlet-mapping>
+            <servlet-name>MyAppointmentDetailController</servlet-name>
+            <url-pattern>/my-appointment-detail</url-pattern>
+        </servlet-mapping>
+        <servlet>
+            <servlet-name>ManageMyPatientAppointment</servlet-name>
+            <servlet-class>controller.ManageMyPatientAppointment</servlet-class>
+        </servlet>
     </servlet-mapping>
     <!-- DefaultHomeFilter -->
     <filter>

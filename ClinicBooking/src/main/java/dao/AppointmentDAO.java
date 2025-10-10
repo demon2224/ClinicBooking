@@ -432,6 +432,7 @@ public class AppointmentDAO extends DBContext {
     public List<Appointment> getAppointmentsByDoctorId(int doctorId) {
         List<Appointment> list = new ArrayList<>();
         String sql = "SELECT TOP 5\n"
+                + "	a.AppointmentID,\n"
                 + "    p.FirstName + ' ' + p.LastName AS PatientName,\n"
                 + "    p.Email AS PatientEmail,\n"
                 + "    p.PhoneNumber AS PatientPhone,\n"
@@ -450,7 +451,7 @@ public class AppointmentDAO extends DBContext {
             ResultSet rs = executeSelectQuery(sql, params);
             if (rs != null) {
                 while (rs.next()) {
-                    Appointment appointment = new Appointment(rs.getString("PatientName"), rs.getString("PatientEmail"), rs.getString("PatientPhone"), rs.getTimestamp("DateBegin"), rs.getString("AppointmentNote"), rs.getString("Status"));
+                    Appointment appointment = new Appointment(rs.getString("PatientName"), rs.getString("PatientEmail"), rs.getString("PatientPhone"), rs.getTimestamp("DateBegin"), rs.getString("AppointmentNote"), rs.getString("Status"), rs.getInt("AppointmentID"));
                     list.add(appointment);
                 }
                 closeResources(rs);
@@ -462,5 +463,87 @@ public class AppointmentDAO extends DBContext {
         return list;
     }
 
+    public List<Appointment> getAllAppointmentsByDoctorId(int doctorId) {
+        List<Appointment> list = new ArrayList<>();
+        String sql = "SELECT \n"
+                + "	a.AppointmentID,\n"
+                + "    p.FirstName + ' ' + p.LastName AS PatientName,\n"
+                + "    p.Email AS PatientEmail,\n"
+                + "    p.PhoneNumber AS PatientPhone,\n"
+                + "    a.DateBegin,\n"
+                + "    a.Note AS AppointmentNote,\n"
+                + "	ast.AppointmentStatusName AS Status\n"
+                + "FROM Appointment a\n"
+                + "INNER JOIN [User] u ON a.UserID = u.UserID\n"
+                + "INNER JOIN [Profile] p ON p.UserProfileID = u.UserID\n"
+                + "INNER JOIN AppointmentStatus ast ON ast.AppointmentStatusID = a.AppointmentStatusID\n"
+                + "LEFT JOIN Prescription pr ON pr.AppointmentID = a.AppointmentID\n"
+                + "LEFT JOIN MedicalRecord mr ON mr.AppointmentID = a.AppointmentID\n"
+                + "WHERE a.DoctorID = ?  ";
+        try {
+            Object[] params = {doctorId};
+            ResultSet rs = executeSelectQuery(sql, params);
+            if (rs != null) {
+                while (rs.next()) {
+                    Appointment appointment = new Appointment(rs.getString("PatientName"), rs.getString("PatientEmail"), rs.getString("PatientPhone"), rs.getTimestamp("DateBegin"), rs.getString("AppointmentNote"), rs.getString("Status"), rs.getInt("AppointmentID"));
+                    list.add(appointment);
+                }
+                closeResources(rs);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(DoctorDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return list;
+    }
+
+    public Appointment getDetailAppointmentById(int appointmentID, int doctorId) {
+        Appointment appointment = null;
+        String sql = "SELECT \n"
+                + "    a.AppointmentID,\n"
+                + "    a.DateBegin,\n"
+                + "    a.DateEnd,\n"
+                + "    ast.AppointmentStatusName AS AppointmentStatus,\n"
+                + "    a.Note AS AppointmentNote,\n"
+                + "    p.FirstName + ' ' + p.LastName AS PatientName,\n"
+                + "    p.Email AS PatientEmail,\n"
+                + "    p.PhoneNumber AS PatientPhone,\n"
+                + "    CASE \n"
+                + "        WHEN p.Gender = 1 THEN 'Male'\n"
+                + "        ELSE 'Female'\n"
+                + "    END AS PatientGender,\n"
+                + "    p.DOB AS PatientDOB,\n"
+                + "    p.UserAddress AS PatientAddress\n"
+                + "FROM Appointment a\n"
+                + "INNER JOIN [User] u ON a.UserID = u.UserID\n"
+                + "INNER JOIN [Profile] p ON p.UserProfileID = u.UserID\n"
+                + "INNER JOIN AppointmentStatus ast ON ast.AppointmentStatusID = a.AppointmentStatusID\n"
+                + "WHERE a.AppointmentID = ? AND a.DoctorID = ?";
+
+        try {
+            Object[] params = {appointmentID, doctorId};
+            ResultSet rs = executeSelectQuery(sql, params);
+
+            if (rs != null && rs.next()) {
+                appointment = new Appointment(
+                        rs.getInt("AppointmentID"),
+                        rs.getTimestamp("DateBegin"),
+                        rs.getTimestamp("DateEnd"),
+                        rs.getString("AppointmentNote"),
+                        rs.getString("PatientName"),
+                        rs.getString("PatientEmail"),
+                        rs.getString("PatientPhone"),
+                        rs.getString("AppointmentStatus"),
+                        rs.getTimestamp("PatientDOB"),
+                        rs.getString("PatientAddress"),
+                        rs.getString("PatientGender")
+                );
+            }
+            closeResources(rs);
+        } catch (SQLException ex) {
+            Logger.getLogger(AppointmentDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return appointment;
+    }
 
 }

@@ -31,8 +31,9 @@ public class Appointment {
     
     private String patientEmail;
     private String patientPhone;
-    private String appointmentStatusName;
-    
+    private Timestamp doB;
+    private String address;
+    private String gender;
     
 
     public Appointment() {
@@ -50,14 +51,31 @@ public class Appointment {
         this.note = note;
     }
 
-    public Appointment(String patientName, String patientEmail, String patientPhone, Timestamp dateBegin, String note, String appointmentStatusName){
+    public Appointment(String patientName, String patientEmail, String patientPhone, Timestamp dateBegin, String note, String statusName, int appointmentID){
         this.patientName = patientName;
         this.patientEmail = patientEmail;
         this.patientPhone = patientPhone;
         this.dateBegin = dateBegin;
         this.note = note;
-        this.appointmentStatusName = appointmentStatusName; 
+        this.statusName = statusName; 
+        this.appointmentID = appointmentID;
     }
+
+    public Appointment(int appointmentID, Timestamp dateBegin, Timestamp dateEnd, String note, String patientName, String patientEmail, String patientPhone, String statusName, Timestamp doB, String address, String gender) {
+        this.appointmentID = appointmentID;
+        this.dateBegin = dateBegin;
+        this.dateEnd = dateEnd;
+        this.note = note;
+        this.patientName = patientName;
+        this.patientEmail = patientEmail;
+        this.patientPhone = patientPhone;
+        this.statusName = statusName;
+        this.doB = doB;
+        this.address = address;
+        this.gender = gender;
+    }
+    
+    
     
     // Getters and Setters
     public int getAppointmentID() {
@@ -172,14 +190,29 @@ public class Appointment {
         this.patientPhone = patientPhone;
     }
 
-    public String getAppointmentStatusName() {
-        return appointmentStatusName;
+    public Timestamp getDoB() {
+        return doB;
     }
 
-    public void setAppointmentStatusName(String appointmentStatusName) {
-        this.appointmentStatusName = appointmentStatusName;
+    public void setDoB(Timestamp doB) {
+        this.doB = doB;
     }
 
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
     
     
     @Override
