@@ -1,15 +1,15 @@
 <%-- 
-    Document   : DoctorDashboard
-    Created on : 7 Oct. 2025, 2:18:25 pm
+    Document   : ManageMyPatientAppointment
+    Created on : 10 Oct. 2025, 7:07:00 pm
     Author     : Le Thien Tri - CE191249
 --%>
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
-<html lang="en">
-    <head>
+<html>
+     <head>
         <meta charset="UTF-8">
-        <title>Doctor Dashboard</title>
+        <title>Manage Patient Appointment</title>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
         <style>
@@ -66,7 +66,7 @@
     </head>
     <body>
         <!-- Sidebar -->
-        <div class="sidebar">
+         <div class="sidebar">
             <h4 class="text-center mt-3 mb-4">CLINIC</h4>
             <a href="${pageContext.request.contextPath}/doctor-dashboard"><i class="fa-solid fa-gauge me-2"></i>Dashboard</a>
             <a href="${pageContext.request.contextPath}/manage-my-patient-appointment"><i class="fa-solid fa-calendar-days me-2"></i>Manage Appointment</a>
@@ -120,70 +120,7 @@
                             </tbody>
                         </table>
                     </div>
-                </div>
-
-                <!-- Patients List -->
-                <div class="card mb-4">
-                    <div class="card-header bg-white">
-                        <h5 class="mb-0">Patient Medical Record List</h5>
-                    </div>
-                    <div class="card-body">
-                        <table class="table align-middle">
-                            <thead>
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Appointment Date</th>
-                                    <th>Diagnosis</th>
-                                    <th>Prescription Status</th>
-                                    <th>Record Create Date</th>                       
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <c:forEach var="myPatientMedicalRecord" items="${myPatientMedicalRecordList}">
-                                    <tr>
-                                        <td>${myPatientMedicalRecord.patientName}</td>
-                                        <td>${myPatientMedicalRecord.appointmentDateBegin}</td>
-                                        <td>${myPatientMedicalRecord.diagnosis}</td>
-                                        <td>${myPatientMedicalRecord.prescriptionStatusName}</td>
-                                        <td>${myPatientMedicalRecord.medicalRecordDateCreate}</td>
-                                    </tr>
-                                </c:forEach>
-
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <!-- Appointment List -->
-                <div class="card mb-4">
-                    <div class="card-header bg-white">
-                        <h5 class="mb-0">Patient Prescription List</h5>
-                    </div>
-                    <div class="card-body">
-                        <table class="table align-middle">
-                            <thead>
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Appointment Date</th>
-                                    <th>Prescription Note</th>
-                                    <th>Prescription Status</th>
-                                    <th>Prescription Date</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <c:forEach var="myPatientPrescription" items="${myPatientPrescriptionList}">
-                                    <tr>
-                                        <td>${myPatientPrescription.patientName}</td>
-                                        <td>${myPatientPrescription.appointmentDateBegin}</td>
-                                        <td>${myPatientPrescription.note}</td>
-                                        <td>${myPatientPrescription.prescriptionStatusName}</td>
-                                        <td>${myPatientPrescription.dateCreate}</td>
-                                    </tr>
-                                </c:forEach>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+                </div>           
             </div>
         </div>
     </body>

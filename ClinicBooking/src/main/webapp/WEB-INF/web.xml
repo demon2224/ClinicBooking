@@ -85,6 +85,15 @@
         <servlet-name>MyAppointmentDetailController</servlet-name>
         <url-pattern>/my-appointment-detail</url-pattern>
     </servlet-mapping>
+        <!-- MyPatientAppointmentController -->
+        <servlet>
+        <servlet-name>ManageMyPatientAppointment</servlet-name>
+        <servlet-class>controller.ManageMyPatientAppointment</servlet-class>
+    </servlet>
+      <servlet-mapping>
+        <servlet-name>ManageMyPatientAppointment</servlet-name>
+        <url-pattern>/manage-my-patient-appointment</url-pattern>
+    </servlet-mapping>
     <!-- DefaultHomeFilter -->
     <filter>
         <filter-name>DefaultHomeFilter</filter-name>
