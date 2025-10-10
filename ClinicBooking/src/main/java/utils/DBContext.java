@@ -22,6 +22,9 @@ public class DBContext {
     private final String DB_USER = "sa";
     private final String DB_PWD = "123456";
 
+    private Connection conn;
+    private PreparedStatement statement;
+    
     public DBContext() {
         try {
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
@@ -47,8 +50,8 @@ public class DBContext {
      */
     public ResultSet executeSelectQuery(String query, Object[] params) {
         try {
-            Connection conn = getConnection();
-            PreparedStatement statement = conn.prepareStatement(query);
+            conn = getConnection();
+            statement = conn.prepareStatement(query);
 
             if (params != null) {
                 for (int i = 0; i < params.length; i++) {
@@ -78,8 +81,9 @@ public class DBContext {
      * @return Number of affected rows
      */
     public int executeQuery(String query, Object[] params) {
-        try (Connection conn = getConnection();
-             PreparedStatement statement = conn.prepareStatement(query)) {
+        try {
+            conn = getConnection();
+            statement = conn.prepareStatement(query);
             
             if (params != null) {
                 for (int i = 0; i < params.length; i++) {
@@ -92,55 +96,17 @@ public class DBContext {
             return 0;
         }
     }
-
-    /**
-     * Execute query and return generated keys (for INSERT operations)
-     * @param query SQL INSERT query
-     * @param params Parameters for the query
-     * @return Generated key value, or -1 if failed
-     */
-    public int executeInsertWithGeneratedKey(String query, Object[] params) {
-        try (Connection conn = getConnection();
-             PreparedStatement statement = conn.prepareStatement(query, PreparedStatement.RETURN_GENERATED_KEYS)) {
-            
-            if (params != null) {
-                for (int i = 0; i < params.length; i++) {
-                    statement.setObject(i + 1, params[i]);
-                }
-            }
-            
-            int affectedRows = statement.executeUpdate();
-            if (affectedRows > 0) {
-                try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
-                    if (generatedKeys.next()) {
-                        return generatedKeys.getInt(1);
-                    }
-                }
-            }
-            return -1;
-        } catch (SQLException ex) {
-            Logger.getLogger(DBContext.class.getName()).log(Level.SEVERE, null, ex);
-            return -1;
-        }
-    }
-
-    /**
-     * Close ResultSet, PreparedStatement, and Connection safely
-     */
-    public void closeResources(ResultSet rs, PreparedStatement ps, Connection conn) {
-        try {
-            if (rs != null) rs.close();
-            if (ps != null) ps.close();
-            if (conn != null) conn.close();
-        } catch (SQLException ex) {
-            Logger.getLogger(DBContext.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
     
     /**
      * Close ResultSet, PreparedStatement, and Connection safely
      */
     public void closeResources(ResultSet rs) {
-        closeResources(rs, null, null);
+        try {
+            if (this.conn != null) conn.close();
+            if (this.statement != null) statement.close();
+            if (rs != null) rs.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(DBContext.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 }
