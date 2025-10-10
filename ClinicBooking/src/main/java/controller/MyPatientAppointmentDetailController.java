@@ -58,10 +58,15 @@ public class MyPatientAppointmentDetailController extends HttpServlet {
             throws ServletException, IOException {
 //        processRequest(request, response);
         int doctorID = 7;
-        int appointmentID = Integer.parseInt(request.getParameter("appointmentID"));
-        AppointmentDAO appointmentDAO = new AppointmentDAO();
-        request.setAttribute("detailAppointment", appointmentDAO.getDetailAppointmentById(appointmentID, doctorID));
-        request.getRequestDispatcher("/WEB-INF/MyPatientAppointmentDetail.jsp").forward(request, response);
+        try {
+            int appointmentID = Integer.parseInt(request.getParameter("appointmentID"));
+            AppointmentDAO appointmentDAO = new AppointmentDAO();
+            request.setAttribute("detailAppointment", appointmentDAO.getDetailAppointmentById(appointmentID, doctorID));
+            request.getRequestDispatcher("/WEB-INF/MyPatientAppointmentDetail.jsp").forward(request, response);
+        } catch (Exception e) {
+            response.sendRedirect(request.getContextPath() + "/manage-my-patient-appointment");
+        }
+
     }
 
     /**
