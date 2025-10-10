@@ -4,12 +4,16 @@
  */
 package controller;
 
+import dao.DoctorDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.List;
+import model.Appointment;
+import model.Doctor;
 
 /**
  *
@@ -57,28 +61,52 @@ public class ReceptionistDashboardController extends HttpServlet {
             throws ServletException, IOException {
 
         String action = request.getParameter("action");
-        String searchQuery = request.getParameter("searchQuery"); // Lấy giá trị search
+        String searchQuery = request.getParameter("searchQuery");
         dao.AppointmentDAO dao = new dao.AppointmentDAO();
 
         try {
+
+            if ("getDoctorsBySpecialty".equals(action)) {
+                String specialtyName = request.getParameter("specialtyName");
+
+                DoctorDAO doctorDAO = new DoctorDAO();
+                List<Doctor> doctors = doctorDAO.getDoctorsBySpecialty(specialtyName);
+
+                response.setContentType("application/json");
+                response.setCharacterEncoding("UTF-8");
+
+                StringBuilder json = new StringBuilder("[");
+                for (int i = 0; i < doctors.size(); i++) {
+                    Doctor d = doctors.get(i);
+                    json.append("{")
+                            .append("\"doctorID\":").append(d.getDoctorID()).append(",")
+                            .append("\"doctorName\":\"").append(d.getFirstName()).append(" ").append(d.getLastName()).append("\"")
+                            .append("}");
+                    if (i < doctors.size() - 1) {
+                        json.append(",");
+                    }
+                }
+                json.append("]");
+                response.getWriter().write(json.toString());
+                return;
+            }
+
             if ("viewDetail".equals(action)) {
                 String idParam = request.getParameter("id");
                 if (idParam != null && !idParam.isEmpty()) {
                     int appointmentId = Integer.parseInt(idParam);
-                    model.Appointment appointment = dao.getAppointmentByIdFull(appointmentId);
+                    Appointment appointment = dao.getAppointmentByIdFull(appointmentId);
+
                     if (appointment != null) {
-                        response.setContentType("application/json");
-                        response.setCharacterEncoding("UTF-8");
-                        String json = "{"
-                                + "\"doctorName\":\"" + appointment.getDoctorName() + "\","
-                                + "\"specialtyName\":\"" + appointment.getSpecialtyName() + "\","
-                                + "\"patientName\":\"" + appointment.getPatientName() + "\","
-                                + "\"statusName\":\"" + appointment.getStatusName() + "\","
-                                + "\"dateBegin\":\"" + appointment.getDateBegin() + "\","
-                                + "\"dateEnd\":\"" + appointment.getDateEnd() + "\","
-                                + "\"note\":\"" + (appointment.getNote() != null ? appointment.getNote() : "") + "\""
-                                + "}";
-                        response.getWriter().write(json);
+                        // Lấy thêm thông tin bác sĩ từ DoctorDAO
+                        Doctor doctor = new DoctorDAO().getDoctorById(appointment.getDoctorID());
+
+                        // Set attribute đúng để JSP dùng
+                        request.setAttribute("appointment", appointment); // dùng trong JSP
+                        request.setAttribute("doctor", doctor);           // dùng trong JSP
+
+                        request.getRequestDispatcher("/WEB-INF/receptionist/AppointmentDetail.jsp")
+                                .forward(request, response);
                         return;
                     } else {
                         response.sendError(HttpServletResponse.SC_NOT_FOUND, "Appointment not found");
@@ -86,11 +114,19 @@ public class ReceptionistDashboardController extends HttpServlet {
                     }
                 }
             }
+            if ("add".equals(action)) {
+                DoctorDAO doctorDAO = new DoctorDAO();
+                List<String[]> specialties = doctorDAO.getAllSpecialties();
+                request.setAttribute("specialties", specialties);
 
-            // Load danh sách appointment (search hoặc toàn bộ)
+                request.getRequestDispatcher("/WEB-INF/receptionist/AddAppointment.jsp")
+                        .forward(request, response);
+                return;
+            }
+
             java.util.List<model.Appointment> appointmentList;
             if (searchQuery != null && !searchQuery.trim().isEmpty()) {
-                appointmentList = dao.searchAppointments(searchQuery); // dùng hàm search mới
+                appointmentList = dao.searchAppointments(searchQuery);
             } else {
                 appointmentList = dao.getAllAppointments();
             }
@@ -119,33 +155,71 @@ public class ReceptionistDashboardController extends HttpServlet {
         String action = request.getParameter("action");
         dao.AppointmentDAO dao = new dao.AppointmentDAO();
 
-        if ("cancel".equals(action)) {
-            int appointmentId = Integer.parseInt(request.getParameter("appointmentId"));
-            boolean success = dao.cancelAppointment(appointmentId);
+        try {
+            if ("cancel".equals(action)) {
+                int appointmentId = Integer.parseInt(request.getParameter("appointmentId"));
+                boolean success = dao.cancelAppointment(appointmentId);
 
-            if (success) {
-                // load lại danh sách
-                response.sendRedirect(request.getContextPath() + "/receptionist-dashboard");
+                if (success) {
+                    response.sendRedirect(request.getContextPath() + "/receptionist-dashboard");
+                } else {
+                    request.setAttribute("error", "Failed to cancel appointment.");
+                    request.getRequestDispatcher("/WEB-INF/ReceptionistDashboard.jsp").forward(request, response);
+                }
+
+            } else if ("approve".equals(action)) {
+                int appointmentId = Integer.parseInt(request.getParameter("appointmentId"));
+                boolean success = dao.approvedStatusAppointment(appointmentId);
+
+                if (success) {
+                    response.sendRedirect(request.getContextPath() + "/receptionist-dashboard");
+                } else {
+                    request.setAttribute("error", "Failed to approve appointment. (Maybe not pending?)");
+                    request.getRequestDispatcher("/WEB-INF/ReceptionistDashboard.jsp").forward(request, response);
+                }
+
+            } else if ("addAppointment".equals(action)) {
+                // Lấy thông tin patient từ form
+                String fullName = request.getParameter("patientName");
+                String[] nameParts = fullName.trim().split("\\s+", 2); // tách thành first + last
+                String firstName = nameParts[0];
+                String lastName = nameParts.length > 1 ? nameParts[1] : "";
+
+                String email = request.getParameter("email");
+                String phone = request.getParameter("phone");
+                int gender = 0; // default
+                String genderStr = request.getParameter("gender");
+                if (genderStr != null && !genderStr.isEmpty()) {
+                    gender = Integer.parseInt(genderStr);
+                }
+                java.sql.Date dob = null;
+                String dobStr = request.getParameter("dob");
+                if (dobStr != null && !dobStr.isEmpty()) {
+                    dob = java.sql.Date.valueOf(dobStr);
+                }
+                String address = request.getParameter("address");
+
+                // Lấy thông tin appointment
+                int doctorId = Integer.parseInt(request.getParameter("doctorId"));
+                String note = request.getParameter("note");
+
+                boolean success = dao.addAppointmentWithNewPatient(firstName, lastName, email, phone,
+                        gender, dob, address,
+                        doctorId, note);
+
+                if (success) {
+                    response.sendRedirect(request.getContextPath() + "/receptionist-dashboard");
+                } else {
+                    request.setAttribute("error", "Failed to add appointment.");
+                    doGet(request, response);
+                }
             } else {
-                request.setAttribute("error", "Failed to cancel appointment.");
-                request.getRequestDispatcher("/WEB-INF/ReceptionistDashboard.jsp").forward(request, response);
-            }
-        } else if ("approve".equals(action)) {
-            int appointmentId = Integer.parseInt(request.getParameter("appointmentId"));
-            System.out.println("Attempting to approve appointmentId=" + appointmentId);
-
-            boolean success = dao.approvedStatusAppointment(appointmentId);
-            System.out.println("Approve success=" + success);
-
-            if (success) {
-                response.sendRedirect(request.getContextPath() + "/receptionist-dashboard");
-            } else {
-                request.setAttribute("error", "Failed to approve appointment. (Maybe not pending?)");
-                request.getRequestDispatcher("/WEB-INF/ReceptionistDashboard.jsp").forward(request, response);
+                doGet(request, response); // fallback
             }
 
-        } else {
-            doGet(request, response); // fallback
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error processing POST request");
         }
     }
 

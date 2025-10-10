@@ -96,9 +96,10 @@
                     <div class="card-header bg-white d-flex justify-content-between align-items-center">
                         <h5 class="mb-0">Appointment List</h5>
                         <!-- Add Appointment button -->
-                        ​        <a href="#" class="btn btn-primary">
-                            <i class="fa-solid fa-plus me-1"></i> Add
+                        <a href="${pageContext.request.contextPath}/receptionist-dashboard?action=add" class="btn btn-primary">
+                            <i class="fa-solid fa-plus me-1"></i> Add Appointment
                         </a>
+
                     </div>
                     <div class="card-body">
                         <table class="table align-middle table-hover">
@@ -137,10 +138,10 @@
                                         </td>
                                         <td>
                                             <!-- View Detail Button -->
-                                            <button class="btn btn-sm btn-info text-white btn-view-detail" 
-                                                    data-id="${a.appointmentID}">
+                                            <a href="${pageContext.request.contextPath}/receptionist-dashboard?action=viewDetail&id=${a.appointmentID}"
+                                               class="btn btn-sm btn-info text-white">
                                                 <i class="fa-solid fa-eye"></i> View Detail
-                                            </button>
+                                            </a>
 
                                             <!-- Approve form -->
                                             <form action="${pageContext.request.contextPath}/receptionist-dashboard" method="post" style="display:inline;">
@@ -164,40 +165,6 @@
                                         </td>
                                     </tr>
                                 </c:forEach>
-                            <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-                            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-                            <script>
-                                                            $(document).ready(function () {
-                                                                $('.btn-view-detail').click(function () {
-                                                                    var appointmentId = $(this).data('id');
-
-                                                                    // Gửi AJAX request đến chính controller hiện tại
-                                                                    $.ajax({
-                                                                        url: '${pageContext.request.contextPath}/receptionist-dashboard',
-                                                                        type: 'get',
-                                                                        data: {action: 'viewDetail', id: appointmentId},
-                                                                        success: function (data) {
-                                                                            // data trả về là JSON
-                                                                            $('#modalDoctorName').text(data.doctorName);
-                                                                            $('#modalSpecialty').text(data.specialtyName);
-                                                                            $('#modalPatient').text(data.patientName || 'N/A');
-                                                                            $('#modalStatus').text(data.statusName);
-                                                                            $('#modalDateBegin').text(data.dateBegin);
-                                                                            $('#modalDateEnd').text(data.dateEnd);
-                                                                            $('#modalNote').text(data.note || 'None');
-
-                                                                            // Hiện modal
-                                                                            var myModal = new bootstrap.Modal(document.getElementById('appointmentModal'));
-                                                                            myModal.show();
-                                                                        },
-                                                                        error: function () {
-                                                                            alert('Cannot load appointment detail.');
-                                                                        }
-                                                                    });
-                                                                });
-                                                            });
-                            </script>
 
                             </tbody>
 
@@ -207,30 +174,7 @@
             </div>
         </div>
 
-        <!-- Appointment Detail Modal -->
-        <div class="modal fade" id="appointmentModal" tabindex="-1" aria-labelledby="appointmentModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="appointmentModalLabel">Appointment Detail</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <!-- Nội dung detail sẽ load bằng JS -->
-                        <p><strong>Doctor:</strong> <span id="modalDoctorName"></span></p>
-                        <p><strong>Specialty:</strong> <span id="modalSpecialty"></span></p>
-                        <p><strong>Patient:</strong> <span id="modalPatient"></span></p>
-                        <p><strong>Status:</strong> <span id="modalStatus"></span></p>
-                        <p><strong>Date Begin:</strong> <span id="modalDateBegin"></span></p>
-                        <p><strong>Date End:</strong> <span id="modalDateEnd"></span></p>
-                        <p><strong>Note:</strong> <span id="modalNote"></span></p>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    </div>
-                </div>
-            </div>
-        </div>
+
 
     </body>
 </html>
