@@ -6,6 +6,7 @@
 
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <!DOCTYPE html>
 <html>
     <head>
@@ -113,14 +114,19 @@
                     <td>${detailAppointment.appointmentID}</td>
                 </tr>
                 <tr>
-                    <th>Date Begin</th><td>${detailAppointment.dateBegin}</td>
+                    <th>Date Begin</th><td> <fmt:formatDate value="${detailAppointment.dateBegin}" pattern="yyyy/MM/dd HH:mm" /></td>
                 </tr>
                 <tr>
                     <th>Date End</th>
                     <td>
-                        ${detailAppointment.statusName == 'Completed' 
-                          ? detailAppointment.dateEnd 
-                          : 'None'}
+                        <c:choose>
+                            <c:when test="${detailAppointment.statusName == 'Completed'}">
+                                <fmt:formatDate value="${detailAppointment.dateEnd}" pattern="yyyy/MM/dd HH:mm"/>
+                            </c:when>
+                            <c:otherwise>
+                                None
+                            </c:otherwise>
+                        </c:choose>
                     </td>
                 </tr>
 
@@ -150,7 +156,7 @@
                 <tr><th>Email</th><td>${detailAppointment.patientEmail}</td></tr>
                 <tr><th>Phone</th><td>${detailAppointment.patientPhone}</td></tr>
                 <tr><th>Gender</th><td>${detailAppointment.gender}</td></tr>
-                <tr><th>Date of Birth</th><td>${detailAppointment.doB}</td></tr>
+                <tr><th>Date of Birth</th><td> <fmt:formatDate value="${detailAppointment.doB}" pattern="yyyy/MM/dd HH:mm" /></td></tr>
                 <tr><th>Address</th><td>${detailAppointment.address}</td></tr>
             </table>
         </div>
