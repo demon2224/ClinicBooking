@@ -6,8 +6,6 @@ package dao;
 
 import utils.DBContext;
 import model.Doctor;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -81,7 +79,7 @@ public class DoctorDAO extends DBContext {
 
         Doctor doctor = null;
         try {
-            Object[] params = { doctorId };
+            Object[] params = {doctorId};
             ResultSet rs = executeSelectQuery(sql, params);
             if (rs != null && rs.next()) {
                 doctor = createDoctorFromResultSet(rs);
@@ -116,7 +114,7 @@ public class DoctorDAO extends DBContext {
                 + "WHERE s.SpecialtyName = ? AND u.RoleID = 4";
 
         try {
-            Object[] params = { specialtyName };
+            Object[] params = {specialtyName};
             ResultSet rs = executeSelectQuery(sql, params);
             if (rs != null) {
                 while (rs.next()) {
@@ -171,9 +169,9 @@ public class DoctorDAO extends DBContext {
     /**
      * Search doctors by name, specialty, job status, and minimum year experience.
      *
-     * @param searchName    The doctor's name to search for (can be partial match).
+     * @param searchName The doctor's name to search for (can be partial match).
      * @param specialtyName The specialty name to filter (null or empty for all).
-     * @param jobStatusId   The job status ID to filter (0 or null for all).
+     * @param jobStatusId The job status ID to filter (0 or null for all).
      * @param minExperience Minimum years of experience (0 or null for all).
      * @return A list of Doctor objects matching the search criteria.
      */
@@ -182,17 +180,17 @@ public class DoctorDAO extends DBContext {
         List<Doctor> doctors = new ArrayList<>();
         StringBuilder sql = new StringBuilder(
                 "SELECT d.DoctorID, d.YearExperience, d.JobStatusID, d.SpecialtyID, "
-                        + "p.FirstName, p.LastName, p.PhoneNumber, p.Email, "
-                        + "a.Avatar, a.Bio, "
-                        + "s.SpecialtyName, "
-                        + "js.JobStatusDescription "
-                        + "FROM Doctor d "
-                        + "INNER JOIN [User] u ON d.DoctorID = u.UserID "
-                        + "INNER JOIN Profile p ON u.UserID = p.UserProfileID "
-                        + "INNER JOIN Account a ON u.UserID = a.UserAccountID "
-                        + "INNER JOIN Specialty s ON d.SpecialtyID = s.SpecialtyID "
-                        + "INNER JOIN JobStatus js ON d.JobStatusID = js.JobStatusID "
-                        + "WHERE u.RoleID = 4");
+                + "p.FirstName, p.LastName, p.PhoneNumber, p.Email, "
+                + "a.Avatar, a.Bio, "
+                + "s.SpecialtyName, "
+                + "js.JobStatusDescription "
+                + "FROM Doctor d "
+                + "INNER JOIN [User] u ON d.DoctorID = u.UserID "
+                + "INNER JOIN Profile p ON u.UserID = p.UserProfileID "
+                + "INNER JOIN Account a ON u.UserID = a.UserAccountID "
+                + "INNER JOIN Specialty s ON d.SpecialtyID = s.SpecialtyID "
+                + "INNER JOIN JobStatus js ON d.JobStatusID = js.JobStatusID "
+                + "WHERE u.RoleID = 4");
 
         // Build parameters list dynamically
         List<Object> paramsList = new ArrayList<>();
@@ -262,8 +260,8 @@ public class DoctorDAO extends DBContext {
     }
 
     /**
-     * Helper method to create Doctor object from ResultSet
-     * Reuses code to avoid duplication
+     * Helper method to create Doctor object from ResultSet Reuses code to avoid
+     * duplication
      */
     private Doctor createDoctorFromResultSet(ResultSet rs) throws SQLException {
         Doctor doctor = new Doctor();

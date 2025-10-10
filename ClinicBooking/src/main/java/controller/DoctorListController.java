@@ -5,7 +5,6 @@
 package controller;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -16,8 +15,7 @@ import java.net.URLEncoder;
 import java.util.List;
 
 /**
- * Controller for Doctor List page
- * Handles search and filter functionality for doctors
+ * Controller for Doctor List page Handles search and filter functionality for doctors
  * Implements PRG (Post-Redirect-Get) pattern for form submissions
  *
  * @author Nguyen Minh Khang - CE190728
@@ -29,10 +27,10 @@ public class DoctorListController extends HttpServlet {
     /**
      * Handles the HTTP <code>GET</code> method.
      *
-     * @param request  servlet request
+     * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException      if an I/O error occurs
+     * @throws IOException if an I/O error occurs
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -108,13 +106,13 @@ public class DoctorListController extends HttpServlet {
     }
 
     /**
-     * Handles the HTTP <code>POST</code> method.
-     * Process search form and redirect to prevent form resubmission.
+     * Handles the HTTP <code>POST</code> method. Process search form and redirect to
+     * prevent form resubmission.
      *
-     * @param request  servlet request
+     * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException      if an I/O error occurs
+     * @throws IOException if an I/O error occurs
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -138,11 +136,9 @@ public class DoctorListController extends HttpServlet {
         }
     }
 
-    // ==================== HELPER METHODS ====================
-
     /**
      * Process doctor avatar paths to ensure proper image display
-     * 
+     *
      * @param doctors List of doctors to process
      */
     private void processdoctorAvatars(List<Doctor> doctors) {
@@ -163,10 +159,10 @@ public class DoctorListController extends HttpServlet {
 
     /**
      * Build redirect URL with search parameters for POST-Redirect-GET pattern
-     * 
-     * @param contextPath     Application context path
-     * @param searchName      Doctor name search term
-     * @param specialtyName   Specialty name filter
+     *
+     * @param contextPath Application context path
+     * @param searchName Doctor name search term
+     * @param specialtyName Specialty name filter
      * @param experienceParam Experience requirement
      * @return Complete redirect URL with parameters
      * @throws IOException if URL encoding fails
