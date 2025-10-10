@@ -5,18 +5,28 @@
 
 package controller.phamacist;
 
+import dao.MedicineDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.List;
+import model.MedicineViewModel;
 
 /**
  *
  * @author Vu Minh Khang - CE191371
  */
 public class ManageMedicineController extends HttpServlet {
+    
+    private MedicineDAO medicineDAO;
+
+    @Override
+    public void init() throws ServletException {
+        medicineDAO = new MedicineDAO();
+    }   
    
     /** 
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
@@ -53,7 +63,14 @@ public class ManageMedicineController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
-        processRequest(request, response);
+//        processRequest(request, response);
+
+        List<MedicineViewModel> medicineList = medicineDAO.getAllMedicines();
+        
+        request.setAttribute("medicineList", medicineList);
+
+        request.getRequestDispatcher("/WEB-INF/pharmacist/Medicine.jsp").forward(request, response);
+
     } 
 
     /** 
@@ -66,7 +83,9 @@ public class ManageMedicineController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
-        processRequest(request, response);
+//        processRequest(request, response);
+
+        response.sendRedirect("/manage-medicine");
     }
 
     /** 
