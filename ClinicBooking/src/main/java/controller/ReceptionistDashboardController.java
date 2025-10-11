@@ -5,6 +5,7 @@
 package controller;
 
 import dao.DoctorDAO;
+import dao.UserDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -14,6 +15,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
 import model.Appointment;
 import model.Doctor;
+import model.Patient;
 
 /**
  *
@@ -102,8 +104,8 @@ public class ReceptionistDashboardController extends HttpServlet {
                         Doctor doctor = new DoctorDAO().getDoctorById(appointment.getDoctorID());
 
                         // Set attribute đúng để JSP dùng
-                        request.setAttribute("appointment", appointment); // dùng trong JSP
-                        request.setAttribute("doctor", doctor);           // dùng trong JSP
+                        request.setAttribute("appointment", appointment);
+                        request.setAttribute("doctor", doctor);
 
                         request.getRequestDispatcher("/WEB-INF/receptionist/AppointmentDetail.jsp")
                                 .forward(request, response);
@@ -118,6 +120,10 @@ public class ReceptionistDashboardController extends HttpServlet {
                 DoctorDAO doctorDAO = new DoctorDAO();
                 List<String[]> specialties = doctorDAO.getAllSpecialties();
                 request.setAttribute("specialties", specialties);
+
+                UserDAO userDAO = new UserDAO();
+                List<Patient> patients = userDAO.getAllPatients();
+                request.setAttribute("patients", patients);
 
                 request.getRequestDispatcher("/WEB-INF/receptionist/AddAppointment.jsp")
                         .forward(request, response);
@@ -179,33 +185,22 @@ public class ReceptionistDashboardController extends HttpServlet {
                 }
 
             } else if ("addAppointment".equals(action)) {
-                // Lấy thông tin patient từ form
+                String existingPatientId = request.getParameter("existingPatientId");
                 String fullName = request.getParameter("patientName");
-                String[] nameParts = fullName.trim().split("\\s+", 2); // tách thành first + last
-                String firstName = nameParts[0];
-                String lastName = nameParts.length > 1 ? nameParts[1] : "";
-
-                String email = request.getParameter("email");
                 String phone = request.getParameter("phone");
-                int gender = 0; // default
                 String genderStr = request.getParameter("gender");
-                if (genderStr != null && !genderStr.isEmpty()) {
-                    gender = Integer.parseInt(genderStr);
-                }
-                java.sql.Date dob = null;
-                String dobStr = request.getParameter("dob");
-                if (dobStr != null && !dobStr.isEmpty()) {
-                    dob = java.sql.Date.valueOf(dobStr);
-                }
-                String address = request.getParameter("address");
-
-                // Lấy thông tin appointment
+                boolean gender = genderStr != null ? Boolean.parseBoolean(genderStr) : true; // default male
                 int doctorId = Integer.parseInt(request.getParameter("doctorId"));
                 String note = request.getParameter("note");
 
-                boolean success = dao.addAppointmentWithNewPatient(firstName, lastName, email, phone,
-                        gender, dob, address,
-                        doctorId, note);
+                if ((existingPatientId == null || existingPatientId.isEmpty())
+                        && (fullName == null || fullName.trim().isEmpty() || phone == null || phone.trim().isEmpty())) {
+                    request.setAttribute("error", "Please select existing patient or enter full name and phone for new patient.");
+                    doGet(request, response); // gọi lại doGet để hiển thị form
+                    return;
+                }
+
+                boolean success = dao.addAppointment(existingPatientId, fullName, phone, gender, doctorId, note);
 
                 if (success) {
                     response.sendRedirect(request.getContextPath() + "/receptionist-dashboard");

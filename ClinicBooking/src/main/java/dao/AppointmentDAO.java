@@ -165,10 +165,11 @@ public class AppointmentDAO extends DBContext {
     }
 
     /**
-     * Cancel appointment by setting status to Canceled (status ID = 4)
+     * Cancel appointment by setting status to Canceled (status ID = 4) Only if
+     * current status is Pending or Approved(status ID = 1 and 2)
      */
     public boolean cancelAppointment(int appointmentId) {
-        String sql = "UPDATE Appointment SET AppointmentStatusID = 4 WHERE AppointmentID = ?";
+        String sql = "UPDATE Appointment SET AppointmentStatusID = 4 WHERE AppointmentID = ? AND (AppointmentStatusID = 1 OR AppointmentStatusID = 2)";
 
         Connection conn = null;
         PreparedStatement stmt = null;
@@ -179,7 +180,29 @@ public class AppointmentDAO extends DBContext {
             stmt.setInt(1, appointmentId);
 
             int rowsAffected = stmt.executeUpdate();
-            return rowsAffected > 0;
+            return rowsAffected > 0; // true nếu cancel thành công
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        } finally {
+            closeResources(null);
+        }
+    }
+
+    public boolean approvedStatusAppointment(int appointmentId) {
+        String sql = "UPDATE Appointment "
+                + "SET AppointmentStatusID = 2 "
+                + "WHERE AppointmentID = ? AND AppointmentStatusID = 1"; // Chỉ approve nếu đang Pending
+        Connection conn = null;
+        PreparedStatement stmt = null;
+
+        try {
+            conn = getConnection();
+            stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, appointmentId);
+
+            int rowsAffected = stmt.executeUpdate();
+            return rowsAffected > 0; // Nếu rowsAffected == 0 nghĩa là appointment không tồn tại hoặc không Pending
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
@@ -296,26 +319,6 @@ public class AppointmentDAO extends DBContext {
         }
 
         return appointments;
-    }
-
-    public boolean approvedStatusAppointment(int appointmentId) {
-        String sql = "UPDATE Appointment SET AppointmentStatusID = 2 WHERE AppointmentID = ? ";
-        Connection conn = null;
-        PreparedStatement stmt = null;
-
-        try {
-            conn = getConnection();
-            stmt = conn.prepareStatement(sql);
-            stmt.setInt(1, appointmentId);
-
-            int rowsAffected = stmt.executeUpdate();
-            return rowsAffected > 0;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        } finally {
-            closeResources(null);
-        }
     }
 
     public Appointment getAppointmentByIdFull(int appointmentId) {
@@ -620,10 +623,11 @@ public class AppointmentDAO extends DBContext {
         return list;
     }
 
-    public boolean addAppointmentWithNewPatient(String firstName, String lastName, String email, String phone,
-            int gender, Date dob, String address,
-            int doctorId, String note) {
+    public boolean addAppointment(String existingPatientIdStr, String fullName, String phone,
+            boolean gender, int doctorId, String note) {
+
         Connection conn = null;
+        PreparedStatement psCheck = null;
         PreparedStatement psUser = null;
         PreparedStatement psProfile = null;
         PreparedStatement psAppointment = null;
@@ -631,65 +635,64 @@ public class AppointmentDAO extends DBContext {
 
         try {
             conn = getConnection();
-            conn.setAutoCommit(false); // dùng transaction
+            conn.setAutoCommit(false);
 
-            // 1. Tạo User mới
-            String sqlUser = "INSERT INTO [User] (RoleID) VALUES (?)";
-            psUser = conn.prepareStatement(sqlUser, Statement.RETURN_GENERATED_KEYS);
-            psUser.setInt(1, 1); // RoleID = 1 mặc định là patient
-            int rowsUser = psUser.executeUpdate();
-
-            if (rowsUser == 0) {
-                conn.rollback();
-                return false;
-            }
-
-            rs = psUser.getGeneratedKeys();
             int userId = 0;
-            if (rs.next()) {
-                userId = rs.getInt(1); // UserID vừa tạo
+
+            // 1. Nếu chọn patient có sẵn
+            if (existingPatientIdStr != null && !existingPatientIdStr.isEmpty()) {
+                userId = Integer.parseInt(existingPatientIdStr);
             } else {
-                conn.rollback();
-                return false;
-            }
+                // 2. Kiểm tra patient đã tồn tại dựa trên phone
+                String sqlCheck = "SELECT UserProfileID FROM Profile WHERE PhoneNumber = ?";
+                psCheck = conn.prepareStatement(sqlCheck);
+                psCheck.setString(1, phone);
+                rs = psCheck.executeQuery();
+                if (rs.next()) {
+                    userId = rs.getInt("UserProfileID");
+                } else {
+                    // Patient mới → tạo User
+                    psUser = conn.prepareStatement("INSERT INTO [User] (RoleID) VALUES (?)", Statement.RETURN_GENERATED_KEYS);
+                    psUser.setInt(1, 1);
+                    psUser.executeUpdate();
+                    rs = psUser.getGeneratedKeys();
+                    if (rs.next()) {
+                        userId = rs.getInt(1);
+                    }
 
-            // 2. Tạo Profile
-            String sqlProfile = "INSERT INTO [Profile] (UserProfileID, FirstName, LastName, Email, PhoneNumber, Gender, DOB, UserAddress) "
-                    + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-            psProfile = conn.prepareStatement(sqlProfile);
-            psProfile.setInt(1, userId);
-            psProfile.setString(2, firstName);
-            psProfile.setString(3, lastName);
-            psProfile.setString(4, email);
-            psProfile.setString(5, phone);
-            psProfile.setInt(6, gender);
-            psProfile.setDate(7, dob);
-            psProfile.setString(8, address);
-            int rowsProfile = psProfile.executeUpdate();
+                    // Tạo Profile mới + Gender
+                    String[] nameParts = fullName.trim().split("\\s+", 2);
+                    String firstName = nameParts[0];
+                    String lastName = nameParts.length > 1 ? nameParts[1] : "";
 
-            if (rowsProfile == 0) {
-                conn.rollback();
-                return false;
+                    psProfile = conn.prepareStatement(
+                            "INSERT INTO [Profile] (UserProfileID, FirstName, LastName, PhoneNumber, Gender) VALUES (?, ?, ?, ?, ?)"
+                    );
+                    psProfile.setInt(1, userId);
+                    psProfile.setString(2, firstName);
+                    psProfile.setString(3, lastName);
+                    psProfile.setString(4, phone);
+                    psProfile.setBoolean(5, gender);
+                    psProfile.executeUpdate();
+                }
             }
 
             // 3. Tạo Appointment
-            String sqlApp = "INSERT INTO Appointment (UserID, DoctorID, AppointmentStatusID, DateCreate, DateBegin, DateEnd, Note) "
-                    + "VALUES (?, ?, ?, GETDATE(), ?, ?, ?)";
-            psAppointment = conn.prepareStatement(sqlApp);
+            psAppointment = conn.prepareStatement(
+                    "INSERT INTO Appointment (UserID, DoctorID, AppointmentStatusID, DateCreate, DateBegin, DateEnd, Note) "
+                    + "VALUES (?, ?, ?, GETDATE(), ?, ?, ?)"
+            );
             psAppointment.setInt(1, userId);
             psAppointment.setInt(2, doctorId);
             psAppointment.setInt(3, 2); // Approved
+
             Timestamp dateBegin = new Timestamp(System.currentTimeMillis());
             Timestamp dateEnd = new Timestamp(System.currentTimeMillis() + 3600 * 1000);
             psAppointment.setTimestamp(4, dateBegin);
             psAppointment.setTimestamp(5, dateEnd);
             psAppointment.setString(6, note);
 
-            int rowsApp = psAppointment.executeUpdate();
-            if (rowsApp == 0) {
-                conn.rollback();
-                return false;
-            }
+            psAppointment.executeUpdate();
 
             conn.commit();
             return true;
@@ -708,6 +711,12 @@ public class AppointmentDAO extends DBContext {
             try {
                 if (rs != null) {
                     rs.close();
+                }
+            } catch (SQLException e) {
+            }
+            try {
+                if (psCheck != null) {
+                    psCheck.close();
                 }
             } catch (SQLException e) {
             }

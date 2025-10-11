@@ -8,7 +8,10 @@ import model.User;
 import utils.DBContext;
 import java.sql.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import model.Account;
+import model.Patient;
 import model.Profile;
 
 /**
@@ -83,4 +86,40 @@ public class UserDAO extends DBContext {
 
         return null;
     }
+
+    /**
+     *
+     * @return List of Patient
+     */
+    public List<Patient> getAllPatients() {
+        List<Patient> patients = new ArrayList<>();
+        String sql = "SELECT u.UserID, p.FirstName, p.LastName, p.PhoneNumber "
+                + "FROM [User] u "
+                + "JOIN [Profile] p ON u.UserID = p.UserProfileID "
+                + "WHERE u.RoleID = 1"; // 1 = patient
+
+        ResultSet rs = null;
+        try {
+            rs = executeSelectQuery(sql, null);
+            while (rs.next()) {
+                int userId = rs.getInt("UserID");
+                String fullName = rs.getString("FirstName") + " " + rs.getString("LastName");
+                String phone = rs.getString("PhoneNumber");
+
+                Patient p = new Patient();
+                p.setUserId(userId);
+                p.setFullName(fullName);
+                p.setPhone(phone);
+
+                patients.add(p);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            closeResources(rs);
+        }
+
+        return patients;
+    }
+
 }
