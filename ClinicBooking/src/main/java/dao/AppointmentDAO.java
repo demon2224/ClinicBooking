@@ -221,26 +221,6 @@ public class AppointmentDAO extends DBContext {
         return appointments;
     }
 
-    public boolean approvedMyStatusAppointment(int appointmentId) {
-        String sql = "UPDATE Appointment SET AppointmentStatusID = 2 WHERE AppointmentID = ? ";
-        Connection conn = null;
-        PreparedStatement stmt = null;
-
-        try {
-            conn = getConnection();
-            stmt = conn.prepareStatement(sql);
-            stmt.setInt(1, appointmentId);
-
-            int rowsAffected = stmt.executeUpdate();
-            return rowsAffected > 0;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        } finally {
-            closeResources(null);
-        }
-    }
-
     public Appointment getAppointmentByIdFull(int appointmentId) {
         String sql = "SELECT "
                 + "a.AppointmentID, a.UserID, a.DoctorID, a.AppointmentStatusID, "
