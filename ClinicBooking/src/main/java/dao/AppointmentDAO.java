@@ -221,6 +221,9 @@ public class AppointmentDAO extends DBContext {
         return appointments;
     }
 
+    /**
+     * Search appointments by user ID and doctor name
+     */
     public Appointment getAppointmentByIdFull(int appointmentId) {
         String sql = "SELECT "
                 + "a.AppointmentID, a.UserID, a.DoctorID, a.AppointmentStatusID, "
@@ -246,7 +249,7 @@ public class AppointmentDAO extends DBContext {
 
             if (rs.next()) {
                 Appointment appointment = new Appointment();
-                // Thông tin appointment
+                // appointment info
                 appointment.setAppointmentID(rs.getInt("AppointmentID"));
                 appointment.setUserID(rs.getInt("UserID"));
                 appointment.setDoctorID(rs.getInt("DoctorID"));
@@ -257,11 +260,11 @@ public class AppointmentDAO extends DBContext {
                 appointment.setNote(rs.getString("Note"));
                 appointment.setStatusName(rs.getString("AppointmentStatusName"));
 
-                // Thông tin bác sĩ
+                // doctor info
                 appointment.setDoctorName(rs.getString("DoctorName"));
                 appointment.setSpecialtyName(rs.getString("SpecialtyName"));
 
-                // Thông tin bệnh nhân
+                // patient info
                 appointment.setPatientName(rs.getString("PatientName"));
                 appointment.setPatientEmail(rs.getString("PatientEmail"));
                 appointment.setPatientPhone(rs.getString("PatientPhone"));
@@ -283,8 +286,8 @@ public class AppointmentDAO extends DBContext {
     /**
      * Search appointments by doctor name, patient name, specialty, or note
      *
-     * @param searchQuery text nhập vào search
-     * @return danh sách appointment khớp
+     * @param searchQuery text is input into seaarch
+     * @return list appointment
      */
     public List<Appointment> searchAppointments(String searchQuery) {
         List<Appointment> appointments = new ArrayList<>();
@@ -456,6 +459,7 @@ public class AppointmentDAO extends DBContext {
         }
         return appointment;
     }
+    
 
     public List<Appointment> searchAppointmentsByDoctor(int doctorId, String keyword, String status) {
         List<Appointment> list = new ArrayList<>();
@@ -521,6 +525,11 @@ public class AppointmentDAO extends DBContext {
         return list;
     }
 
+    /**
+     * Add appointment if user(patient) already have account get the list patient, ìf not
+     * create user by phone number
+     * 
+     */
     public boolean addAppointment(String existingPatientIdStr, String fullName, String phone,
             boolean gender, int doctorId, String note) {
 
@@ -537,11 +546,11 @@ public class AppointmentDAO extends DBContext {
 
             int userId = 0;
 
-            // 1. Nếu chọn patient có sẵn
+            // Choose user already have account 
             if (existingPatientIdStr != null && !existingPatientIdStr.isEmpty()) {
                 userId = Integer.parseInt(existingPatientIdStr);
             } else {
-                // 2. Kiểm tra patient đã tồn tại dựa trên phone
+                // Check user exit by phone number
                 String sqlCheck = "SELECT UserProfileID FROM Profile WHERE PhoneNumber = ?";
                 psCheck = conn.prepareStatement(sqlCheck);
                 psCheck.setString(1, phone);
@@ -549,7 +558,7 @@ public class AppointmentDAO extends DBContext {
                 if (rs.next()) {
                     userId = rs.getInt("UserProfileID");
                 } else {
-                    // Patient mới → tạo User
+                    // Create new patient
                     psUser = conn.prepareStatement("INSERT INTO [User] (RoleID) VALUES (?)", Statement.RETURN_GENERATED_KEYS);
                     psUser.setInt(1, 1);
                     psUser.executeUpdate();
@@ -558,7 +567,7 @@ public class AppointmentDAO extends DBContext {
                         userId = rs.getInt(1);
                     }
 
-                    // Tạo Profile mới + Gender
+                    // Create Profile
                     String[] nameParts = fullName.trim().split("\\s+", 2);
                     String firstName = nameParts[0];
                     String lastName = nameParts.length > 1 ? nameParts[1] : "";
@@ -575,7 +584,7 @@ public class AppointmentDAO extends DBContext {
                 }
             }
 
-            // 3. Tạo Appointment
+            // Add appointment
             psAppointment = conn.prepareStatement(
                     "INSERT INTO Appointment (UserID, DoctorID, AppointmentStatusID, DateCreate, DateBegin, DateEnd, Note) "
                     + "VALUES (?, ?, ?, GETDATE(), ?, ?, ?)"
@@ -668,11 +677,15 @@ public class AppointmentDAO extends DBContext {
             closeResources(null);
         }
     }
+    /**
+     * Update appointment by setting status to Approved (status ID = 2) Only if
+     * current status is Pending(status ID)
+     */
 
     public boolean approvedStatusAppointment(int appointmentId) {
         String sql = "UPDATE Appointment "
                 + "SET AppointmentStatusID = 2 "
-                + "WHERE AppointmentID = ? AND AppointmentStatusID = 1"; // Chỉ approve nếu đang Pending
+                + "WHERE AppointmentID = ? AND AppointmentStatusID = 1"; 
         Connection conn = null;
         PreparedStatement stmt = null;
 

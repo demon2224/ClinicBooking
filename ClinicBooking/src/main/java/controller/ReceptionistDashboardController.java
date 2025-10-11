@@ -61,85 +61,13 @@ public class ReceptionistDashboardController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
-        String action = request.getParameter("action");
-        String searchQuery = request.getParameter("searchQuery");
         dao.AppointmentDAO dao = new dao.AppointmentDAO();
-
         try {
-
-            if ("getDoctorsBySpecialty".equals(action)) {
-                String specialtyName = request.getParameter("specialtyName");
-
-                DoctorDAO doctorDAO = new DoctorDAO();
-                List<Doctor> doctors = doctorDAO.getDoctorsBySpecialty(specialtyName);
-
-                response.setContentType("application/json");
-                response.setCharacterEncoding("UTF-8");
-
-                StringBuilder json = new StringBuilder("[");
-                for (int i = 0; i < doctors.size(); i++) {
-                    Doctor d = doctors.get(i);
-                    json.append("{")
-                            .append("\"doctorID\":").append(d.getDoctorID()).append(",")
-                            .append("\"doctorName\":\"").append(d.getFirstName()).append(" ").append(d.getLastName()).append("\"")
-                            .append("}");
-                    if (i < doctors.size() - 1) {
-                        json.append(",");
-                    }
-                }
-                json.append("]");
-                response.getWriter().write(json.toString());
-                return;
-            }
-
-            if ("viewDetail".equals(action)) {
-                String idParam = request.getParameter("id");
-                if (idParam != null && !idParam.isEmpty()) {
-                    int appointmentId = Integer.parseInt(idParam);
-                    Appointment appointment = dao.getAppointmentByIdFull(appointmentId);
-
-                    if (appointment != null) {
-                        // Lấy thêm thông tin bác sĩ từ DoctorDAO
-                        Doctor doctor = new DoctorDAO().getDoctorById(appointment.getDoctorID());
-
-                        // Set attribute đúng để JSP dùng
-                        request.setAttribute("appointment", appointment);
-                        request.setAttribute("doctor", doctor);
-
-                        request.getRequestDispatcher("/WEB-INF/receptionist/AppointmentDetail.jsp")
-                                .forward(request, response);
-                        return;
-                    } else {
-                        response.sendError(HttpServletResponse.SC_NOT_FOUND, "Appointment not found");
-                        return;
-                    }
-                }
-            }
-            if ("add".equals(action)) {
-                DoctorDAO doctorDAO = new DoctorDAO();
-                List<String[]> specialties = doctorDAO.getAllSpecialties();
-                request.setAttribute("specialties", specialties);
-
-                UserDAO userDAO = new UserDAO();
-                List<Patient> patients = userDAO.getAllPatients();
-                request.setAttribute("patients", patients);
-
-                request.getRequestDispatcher("/WEB-INF/receptionist/AddAppointment.jsp")
-                        .forward(request, response);
-                return;
-            }
-
-            java.util.List<model.Appointment> appointmentList;
-            if (searchQuery != null && !searchQuery.trim().isEmpty()) {
-                appointmentList = dao.searchAppointments(searchQuery);
-            } else {
-                appointmentList = dao.getAllAppointments();
-            }
-
+            List<model.Appointment> appointmentList = dao.getAllAppointments();
             request.setAttribute("appointmentList", appointmentList);
-            request.getRequestDispatcher("/WEB-INF/ReceptionistDashboard.jsp").forward(request, response);
 
+            request.getRequestDispatcher("/WEB-INF/receptionist/ReceptionistDashboard.jsp")
+                    .forward(request, response);
         } catch (Exception e) {
             e.printStackTrace();
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Server error");
@@ -157,65 +85,7 @@ public class ReceptionistDashboardController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
-        String action = request.getParameter("action");
-        dao.AppointmentDAO dao = new dao.AppointmentDAO();
-
-        try {
-            if ("cancel".equals(action)) {
-                int appointmentId = Integer.parseInt(request.getParameter("appointmentId"));
-                boolean success = dao.cancelAppointment(appointmentId);
-
-                if (success) {
-                    response.sendRedirect(request.getContextPath() + "/receptionist-dashboard");
-                } else {
-                    request.setAttribute("error", "Failed to cancel appointment.");
-                    request.getRequestDispatcher("/WEB-INF/ReceptionistDashboard.jsp").forward(request, response);
-                }
-
-            } else if ("approve".equals(action)) {
-                int appointmentId = Integer.parseInt(request.getParameter("appointmentId"));
-                boolean success = dao.approvedStatusAppointment(appointmentId);
-
-                if (success) {
-                    response.sendRedirect(request.getContextPath() + "/receptionist-dashboard");
-                } else {
-                    request.setAttribute("error", "Failed to approve appointment. (Maybe not pending?)");
-                    request.getRequestDispatcher("/WEB-INF/ReceptionistDashboard.jsp").forward(request, response);
-                }
-
-            } else if ("addAppointment".equals(action)) {
-                String existingPatientId = request.getParameter("existingPatientId");
-                String fullName = request.getParameter("patientName");
-                String phone = request.getParameter("phone");
-                String genderStr = request.getParameter("gender");
-                boolean gender = genderStr != null ? Boolean.parseBoolean(genderStr) : true; // default male
-                int doctorId = Integer.parseInt(request.getParameter("doctorId"));
-                String note = request.getParameter("note");
-
-                if ((existingPatientId == null || existingPatientId.isEmpty())
-                        && (fullName == null || fullName.trim().isEmpty() || phone == null || phone.trim().isEmpty())) {
-                    request.setAttribute("error", "Please select existing patient or enter full name and phone for new patient.");
-                    doGet(request, response); // gọi lại doGet để hiển thị form
-                    return;
-                }
-
-                boolean success = dao.addAppointment(existingPatientId, fullName, phone, gender, doctorId, note);
-
-                if (success) {
-                    response.sendRedirect(request.getContextPath() + "/receptionist-dashboard");
-                } else {
-                    request.setAttribute("error", "Failed to add appointment.");
-                    doGet(request, response);
-                }
-            } else {
-                doGet(request, response); // fallback
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error processing POST request");
-        }
+        processRequest(request, response);
     }
 
     /**
