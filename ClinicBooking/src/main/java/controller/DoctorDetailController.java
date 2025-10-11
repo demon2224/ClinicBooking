@@ -68,29 +68,35 @@ public class DoctorDetailController extends HttpServlet {
             throws ServletException, IOException {
         try {
             String doctorIdParam = request.getParameter("id");
+            // If doctorId parameter is missing or empty, redirect to doctor list page
             if (doctorIdParam == null || doctorIdParam.trim().isEmpty()) {
                 response.sendRedirect(request.getContextPath() + DoctorListConstants.DOCTOR_LIST_URL);
                 return;
             }
             int doctorId = Integer.parseInt(doctorIdParam);
             Doctor doctor = doctorDAO.getDoctorById(doctorId);
+            // If doctor is not found, redirect to doctor list page
             if (doctor == null) {
                 response.sendRedirect(request.getContextPath() + DoctorListConstants.DOCTOR_LIST_URL);
                 return;
             }
+            // Process the doctor's avatar
             processAvatar(doctor);
-
+            // Retrieve all academic degrees of the doctor
             List<DoctorDegree> degrees = doctorDAO.getDoctorDegrees(doctorId);
             // Get doctor reviews data
             List<DoctorReview> doctorReviews = doctorReviewDAO.getReviewsByDoctorId(doctorId);
+            // Calculate the average rating for the doctor based on the reviews
             double averageRating = doctorReviewDAO.getAverageRatingByDoctorId(doctorId);
+            // Count the total number of reviews for the doctor
             int reviewCount = doctorReviewDAO.getReviewCountByDoctorId(doctorId);
-
+            // Set doctor reviews, average rating, review count, degrees, and doctor details in request attributes
             request.setAttribute("doctorReviews", doctorReviews);
             request.setAttribute("averageRating", averageRating);
             request.setAttribute("reviewCount", reviewCount);
             request.setAttribute("degrees", degrees);
             request.setAttribute("doctor", doctor);
+
             request.getRequestDispatcher(DoctorListConstants.DOCTOR_DETAIL_JSP).forward(request, response);
         } catch (NumberFormatException e) {
             response.sendRedirect(request.getContextPath() + DoctorListConstants.DOCTOR_LIST_URL);
@@ -113,16 +119,22 @@ public class DoctorDetailController extends HttpServlet {
             throws ServletException, IOException {
 
         String doctorId = request.getParameter("id");
+        // Initialize the redirect URL to the doctor detail page
         String redirectUrl = request.getContextPath() + DoctorListConstants.DOCTOR_DETAIL_URL;
-
+        // If doctorId is provided and not empty, append it as a query parameter to the URL
         if (doctorId != null && !doctorId.trim().isEmpty()) {
             redirectUrl += "?id=" + doctorId;
         }
+        // Redirect the response to the constructed URL
         response.sendRedirect(redirectUrl);
     }
 
     /**
-     * Process avatar path
+     * Processes the doctor's avatar: - If the avatar is valid but lacks the correct path
+     * prefix, it adds the base path. - If the avatar is null or empty, it sets the
+     * default avatar.
+     *
+     * @param doctor the Doctor object whose avatar is being processed
      */
     private void processAvatar(Doctor doctor) {
         String avatar = doctor.getAvatar();
@@ -145,5 +157,4 @@ public class DoctorDetailController extends HttpServlet {
     public String getServletInfo() {
         return "Doctor Detail Controller";
     }// </editor-fold>
-
 }

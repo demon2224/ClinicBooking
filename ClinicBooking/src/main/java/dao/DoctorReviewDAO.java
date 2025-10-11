@@ -21,6 +21,13 @@ import utils.DBContext;
  */
 public class DoctorReviewDAO extends DBContext {
 
+    /**
+     * Retrieves a list of reviews for a specific doctor.
+     *
+     * @param doctorId the ID of the doctor whose reviews are being retrieved
+     * @return a list of DoctorReview objects representing the reviews for the doctor, or
+     * an empty list if none are found or an error occurs
+     */
     public List<DoctorReview> getReviewsByDoctorId(int doctorId) {
         List<DoctorReview> reviews = new ArrayList<>();
         String sql = "SELECT dr.DoctorReviewID, dr.DoctorID, dr.Content, "
@@ -61,28 +68,44 @@ public class DoctorReviewDAO extends DBContext {
         return reviews;
     }
 
+    /**
+     * Calculates and returns the average rating for a doctor based on their reviews.
+     *
+     * @param doctorId the ID of the doctor whose average rating is being calculated
+     * @return the average rating (rounded to one decimal place) for the doctor, or 0.0 if
+     * no ratings are found or an error occurs
+     */
     public double getAverageRatingByDoctorId(int doctorId) {
         String sql = "SELECT AVG(CAST(RateScore AS FLOAT)) AS AvgRating FROM DoctorReview WHERE DoctorID = ?";
         try {
             Object[] params = {doctorId};
             ResultSet rs = executeSelectQuery(sql, params);
             if (rs != null && rs.next()) {
+                // Return the average rating, rounded to one decimal place
                 double avgRating = rs.getDouble("AvgRating");
-                closeResources(rs);
+                closeResources(rs); // Close the result set
                 return Math.round(avgRating * 10.0) / 10.0;
             }
         } catch (SQLException ex) {
             Logger.getLogger(DoctorReviewDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return 0.0;
+        return 0.0;  // Return 0 if no ratings are found or an error occurs
     }
 
+    /**
+     * Counts and returns the total number of reviews for a doctor.
+     *
+     * @param doctorId the ID of the doctor whose reviews are being counted
+     * @return the total number of reviews for the doctor, or 0 if none are found or an
+     * error occurs
+     */
     public int getReviewCountByDoctorId(int doctorId) {
         String sql = "SELECT COUNT(*) AS ReviewCount FROM DoctorReview WHERE DoctorID = ?";
         try {
             Object[] params = {doctorId};
             ResultSet rs = executeSelectQuery(sql, params);
             if (rs != null && rs.next()) {
+                // Return the count of reviews
                 int count = rs.getInt("ReviewCount");
                 closeResources(rs);
                 return count;
@@ -90,7 +113,6 @@ public class DoctorReviewDAO extends DBContext {
         } catch (SQLException ex) {
             Logger.getLogger(DoctorReviewDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return 0;
+        return 0;  // Return 0 if no reviews are found or an error occurs
     }
-
 }

@@ -224,7 +224,7 @@ public class DoctorDAO extends DBContext {
             sql.append(" AND d.YearExperience >= ?");
             paramsList.add(minExperience);
         }
-
+        // Convert parameters list to array
         Object[] params = paramsList.toArray();
         ResultSet rs = executeSelectQuery(sql.toString(), params);
         try {
