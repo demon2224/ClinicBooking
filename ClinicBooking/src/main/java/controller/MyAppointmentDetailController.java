@@ -15,7 +15,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 /**
- * My Appointment Detail Controller
+ * My Appointment Detail Controller - Display appointment details only
  *
  * @author Le Anh Tuan - CE180905
  */
@@ -39,8 +39,8 @@ public class MyAppointmentDetailController extends HttpServlet {
 
         String appointmentIdParam = request.getParameter("id");
 
+        // Redirect to appointments list if no ID provided
         if (appointmentIdParam == null || appointmentIdParam.trim().isEmpty()) {
-            // No appointment ID provided, redirect to manage appointments
             response.sendRedirect(request.getContextPath() + "/manage-my-appointments");
             return;
         }
@@ -51,42 +51,45 @@ public class MyAppointmentDetailController extends HttpServlet {
             // Get appointment details
             Appointment appointment = appointmentDAO.getAppointmentById(appointmentId);
 
+            // Redirect if appointment not found
             if (appointment == null) {
-                request.setAttribute("errorMessage", "Appointment not found!");
-                request.getRequestDispatcher("/WEB-INF/error/404.jsp").forward(request, response);
+                response.sendRedirect(request.getContextPath() + "/manage-my-appointments");
                 return;
             }
 
-            // Get patient information
+            // Get patient and doctor information
             User patient = userDAO.getUserById(appointment.getUserID());
-
-            // Get doctor information
             User doctor = userDAO.getUserById(appointment.getDoctorID());
 
             // Set attributes for JSP
             request.setAttribute("appointment", appointment);
             request.setAttribute("patient", patient);
             request.setAttribute("doctor", doctor);
+            
             // Forward to detail page
             request.getRequestDispatcher("/WEB-INF/MyAppointmentDetail.jsp").forward(request, response);
 
         } catch (NumberFormatException e) {
-            request.setAttribute("errorMessage", "Invalid appointment ID!");
-            request.getRequestDispatcher("/WEB-INF/error/404.jsp").forward(request, response);
+            // Redirect if ID is not a valid number
+            response.sendRedirect(request.getContextPath() + "/manage-my-appointments");
+        } catch (Exception e) {
+            // Redirect on any other error
+            response.sendRedirect(request.getContextPath() + "/manage-my-appointments");
         }
     }
 
     /**
-     * Handles POST requests for appointment actions (cancel, reschedule, etc.)
+     * Handles POST requests - processes form actions and redirects back to current page
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        String action = request.getParameter("action");
         String appointmentIdParam = request.getParameter("appointmentId");
+        String action = request.getParameter("action");
 
-        if (appointmentIdParam == null || action == null) {
+        // If no appointment ID, redirect to appointments list
+        if (appointmentIdParam == null || appointmentIdParam.trim().isEmpty()) {
             response.sendRedirect(request.getContextPath() + "/manage-my-appointments");
             return;
         }
@@ -94,36 +97,16 @@ public class MyAppointmentDetailController extends HttpServlet {
         try {
             int appointmentId = Integer.parseInt(appointmentIdParam);
 
-            switch (action) {
-                case "cancel":
-                    handleCancelAppointment(appointmentId, request, response);
-                    break;
-                default:
-                    response.sendRedirect(request.getContextPath() + "/my-appointment-detail?id=" + appointmentId);
-                    break;
-            }
+            // Process actions here if needed (currently no actions implemented)
+            // Example: case "someAction": processAction(); break;
+
+            // Always redirect back to current appointment detail page
+            response.sendRedirect(request.getContextPath() + "/my-appointment-detail?id=" + appointmentId);
 
         } catch (NumberFormatException e) {
-            request.setAttribute("errorMessage", "Invalid appointment ID!");
+            // If invalid ID, redirect to appointments list
             response.sendRedirect(request.getContextPath() + "/manage-my-appointments");
         }
-    }
-
-    /**
-     * Handle appointment cancellation
-     */
-    private void handleCancelAppointment(int appointmentId, HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-
-        boolean success = appointmentDAO.cancelAppointment(appointmentId);
-
-        if (success) {
-            request.getSession().setAttribute("successMessage", "Appointment cancelled successfully!");
-        } else {
-            request.getSession().setAttribute("errorMessage", "Failed to cancel appointment!");
-        }
-
-        response.sendRedirect(request.getContextPath() + "/manage-my-appointments");
     }
 
     @Override

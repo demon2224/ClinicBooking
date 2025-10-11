@@ -29,12 +29,27 @@
                 background-color: #f8fafc;
             }
 
-            .main-content {
-                padding: 2rem;
-                max-width: 1000px;
-                margin: 0 auto;
+            /* Force header to be at top */
+            .header {
+                position: fixed !important;
+                top: 0 !important;
+                left: 0 !important;
+                right: 0 !important;
+                z-index: 9999 !important;
+                background-color: #ffffff !important;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
             }
 
+            .main-content {
+                padding: 2rem;
+                max-width: 1200px;
+                margin: 0 auto;
+                min-height: calc(100vh - 80px);
+                position: relative;
+                z-index: 1;
+            }
+
+            /* Page Header - Simple style like manage appointments */
             .page-header {
                 background: white;
                 padding: 2rem;
@@ -49,8 +64,22 @@
             .page-header h1 {
                 color: #175CDD;
                 margin: 0;
-                font-size: 1.8rem;
+                font-size: 2rem;
                 font-weight: 600;
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+            }
+
+            .page-header h1 i {
+                color: #175CDD;
+                font-size: 1.8rem;
+            }
+
+            .page-header p {
+                color: #64748b;
+                margin: 0.5rem 0 0 0;
+                font-size: 1.1rem;
             }
 
             .back-btn {
@@ -62,21 +91,27 @@
                 text-decoration: none;
                 font-weight: 500;
                 transition: all 0.3s ease;
+                display: inline-flex;
+                align-items: center;
+                gap: 0.5rem;
             }
 
             .back-btn:hover {
                 background: #cbd5e1;
+                color: #334155;
             }
 
+            /* Appointment Detail Card */
             .appointment-detail-card {
                 background: white;
-                border-radius: 0.5rem;
-                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                border-radius: 0.75rem;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
                 overflow: hidden;
                 margin-bottom: 2rem;
             }
 
-            .card-header {
+            /* Header Section - Simplified */
+            .appointment-header {
                 background: #175CDD;
                 color: white;
                 padding: 1.5rem 2rem;
@@ -85,356 +120,364 @@
                 align-items: center;
             }
 
-            .card-header h2 {
+            .appointment-header h2 {
                 margin: 0;
-                font-size: 1.25rem;
+                font-size: 1.5rem;
                 font-weight: 600;
+                color: white;
             }
 
+            /* Status Badge in Header */
             .status-badge {
                 padding: 0.5rem 1rem;
-                border-radius: 1rem;
-                font-size: 0.875rem;
-                font-weight: 500;
+                border-radius: 20px;
+                font-weight: 600;
+                font-size: 0.9rem;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+            }
+
+            .status-pending {
+                background: rgba(255, 193, 7, 0.2);
+                color: #856404;
+                border: 1px solid rgba(255, 193, 7, 0.5);
             }
 
             .status-confirmed {
-                background: #dcfce7;
-                color: #166534;
+                background: rgba(40, 167, 69, 0.2);
+                color: #155724;
+                border: 1px solid rgba(40, 167, 69, 0.5);
             }
-            .status-pending {
-                background: #fef3c7;
-                color: #92400e;
-            }
+
             .status-cancelled {
-                background: #fee2e2;
-                color: #dc2626;
+                background: rgba(220, 53, 69, 0.2);
+                color: #721c24;
+                border: 1px solid rgba(220, 53, 69, 0.5);
             }
+
             .status-completed {
-                background: #dbeafe;
-                color: #1e40af;
+                background: rgba(23, 162, 184, 0.2);
+                color: #0c5460;
+                border: 1px solid rgba(23, 162, 184, 0.5);
             }
 
-            .card-content {
+            /* Content Sections */
+            .appointment-content {
+                padding: 0;
+            }
+
+            .info-section {
                 padding: 2rem;
+                border-bottom: 1px solid #e2e8f0;
             }
 
-            .detail-grid {
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-                gap: 2rem;
-                margin-bottom: 2rem;
+            .info-section:last-child {
+                border-bottom: none;
             }
 
-            .detail-section {
-                border: 1px solid #e2e8f0;
-                border-radius: 0.375rem;
-                padding: 1.5rem;
-            }
-
-            .detail-section h3 {
-                color: #1e293b;
-                margin: 0 0 1rem 0;
-                font-size: 1.1rem;
+            .section-title {
+                color: #175CDD;
+                font-size: 1.25rem;
                 font-weight: 600;
-                border-bottom: 2px solid #e2e8f0;
-                padding-bottom: 0.5rem;
-            }
-
-            .detail-item {
+                margin: 0 0 1.5rem 0;
                 display: flex;
-                margin-bottom: 0.75rem;
-            }
-
-            .detail-label {
-                font-weight: 500;
-                color: #475569;
-                min-width: 120px;
-            }
-
-            .detail-value {
-                color: #1e293b;
-                flex: 1;
-            }
-
-            .action-buttons {
-                display: flex;
-                gap: 1rem;
-                justify-content: center;
-                padding-top: 1.5rem;
-                border-top: 1px solid #e2e8f0;
-            }
-
-            .btn {
-                padding: 0.75rem 1.5rem;
-                border: none;
-                border-radius: 0.375rem;
-                font-weight: 500;
-                text-decoration: none;
-                cursor: pointer;
-                transition: all 0.3s ease;
-                display: inline-flex;
                 align-items: center;
                 gap: 0.5rem;
             }
 
-            .btn-cancel {
-                background: #fee2e2;
-                color: #dc2626;
+            .section-title i {
+                color: #175CDD;
             }
 
-            .btn-cancel:hover {
-                background: #fecaca;
+            .info-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                gap: 2rem;
             }
 
-            .btn-reschedule {
-                background: #f3e8ff;
-                color: #7c3aed;
+            .info-item {
+                display: flex;
+                align-items: flex-start;
+                gap: 1rem;
             }
 
-            .btn-reschedule:hover {
-                background: #e9d5ff;
+            .info-icon {
+                width: 40px;
+                height: 40px;
+                background: #f1f5f9;
+                border-radius: 8px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: #175CDD;
+                font-size: 1.1rem;
+                flex-shrink: 0;
             }
 
-            .alert {
-                padding: 1rem 1.5rem;
-                border-radius: 0.375rem;
-                margin-bottom: 1.5rem;
+            .info-content h4 {
+                margin: 0 0 0.25rem 0;
+                color: #1e293b;
+                font-weight: 600;
+                font-size: 1rem;
             }
 
-            .alert-error {
-                background: #fee2e2;
-                color: #dc2626;
-                border: 1px solid #fecaca;
+            .info-content p {
+                margin: 0;
+                color: #64748b;
+                font-size: 0.95rem;
+                line-height: 1.4;
+            }
+
+            /* Action Buttons */
+            .action-buttons {
+                padding: 2rem;
+                background: #f8fafc;
+                display: flex;
+                gap: 1rem;
+                justify-content: flex-end;
+            }
+
+            .btn {
+                padding: 0.75rem 1.5rem;
+                border-radius: 8px;
+                font-weight: 600;
+                text-decoration: none;
+                display: inline-flex;
+                align-items: center;
+                gap: 0.5rem;
+                border: 2px solid transparent;
+                transition: all 0.2s ease;
+                cursor: pointer;
+                font-size: 0.95rem;
+            }
+
+            .btn-primary {
+                background: #175CDD;
+                color: white;
+            }
+
+            .btn-primary:hover {
+                background: #1e40af;
+                transform: translateY(-1px);
+                box-shadow: 0 4px 12px rgba(23, 92, 221, 0.3);
+            }
+
+            .btn-outline {
+                background: white;
+                color: #175CDD;
+                border-color: #175CDD;
+            }
+
+            .btn-outline:hover {
+                background: #175CDD;
+                color: white;
+                transform: translateY(-1px);
+                box-shadow: 0 4px 12px rgba(23, 92, 221, 0.2);
+            }
+
+            .btn-danger {
+                background: #dc3545;
+                color: white;
+            }
+
+            .btn-danger:hover {
+                background: #c82333;
+                transform: translateY(-1px);
+                box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+            }
+
+            /* Responsive */
+            @media (max-width: 768px) {
+                .main-content {
+                    padding: 1rem;
+                }
+
+                .appointment-info {
+                    flex-direction: column;
+                    text-align: center;
+                    gap: 1rem;
+                }
+
+                .appointment-title h1 {
+                    font-size: 2rem;
+                }
+
+                .status-actions {
+                    position: relative;
+                    top: auto;
+                    right: auto;
+                    justify-content: center;
+                    margin-top: 1rem;
+                }
+
+                .info-grid {
+                    grid-template-columns: 1fr;
+                    gap: 1.5rem;
+                }
+
+                .action-buttons {
+                    flex-direction: column;
+                }
             }
         </style>
     </head>
     <body>
-        <header class="header">
-            <div class="container">
-                <!-- Logo -->
-                <a href="${pageContext.request.contextPath}/home" class="logo">
-                    <i class="fas fa-stethoscope"></i>
-                    CLINIC
-                </a>
+        <!-- Include Header -->
+        <jsp:include page="includes/header.jsp">
+            <jsp:param name="activePage" value="manage-appointments" />
+        </jsp:include>
 
-                <!-- Navigation Menu -->
-                <nav>
-                    <ul class="nav-menu">
-                        <li>
-                            <a href="${pageContext.request.contextPath}/home">Home</a>
-                        </li>
-                        <li>
-                            <a href="#">About</a>
-                        </li>
-                        <li>
-                            <a href="${pageContext.request.contextPath}/doctor-list">Doctors</a>
-                        </li>
-                        <li class="dropdown">
-                            <a href="#" class="dropdown-toggle active">Portal</a>
-                            <ul class="dropdown-menu">
-                                <li><a href="${pageContext.request.contextPath}/manage-my-appointments" class="active">Manage My Appointments</a></li>
-                                <li><a href="#">Manage My Medical Records</a></li>
-                                <li><a href="#">Manage My Prescriptions</a></li>
-                                <li><a href="#">Manage My Invoices</a></li>
-                                <li><a href="#">My Feedbacks</a></li>
-                            </ul>
-                        </li>
-                        <li>
-                            <a href="#">Contact</a>
-                        </li>
-                    </ul>
-                </nav>
-
-                <!-- User Actions -->
-                <div class="user-actions">
-                    <!-- Register Button -->
-                    <a href="#" class="btn btn-register">
-                        <i class="fas fa-user-plus"></i>
-                        Register
-                    </a>
-
-                    <!-- Login Button -->
-                    <a href="#" class="btn btn-login">
-                        <i class="fas fa-sign-in-alt"></i>
-                        Login
-                    </a>
-                </div>
-            </div>
-        </header>
         <main class="main-content">
-            <!-- Page Header -->
-            <div class="page-header">
-                <h1><i class="fas fa-calendar-check"></i> Appointment Details</h1>
-                <a href="${pageContext.request.contextPath}/manage-my-appointments" class="back-btn">
-                    <i class="fas fa-arrow-left"></i> Back to Appointments
-                </a>
-            </div>
-
-            <!-- Error Message -->
-            <c:if test="${not empty errorMessage}">
-                <div class="alert alert-error">
-                    <i class="fas fa-exclamation-circle"></i> ${errorMessage}
-                </div>
-            </c:if>
-
-            <!-- Appointment Details -->
-            <c:if test="${not empty appointment}">
-                <div class="appointment-detail-card">
-                    <div class="card-header">
-                        <h2>Appointment #${appointment.appointmentID}</h2>
-                        <div class="status-badge
-                             <c:choose>
-                                 <c:when test="${appointment.appointmentStatusID == 2}">status-confirmed</c:when>
-                                 <c:when test="${appointment.appointmentStatusID == 1}">status-pending</c:when>
-                                 <c:when test="${appointment.appointmentStatusID == 4}">status-cancelled</c:when>
-                                 <c:when test="${appointment.appointmentStatusID == 3}">status-completed</c:when>
-                                 <c:otherwise>status-pending</c:otherwise>
-                             </c:choose>">
-                            ${appointment.statusName != null ? appointment.statusName : 'Unknown'}
-                        </div>
+            <div class="appointment-detail-card">
+                <div class="page-header">
+                    <div>
+                        <h1><i class="fas fa-calendar-check"></i> Appointment Details</h1>
+                        <p>View and manage your appointment information</p>
                     </div>
+                </div>
 
-                    <div class="card-content">
-                        <div class="detail-grid">
+                <!-- Content Sections -->
+                <div class="appointment-content">
+                    <c:choose>
+                        <c:when test="${not empty appointment}">
                             <!-- Appointment Information -->
-                            <div class="detail-section">
-                                <h3><i class="fas fa-calendar"></i> Appointment Information</h3>
-                                <div class="detail-item">
-                                    <span class="detail-label">Date & Time:</span>
-                                    <span class="detail-value">
-                                        <fmt:formatDate value="${appointment.dateBegin}"
-                                                        pattern="EEEE, MMMM dd, yyyy 'at' hh:mm a"/>
-                                    </span>
-                                </div>
-                                <div class="detail-item">
-                                    <span class="detail-label">Duration:</span>
-                                    <span class="detail-value">
-                                        <fmt:formatDate value="${appointment.dateBegin}" pattern="hh:mm a"/> -
-                                        <fmt:formatDate value="${appointment.dateEnd}" pattern="hh:mm a"/>
-                                    </span>
-                                </div>
-                                <div class="detail-item">
-                                    <span class="detail-label">Created:</span>
-                                    <span class="detail-value">
-                                        <fmt:formatDate value="${appointment.dateCreate}"
-                                                        pattern="MMM dd, yyyy 'at' hh:mm a"/>
-                                    </span>
-                                </div>
-                                <c:if test="${not empty appointment.note}">
-                                    <div class="detail-item">
-                                        <span class="detail-label">Note:</span>
-                                        <span class="detail-value">${appointment.note}</span>
+                            <div class="info-section">
+                                <h3 class="section-title">
+                                    <i class="fas fa-calendar-alt"></i>
+                                    Appointment Information
+                                </h3>
+                                <div class="info-grid">
+                                    <div class="info-item">
+                                        <div class="info-icon">
+                                            <i class="fas fa-calendar"></i>
+                                        </div>
+                                        <div class="info-content">
+                                            <h4>Appointment Date</h4>
+                                            <p>
+                                                <fmt:formatDate value="${appointment.dateBegin}"
+                                                                pattern="EEEE, MMMM dd, yyyy"/>
+                                            </p>
+                                        </div>
                                     </div>
-                                </c:if>
+                                    <div class="info-item">
+                                        <div class="info-icon">
+                                            <i class="fas fa-clock"></i>
+                                        </div>
+                                        <div class="info-content">
+                                            <h4>Time</h4>
+                                            <p>
+                                                <fmt:formatDate value="${appointment.dateBegin}" pattern="hh:mm a"/> -
+                                                <fmt:formatDate value="${appointment.dateEnd}" pattern="hh:mm a"/>
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <div class="info-item">
+                                        <div class="info-icon">
+                                            <i class="fas fa-plus-circle"></i>
+                                        </div>
+                                        <div class="info-content">
+                                            <h4>Created On</h4>
+                                            <p>
+                                                <fmt:formatDate value="${appointment.dateCreate}"
+                                                                pattern="MMM dd, yyyy 'at' hh:mm a"/>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
 
                             <!-- Doctor Information -->
-                            <div class="detail-section">
-                                <h3><i class="fas fa-user-md"></i> Doctor Information</h3>
-                                <div class="detail-item">
-                                    <span class="detail-label">Name:</span>
-                                    <span class="detail-value">
-                                        Dr. ${appointment.doctorName != null ? appointment.doctorName : 'Unknown Doctor'}
-                                    </span>
-                                </div>
-                                <div class="detail-item">
-                                    <span class="detail-label">Specialty:</span>
-                                    <span class="detail-value">
-                                        ${appointment.specialtyName != null ? appointment.specialtyName : 'General'}
-                                    </span>
-                                </div>
-                                <c:if test="${not empty doctor}">
-                                    <c:if test="${not empty doctor.email}">
-                                        <div class="detail-item">
-                                            <span class="detail-label">Email:</span>
-                                            <span class="detail-value">${doctor.email}</span>
+                            <div class="info-section">
+                                <h3 class="section-title">
+                                    <i class="fas fa-user-md"></i>
+                                    Doctor Information
+                                </h3>
+                                <div class="info-grid">
+                                    <div class="info-item">
+                                        <div class="info-icon">
+                                            <i class="fas fa-user-md"></i>
                                         </div>
-                                    </c:if>
-                                    <c:if test="${not empty doctor.phoneNumber}">
-                                        <div class="detail-item">
-                                            <span class="detail-label">Phone:</span>
-                                            <span class="detail-value">${doctor.phoneNumber}</span>
+                                        <div class="info-content">
+                                            <h4>Doctor Name</h4>
+                                            <p>Dr. ${appointment.doctorName != null ? appointment.doctorName : 'Unknown Doctor'}</p>
                                         </div>
-                                    </c:if>
-                                </c:if>
-                            </div>
-
-                            <!-- Patient Information -->
-                            <c:if test="${not empty patient}">
-                                <div class="detail-section">
-                                    <h3><i class="fas fa-user"></i> Patient Information</h3>
-                                    <div class="detail-item">
-                                        <span class="detail-label">Name:</span>
-                                        <span class="detail-value">${patient.fullName}</span>
                                     </div>
-                                    <c:if test="${not empty patient.email}">
-                                        <div class="detail-item">
-                                            <span class="detail-label">Email:</span>
-                                            <span class="detail-value">${patient.email}</span>
+                                    <div class="info-item">
+                                        <div class="info-icon">
+                                            <i class="fas fa-stethoscope"></i>
                                         </div>
-                                    </c:if>
-                                    <c:if test="${not empty patient.phoneNumber}">
-                                        <div class="detail-item">
-                                            <span class="detail-label">Phone:</span>
-                                            <span class="detail-value">${patient.phoneNumber}</span>
+                                        <div class="info-content">
+                                            <h4>Specialty</h4>
+                                            <p>${appointment.specialtyName != null ? appointment.specialtyName : 'General Medicine'}</p>
                                         </div>
-                                    </c:if>
-                                    <c:if test="${not empty patient.userAddress}">
-                                        <div class="detail-item">
-                                            <span class="detail-label">Address:</span>
-                                            <span class="detail-value">${patient.userAddress}</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <div class="info-icon">
+                                            <i class="fas fa-star"></i>
                                         </div>
-                                    </c:if>
+                                        <div class="info-content">
+                                            <h4>Rating</h4>
+                                            <p>
+                                                <span class="stars">
+                                                    <i class="fas fa-star"></i>
+                                                    <i class="fas fa-star"></i>
+                                                    <i class="fas fa-star"></i>
+                                                    <i class="fas fa-star"></i>
+                                                    <i class="fas fa-star"></i>
+                                                </span>
+                                                5.0
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="info-item">
+                                        <div class="info-icon">
+                                            <i class="fas fa-graduation-cap"></i>
+                                        </div>
+                                        <div class="info-content">
+                                            <h4>Experience</h4>
+                                            <p>8+ years</p>
+                                        </div>
+                                    </div>
                                 </div>
-                            </c:if>
-                        </div>
-
-                        <!-- Action Buttons -->
-                        <c:if test="${appointment.appointmentStatusID != 4 && appointment.appointmentStatusID != 3}">
-                            <div class="action-buttons">
-                                <button class="btn btn-reschedule" onclick="rescheduleAppointment()">
-                                    <i class="fas fa-edit"></i> Reschedule
-                                </button>
-                                <button class="btn btn-cancel" onclick="confirmCancel()">
-                                    <i class="fas fa-times"></i> Cancel Appointment
-                                </button>
                             </div>
-                        </c:if>
-                    </div>
+
+                            <!-- Additional Notes -->
+                            <c:choose>
+                                <c:when test="${not empty appointment.note}">
+                                    <div class="info-section">
+                                        <h3 class="section-title">
+                                            <i class="fas fa-sticky-note"></i>
+                                            Appointment Notes
+                                        </h3>
+                                        <div class="info-grid">
+                                            <div class="info-item">
+                                                <div class="info-icon">
+                                                    <i class="fas fa-comment-alt"></i>
+                                                </div>
+                                                <div class="info-content">
+                                                    <h4>Notes</h4>
+                                                    <p>${appointment.note}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </c:when>
+                            </c:choose>
+                        </c:when>
+                        <c:otherwise>
+                            <!-- Error Message -->
+                            <div class="info-section">
+                                <div class="error-message">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                    <h3>Appointment Not Found</h3>
+                                    <p>The requested appointment could not be found or you don't have permission to view it.</p>
+                                </div>
+                            </div>
+                        </c:otherwise>
+                    </c:choose>
                 </div>
-            </c:if>
+            </div>
         </main>
-
-        <!-- JavaScript -->
-        <script>
-            function confirmCancel() {
-                if (confirm('Are you sure you want to cancel this appointment? This action cannot be undone.')) {
-                    // Create form to submit cancellation
-                    const form = document.createElement('form');
-                    form.method = 'POST';
-                    form.action = '${pageContext.request.contextPath}/my-appointment-detail';
-
-                    const actionInput = document.createElement('input');
-                    actionInput.type = 'hidden';
-                    actionInput.name = 'action';
-                    actionInput.value = 'cancel';
-
-                    const idInput = document.createElement('input');
-                    idInput.type = 'hidden';
-                    idInput.name = 'appointmentId';
-                    idInput.value = '${appointment.appointmentID}';
-
-                    form.appendChild(actionInput);
-                    form.appendChild(idInput);
-                    document.body.appendChild(form);
-                    form.submit();
-                }
-            }
-
-            function rescheduleAppointment() {
-                alert('Reschedule functionality will be implemented soon!');
-            }
-        </script>
     </body>
 </html>
