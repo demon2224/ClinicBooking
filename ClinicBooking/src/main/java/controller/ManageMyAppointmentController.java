@@ -5,7 +5,6 @@
 package controller;
 
 import dao.AppointmentDAO;
-import dao.UserDAO;
 import model.Appointment;
 import java.io.IOException;
 import java.util.List;
@@ -24,11 +23,9 @@ import model.User;
 public class ManageMyAppointmentController extends HttpServlet {
 
     private AppointmentDAO appointmentDAO;
-    private UserDAO userDAO;
 
     @Override
     public void init() throws ServletException {
-        userDAO = new UserDAO();
         appointmentDAO = new AppointmentDAO();
     }
 
@@ -50,12 +47,9 @@ public class ManageMyAppointmentController extends HttpServlet {
 
         List<Appointment> appointments;
 
-        // Apply search and filter
+        // Apply search
         if (searchQuery != null && !searchQuery.trim().isEmpty()) {
             appointments = appointmentDAO.searchAppointmentsByUserId(userId, searchQuery);
-        } else if (statusFilter != null && !statusFilter.trim().isEmpty() && !statusFilter.equals("all")) {
-            int statusId = Integer.parseInt(statusFilter);
-            appointments = appointmentDAO.getAppointmentsByUserIdAndStatus(userId, statusId);
         } else {
             appointments = appointmentDAO.getAppointmentsByUserId(userId);
         }
@@ -104,7 +98,7 @@ public class ManageMyAppointmentController extends HttpServlet {
             } else if (appointment.getAppointmentStatusID() != 1) {
                 request.getSession().setAttribute("errorMessage", "Only pending appointments can be cancelled!");
             } else {
-                boolean success = appointmentDAO.cancelAppointment(appointmentId);
+                boolean success = appointmentDAO.cancelMyAppointment(appointmentId);
 
                 if (success) {
                     request.getSession().setAttribute("successMessage", "Appointment cancelled successfully!");
