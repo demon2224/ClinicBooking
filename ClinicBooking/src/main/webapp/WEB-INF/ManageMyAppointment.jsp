@@ -550,59 +550,10 @@
         </style>
     </head>
     <body>
-        <!-- Header -->
-        <header class="header">
-            <div class="container">
-                <!-- Logo -->
-                <a href="${pageContext.request.contextPath}/home" class="logo">
-                    <i class="fas fa-stethoscope"></i>
-                    CLINIC
-                </a>
-
-                <!-- Navigation Menu -->
-                <nav>
-                    <ul class="nav-menu">
-                        <li>
-                            <a href="${pageContext.request.contextPath}/home">Home</a>
-                        </li>
-                        <li>
-                            <a href="#">About</a>
-                        </li>
-                        <li>
-                            <a href="${pageContext.request.contextPath}/doctor-list">Doctors</a>
-                        </li>
-                        <li class="dropdown">
-                            <a href="#" class="dropdown-toggle active">Portal</a>
-                            <ul class="dropdown-menu">
-                                <li><a href="${pageContext.request.contextPath}/manage-my-appointments" class="active">Manage My Appointments</a></li>
-                                <li><a href="#">Manage My Medical Records</a></li>
-                                <li><a href="#">Manage My Prescriptions</a></li>
-                                <li><a href="#">Manage My Invoices</a></li>
-                                <li><a href="#">My Feedbacks</a></li>
-                            </ul>
-                        </li>
-                        <li>
-                            <a href="#">Contact</a>
-                        </li>
-                    </ul>
-                </nav>
-
-                <!-- User Actions -->
-                <div class="user-actions">
-                    <!-- Register Button -->
-                    <a href="#" class="btn btn-register">
-                        <i class="fas fa-user-plus"></i>
-                        Register
-                    </a>
-
-                    <!-- Login Button -->
-                    <a href="#" class="btn btn-login">
-                        <i class="fas fa-sign-in-alt"></i>
-                        Login
-                    </a>
-                </div>
-            </div>
-        </header>
+        <!-- Include Header -->
+        <jsp:include page="includes/header.jsp">
+            <jsp:param name="activePage" value="manage-appointments" />
+        </jsp:include>
 
         <!-- Main Content -->
         <main class="main-content">
