@@ -28,19 +28,19 @@ public class CreateNewMedicineValidate {
     public static final int AVAILABLE_MEDICINE_STATUS = 1;
     public static final int UNAVAILABLE_MEDICINE_STATUS = 0;
 
-    public static boolean checkValidMedicineName(String medicineName) {
+    public static boolean isValidMedicineName(String medicineName) {
         return medicineName.matches(MEDICINE_NAME_REGEX);
     }
 
-    public static boolean checkValidMedicineCode(String medicineCode) {
+    public static boolean isValidMedicineCode(String medicineCode) {
         return medicineCode.matches(MEDICINE_CODE_REGEX);
     }
 
-    public static boolean checkValidMedicineCodeLength(String medicineCode) {
+    public static boolean isValidMedicineCodeLength(String medicineCode) {
         return medicineCode.length() != MEDICINE_CODE_LENGTH;
     }
 
-    public static boolean checkValidMedicineType(String medicineType, List<MedicineType> medicineTypeList) {
+    public static boolean isValidMedicineType(String medicineType, List<MedicineType> medicineTypeList) {
         for (MedicineType medicineTypeName : medicineTypeList) {
             if (medicineTypeName.equals(medicineType)) {
                 return true;
@@ -50,11 +50,11 @@ public class CreateNewMedicineValidate {
         return false;
     }
 
-    public static boolean checkValidMedicineQuantity(int quantity) {
+    public static boolean isValidMedicineQuantity(int quantity) {
         return quantity > MIN_MEDICINE_QUANTITY;
     }
 
-    public static boolean checkValidMedicneQuantityNumber(String medicineQuantity) {
+    public static boolean isValidMedicneQuantityNumber(String medicineQuantity) {
         int quantity;
         try {
             if (medicineQuantity.length() <= MIN_MEDICINE_NAME_LENGTH) {
@@ -65,14 +65,14 @@ public class CreateNewMedicineValidate {
             return false;
         }
 
-        return checkValidMedicineQuantity(quantity);
+        return isValidMedicineQuantity(quantity);
     }
 
-    public static boolean checkValidMedicinePrice(int price) {
+    public static boolean isValidMedicinePrice(int price) {
         return price > MIN_MEDICINE_PRICE;
     }
 
-    public static boolean checkValidMedicinePriceNumber(String medicinePrice) {
+    public static boolean isValidMedicinePriceNumber(String medicinePrice) {
         int price;
         try {
             if (medicinePrice.length() <= MIN_MEDICINE_PRICE) {
@@ -83,7 +83,7 @@ public class CreateNewMedicineValidate {
             return false;
         }
 
-        return checkValidMedicinePrice(price);
+        return isValidMedicinePrice(price);
     }
 
     public static boolean isValidExpiryDate(String dateStr) {
@@ -101,7 +101,7 @@ public class CreateNewMedicineValidate {
     public static boolean isValidMedicineStatus(String status) {
         try {
             int statusValue = Integer.parseInt(status);
-            return statusValue == 0 || statusValue == 1;
+            return statusValue == UNAVAILABLE_MEDICINE_STATUS || statusValue == AVAILABLE_MEDICINE_STATUS;
         } catch (NumberFormatException e) {
             return false;
         }
