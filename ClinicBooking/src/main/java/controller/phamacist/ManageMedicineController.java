@@ -6,6 +6,7 @@ package controller.phamacist;
 
 import dao.MedicineDAO;
 import dao.MedicineStockTransactionDAO;
+import dao.MedicineTypeDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -14,7 +15,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
 import model.MedicineStockTransaction;
+import model.MedicineType;
 import model.MedicineViewModel;
+import validate.CreateNewMedicineValidate;
 
 /**
  *
@@ -24,11 +27,13 @@ public class ManageMedicineController extends HttpServlet {
 
     private MedicineDAO medicineDAO;
     private MedicineStockTransactionDAO medicineStockTransactionDAO;
+    private MedicineTypeDAO medicineTypeDAO;
 
     @Override
     public void init() throws ServletException {
         medicineDAO = new MedicineDAO();
         medicineStockTransactionDAO = new MedicineStockTransactionDAO();
+        medicineTypeDAO = new MedicineTypeDAO();
     }
 
     /**
@@ -81,19 +86,34 @@ public class ManageMedicineController extends HttpServlet {
         try {
             if (action.equals("detail")) {
                 int medicineParam = Integer.parseInt(request.getParameter("medicineId"));
-                handleViewMedicineDetail(request, response, medicineParam);
+                handleViewMedicineDetailRequest(request, response, medicineParam);
                 return;
             }
 
             if (action.equals("create")) {
-                handleInvalidRequest(request, response);
+                handleCreateRequest(request, response);
+                return;
             }
         } catch (NumberFormatException ex) {
+            handleInvalidRequest(request, response);
+            return;
+        }
+
+        handleInvalidRequest(request, response);
+    }
+
+    private void handleCreateRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String typeParam = request.getParameter("type");
+        if (typeParam.equals("medicine")) {
+            List<MedicineType> medicineTypeList = medicineTypeDAO.getAllMedicineType();
+            request.setAttribute("medicineTypeList", medicineTypeList);
+            request.getRequestDispatcher("/WEB-INF/pharmacist/CreateMedicine.jsp").forward(request, response);
+        } else {
             handleInvalidRequest(request, response);
         }
     }
 
-    private void handleViewMedicineDetail(HttpServletRequest request, HttpServletResponse response, int medicineParam) throws ServletException, IOException {
+    private void handleViewMedicineDetailRequest(HttpServletRequest request, HttpServletResponse response, int medicineParam) throws ServletException, IOException {
         MedicineViewModel medicine = medicineDAO.getMedicineById(medicineParam);
         List<MedicineStockTransaction> medicineStockTransactionList = medicineStockTransactionDAO.getMedicineStockTransactionByMedicineId(medicineParam);
         request.setAttribute("medicine", medicine);
@@ -120,7 +140,33 @@ public class ManageMedicineController extends HttpServlet {
             throws ServletException, IOException {
 //        processRequest(request, response);
 
+        String action = request.getParameter("action");
+
+        if (action.equals("create")) {
+            handleCreateResponse(request, response);
+        }
+
         response.sendRedirect("/manage-medicine");
+    }
+
+    private void handleCreateResponse(HttpServletRequest request, HttpServletResponse response) {
+        String medicineNameParam = request.getParameter("medicineName");
+        String medicineCodeParam = request.getParameter("medicineCode");
+        String medicineTypeIdParam = request.getParameter("medicineTypeId");
+        String quantityParam = request.getParameter("quantity");
+        String priceParam = request.getParameter("price");
+        String dateExpireParam = request.getParameter("dateExpire");
+        String medicineStatusParam = request.getParameter("medicineStatus");
+        
+        
+    }
+    
+    private void handleCheckMedicineName(HttpServletRequest request) {
+        String medicineNameParam = request.getParameter("medicineName");
+        
+        if (CreateNewMedicineValidate.isValidMedicineName(medicineNameParam)) {
+            
+        }
     }
 
     /**

@@ -87,7 +87,14 @@
             <div class="container-fluid mt-4">
                 <div class="card mb-4">
                     <div class="card-header bg-white">
-                        <h5 class="mb-0">Medicine List</h5>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">Medicine List</h5>
+                            <div>
+                                <a href="${pageContext.request.contextPath}/manage-medicine?action=create&type=medicine" class="btn btn-success">
+                                    <i class="fas fa-plus"></i> Add Medicine
+                                </a>
+                            </div>
+                        </div>
                     </div>
                     <div class="card-body">
                         <table class="table align-middle">
