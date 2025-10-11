@@ -6,6 +6,7 @@ package controller;
 
 import constants.DoctorListConstants;
 import dao.DoctorDAO;
+import dao.DoctorReviewDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -15,6 +16,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
 import model.Doctor;
 import model.DoctorDegree;
+import model.DoctorReview;
 
 /**
  * Controller for Doctor Detail page
@@ -24,6 +26,7 @@ import model.DoctorDegree;
 public class DoctorDetailController extends HttpServlet {
 
     private final DoctorDAO doctorDAO = new DoctorDAO();
+    private final DoctorReviewDAO doctorReviewDAO = new DoctorReviewDAO();
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
@@ -78,7 +81,14 @@ public class DoctorDetailController extends HttpServlet {
             processAvatar(doctor);
 
             List<DoctorDegree> degrees = doctorDAO.getDoctorDegrees(doctorId);
+            // Get doctor reviews data
+            List<DoctorReview> doctorReviews = doctorReviewDAO.getReviewsByDoctorId(doctorId);
+            double averageRating = doctorReviewDAO.getAverageRatingByDoctorId(doctorId);
+            int reviewCount = doctorReviewDAO.getReviewCountByDoctorId(doctorId);
 
+            request.setAttribute("doctorReviews", doctorReviews);
+            request.setAttribute("averageRating", averageRating);
+            request.setAttribute("reviewCount", reviewCount);
             request.setAttribute("degrees", degrees);
             request.setAttribute("doctor", doctor);
             request.getRequestDispatcher(DoctorListConstants.DOCTOR_DETAIL_JSP).forward(request, response);
