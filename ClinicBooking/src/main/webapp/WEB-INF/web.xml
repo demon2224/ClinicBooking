@@ -3,6 +3,10 @@
     <!-- Application Display Name -->
     <display-name>Clinic Booking System</display-name>
     <!-- Welcome File List -->
+    <servlet>
+        <servlet-name>ReceptionistManageAppointmentController</servlet-name>
+        <servlet-class>controller.ReceptionistManageAppointmentController</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>PharmacistDashboardController</servlet-name>
         <url-pattern>/pharmacist-dashboard</url-pattern>
@@ -10,6 +14,10 @@
     <servlet-mapping>
         <servlet-name>ManageMedicineController</servlet-name>
         <url-pattern>/manage-medicine</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ReceptionistManageAppointmentController</servlet-name>
+        <url-pattern>/receptionist-manage-appointment</url-pattern>
     </servlet-mapping>
     <welcome-file-list>
         <welcome-file>index.jsp</welcome-file>
@@ -85,7 +93,7 @@
         <servlet-name>MyAppointmentDetailController</servlet-name>
         <url-pattern>/my-appointment-detail</url-pattern>
     </servlet-mapping>
-     <!-- MyPatientAppointmentDetailController -->
+    <!-- MyPatientAppointmentDetailController -->
     <servlet>
         <servlet-name>MyPatientAppointmentDetailController</servlet-name>
         <servlet-class>controller.MyPatientAppointmentDetailController</servlet-class>
