@@ -73,7 +73,7 @@ public class ManageMyPatientAppointmentController extends HttpServlet {
         }
 
         request.setAttribute("myPatientAppointmentList", list);
-        request.getRequestDispatcher("/WEB-INF/ManageMyPatientAppointment.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/doctor/ManageMyPatientAppointment.jsp").forward(request, response);
     }
 
     /**
