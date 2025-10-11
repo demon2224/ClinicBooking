@@ -98,7 +98,7 @@
                             <div class="col-4">
                                 Status: 
                                 <c:choose>
-                                    <c:when test="${med.medicine.medicineStatus}">
+                                    <c:when test="${requestScope.medicine.medicineStatus}">
                                         <span class="badge bg-success text-white">Available</span>
                                     </c:when>
                                     <c:otherwise>
