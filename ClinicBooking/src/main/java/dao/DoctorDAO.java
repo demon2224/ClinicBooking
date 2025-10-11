@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import model.ConsultationFee;
 import model.DoctorDegree;
 
 /**
@@ -44,20 +43,20 @@ public class DoctorDAO extends DBContext {
                 + "INNER JOIN JobStatus js ON d.JobStatusID = js.JobStatusID "
                 + "WHERE u.RoleID = 4";
 
+        ResultSet rs = executeSelectQuery(sql);
         try {
-            ResultSet rs = executeSelectQuery(sql);
             if (rs != null) {
                 // Populate the list with Doctor objects
                 while (rs.next()) {
                     Doctor doctor = createDoctorFromResultSet(rs);
                     doctors.add(doctor);
                 }
-                closeResources(rs);
             }
         } catch (SQLException ex) {
             Logger.getLogger(DoctorDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            closeResources(rs);
         }
-
         return doctors;
     }
 
@@ -83,17 +82,17 @@ public class DoctorDAO extends DBContext {
                 + "WHERE d.DoctorID = ? AND u.RoleID = 4";
 
         Doctor doctor = null;
+        Object[] params = {doctorId};
+        ResultSet rs = executeSelectQuery(sql, params);
         try {
-            Object[] params = {doctorId};
-            ResultSet rs = executeSelectQuery(sql, params);
             if (rs != null && rs.next()) {
                 doctor = createDoctorFromResultSet(rs);
-                closeResources(rs);
             }
         } catch (SQLException ex) {
             Logger.getLogger(DoctorDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            closeResources(rs);
         }
-
         return doctor;
     }
 
@@ -120,20 +119,20 @@ public class DoctorDAO extends DBContext {
                 + "INNER JOIN JobStatus js ON d.JobStatusID = js.JobStatusID "
                 + "WHERE s.SpecialtyName = ? AND u.RoleID = 4";
 
+        Object[] params = {specialtyName};
+        ResultSet rs = executeSelectQuery(sql, params);
         try {
-            Object[] params = {specialtyName};
-            ResultSet rs = executeSelectQuery(sql, params);
             if (rs != null) {
                 while (rs.next()) {
                     Doctor doctor = createDoctorFromResultSet(rs);
                     doctors.add(doctor);
                 }
-                closeResources(rs);
             }
         } catch (SQLException ex) {
             Logger.getLogger(DoctorDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            closeResources(rs);
         }
-
         return doctors;
     }
 
@@ -159,19 +158,19 @@ public class DoctorDAO extends DBContext {
                 + "INNER JOIN JobStatus js ON d.JobStatusID = js.JobStatusID "
                 + "WHERE d.JobStatusID = 1 AND u.RoleID = 4";
 
+        ResultSet rs = executeSelectQuery(sql);
         try {
-            ResultSet rs = executeSelectQuery(sql);
             if (rs != null) {
                 while (rs.next()) {
                     Doctor doctor = createDoctorFromResultSet(rs);
                     doctors.add(doctor);
                 }
-                closeResources(rs);
             }
         } catch (SQLException ex) {
             Logger.getLogger(DoctorDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            closeResources(rs);
         }
-
         return doctors;
     }
 
@@ -226,20 +225,20 @@ public class DoctorDAO extends DBContext {
             paramsList.add(minExperience);
         }
 
+        Object[] params = paramsList.toArray();
+        ResultSet rs = executeSelectQuery(sql.toString(), params);
         try {
-            Object[] params = paramsList.toArray();
-            ResultSet rs = executeSelectQuery(sql.toString(), params);
             if (rs != null) {
                 while (rs.next()) {
                     Doctor doctor = createDoctorFromResultSet(rs);
                     doctors.add(doctor);
                 }
-                closeResources(rs);
             }
         } catch (SQLException ex) {
             Logger.getLogger(DoctorDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            closeResources(rs);
         }
-
         return doctors;
     }
 
@@ -254,8 +253,8 @@ public class DoctorDAO extends DBContext {
 
         String sql = "SELECT SpecialtyID, SpecialtyName FROM Specialty ORDER BY SpecialtyName";
 
+        ResultSet rs = executeSelectQuery(sql);
         try {
-            ResultSet rs = executeSelectQuery(sql);
             if (rs != null) {
                 while (rs.next()) {
                     String[] specialty = new String[2];
@@ -263,12 +262,12 @@ public class DoctorDAO extends DBContext {
                     specialty[1] = rs.getString("SpecialtyName");
                     specialties.add(specialty);
                 }
-                closeResources(rs);
             }
         } catch (SQLException ex) {
             Logger.getLogger(DoctorDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            closeResources(rs);
         }
-
         return specialties;
     }
 
@@ -313,10 +312,9 @@ public class DoctorDAO extends DBContext {
                 + "FROM DoctorDegree dd INNER JOIN Degree d ON dd.DegreeID = d.DegreeID "
                 + "WHERE dd.DoctorID = ? ORDER BY dd.DateEarn DESC";
 
+        Object[] params = {doctorId};
+        ResultSet rs = executeSelectQuery(sql, params);
         try {
-            Object[] params = {doctorId};
-            ResultSet rs = executeSelectQuery(sql, params);
-
             if (rs != null) {
                 while (rs.next()) {
                     DoctorDegree degree = new DoctorDegree();
@@ -328,9 +326,10 @@ public class DoctorDAO extends DBContext {
                     degrees.add(degree);
                 }
             }
-            closeResources(rs);
         } catch (SQLException ex) {
             Logger.getLogger(DoctorDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            closeResources(rs);
         }
         return degrees;
     }
