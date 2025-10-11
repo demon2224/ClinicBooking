@@ -19,9 +19,14 @@ import utils.DBContext;
  */
 public class MedicineTypeDAO extends DBContext {
 
+    /**
+     * Get all record of medicine type.
+     * 
+     * @return a list contain all medicine type
+     */
     public List<MedicineType> getAllMedicineType() {
         String query = "SELECT mt.MedicineTypeID, mt.MedicineTypeName\n"
-                + "FROM [dbo].[MedicineType] mt ";
+                + "FROM [dbo].[MedicineType] mt;";
         ResultSet rs = null;
         List<MedicineType> medicineTypeList = new ArrayList<>();
 

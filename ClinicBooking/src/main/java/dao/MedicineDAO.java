@@ -21,6 +21,11 @@ import utils.DBContext;
  */
 public class MedicineDAO extends DBContext {
 
+    /**
+     * Get all record of all medicines.
+     * 
+     * @return a list contain all medicine information
+     */
     public List<MedicineViewModel> getAllMedicines() {
         String query = "SELECT m.MedicineID, mt.MedicineTypeName, m.MedicineStatus, m.MedicineName, m.MedicineCode, m.Price, m.Quantity, \n"
                 + "		(SELECT TOP 1 subst.DateImport\n"
@@ -59,6 +64,12 @@ public class MedicineDAO extends DBContext {
         return medicineList;
     }
 
+    /**
+     * Get a specific medicine information by medicineId.
+     * 
+     * @param medicineId is the medicine want to get information
+     * @return an object contain information of a medicine
+     */
     public MedicineViewModel getMedicineById(int medicineId) {
         String query = "SELECT m.MedicineID, mt.MedicineTypeName, m.MedicineStatus, m.MedicineName, m.MedicineCode, m.Quantity, m.Price, m.DateCreate, \n"
                 + "             (SELECT TOP 1 subst.DateImport\n"
@@ -99,6 +110,14 @@ public class MedicineDAO extends DBContext {
         return medicine;
     }
 
+    /**
+     * Get all record of all medicine match with user search input.
+     * 
+     * @param medicineType is the type of medicine
+     * @param medicineName is the name of medicine
+     * @param medicineCode is the code of medicine
+     * @return a list contain all medicine match with user search input
+     */
     public List<MedicineViewModel> searchMedicineByTypeNameCode(String medicineType, String medicineName, String medicineCode) {
         String query = "SELECT m.MedicineID, mt.MedicineTypeName, m.MedicineStatus, m.MedicineName, m.MedicineCode, m.Quantity, m.Price, m.DateCreate, \n"
                 + "		(SELECT TOP 1 subst.DateImport\n"
