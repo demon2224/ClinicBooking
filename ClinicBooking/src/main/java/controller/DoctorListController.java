@@ -74,26 +74,19 @@ public class DoctorListController extends HttpServlet {
                     || selectedSpecialtyName != null || minExperience != null;
 
             if (hasSearchCriteria) {
-                // Execute search with criteria - filter only Available doctors
-                // Now using specialty name directly instead of converting to ID
-                doctors = doctorDAO.searchDoctors(searchName, selectedSpecialtyName, 1, minExperience);
+                doctors = doctorDAO.searchDoctors(searchName, selectedSpecialtyName, DoctorListConstants.AVAILABLE_ID, minExperience);
             } else {
-                // No criteria provided - get all available doctors
                 doctors = doctorDAO.getAvailableDoctors();
             }
 
-            // Process doctor avatars - ensure proper image paths
             processDoctorAvatars(doctors);
 
-            // Get all specialties for dropdown filter
             List<String[]> specialties = doctorDAO.getAllSpecialties();
 
-            // Set attributes for JSP
             request.setAttribute("doctors", doctors);
             request.setAttribute("totalDoctors", doctors.size());
             request.setAttribute("specialties", specialties);
 
-            // Maintain search state for form persistence
             request.setAttribute("searchName", searchName);
             request.setAttribute("selectedSpecialty", selectedSpecialtyName);
             request.setAttribute("minExperience", experienceParam);
@@ -124,15 +117,12 @@ public class DoctorListController extends HttpServlet {
             String searchName = request.getParameter("searchName");
             String specialtyName = request.getParameter("specialty");
             String experienceParam = request.getParameter("minExperience");
-
             // Build redirect URL for PRG pattern
             String redirectUrl = buildRedirectUrl(request.getContextPath(), searchName, specialtyName, experienceParam);
-
-            // Execute redirect to GET request (Post-Redirect-Get pattern)
+            // Execute redirect to GET request
             response.sendRedirect(redirectUrl);
-
         } catch (Exception e) {
-            // Fallback: redirect to clean doctor list page on any error
+            // Redirect to clean doctor list page on any error
             response.sendRedirect(request.getContextPath() + DoctorListConstants.DOCTOR_LIST_URL);
         }
     }
@@ -145,7 +135,6 @@ public class DoctorListController extends HttpServlet {
     private void processDoctorAvatars(List<Doctor> doctors) {
         for (Doctor doctor : doctors) {
             String avatar = doctor.getAvatar();
-
             if (avatar != null && !avatar.trim().isEmpty()) {
                 // Ensure avatar has full path if it doesn't already
                 if (!avatar.startsWith(DoctorListConstants.AVATAR_PATH_PREFIX)) {
@@ -172,20 +161,17 @@ public class DoctorListController extends HttpServlet {
             throws IOException {
         StringBuilder url = new StringBuilder(contextPath + DoctorListConstants.DOCTOR_LIST_URL);
         boolean hasParams = false;
-
         // Add search name parameter
         if (searchName != null && !searchName.trim().isEmpty()) {
             url.append("?searchName=").append(URLEncoder.encode(searchName.trim(), DoctorListConstants.URL_ENCODING));
             hasParams = true;
         }
-
         // Add specialty name parameter
         if (specialtyName != null && !specialtyName.trim().isEmpty()) {
             url.append(hasParams ? "&" : "?").append("specialty=")
                     .append(URLEncoder.encode(specialtyName.trim(), DoctorListConstants.URL_ENCODING));
             hasParams = true;
         }
-
         // Add experience parameter (validate first)
         if (experienceParam != null && !experienceParam.trim().isEmpty()) {
             try {
@@ -198,7 +184,6 @@ public class DoctorListController extends HttpServlet {
                 // Skip invalid experience parameter
             }
         }
-
         return url.toString();
     }
 

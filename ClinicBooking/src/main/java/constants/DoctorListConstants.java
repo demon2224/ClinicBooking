@@ -10,6 +10,8 @@ package constants;
  */
 public class DoctorListConstants {
 
+    // Job status id
+    public static final int AVAILABLE_ID = 1;
     // Experience range limits
     public static final int MIN_EXPERIENCE_YEARS = 0;
     public static final int MAX_EXPERIENCE_YEARS = 50;
