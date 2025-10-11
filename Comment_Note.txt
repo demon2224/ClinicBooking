@@ -11,6 +11,7 @@ Ghi nhỏ lại chi tiết những phần mình đã làm
 - test: viết test hoặc sửa test(hiện tại chưa dùng)
 - style: đổi format code, căng lề liên quan đến giao diện code
 - chore: thay đổi ko liên quan đến tính năng như update .gitignore, config, build script, sql
+- docs: thêm comment
 
 (scope): feature mà ảnh hưởng
 
