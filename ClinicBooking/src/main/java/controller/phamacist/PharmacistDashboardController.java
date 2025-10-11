@@ -56,6 +56,7 @@ public class PharmacistDashboardController extends HttpServlet {
     throws ServletException, IOException {
 //        processRequest(request, response);
 
+        // Show the user the pharmacist dashboard.
         request.getRequestDispatcher(PharmacistDashboardConstants.PHARMACIST_DASHBOARD_URL).forward(request, response);
     } 
 
@@ -70,6 +71,9 @@ public class PharmacistDashboardController extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
 //        processRequest(request, response);
+
+        // Redirect to this controller.
+        response.sendRedirect(request.getContextPath() + "/pharmacist-dashboard");
     }
 
     /** 

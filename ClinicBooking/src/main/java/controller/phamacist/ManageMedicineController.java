@@ -29,6 +29,11 @@ public class ManageMedicineController extends HttpServlet {
     private MedicineStockTransactionDAO medicineStockTransactionDAO;
     private MedicineTypeDAO medicineTypeDAO;
 
+    /**
+     * Initialize all the necessary DAO using in this controller.
+     *
+     * @throws ServletException
+     */
     @Override
     public void init() throws ServletException {
         medicineDAO = new MedicineDAO();
@@ -78,51 +83,90 @@ public class ManageMedicineController extends HttpServlet {
 
         String action = request.getParameter("action");
 
+        // Checking if the action is null or not.
+        // If it null or empty then show the user the medicine list.
         if (action == null || action.isBlank()) {
             handleInvalidRequest(request, response);
             return;
         }
 
-        try {
-            if (action.equals("detail")) {
+        // If the action is detail then show the user the detail of specific medicine.
+        if (action.equals("detail")) {
+            try {
+                // Parse the medicineId from string to integer.
+                // If it enable then show the user the detail information of that medicine.
                 int medicineParam = Integer.parseInt(request.getParameter("medicineId"));
                 handleViewMedicineDetailRequest(request, response, medicineParam);
                 return;
-            }
-
-            if (action.equals("search")) {
-                handleSearchRequest(request, response);
+            } catch (NumberFormatException ex) {
+                // If it not enable then show the user the medicine list.
+                handleInvalidRequest(request, response);
                 return;
             }
+        }
 
-            if (action.equals("create")) {
-                handleCreateRequest(request, response);
-                return;
-            }
-        } catch (NumberFormatException ex) {
-            handleInvalidRequest(request, response);
+        // If the action is search then show the user the list of.all medicine that match with user input.
+        if (action.equals("search")) {
+            handleSearchRequest(request, response);
             return;
         }
 
+        // If the action is create then show the user the view when create new medicine.
+        if (action.equals("create")) {
+            handleCreateRequest(request, response);
+            return;
+        }
+
+        // If the action is not all of above then show the user the medicine list.
         handleInvalidRequest(request, response);
     }
 
+    /**
+     * Handle the request of user when they want to create new medicine.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
     private void handleCreateRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String typeParam = request.getParameter("type");
+
+        // Check if the type param is a medicine or not.
+        // If yes then show user the create new medicine view.
         if (typeParam.equals("medicine")) {
+
+            // Get all the medicine type from database.
             List<MedicineType> medicineTypeList = medicineTypeDAO.getAllMedicineType();
             request.setAttribute("medicineTypeList", medicineTypeList);
+
+            // Show user the view when create new medicine.
             request.getRequestDispatcher("/WEB-INF/pharmacist/CreateMedicine.jsp").forward(request, response);
+
+            // If the type param is not medicine then show user the medicine list.
         } else {
             handleInvalidRequest(request, response);
         }
     }
 
+    /**
+     * Handle when user search for a specific medicine.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
     private void handleSearchRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String searchParam = request.getParameter("search");
         List<MedicineViewModel> medicineList = null;
+
+        // Check if the search input is null or not.
+        // If it is yes then show user the medicine list.
         if (searchParam == null || searchParam.trim().isEmpty()) {
             medicineList = medicineDAO.getAllMedicines();
+
+            // If it is not then get all the medicine with type, name, code match with user search and show them.
         } else {
             medicineList = medicineDAO.searchMedicineByTypeNameCode(searchParam.trim(), searchParam.trim(), searchParam.trim());
         }
@@ -130,6 +174,15 @@ public class ManageMedicineController extends HttpServlet {
         request.getRequestDispatcher("/WEB-INF/pharmacist/MedicineList.jsp").forward(request, response);
     }
 
+    /**
+     * Handle when user want to view detail of a specific medicine.
+     * 
+     * @param request servlet request
+     * @param response servlet response
+     * @param medicineParam medicine id want to view detail information
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
     private void handleViewMedicineDetailRequest(HttpServletRequest request, HttpServletResponse response, int medicineParam) throws ServletException, IOException {
         MedicineViewModel medicine = medicineDAO.getMedicineById(medicineParam);
         List<MedicineStockTransaction> medicineStockTransactionList = medicineStockTransactionDAO.getMedicineStockTransactionByMedicineId(medicineParam);
@@ -138,6 +191,15 @@ public class ManageMedicineController extends HttpServlet {
         request.getRequestDispatcher("/WEB-INF/pharmacist/MedicineDetail.jsp").forward(request, response);
     }
 
+    /**
+     * Handle when the user request is invalid or an error occur.
+     * Show the user medicine list.
+     * 
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
     private void handleInvalidRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         List<MedicineViewModel> medicineList = medicineDAO.getAllMedicines();
         request.setAttribute("medicineList", medicineList);
@@ -166,6 +228,14 @@ public class ManageMedicineController extends HttpServlet {
         response.sendRedirect("/manage-medicine");
     }
 
+    /**
+     * Handle when user want to create new medicine.
+     * 
+     * STILL IN PROCESS
+     * 
+     * @param request
+     * @param response 
+     */
     private void handleCreateResponse(HttpServletRequest request, HttpServletResponse response) {
         String medicineNameParam = request.getParameter("medicineName");
         String medicineCodeParam = request.getParameter("medicineCode");
@@ -177,7 +247,15 @@ public class ManageMedicineController extends HttpServlet {
 
     }
 
-    private void handleCheckMedicineName(HttpServletRequest request) {
+    /**
+     * Check the medicine name is valid or not.
+     * If it invalid then show the error of it.
+     * 
+     * STILL IN PROCESS
+     * 
+     * @param request 
+     */
+    private void checkMedicineName(HttpServletRequest request) {
         String medicineNameParam = request.getParameter("medicineName");
 
         if (CreateNewMedicineValidate.isValidMedicineName(medicineNameParam)) {
