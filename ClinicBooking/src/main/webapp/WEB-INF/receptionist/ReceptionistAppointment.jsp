@@ -78,7 +78,7 @@
         <div class="main-content">
             <nav class="navbar navbar-light">
                 <div class="container-fluid">
-                    <form class="d-flex w-50" method="get" action="${pageContext.request.contextPath}/receptionist-dashboard">
+                    <form class="d-flex w-50" method="get" action="${pageContext.request.contextPath}/receptionist-manage-appointment">
                         <input class="form-control me-2" type="search" name="searchQuery" placeholder="Search here" value="${param.searchQuery}">
                         <button class="btn btn-outline-primary" type="submit">
                             <i class="fa-solid fa-magnifying-glass"></i>
