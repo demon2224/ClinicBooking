@@ -5,6 +5,7 @@
 package model;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 /**
  *
@@ -99,6 +100,11 @@ public class Medicine {
         this.dateCreated = dateCreated;
     }
     
-    
+    public String getDateCreateFormatDate() {
+        if (this.dateCreated == null) {
+            return "";
+        }
+        return this.dateCreated.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"));
+    }
     
 }
