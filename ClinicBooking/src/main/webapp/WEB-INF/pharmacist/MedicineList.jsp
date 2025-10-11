@@ -136,7 +136,7 @@
                                         <td>${med.quantity}</td>
                                         <td><fmt:formatNumber value="${med.price}" type="currency" currencySymbol="$" /></td>
                                         <td>${med.lastStockTransactionFormatDate}</td>
-                                        <td><a class="btn btn-submit bg-warning" href="${pageContext.request.contextPath}/manage-medicine?action=detail&medicineId=${med.medicineId}">View</a></td>
+                                        <td><a class="btn btn-submit bg-warning" href="${pageContext.request.contextPath}/manage-medicine?action=detail&medicineId=${med.medicineId}">View Detail</a></td>
                                     </tr>
                                 </c:forEach>
                             </tbody>
