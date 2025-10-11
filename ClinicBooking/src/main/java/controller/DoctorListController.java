@@ -99,7 +99,7 @@ public class DoctorListController extends HttpServlet {
             request.setAttribute("minExperience", experienceParam);
 
         } catch (Exception e) {
-            request.setAttribute("errorMessage", DoctorListConstants.ERROR_LOADING_DOCTORS + e.getMessage());
+            request.setAttribute("errorMessage", DoctorListConstants.ERROR_LOADING_DOCTORS_MSG + e.getMessage());
             e.printStackTrace();
         }
 

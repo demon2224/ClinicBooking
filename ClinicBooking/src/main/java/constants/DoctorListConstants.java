@@ -25,5 +25,5 @@ public class DoctorListConstants {
 
     // Encoding and error message
     public static final String URL_ENCODING = "UTF-8";
-    public static final String ERROR_LOADING_DOCTORS = "Error loading doctor list: ";
+    public static final String ERROR_LOADING_DOCTORS_MSG = "Error loading doctor list: ";
 }
