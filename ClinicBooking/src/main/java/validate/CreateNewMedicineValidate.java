@@ -23,23 +23,52 @@ public class CreateNewMedicineValidate {
     public static final int MIN_MEDICINE_NAME_LENGTH = 0;
     public static final int MEDICINE_CODE_LENGTH = 6;
     public static final int MIN_MEDICINE_QUANTITY = 0;
-    public static final int MIN_MEDICINE_PRICE = 0;
+    public static final double MIN_MEDICINE_PRICE = 0;
 
     public static final int AVAILABLE_MEDICINE_STATUS = 1;
     public static final int UNAVAILABLE_MEDICINE_STATUS = 0;
 
+    /**
+     * Check the name of medicine is valid or not. Valid medicine name is only
+     * contains character or white space.
+     *
+     * @param medicineName is the name of medicine
+     * @return True if medicine name is valid. False if it is invalid
+     */
     public static boolean isValidMedicineName(String medicineName) {
         return medicineName.matches(MEDICINE_NAME_REGEX);
     }
 
+    /**
+     * Check the code of medicine is valid or not. Valid medicine code is first
+     * 3 letters is character, last 3 letters is number.
+     *
+     * @param medicineCode is the code of medicine
+     * @return True if medicine code is valid. False if it is invalid
+     */
     public static boolean isValidMedicineCode(String medicineCode) {
         return medicineCode.matches(MEDICINE_CODE_REGEX);
     }
 
+    /**
+     * Check the length of medicine code is valid or not. Valid medicine code is
+     * length = 6.
+     *
+     * @param medicineCode is the code of medicine
+     * @return True if medicine code is valid. False if it is invalid
+     */
     public static boolean isValidMedicineCodeLength(String medicineCode) {
         return medicineCode.length() != MEDICINE_CODE_LENGTH;
     }
 
+    /**
+     * Check the type of medicine is valid or not. Valid medicine type is all
+     * the exist medicine type exist in the database.
+     *
+     * @param medicineType is the type of medicine
+     * @param medicineTypeList is the list contain all the medicine type
+     * @return True if medicine type is valid. False if it is invalid
+     */
     public static boolean isValidMedicineType(String medicineType, List<MedicineType> medicineTypeList) {
         for (MedicineType medicineTypeName : medicineTypeList) {
             if (medicineTypeName.equals(medicineType)) {
@@ -50,10 +79,24 @@ public class CreateNewMedicineValidate {
         return false;
     }
 
+    /**
+     * Check the quantity of medicine is valid or not. Valid medicine quantity
+     * can not be negative.
+     *
+     * @param quantity is the quantity of medicine
+     * @return True if medicine quantity is valid. False if it is invalid
+     */
     public static boolean isValidMedicineQuantity(int quantity) {
         return quantity > MIN_MEDICINE_QUANTITY;
     }
 
+    /**
+     * Check the quantity of medicine is valid or not. Valid medicine quantity
+     * can not be empty or contain character.
+     *
+     * @param medicineQuantity is the quantity of medicine
+     * @return True if medicine quantity is valid. False if it is invalid
+     */
     public static boolean isValidMedicneQuantityNumber(String medicineQuantity) {
         int quantity;
         try {
@@ -68,10 +111,24 @@ public class CreateNewMedicineValidate {
         return isValidMedicineQuantity(quantity);
     }
 
-    public static boolean isValidMedicinePrice(int price) {
+    /**
+     * Check the price of medicine is valid or not. Valid medicine price can not
+     * be negative.
+     *
+     * @param price is the price of medicine
+     * @return True if medicine price is valid. False if it is invalid
+     */
+    public static boolean isValidMedicinePrice(double price) {
         return price > MIN_MEDICINE_PRICE;
     }
 
+    /**
+     * Check the price of medicine is valid or not. Valid medicine price can not
+     * be empty or contain character.
+     *
+     * @param medicinePrice is the price of medicine
+     * @return True if medicine price is valid. False if it is invalid
+     */
     public static boolean isValidMedicinePriceNumber(String medicinePrice) {
         int price;
         try {
@@ -86,6 +143,13 @@ public class CreateNewMedicineValidate {
         return isValidMedicinePrice(price);
     }
 
+    /**
+     * Check the expiry date of medicine is valid or not. Valid expiry date must
+     * be a valid date with format "yyyy-MM-dd" and can not be later than now.
+     *
+     * @param dateStr is the expiry date of medicine
+     * @return True if medicine expiry date is valid. False if it is invalid
+     */
     public static boolean isValidExpiryDate(String dateStr) {
         try {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMAT);
@@ -98,6 +162,13 @@ public class CreateNewMedicineValidate {
         }
     }
 
+    /**
+     * Check if the status of medicine is valid or not. Valid medicine status
+     * can not be anything else except 0 (unavailable) or 1 (available).
+     *
+     * @param status is the status of medicine
+     * @return True if medicine status is valid. False if it is invalid
+     */
     public static boolean isValidMedicineStatus(String status) {
         try {
             int statusValue = Integer.parseInt(status);
@@ -106,5 +177,5 @@ public class CreateNewMedicineValidate {
             return false;
         }
     }
-    
+
 }
