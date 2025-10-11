@@ -90,6 +90,11 @@ public class ManageMedicineController extends HttpServlet {
                 return;
             }
 
+            if (action.equals("search")) {
+                handleSearchRequest(request, response);
+                return;
+            }
+
             if (action.equals("create")) {
                 handleCreateRequest(request, response);
                 return;
@@ -111,6 +116,18 @@ public class ManageMedicineController extends HttpServlet {
         } else {
             handleInvalidRequest(request, response);
         }
+    }
+
+    private void handleSearchRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String searchParam = request.getParameter("search");
+        List<MedicineViewModel> medicineList = null;
+        if (searchParam == null || searchParam.trim().isEmpty()) {
+            medicineList = medicineDAO.getAllMedicines();
+        } else {
+            medicineList = medicineDAO.searchMedicineByTypeNameCode(searchParam.trim(), searchParam.trim(), searchParam.trim());
+        }
+        request.setAttribute("medicineList", medicineList);
+        request.getRequestDispatcher("/WEB-INF/pharmacist/MedicineList.jsp").forward(request, response);
     }
 
     private void handleViewMedicineDetailRequest(HttpServletRequest request, HttpServletResponse response, int medicineParam) throws ServletException, IOException {
@@ -157,15 +174,14 @@ public class ManageMedicineController extends HttpServlet {
         String priceParam = request.getParameter("price");
         String dateExpireParam = request.getParameter("dateExpire");
         String medicineStatusParam = request.getParameter("medicineStatus");
-        
-        
+
     }
-    
+
     private void handleCheckMedicineName(HttpServletRequest request) {
         String medicineNameParam = request.getParameter("medicineName");
-        
+
         if (CreateNewMedicineValidate.isValidMedicineName(medicineNameParam)) {
-            
+
         }
     }
 

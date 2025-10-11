@@ -74,9 +74,12 @@
         <div class="main-content">
             <nav class="navbar navbar-light">
                 <div class="container-fluid">
-                    <form class="d-flex w-50">
-                        <input class="form-control me-2" type="search" placeholder="Search here">
-                        <button class="btn btn-outline-primary" type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
+                    <form class="d-flex w-50" action="${pageContext.request.contextPath}/manage-medicine" method="GET">
+                        <input type="hidden" name="action" value="search">
+                        <input class="form-control me-2" type="search" placeholder="Search here" name="search" value="${param.search}">
+                        <button class="btn btn-outline-primary" type="submit">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                        </button>
                     </form>
                     <div>
                         <button class="btn btn-submit" id="Logout" type="submit">Logout</button>
