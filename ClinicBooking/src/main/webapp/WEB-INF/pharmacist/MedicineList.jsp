@@ -1,16 +1,17 @@
 <%-- 
-    Document   : PharmacistDashboard
-    Created on : Oct 10, 2025, 1:47:38 PM
+    Document   : medicine
+    Created on : Oct 10, 2025, 3:41:23 PM
     Author     : Vu Minh Khang - CE191371
 --%>
 
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <!DOCTYPE html>
 <html lang="en">
     <head>
         <meta charset="UTF-8">
-        <title>Pharmacist Dashboard</title>
+        <title>Doctor Dashboard</title>
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assests/css/bootstrap.min.css">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assests/css/all.min.css" />
         <style>
@@ -86,35 +87,52 @@
             <div class="container-fluid mt-4">
                 <div class="card mb-4">
                     <div class="card-header bg-white">
-                        <h5 class="mb-0">My Patient Appointment List</h5>
+                        <h5 class="mb-0">Medicine List</h5>
                     </div>
                     <div class="card-body">
                         <table class="table align-middle">
                             <thead>
                                 <tr>
-                                    <th>Name</th>
-                                    <th>Email</th>
-                                    <th>Phone</th>
-                                    <th>Date</th>
-                                    <th>Note</th>
+                                    <th>#</th>
+                                    <th>Type</th>
                                     <th>Status</th>
+                                    <th>Name</th>
+                                    <th>Code</th>
+                                    <th>Quantity</th>
+                                    <th>Price Per Unit</th>
+                                    <th>Last Import</th>
+                                    <th>Detail</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>Place Holder</td>
-                                    <td>Place Holder</td>
-                                    <td>Place Holder</td>
-                                    <td>Place Holder</td>
-                                    <td>Place Holder</td>
-                                    <td>Place Holder</td>
-                                </tr>
-
+                                <c:forEach items="${requestScope.medicineList}" var="med" varStatus="item">
+                                    <tr>
+                                        <td>${item.count}</td>
+                                        <td>${med.medicineType}</td>
+                                        <c:choose>
+                                            <c:when test="${med.medicineStatus}">
+                                                <td>
+                                                    <span class="badge bg-success text-white">Available</span>
+                                                </td>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <td>
+                                                    <span class="badge bg-danger text-white">Unavailable</span>
+                                                </td>
+                                            </c:otherwise>
+                                        </c:choose>
+                                        <td>${med.medicineName}</td>
+                                        <td>${med.medicineCode}</td>
+                                        <td>${med.quantity}</td>
+                                        <td><fmt:formatNumber value="${med.price}" type="currency" currencySymbol="$" /></td>
+                                        <td>${med.lastStockTransactionFormatDate}</td>
+                                        <td><a class="btn btn-submit bg-warning" href="${pageContext.request.contextPath}/manage-medicine?action=detail&medicineId=${med.medicineId}">View</a></td>
+                                    </tr>
+                                </c:forEach>
                             </tbody>
                         </table>
                     </div>
                 </div>
-
             </div>
         </div>
     </body>
