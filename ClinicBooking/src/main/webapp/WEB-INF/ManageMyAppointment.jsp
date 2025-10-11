@@ -22,25 +22,39 @@
         <link href="${pageContext.request.contextPath}/assests/css/main.css" rel="stylesheet" type="text/css"/>
 
         <style>
+            /* Force clear browser cache */
+            * {
+                box-sizing: border-box;
+            }
+
             body {
-                margin: 0;
+                margin: 0 !important;
                 font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-                padding-top: 80px; /* Space for fixed header */
-                background-color: #f8fafc;
+                padding-top: 80px !important; /* Space for fixed header */
+                background-color: #f8fafc !important;
+                overflow-x: hidden !important;
             }
 
             .main-content {
-                padding: 2rem;
-                max-width: 1200px;
-                margin: 0 auto;
+                padding: 2rem !important;
+                max-width: 1200px !important;
+                margin: 0 auto !important;
+                min-height: calc(100vh - 80px) !important;
+                position: relative !important;
+                z-index: 1 !important;
+                display: flex !important;
+                flex-direction: column !important;
             }
 
             .page-header {
-                background: white;
-                padding: 2rem;
-                border-radius: 0.5rem;
-                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-                margin-bottom: 2rem;
+                background: white !important;
+                padding: 2rem !important;
+                border-radius: 0.5rem !important;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+                margin-bottom: 0 !important;
+                position: relative !important;
+                z-index: 5 !important;
+                order: 1 !important;
             }
 
             .page-header h1 {
@@ -57,19 +71,26 @@
             }
 
             .appointments-section {
-                background: white;
-                border-radius: 0.5rem;
-                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-                overflow: hidden;
+                background: white !important;
+                border-radius: 0.5rem !important;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+                overflow: hidden !important;
+                position: relative !important;
+                z-index: 1 !important;
+                margin-top: 0 !important;
+                clear: both !important;
+                order: 3 !important;
             }
 
             .section-header {
-                background: #175CDD;
-                color: white;
+                background: white !important;
+                color: #175CDD !important;
                 padding: 1.5rem 2rem;
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
+                border-bottom: 1px solid #e2e8f0 !important;
+                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
             }
 
             .section-header h2 {
@@ -280,26 +301,35 @@
 
             /* Search and Filter Styles */
             .search-filter-section {
-                background: white;
-                border-radius: 0.5rem;
-                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-                margin-bottom: 2rem;
-                overflow: hidden;
+                background: white !important;
+                border-radius: 0.5rem !important;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+                margin-bottom: 0 !important;
+                overflow: visible !important;
+                position: relative !important;
+                z-index: 999 !important;
+                clear: both !important;
+                margin-top: 0 !important;
+                order: 2 !important;
             }
 
             .search-filter-content {
-                padding: 1.5rem 2rem;
+                padding: 1.5rem 2rem !important;
+                position: relative !important;
             }
 
             .search-form {
-                width: 100%;
+                width: 100% !important;
+                position: relative !important;
             }
 
             .search-row {
-                display: flex;
-                gap: 1rem;
-                align-items: center;
-                flex-wrap: nowrap;
+                display: flex !important;
+                gap: 1rem !important;
+                align-items: center !important;
+                flex-wrap: nowrap !important;
+                position: relative !important;
+                z-index: 100 !important;
             }
 
             .search-input-group {
@@ -387,6 +417,24 @@
 
             /* Responsive Design */
             @media (max-width: 768px) {
+                .main-content {
+                    padding: 1rem;
+                }
+
+                .page-header {
+                    padding: 1.5rem;
+                    margin-bottom: 1.5rem;
+                }
+
+                .search-filter-section {
+                    margin-bottom: 1.5rem;
+                    border-radius: 0.375rem;
+                }
+
+                .search-filter-content {
+                    padding: 1rem;
+                }
+
                 .search-row {
                     flex-direction: column;
                     gap: 1rem;
@@ -405,6 +453,30 @@
                 .btn-search, .btn-clear {
                     width: 100%;
                     justify-content: center;
+                    margin-top: 0.5rem;
+                }
+            }
+
+            @media (max-width: 480px) {
+                .main-content {
+                    padding: 0.5rem;
+                }
+
+                .page-header {
+                    padding: 1rem;
+                    margin-bottom: 1rem;
+                }
+
+                .page-header h1 {
+                    font-size: 1.5rem;
+                }
+
+                .search-filter-content {
+                    padding: 0.75rem;
+                }
+
+                .search-input, .filter-select {
+                    font-size: 16px; /* Prevent zoom on iOS */
                 }
             }
 
@@ -432,8 +504,8 @@
 
             /* Status Colors */
             .status-approved {
-                background: #dcfce7;
-                color: #166534;
+                background: #dbeafe;
+                color: #1e40af;
             }
 
             .status-pending {
@@ -447,8 +519,8 @@
             }
 
             .status-completed {
-                background: #dbeafe;
-                color: #1e40af;
+                background: #dcfce7;
+                color: #166534;
             }
 
             @media (max-width: 768px) {
@@ -538,12 +610,8 @@
             <div class="page-header">
                 <h1><i class="fas fa-calendar-check"></i> Manage My Appointments</h1>
                 <p>View and manage your appointments</p>
-                <c:if test="${not empty userName}">
-                    <p class="text-muted">Welcome, ${user.fullName}</p>
-                </c:if>
-                <c:if test="${not empty appointments}">
-                    <p class="text-muted">You have ${appointments.size()} appointments</p>
-                </c:if>
+                <p class="text-muted">Welcome, ${user.fullName}</p>
+                <p class="text-muted">You have ${appointments.size()} appointments</p>
             </div>
 
             <!-- Message Display -->
@@ -564,34 +632,41 @@
             <!-- Search and Filter Section -->
             <div class="search-filter-section">
                 <div class="search-filter-content">
-                    <form method="GET" action="${pageContext.request.contextPath}/manage-my-appointments" class="search-form">
+                    <form method="GET"
+                          action="${pageContext.request.contextPath}/manage-my-appointments"
+                          class="search-form">
+
                         <div class="search-row">
                             <!-- Search Input -->
                             <div class="search-input-group">
                                 <i class="fas fa-search"></i>
-                                <input type="text" name="search" placeholder="Search for Doctors by name..."
-                                       value="${searchQuery}" class="search-input">
+                                <input type="text"
+                                       name="search"
+                                       placeholder="Search for doctors by name..."
+                                       value="${searchQuery}"
+                                       class="search-input" />
                             </div>
+
                             <!-- Search Button -->
                             <button type="submit" class="btn-search">
-                                <i class="fas fa-search"></i> Search
+                                <i class="fas fa-search"></i>
+                                Search
                             </button>
 
                             <!-- Clear Button -->
-                            <a href="${pageContext.request.contextPath}/manage-my-appointments" class="btn-clear">
-                                <i class="fas fa-times"></i> Clear
+                            <a href="${pageContext.request.contextPath}/manage-my-appointments"
+                               class="btn-clear">
+                                <i class="fas fa-times"></i>
+                                Clear
                             </a>
                         </div>
                     </form>
                 </div>
             </div>
 
+
             <!-- Appointments Section -->
             <div class="appointments-section">
-                <div class="section-header">
-                    <h2>My Appointments</h2>
-                </div>
-
                 <div class="appointments-content">
                     <c:choose>
                         <c:when test="${empty appointments}">
@@ -600,10 +675,6 @@
                                 <i class="fas fa-calendar-times"></i>
                                 <h3>No Appointments Found</h3>
                                 <p>You don't have any appointments scheduled yet.</p>
-                                <a href="#" class="btn-new-appointment" style="margin-top: 1rem;">
-                                    <i class="fas fa-plus"></i>
-                                    Book Your First Appointment
-                                </a>
                             </div>
                         </c:when>
                         <c:otherwise>
