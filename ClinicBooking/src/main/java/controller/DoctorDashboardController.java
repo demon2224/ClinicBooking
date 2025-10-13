@@ -77,7 +77,7 @@ public class DoctorDashboardController extends HttpServlet {
     request.setAttribute("myPatientAppointmentList", appointmentList);
     request.setAttribute("myPatientMedicalRecordList", medicalRecordList);
     request.setAttribute("myPatientPrescriptionList", prescriptionList);
-    request.getRequestDispatcher("/WEB-INF/DoctorDashboard.jsp").forward(request, response);
+    request.getRequestDispatcher("/WEB-INF/doctor/DoctorDashboard.jsp").forward(request, response);
     }
 
     /**
