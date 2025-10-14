@@ -83,15 +83,6 @@
                     <form class="d-flex w-75" action="${pageContext.request.contextPath}/manage-my-patient-appointment" method="get">
                         <input class="form-control me-2" type="text" name="keyword" 
                                placeholder="Search by patient name..." value="${param.keyword}">
-
-                        <select class="form-select me-2" name="status">
-                            <option value="">All Status</option>
-                            <option value="Pending" ${param.status == 'Pending' ? 'selected' : ''}>Pending</option>
-                            <option value="Approved" ${param.status == 'Approved' ? 'selected' : ''}>Approved</option>
-                            <option value="Completed" ${param.status == 'Completed' ? 'selected' : ''}>Completed</option>
-                            <option value="Canceled" ${param.status == 'Canceled' ? 'selected' : ''}>Canceled</option>
-                        </select>
-
                         <button class="btn btn-outline-primary" type="submit">
                             <i class="fa-solid fa-magnifying-glass"></i> Search
                         </button>

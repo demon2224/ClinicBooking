@@ -222,7 +222,7 @@ public class AppointmentDAO extends DBContext {
     }
 
     /**
-     * Get appointment info with doctor and patient info to view 
+     * Get appointment info with doctor and patient info to view
      */
     public Appointment getAppointmentByIdFull(int appointmentId) {
         String sql = "SELECT "
@@ -459,9 +459,8 @@ public class AppointmentDAO extends DBContext {
         }
         return appointment;
     }
-    
 
-    public List<Appointment> searchAppointmentsByDoctor(int doctorId, String keyword, String status) {
+    public List<Appointment> searchAppointmentsByDoctor(int doctorId, String keyword) {
         List<Appointment> list = new ArrayList<>();
 
         String sql = "SELECT \n"
@@ -483,9 +482,6 @@ public class AppointmentDAO extends DBContext {
         if (keyword != null && !keyword.trim().isEmpty()) {
             sql += "AND (p.FirstName + ' ' + p.LastName LIKE ?) ";
         }
-        if (status != null && !status.trim().isEmpty()) {
-            sql += "AND ast.AppointmentStatusName = ? ";
-        }
 
         sql += "ORDER BY a.DateBegin DESC";
 
@@ -496,10 +492,6 @@ public class AppointmentDAO extends DBContext {
             if (keyword != null && !keyword.trim().isEmpty()) {
                 paramsList.add("%" + keyword.trim() + "%");
             }
-            if (status != null && !status.trim().isEmpty()) {
-                paramsList.add(status.trim());
-            }
-
             Object[] params = paramsList.toArray();
 
             ResultSet rs = executeSelectQuery(sql, params);
@@ -526,9 +518,9 @@ public class AppointmentDAO extends DBContext {
     }
 
     /**
-     * Add appointment if user(patient) already have account get the list patient, ìf not
-     * create user by phone number
-     * 
+     * Add appointment if user(patient) already have account get the list
+     * patient, ìf not create user by phone number
+     *
      */
     public boolean addAppointment(String existingPatientIdStr, String fullName, String phone,
             boolean gender, int doctorId, String note) {
@@ -546,7 +538,7 @@ public class AppointmentDAO extends DBContext {
 
             int userId = 0;
 
-            // Choose user already have account 
+            // Choose user already have account
             if (existingPatientIdStr != null && !existingPatientIdStr.isEmpty()) {
                 userId = Integer.parseInt(existingPatientIdStr);
             } else {
@@ -653,6 +645,7 @@ public class AppointmentDAO extends DBContext {
             }
         }
     }
+
     /**
      * Cancel appointment by setting status to Canceled (status ID = 4) Only if
      * current status is Pending or Approved(status ID = 1 and 2)
@@ -677,6 +670,7 @@ public class AppointmentDAO extends DBContext {
             closeResources(null);
         }
     }
+
     /**
      * Update appointment by setting status to Approved (status ID = 2) Only if
      * current status is Pending(status ID)
@@ -685,7 +679,7 @@ public class AppointmentDAO extends DBContext {
     public boolean approvedStatusAppointment(int appointmentId) {
         String sql = "UPDATE Appointment "
                 + "SET AppointmentStatusID = 2 "
-                + "WHERE AppointmentID = ? AND AppointmentStatusID = 1"; 
+                + "WHERE AppointmentID = ? AND AppointmentStatusID = 1";
         Connection conn = null;
         PreparedStatement stmt = null;
 

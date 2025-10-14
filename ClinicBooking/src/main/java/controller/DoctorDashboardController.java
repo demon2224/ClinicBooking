@@ -24,8 +24,6 @@ import model.Prescription;
  */
 public class DoctorDashboardController extends HttpServlet {
 
-    
-    
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -65,19 +63,19 @@ public class DoctorDashboardController extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 //        processRequest(request, response);
-          int doctorID = 7;
-    AppointmentDAO appointmentDAO = new AppointmentDAO();  
-    MedicalRecordDAO medicalRecordDAO = new MedicalRecordDAO();
-    PrescriptionDAO prescriptionDAO = new PrescriptionDAO();
-    
-    List<MedicalRecord> medicalRecordList = medicalRecordDAO.getPatientMedicalRecordByDoctorId(doctorID);
-    List<Appointment> appointmentList = appointmentDAO.getAppointmentsByDoctorId(doctorID);
-    List<Prescription> prescriptionList = prescriptionDAO.getPatientPrescriptionByDoctorId(doctorID);
-    
-    request.setAttribute("myPatientAppointmentList", appointmentList);
-    request.setAttribute("myPatientMedicalRecordList", medicalRecordList);
-    request.setAttribute("myPatientPrescriptionList", prescriptionList);
-    request.getRequestDispatcher("/WEB-INF/doctor/DoctorDashboard.jsp").forward(request, response);
+        int doctorID = 7;
+        AppointmentDAO appointmentDAO = new AppointmentDAO();
+        MedicalRecordDAO medicalRecordDAO = new MedicalRecordDAO();
+        PrescriptionDAO prescriptionDAO = new PrescriptionDAO();
+
+        List<MedicalRecord> medicalRecordList = medicalRecordDAO.getPatientMedicalRecordByDoctorId(doctorID);
+        List<Appointment> appointmentList = appointmentDAO.getAppointmentsByDoctorId(doctorID);
+        List<Prescription> prescriptionList = prescriptionDAO.getPatientPrescriptionByDoctorId(doctorID);
+
+        request.setAttribute("myPatientAppointmentList", appointmentList);
+        request.setAttribute("myPatientMedicalRecordList", medicalRecordList);
+        request.setAttribute("myPatientPrescriptionList", prescriptionList);
+        request.getRequestDispatcher("/WEB-INF/doctor/DoctorDashboard.jsp").forward(request, response);
     }
 
     /**

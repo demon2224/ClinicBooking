@@ -61,13 +61,11 @@ public class ManageMyPatientAppointmentController extends HttpServlet {
 //        processRequest(request, response);
         int doctorID = 7;
         String keyword = request.getParameter("keyword");
-        String status = request.getParameter("status");
         AppointmentDAO appointmentDAO = new AppointmentDAO();
         List<Appointment> list;
 
-        if ((keyword != null && !keyword.trim().isEmpty())
-                || (status != null && !status.trim().isEmpty())) {
-            list = appointmentDAO.searchAppointmentsByDoctor(doctorID, keyword, status);
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            list = appointmentDAO.searchAppointmentsByDoctor(doctorID, keyword);
         } else {
             list = appointmentDAO.getAllAppointmentsByDoctorId(doctorID);
         }
