@@ -14,10 +14,10 @@ import dao.DoctorDAO;
 import model.Doctor;
 import java.net.URLEncoder;
 import java.util.List;
+import utils.AvatarHandler;
 
 /**
- * Controller for Doctor List page Handles search and filter functionality for
- * doctors
+ * Controller for Doctor List page Handles search and filter functionality for doctors
  * Implements PRG (Post-Redirect-Get) pattern for form submissions
  *
  * @author Nguyen Minh Khang - CE190728
@@ -29,10 +29,10 @@ public class DoctorListController extends HttpServlet {
     /**
      * Handles the HTTP <code>GET</code> method.
      *
-     * @param request  servlet request
+     * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException      if an I/O error occurs
+     * @throws IOException if an I/O error occurs
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -51,8 +51,8 @@ public class DoctorListController extends HttpServlet {
             } else {
                 doctors = doctorDAO.getAvailableDoctors();
             }
-
-            processDoctorAvatars(doctors);
+            // Process single doctor avatar using AvatarHandler
+            AvatarHandler.processDoctorAvatars(doctors);
 
             request.setAttribute("doctors", doctors);
             request.setAttribute("totalDoctors", doctors.size());
@@ -67,14 +67,13 @@ public class DoctorListController extends HttpServlet {
     }
 
     /**
-     * Handles the HTTP <code>POST</code> method. Process search form and redirect
-     * to
+     * Handles the HTTP <code>POST</code> method. Process search form and redirect to
      * prevent form resubmission.
      *
-     * @param request  servlet request
+     * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException      if an I/O error occurs
+     * @throws IOException if an I/O error occurs
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -94,30 +93,10 @@ public class DoctorListController extends HttpServlet {
     }
 
     /**
-     * Process doctor avatar paths to ensure proper image display
-     *
-     * @param doctors List of doctors to process
-     */
-    private void processDoctorAvatars(List<Doctor> doctors) {
-        for (Doctor doctor : doctors) {
-            String avatar = doctor.getAvatar();
-            if (avatar != null && !avatar.trim().isEmpty()) {
-                // Ensure avatar has full path if it doesn't already
-                if (!avatar.startsWith(DoctorListConstants.AVATAR_PATH_PREFIX)) {
-                    doctor.setAvatar(DoctorListConstants.AVATAR_BASE_PATH + avatar);
-                }
-            } else {
-                // Set default avatar for doctors without image
-                doctor.setAvatar(DoctorListConstants.DEFAULT_AVATAR);
-            }
-        }
-    }
-
-    /**
      * Build redirect URL with search parameters for POST-Redirect-GET pattern
      *
      * @param contextPath Application context path
-     * @param searchName  Doctor name search term
+     * @param searchName Doctor name search term
      * @return Complete redirect URL with parameters
      * @throws IOException if URL encoding fails
      */

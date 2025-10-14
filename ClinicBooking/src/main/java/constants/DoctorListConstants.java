@@ -12,10 +12,7 @@ public class DoctorListConstants {
 
     // Job status id
     public static final int AVAILABLE_ID = 1;
-    // Avatar path configuration
-    public static final String DEFAULT_AVATAR = "assests/img/0.png";
-    public static final String AVATAR_BASE_PATH = "assests/img/";
-    public static final String AVATAR_PATH_PREFIX = "assests/";
+
     // JSP and URL constants
     public static final String DOCTOR_LIST_JSP = "/WEB-INF/DoctorList.jsp";
     public static final String DOCTOR_DETAIL_JSP = "/WEB-INF/DoctorDetail.jsp";

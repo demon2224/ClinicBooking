@@ -17,6 +17,7 @@ import java.util.List;
 import model.Doctor;
 import model.DoctorDegree;
 import model.DoctorReview;
+import utils.AvatarHandler;
 
 /**
  * Controller for Doctor Detail page
@@ -81,7 +82,7 @@ public class DoctorDetailController extends HttpServlet {
                 return;
             }
             // Process the doctor's avatar
-            processAvatar(doctor);
+            AvatarHandler.processSingleDoctorAvatar(doctor);
             // Retrieve all academic degrees of the doctor
             List<DoctorDegree> degrees = doctorDAO.getDoctorDegrees(doctorId);
             // Get doctor reviews data
@@ -127,25 +128,6 @@ public class DoctorDetailController extends HttpServlet {
         }
         // Redirect the response to the constructed URL
         response.sendRedirect(redirectUrl);
-    }
-
-    /**
-     * Processes the doctor's avatar: - If the avatar is valid but lacks the correct path
-     * prefix, it adds the base path. - If the avatar is null or empty, it sets the
-     * default avatar.
-     *
-     * @param doctor the Doctor object whose avatar is being processed
-     */
-    private void processAvatar(Doctor doctor) {
-        String avatar = doctor.getAvatar();
-
-        if (avatar != null && !avatar.isEmpty()) {
-            if (!avatar.startsWith(DoctorListConstants.AVATAR_PATH_PREFIX)) {
-                doctor.setAvatar(DoctorListConstants.AVATAR_BASE_PATH + avatar);
-            }
-        } else {
-            doctor.setAvatar(DoctorListConstants.DEFAULT_AVATAR);
-        }
     }
 
     /**
