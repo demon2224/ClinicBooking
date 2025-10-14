@@ -69,8 +69,8 @@
         <!-- Sidebar -->
         <div class="sidebar">
             <h4 class="text-center mt-3 mb-4">CLINIC</h4>
-            <a href="#"><i class="fa-solid fa-gauge me-2"></i>Dashboard</a>
-            <a href="#"><i class="fa-solid fa-calendar-days me-2"></i>Manage Appointment</a>
+            <a href="${pageContext.request.contextPath}/receptionist-dashboard"><i class="fa-solid fa-gauge me-2"></i>Dashboard</a>
+            <a href="${pageContext.request.contextPath}/receptionist-manage-appointment?action"><i class="fa-solid fa-calendar-days me-2"></i>Manage Appointment</a>
             <a href="#"><i class="fa-solid fa-user-doctor me-2"></i>Manage Invoice</a>
         </div>
 
@@ -97,11 +97,10 @@
                 <c:remove var="successMessage" scope="session"/>
 
                 <script>
-                    // Tự động ẩn sau 2 giây
+                    // auto hide after 2 seccond
                     setTimeout(function () {
                         var alertEl = document.getElementById('successAlert');
                         if (alertEl) {
-                            // Sử dụng Bootstrap 5 để ẩn alert với animation
                             var bsAlert = bootstrap.Alert.getOrCreateInstance(alertEl);
                             bsAlert.close();
                         }
@@ -214,61 +213,61 @@
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
         <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const contextPath = '${pageContext.request.contextPath}';
-            let actionType = '';
-            let appointmentId = '';
+                    document.addEventListener('DOMContentLoaded', () => {
+                        const contextPath = '${pageContext.request.contextPath}';
+                        let actionType = '';
+                        let appointmentId = '';
 
-            // Approve button
-            document.querySelectorAll('.btn-approve').forEach(btn => {
-                btn.addEventListener('click', function () {
-                    actionType = 'approve';
-                    appointmentId = this.getAttribute('data-id');
-                    document.querySelector('#confirmModal .modal-body').innerText = 'Approve this appointment?';
-                });
-            });
+                        // Approve button
+                        document.querySelectorAll('.btn-approve').forEach(btn => {
+                            btn.addEventListener('click', function () {
+                                actionType = 'approve';
+                                appointmentId = this.getAttribute('data-id');
+                                document.querySelector('#confirmModal .modal-body').innerText = 'Approve this appointment?';
+                            });
+                        });
 
-            // Cancel button
-            document.querySelectorAll('.btn-cancel').forEach(btn => {
-                btn.addEventListener('click', function () {
-                    actionType = 'cancel';
-                    appointmentId = this.getAttribute('data-id');
-                    document.querySelector('#confirmModal .modal-body').innerText = 'Cancel this appointment?';
-                });
-            });
+                        // Cancel button
+                        document.querySelectorAll('.btn-cancel').forEach(btn => {
+                            btn.addEventListener('click', function () {
+                                actionType = 'cancel';
+                                appointmentId = this.getAttribute('data-id');
+                                document.querySelector('#confirmModal .modal-body').innerText = 'Cancel this appointment?';
+                            });
+                        });
 
-            // Confirm modal Yes button
-            document.getElementById('confirmActionBtn').addEventListener('click', function () {
-                if (!actionType || !appointmentId)
-                    return;
+                        // Confirm modal Yes button
+                        document.getElementById('confirmActionBtn').addEventListener('click', function () {
+                            if (!actionType || !appointmentId)
+                                return;
 
-                // Close modal
-                const modalEl = document.getElementById('confirmModal');
-                const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
-                modal.hide();
+                            // Close modal
+                            const modalEl = document.getElementById('confirmModal');
+                            const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
+                            modal.hide();
 
-                // Create dynamic POST form
-                const form = document.createElement('form');
-                form.method = 'post';
-                form.action = contextPath + '/receptionist-manage-appointment';
-                form.style.display = 'none';
+                            // Create dynamic POST form
+                            const form = document.createElement('form');
+                            form.method = 'post';
+                            form.action = contextPath + '/receptionist-manage-appointment';
+                            form.style.display = 'none';
 
-                const inputAction = document.createElement('input');
-                inputAction.type = 'hidden';
-                inputAction.name = 'action';
-                inputAction.value = actionType;
-                form.appendChild(inputAction);
+                            const inputAction = document.createElement('input');
+                            inputAction.type = 'hidden';
+                            inputAction.name = 'action';
+                            inputAction.value = actionType;
+                            form.appendChild(inputAction);
 
-                const inputId = document.createElement('input');
-                inputId.type = 'hidden';
-                inputId.name = 'appointmentId';
-                inputId.value = appointmentId;
-                form.appendChild(inputId);
+                            const inputId = document.createElement('input');
+                            inputId.type = 'hidden';
+                            inputId.name = 'appointmentId';
+                            inputId.value = appointmentId;
+                            form.appendChild(inputId);
 
-                document.body.appendChild(form);
-                form.submit();
-            });
-        });
+                            document.body.appendChild(form);
+                            form.submit();
+                        });
+                    });
         </script>
     </body>
 </html>

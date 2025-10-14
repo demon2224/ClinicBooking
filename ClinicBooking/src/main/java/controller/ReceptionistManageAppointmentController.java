@@ -2,7 +2,6 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-
 package controller;
 
 import dao.DoctorDAO;
@@ -18,13 +17,12 @@ import model.Appointment;
 import model.Doctor;
 import model.Patient;
 
-
 /**
  *
  * @author Ngo Quoc Hung - CE191184
  */
 public class ReceptionistManageAppointmentController extends HttpServlet {
-   
+
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -97,27 +95,29 @@ public class ReceptionistManageAppointmentController extends HttpServlet {
 
             if ("viewDetail".equals(action)) {
                 String idParam = request.getParameter("id");
-                if (idParam != null && !idParam.isEmpty()) {
-                    int appointmentId = Integer.parseInt(idParam);
-                    Appointment appointment = dao.getAppointmentByIdFull(appointmentId);
-
-                    if (appointment != null) {
-                        // Lấy thêm thông tin bác sĩ từ DoctorDAO
-                        Doctor doctor = new DoctorDAO().getDoctorById(appointment.getDoctorID());
-
-                        // Set attribute đúng để JSP dùng
-                        request.setAttribute("appointment", appointment);
-                        request.setAttribute("doctor", doctor);
-
-                        request.getRequestDispatcher("/WEB-INF/receptionist/AppointmentDetail.jsp")
-                                .forward(request, response);
-                        return;
-                    } else {
-                        response.sendError(HttpServletResponse.SC_NOT_FOUND, "Appointment not found");
-                        return;
-                    }
+                if (idParam == null || idParam.trim().isEmpty()) {
+                    response.sendRedirect(request.getContextPath() + "/receptionist-manage-appointment");
+                    return;
                 }
+                int appointmentId;
+                try {
+                    appointmentId = Integer.parseInt(idParam);
+                } catch (NumberFormatException e) {
+                    response.sendRedirect(request.getContextPath() + "/receptionist-manage-appointment");
+                    return;
+                }
+                Appointment appointment = dao.getAppointmentByIdFull(appointmentId);
+                if (appointment == null) {
+                    response.sendRedirect(request.getContextPath() + "/receptionist-manage-appointment");
+                    return;
+                }
+                Doctor doctor = new DoctorDAO().getDoctorById(appointment.getDoctorID());
+                request.setAttribute("appointment", appointment);
+                request.setAttribute("doctor", doctor);
+                request.getRequestDispatcher("/WEB-INF/receptionist/AppointmentDetail.jsp").forward(request, response);
+                return;
             }
+
             if ("add".equals(action)) {
                 DoctorDAO doctorDAO = new DoctorDAO();
                 List<String[]> specialties = doctorDAO.getAllSpecialties();
@@ -132,7 +132,7 @@ public class ReceptionistManageAppointmentController extends HttpServlet {
                 return;
             }
 
-            java.util.List<model.Appointment> appointmentList;
+            List<Appointment> appointmentList;
             if (searchQuery != null && !searchQuery.trim().isEmpty()) {
                 appointmentList = dao.searchAppointments(searchQuery);
             } else {
@@ -140,7 +140,8 @@ public class ReceptionistManageAppointmentController extends HttpServlet {
             }
 
             request.setAttribute("appointmentList", appointmentList);
-            request.getRequestDispatcher("/WEB-INF/receptionist/ReceptionistAppointment.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/receptionist/ReceptionistAppointment.jsp")
+                    .forward(request, response);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -156,7 +157,6 @@ public class ReceptionistManageAppointmentController extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -201,7 +201,7 @@ public class ReceptionistManageAppointmentController extends HttpServlet {
                 if ((existingPatientId == null || existingPatientId.isEmpty())
                         && (fullName == null || fullName.trim().isEmpty() || phone == null || phone.trim().isEmpty())) {
                     request.setAttribute("error", "Please select existing patient or enter full name and phone for new patient.");
-                    doGet(request, response); // gọi lại doGet để hiển thị form
+                    doGet(request, response);
                     return;
                 }
 

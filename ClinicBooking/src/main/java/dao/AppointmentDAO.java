@@ -222,7 +222,7 @@ public class AppointmentDAO extends DBContext {
     }
 
     /**
-     * Search appointments by user ID and doctor name
+     * Get appointment info with doctor and patient info to view 
      */
     public Appointment getAppointmentByIdFull(int appointmentId) {
         String sql = "SELECT "

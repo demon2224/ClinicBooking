@@ -10,18 +10,13 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Patient Appointment Detail (Demo)</title>
+        <meta charset="UTF-8">
+        <title>Doctor Dashboard</title>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
         <style>
-            html, body {
-                margin: 0;
-                padding: 0;
-                height: 100%;
-            }
             body {
                 background-color: #f8f9fa;
-                font-family: "Segoe UI", sans-serif;
             }
             .sidebar {
                 width: 240px;
@@ -29,38 +24,6 @@
                 background-color: #1B5A90;
                 color: white;
                 position: fixed;
-                top: 0;
-                left: 0;
-            }
-            .container {
-                margin-top: 40px;
-                background: #fff;
-                padding: 30px;
-                border-radius: 12px;
-                box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-                max-width: 900px;
-            }
-            h3.section-title {
-                color: #0d6efd;
-                font-weight: 600;
-                border-bottom: 2px solid #0d6efd;
-                padding-bottom: 6px;
-                margin-bottom: 20px;
-            }
-            .info-table th {
-                width: 200px;
-                background-color: #f1f1f1;
-            }
-            .back-btn {
-                text-decoration: none;
-                padding: 8px 18px;
-                background-color: #0d6efd;
-                color: white;
-                border-radius: 6px;
-                transition: 0.3s;
-            }
-            .back-btn:hover {
-                background-color: #084298;
             }
             .sidebar a {
                 display: block;
@@ -71,15 +34,43 @@
             .sidebar a:hover {
                 background-color: #00D0F1;
             }
+            .main-content {
+                margin-left: 260px;
+                padding: 25px;
+            }
+            .card {
+                border-radius: 10px;
+            }
+            .table img {
+                border-radius: 50%;
+                width: 40px;
+                height: 40px;
+            }
+            .status-toggle {
+                width: 40px;
+                height: 20px;
+            }
+            .navbar {
+                background: white;
+                border-bottom: 1px solid #dee2e6;
+            }
+            #Logout {
+                color: red;
+                border-color: red;
+            }
+            #Logout:hover {
+                background-color: red;
+                color: white;
+            }
         </style>
     </head>
     <body>
+        <!-- Sidebar -->
         <div class="sidebar">
             <h4 class="text-center mt-3 mb-4">CLINIC</h4>
-            <a href="${pageContext.request.contextPath}/doctor-dashboard"><i class="fa-solid fa-gauge me-2"></i>Dashboard</a>
-            <a href="${pageContext.request.contextPath}/manage-my-patient-appointment"><i class="fa-solid fa-calendar-days me-2"></i>Manage Appointment</a>
-            <a href="#"><i class="fa-solid fa-user-doctor me-2"></i>Manage Medical Record</a>
-            <a href="#"><i class="fa-solid fa-user me-2"></i>Manage Prescription</a>
+            <a href="${pageContext.request.contextPath}/receptionist-dashboard"><i class="fa-solid fa-gauge me-2"></i>Dashboard</a>
+            <a href="${pageContext.request.contextPath}/receptionist-manage-appointment?action"><i class="fa-solid fa-calendar-days me-2"></i>Manage Appointment</a>
+            <a href="#"><i class="fa-solid fa-user-doctor me-2"></i>Manage Invoice</a>
         </div>
 
         <div class="container">

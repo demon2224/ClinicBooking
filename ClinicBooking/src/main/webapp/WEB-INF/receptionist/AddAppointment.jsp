@@ -15,18 +15,12 @@
 <html>
     <head>
         <meta charset="UTF-8">
-        <title>Add Appointment</title>
+        <title>Doctor Dashboard</title>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
         <style>
-            html, body {
-                margin: 0;
-                padding: 0;
-                height: 100%;
-            }
             body {
                 background-color: #f8f9fa;
-                font-family: "Segoe UI", sans-serif;
             }
             .sidebar {
                 width: 240px;
@@ -34,8 +28,6 @@
                 background-color: #1B5A90;
                 color: white;
                 position: fixed;
-                top: 0;
-                left: 0;
             }
             .sidebar a {
                 display: block;
@@ -46,21 +38,37 @@
             .sidebar a:hover {
                 background-color: #00D0F1;
             }
-            .container {
+            .main-content {
                 margin-left: 260px;
-                margin-top: 40px;
-                background: #fff;
-                padding: 30px;
-                border-radius: 12px;
-                box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-                max-width: 800px;
+                padding: 25px;
             }
-            h3.section-title {
-                color: #0d6efd;
-                font-weight: 600;
-                border-bottom: 2px solid #0d6efd;
-                padding-bottom: 6px;
-                margin-bottom: 20px;
+            .required::after {
+                content: " *";
+                color: red;
+            }
+            .card {
+                border-radius: 10px;
+            }
+            .table img {
+                border-radius: 50%;
+                width: 40px;
+                height: 40px;
+            }
+            .status-toggle {
+                width: 40px;
+                height: 20px;
+            }
+            .navbar {
+                background: white;
+                border-bottom: 1px solid #dee2e6;
+            }
+            #Logout {
+                color: red;
+                border-color: red;
+            }
+            #Logout:hover {
+                background-color: red;
+                color: white;
             }
         </style>
     </head>
@@ -68,15 +76,14 @@
         <!-- Sidebar -->
         <div class="sidebar">
             <h4 class="text-center mt-3 mb-4">CLINIC</h4>
-            <a href="${pageContext.request.contextPath}/doctor-dashboard"><i class="fa-solid fa-gauge me-2"></i>Dashboard</a>
-            <a href="${pageContext.request.contextPath}/manage-my-patient-appointment"><i class="fa-solid fa-calendar-days me-2"></i>Manage Appointment</a>
-            <a href="#"><i class="fa-solid fa-user-doctor me-2"></i>Manage Medical Record</a>
-            <a href="#"><i class="fa-solid fa-user me-2"></i>Manage Prescription</a>
+            <a href="${pageContext.request.contextPath}/receptionist-dashboard"><i class="fa-solid fa-gauge me-2"></i>Dashboard</a>
+            <a href="${pageContext.request.contextPath}/receptionist-manage-appointment?action"><i class="fa-solid fa-calendar-days me-2"></i>Manage Appointment</a>
+            <a href="#"><i class="fa-solid fa-user-doctor me-2"></i>Manage Invoice</a>
         </div>
 
         <!-- Main Container -->
         <div class="container">
-            <h3 class="section-title">Add New Appointment</h3>
+            <h3 class="section-title">Add Appointment</h3>
 
             <form action="${pageContext.request.contextPath}/receptionist-manage-appointment" method="post">
                 <input type="hidden" name="action" value="addAppointment">
@@ -84,7 +91,7 @@
                 <!-- Appointment Info -->
                 <h5>Appointment Information</h5>
                 <div class="mb-3 row">
-                    <label class="col-sm-3 col-form-label">Specialty</label>
+                    <label class="col-sm-3 col-form-label required">Specialty</label>
                     <div class="col-sm-9">
                         <select class="form-select" id="specialtySelect" name="specialtyName" required>
                             <option value="">-- Select Specialty --</option>
@@ -96,7 +103,7 @@
                 </div>
 
                 <div class="mb-3 row">
-                    <label class="col-sm-3 col-form-label">Doctor</label>
+                    <label class="col-sm-3 col-form-label required">Doctor</label>
                     <div class="col-sm-9">
                         <select class="form-select" id="doctorSelect" name="doctorId" required>
                             <option value="">-- Select Doctor --</option>
@@ -105,11 +112,18 @@
                 </div>
 
                 <div class="mb-3 row">
-                    <label class="col-sm-3 col-form-label">Date Begin</label>
+                    <label class="col-sm-3 col-form-label required">Date Begin</label>
                     <div class="col-sm-9">
-                        <input type="datetime-local" class="form-control" name="dateBegin" value="<%=defaultDateBegin%>" readonly>
+                        <input 
+                            type="datetime-local"
+                            class="form-control"
+                            name="dateBegin"
+                            value="<%=defaultDateBegin%>"
+                            min="<%=defaultDateBegin%>"
+                            required>
                     </div>
                 </div>
+
 
                 <div class="mb-3 row">
                     <label class="col-sm-3 col-form-label">Note</label>
@@ -121,7 +135,7 @@
                 <!-- Patient Info -->
                 <h5>Patient Information</h5>
                 <div class="mb-3 row">
-                    <label class="col-sm-3 col-form-label">Select Existing Patient</label>
+                    <label class="col-sm-3 col-form-label required">Select Existing Patient</label>
                     <div class="col-sm-9">
                         <select class="form-select" name="existingPatientId">
                             <option value="">-- New Patient --</option>
@@ -133,7 +147,7 @@
                 </div>
 
                 <div class="mb-3 row">
-                    <label class="col-sm-3 col-form-label">Full Name</label>
+                    <label class="col-sm-3 col-form-label required">Full Name</label>
                     <div class="col-sm-9">
                         <input type="text" class="form-control" name="patientName" id="patientName"
                                placeholder="Required if new patient"
@@ -143,7 +157,7 @@
                 </div>
 
                 <div class="mb-3 row">
-                    <label class="col-sm-3 col-form-label">Phone</label>
+                    <label class="col-sm-3 col-form-label required">Phone</label>
                     <div class="col-sm-9">
                         <input type="text" class="form-control" name="phone" id="phone"
                                placeholder="Required if new patient"
@@ -152,7 +166,7 @@
                 </div>
 
                 <div class="mb-3 row">
-                    <label class="col-sm-3 col-form-label">Gender</label>
+                    <label class="col-sm-3 col-form-label required">Gender</label>
                     <div class="col-sm-9">
                         <select class="form-select" name="gender" id="genderSelect">
                             <option value="true">Male</option>
@@ -209,6 +223,31 @@
             $('select[name="existingPatientId"]').change(function () {
                 togglePatientFields();
             });
+        </script>
+        <script>
+            const dateInput = document.querySelector('input[name="dateBegin"]');
+            dateInput.addEventListener('keydown', e => e.preventDefault());
+
+            const dateInput = document.querySelector('input[name="dateBegin"]');
+
+            function setMinDateTime() {
+                const now = new Date();
+                now.setMinutes(now.getMinutes() - now.getTimezoneOffset()); // adjust timezone
+                dateInput.min = now.toISOString().slice(0, 16);
+            }
+
+            // Prevent selecting a past date or time
+            dateInput.addEventListener("change", function () {
+                const selected = new Date(this.value);
+                const now = new Date();
+                if (selected < now) {
+                    alert("You cannot select a past date or time!");
+                    this.value = "";
+                }
+            });
+
+            // Set minimum date and time when the page loads
+            setMinDateTime();
         </script>
     </body>
 </html>
