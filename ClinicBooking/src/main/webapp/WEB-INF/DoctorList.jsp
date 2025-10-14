@@ -40,24 +40,26 @@
 
             .search-filter-form {
                 background: white;
-                padding: 1.5rem;
+                padding: 2rem;
                 border-radius: 12px;
-                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-                margin-bottom: 1.5rem;
+                box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+                margin: 0 auto 2rem auto;
+                max-width: 800px;
             }
 
             .search-bar-wrapper {
                 display: flex;
-                gap: 0.75rem;
+                gap: 1rem;
                 align-items: center;
-                flex-wrap: nowrap;
+                justify-content: center;
+                flex-wrap: wrap;
             }
 
             .search-input-group {
-                flex: 1;
                 position: relative;
-                min-width: 200px;
-                max-width: 400px;
+                flex: 1;
+                min-width: 300px;
+                max-width: 500px;
             }
 
             .search-icon {
@@ -66,101 +68,95 @@
                 top: 50%;
                 transform: translateY(-50%);
                 color: #6c757d;
-                font-size: 1rem;
+                font-size: 1.1rem;
+                z-index: 1;
             }
 
             .search-input {
-                width: 300px;
-                padding: 0.75rem 1rem 0.75rem 2.5rem;
-                border: 1px solid #d0d7de;
-                border-radius: 8px;
-                font-size: 0.95rem;
-                transition: all 0.2s ease;
+                width: 100%;
+                padding: 0.9rem 1rem 0.9rem 3rem;
+                border: 1px solid #e1e5e9;
+                border-radius: 10px;
+                font-size: 1rem;
+                transition: all 0.3s ease;
+                box-sizing: border-box;
             }
 
             .search-input:focus {
                 outline: none;
                 border-color: #175cdd;
-                box-shadow: 0 0 0 3px rgba(23, 92, 221, 0.1);
-            }
-
-            .filter-group {
-                display: flex;
-                gap: 0.75rem;
-                flex-wrap: nowrap;
-                flex-shrink: 0;
-                position: relative;
-                left: 200px;
-            }
-
-            .filter-select {
-                padding: 0.75rem 1rem;
-                border: 1px solid #d0d7de;
-                border-radius: 8px;
-                font-size: 0.9rem;
                 background-color: white;
-                cursor: pointer;
-                transition: all 0.2s ease;
-                min-width: 140px;
-                white-space: nowrap;
+                box-shadow: 0 0 0 4px rgba(23, 92, 221, 0.1);
             }
 
-            .filter-select:focus {
-                outline: none;
-                border-color: #175cdd;
-                box-shadow: 0 0 0 3px rgba(23, 92, 221, 0.1);
+            .search-input::placeholder {
+                color: #8e9297;
+                font-size: 0.95rem;
             }
 
             .search-button {
-                padding: 0.80rem 1.5rem;
-                background-color: #175cdd;
+                padding: 0.9rem 1.5rem;
+                background: linear-gradient(135deg, #175cdd, #1347b8);
                 color: white;
                 border: none;
-                border-radius: 8px;
-                font-size: 0.9rem;
+                border-radius: 10px;
+                font-size: 0.95rem;
                 font-weight: 600;
                 cursor: pointer;
-                transition: all 0.2s ease;
+                transition: all 0.3s ease;
                 white-space: nowrap;
-                flex-shrink: 0;
-                position: relative;
-                left: 200px;
+
             }
 
             .search-button:hover {
-                background-color: #135bb8;
+                background: linear-gradient(135deg, #1347b8, #0f3a9e);
+                transform: translateY(-1px);
+
+            }
+
+            .search-button i {
+                margin-right: 0.5rem;
             }
 
             .clear-button {
-                padding: 0.70rem 1.2rem;
+                padding: 0.7rem 1.8rem;
                 background-color: white;
-                color: #24292f;
-                border: 1px solid #d0d7de;
-                border-radius: 8px;
-                font-size: 0.9rem;
+                color: #495057;
+                border: 2px solid #dee2e6;
+                border-radius: 10px;
+                font-size: 0.95rem;
                 font-weight: 600;
                 text-decoration: none;
                 cursor: pointer;
-                transition: all 0.2s ease;
+                transition: all 0.3s ease;
                 white-space: nowrap;
-                display: inline-block;
-                flex-shrink: 0;
-                position: relative;
-                left: 205px;
+                display: inline-flex;
+                align-items: center;
+
             }
 
             .clear-button:hover {
-                background-color: #f6f8fa;
-                border-color: #8c959f;
+                background-color: #f8f9fa;
+                border-color: #adb5bd;
+                color: #343a40;
                 text-decoration: none;
-                color: #24292f;
+                transform: translateY(-1px);
+                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.12);
+            }
+
+            .clear-button i {
+                margin-right: 0.5rem;
             }
 
             .results-count {
                 color: #656d76;
                 font-size: 0.95rem;
-                margin-top: 1rem;
+                margin: 1.5rem 0 0 0;
                 text-align: center;
+                font-weight: 500;
+                padding: 0.75rem 1.5rem;
+                border-radius: 25px;
+                display: inline-block;
             }
 
             .doctor-container {
@@ -352,46 +348,53 @@
             }
 
             @media (max-width: 1024px) {
+                .search-filter-form {
+                    margin: 0 1rem 2rem 1rem;
+                    padding: 1.5rem;
+                }
+
                 .search-bar-wrapper {
-                    flex-wrap: wrap;
+                    flex-direction: column;
+                    gap: 1rem;
                 }
 
                 .search-input-group {
-                    flex: 1 1 100%;
+                    min-width: 100%;
                     max-width: 100%;
                 }
 
-                .filter-group {
-                    flex: 1 1 100%;
-                    width: 100%;
+                .search-input {
+                    font-size: 0.95rem;
                 }
             }
 
             @media (max-width: 768px) {
+                .search-filter-form {
+                    margin: 0 0.5rem 1.5rem 0.5rem;
+                    padding: 1.25rem;
+                }
+
                 .search-bar-wrapper {
                     flex-direction: column;
-                    gap: 0.75rem;
+                    gap: 1rem;
+                    align-items: stretch;
                 }
 
                 .search-input-group {
-                    width: 100%;
                     min-width: 100%;
-                    max-width: 100%;
+                    width: 100%;
                 }
 
-                .filter-group {
-                    width: 100%;
-                    flex-direction: column;
-                }
-
-                .filter-select {
-                    width: 100%;
-                    min-width: 100%;
+                .search-input {
+                    padding: 0.8rem 1rem 0.8rem 3rem;
+                    font-size: 0.9rem;
                 }
 
                 .search-button,
                 .clear-button {
                     width: 100%;
+                    justify-content: center;
+                    padding: 0.8rem 1.5rem;
                 }
 
                 .doctor-grid {
@@ -405,6 +408,7 @@
 
                 h1 {
                     font-size: 1.5rem;
+                    margin: 1.5rem 0 1rem 0;
                 }
 
                 .doctor-card {
@@ -413,25 +417,66 @@
                 }
 
                 .doctor-avatar {
-                    width: 90px;
-                    height: 90px;
+                    width: 150px;
+                    height: 150px;
                 }
             }
 
             @media (max-width: 480px) {
+                .search-filter-form {
+                    margin: 0 0.25rem 1rem 0.25rem;
+                    padding: 1rem;
+                }
+
+                .search-input-group {
+                    min-width: 100%;
+                }
+
+                .search-input {
+                    padding: 0.75rem 0.8rem 0.75rem 2.8rem;
+                    font-size: 0.85rem;
+                    border-radius: 20px;
+                }
+
+                .search-icon {
+                    font-size: 1rem;
+                    left: 0.8rem;
+                }
+
+                .search-button,
+                .clear-button {
+                    padding: 0.75rem 1.2rem;
+                    font-size: 0.85rem;
+                    border-radius: 20px;
+                }
+
+                h1 {
+                    font-size: 1.3rem;
+                    margin: 1rem 0 0.5rem 0;
+                }
+
                 .doctor-grid {
-                    grid-template-columns: 2fr;
+                    grid-template-columns: 1fr;
                     gap: 1rem;
                 }
 
                 .doctor-actions {
                     flex-direction: column;
+                    gap: 0.5rem;
                 }
 
                 .btn-view,
                 .btn-book {
                     flex: none;
-                    width: 90%;
+                    width: 100%;
+                    min-height: 44px;
+                    padding: 0.8rem 0.5rem;
+                    font-size: 0.9rem;
+                }
+
+                .doctor-avatar {
+                    width: 120px;
+                    height: 120px;
                 }
             }
         </style>
@@ -459,27 +504,6 @@
                                value="${searchName != null ? searchName : ''}">
                     </div>
 
-                    <!-- Filter Dropdowns -->
-                    <div class="filter-group">
-                        <!-- Specialty Filter -->
-                        <select name="specialty" class="filter-select">
-                            <option value="">All Specialties</option>
-                            <c:forEach var="spec" items="${specialties}">
-                                <option value="${spec[1]}" ${selectedSpecialty eq spec[1] ? 'selected' : '' }>
-                                    ${spec[1]}
-                                </option>
-                            </c:forEach>
-                        </select>
-
-                        <!-- Experience Filter -->
-                        <select name="minExperience" class="filter-select">
-                            <option value="">All Experience</option>
-                            <option value="5" ${minExperience eq '5' ? 'selected' : '' }>5+ years</option>
-                            <option value="10" ${minExperience eq '10' ? 'selected' : '' }>10+ years</option>
-                            <option value="15" ${minExperience eq '15' ? 'selected' : '' }>15+ years</option>
-                        </select>
-                    </div>
-
                     <!-- Search Button -->
                     <button type="submit" class="search-button">
                         <i class="fas fa-search"></i> Search
@@ -494,7 +518,9 @@
 
             <!-- Results Count -->
             <c:if test="${not empty doctors}">
-                <p class="results-count">Showing ${totalDoctors} doctor(s)</p>
+                <div style="text-align: center;">
+                    <span class="results-count">Showing ${totalDoctors} doctor(s)</span>
+                </div>
             </c:if>
         </div>
 

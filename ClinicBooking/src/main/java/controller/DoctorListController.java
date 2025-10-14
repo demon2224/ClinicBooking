@@ -16,7 +16,8 @@ import java.net.URLEncoder;
 import java.util.List;
 
 /**
- * Controller for Doctor List page Handles search and filter functionality for doctors
+ * Controller for Doctor List page Handles search and filter functionality for
+ * doctors
  * Implements PRG (Post-Redirect-Get) pattern for form submissions
  *
  * @author Nguyen Minh Khang - CE190728
@@ -28,10 +29,10 @@ public class DoctorListController extends HttpServlet {
     /**
      * Handles the HTTP <code>GET</code> method.
      *
-     * @param request servlet request
+     * @param request  servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * @throws IOException      if an I/O error occurs
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -39,57 +40,23 @@ public class DoctorListController extends HttpServlet {
         try {
             DoctorDAO doctorDAO = new DoctorDAO();
 
-            // Get search and filter parameters from request
+            // Get search parameter from request
             String searchName = request.getParameter("searchName");
-            String specialtyNameParam = request.getParameter("specialty");
-            String experienceParam = request.getParameter("minExperience");
-
-            // Parse and validate parameters
-            String selectedSpecialtyName = null;
-            Integer minExperience = null;
-
-            // Process specialty name
-            if (specialtyNameParam != null && !specialtyNameParam.trim().isEmpty()) {
-                selectedSpecialtyName = specialtyNameParam.trim();
-            }
-
-            // Process minimum experience
-            if (experienceParam != null && !experienceParam.trim().isEmpty()) {
-                try {
-                    minExperience = Integer.parseInt(experienceParam.trim());
-                    // Validate experience range using constants
-                    if (minExperience < DoctorListConstants.MIN_EXPERIENCE_YEARS
-                            || minExperience > DoctorListConstants.MAX_EXPERIENCE_YEARS) {
-                        minExperience = null; // Invalid range, ignore
-                    }
-                } catch (NumberFormatException e) {
-                    // Ignore invalid numeric input
-                }
-            }
 
             List<Doctor> doctors;
 
             // Determine search strategy based on criteria
-            boolean hasSearchCriteria = (searchName != null && !searchName.trim().isEmpty())
-                    || selectedSpecialtyName != null || minExperience != null;
-
-            if (hasSearchCriteria) {
-                doctors = doctorDAO.searchDoctors(searchName, selectedSpecialtyName, DoctorListConstants.AVAILABLE_ID, minExperience);
+            if (searchName != null && !searchName.trim().isEmpty()) {
+                doctors = doctorDAO.searchDoctors(searchName, null, DoctorListConstants.AVAILABLE_ID, null);
             } else {
                 doctors = doctorDAO.getAvailableDoctors();
             }
 
             processDoctorAvatars(doctors);
 
-            List<String[]> specialties = doctorDAO.getAllSpecialties();
-
             request.setAttribute("doctors", doctors);
             request.setAttribute("totalDoctors", doctors.size());
-            request.setAttribute("specialties", specialties);
-
             request.setAttribute("searchName", searchName);
-            request.setAttribute("selectedSpecialty", selectedSpecialtyName);
-            request.setAttribute("minExperience", experienceParam);
 
         } catch (Exception e) {
             request.setAttribute("errorMessage", DoctorListConstants.ERROR_LOADING_DOCTORS_MSG + e.getMessage());
@@ -100,13 +67,14 @@ public class DoctorListController extends HttpServlet {
     }
 
     /**
-     * Handles the HTTP <code>POST</code> method. Process search form and redirect to
+     * Handles the HTTP <code>POST</code> method. Process search form and redirect
+     * to
      * prevent form resubmission.
      *
-     * @param request servlet request
+     * @param request  servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * @throws IOException      if an I/O error occurs
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -115,10 +83,8 @@ public class DoctorListController extends HttpServlet {
         try {
             // Extract form parameters from POST request
             String searchName = request.getParameter("searchName");
-            String specialtyName = request.getParameter("specialty");
-            String experienceParam = request.getParameter("minExperience");
             // Build redirect URL for PRG pattern
-            String redirectUrl = buildRedirectUrl(request.getContextPath(), searchName, specialtyName, experienceParam);
+            String redirectUrl = buildRedirectUrl(request.getContextPath(), searchName);
             // Execute redirect to GET request
             response.sendRedirect(redirectUrl);
         } catch (Exception e) {
@@ -151,38 +117,16 @@ public class DoctorListController extends HttpServlet {
      * Build redirect URL with search parameters for POST-Redirect-GET pattern
      *
      * @param contextPath Application context path
-     * @param searchName Doctor name search term
-     * @param specialtyName Specialty name filter
-     * @param experienceParam Experience requirement
+     * @param searchName  Doctor name search term
      * @return Complete redirect URL with parameters
      * @throws IOException if URL encoding fails
      */
-    private String buildRedirectUrl(String contextPath, String searchName, String specialtyName, String experienceParam)
+    private String buildRedirectUrl(String contextPath, String searchName)
             throws IOException {
         StringBuilder url = new StringBuilder(contextPath + DoctorListConstants.DOCTOR_LIST_URL);
-        boolean hasParams = false;
         // Add search name parameter
         if (searchName != null && !searchName.trim().isEmpty()) {
             url.append("?searchName=").append(URLEncoder.encode(searchName.trim(), DoctorListConstants.URL_ENCODING));
-            hasParams = true;
-        }
-        // Add specialty name parameter
-        if (specialtyName != null && !specialtyName.trim().isEmpty()) {
-            url.append(hasParams ? "&" : "?").append("specialty=")
-                    .append(URLEncoder.encode(specialtyName.trim(), DoctorListConstants.URL_ENCODING));
-            hasParams = true;
-        }
-        // Add experience parameter (validate first)
-        if (experienceParam != null && !experienceParam.trim().isEmpty()) {
-            try {
-                int experience = Integer.parseInt(experienceParam.trim());
-                if (experience >= DoctorListConstants.MIN_EXPERIENCE_YEARS
-                        && experience <= DoctorListConstants.MAX_EXPERIENCE_YEARS) {
-                    url.append(hasParams ? "&" : "?").append("minExperience=").append(experience);
-                }
-            } catch (NumberFormatException e) {
-                // Skip invalid experience parameter
-            }
         }
         return url.toString();
     }
