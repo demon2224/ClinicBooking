@@ -22,45 +22,6 @@ import model.DoctorDegree;
 public class DoctorDAO extends DBContext {
 
     /**
-     * Retrieves all doctors from the database.
-     *
-     * @return List of Doctor objects.
-     */
-    public List<Doctor> getAllDoctors() {
-
-        List<Doctor> doctors = new ArrayList<>();
-
-        String sql = "SELECT d.DoctorID, d.YearExperience, d.JobStatusID, d.SpecialtyID, "
-                + "p.FirstName, p.LastName, p.PhoneNumber, p.Email, "
-                + "a.Avatar, a.Bio, "
-                + "s.SpecialtyName, "
-                + "js.JobStatusDescription "
-                + "FROM Doctor d "
-                + "INNER JOIN [User] u ON d.DoctorID = u.UserID "
-                + "INNER JOIN Profile p ON u.UserID = p.UserProfileID "
-                + "INNER JOIN Account a ON u.UserID = a.UserAccountID "
-                + "INNER JOIN Specialty s ON d.SpecialtyID = s.SpecialtyID "
-                + "INNER JOIN JobStatus js ON d.JobStatusID = js.JobStatusID "
-                + "WHERE u.RoleID = 4";
-
-        ResultSet rs = executeSelectQuery(sql);
-        try {
-            if (rs != null) {
-                // Populate the list with Doctor objects
-                while (rs.next()) {
-                    Doctor doctor = createDoctorFromResultSet(rs);
-                    doctors.add(doctor);
-                }
-            }
-        } catch (SQLException ex) {
-            Logger.getLogger(DoctorDAO.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            closeResources(rs);
-        }
-        return doctors;
-    }
-
-    /**
      * Retrieves a specific doctor by their ID.
      *
      * @param doctorId The ID of the doctor to be retrieved.
