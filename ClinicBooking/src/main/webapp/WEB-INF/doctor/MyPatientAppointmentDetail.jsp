@@ -99,7 +99,7 @@
             <h4 class="text-center mt-3 mb-4">CLINIC</h4>
             <a href="${pageContext.request.contextPath}/doctor-dashboard"><i class="fa-solid fa-gauge me-2"></i>Dashboard</a>
             <a href="${pageContext.request.contextPath}/manage-my-patient-appointment"><i class="fa-solid fa-calendar-days me-2"></i>Manage Appointment</a>
-            <a href="#"><i class="fa-solid fa-user-doctor me-2"></i>Manage Medical Record</a>
+            <a href="${pageContext.request.contextPath}/manage-my-patient-medical-record"><i class="fa-solid fa-user-doctor me-2"></i>Manage Medical Record</a>
             <a href="#"><i class="fa-solid fa-user me-2"></i>Manage Prescription</a>
         </div>
         <div class="container">
@@ -160,6 +160,5 @@
                 <tr><th>Address</th><td>${detailAppointment.address}</td></tr>
             </table>
         </div>
-
     </body>
 </html>

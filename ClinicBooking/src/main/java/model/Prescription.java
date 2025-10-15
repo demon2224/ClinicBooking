@@ -11,16 +11,18 @@ import java.sql.Timestamp;
  * @author Le Thien Tri - CE191249
  */
 public class Prescription {
+
     private int prescriptionID;
     private int appointmentID;
     private int prescriptionStatusID;
     private Timestamp dateCreate;
     private String note;
-    
+
     // Additional fields for display
     private String patientName;
     private Timestamp appointmentDateBegin;
     private String prescriptionStatusName;
+    private String medicineName;
 
     public Prescription() {
     }
@@ -32,8 +34,19 @@ public class Prescription {
         this.appointmentDateBegin = appointmentDateBegin;
         this.prescriptionStatusName = prescriptionStatusName;
     }
-    
+
+    public Prescription(String medicineName) {
+        this.medicineName = medicineName;
+    }
+
     // Getters and Setters
+    public String getMedicineName() {
+        return medicineName;
+    }
+
+    public void setMedicineName(String medicineName) {
+        this.medicineName = medicineName;
+    }
 
     public int getPrescriptionID() {
         return prescriptionID;
@@ -98,6 +111,5 @@ public class Prescription {
     public void setPrescriptionStatusName(String prescriptionStatusName) {
         this.prescriptionStatusName = prescriptionStatusName;
     }
-    
-    
+
 }

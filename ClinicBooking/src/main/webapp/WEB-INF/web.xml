@@ -7,6 +7,14 @@
         <servlet-name>ReceptionistManageAppointmentController</servlet-name>
         <servlet-class>controller.ReceptionistManageAppointmentController</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>ManageMyPatientMedicalRecordController</servlet-name>
+        <servlet-class>controller.ManageMyPatientMedicalRecordController</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>ManageMyPatientMedicalRecordDetailController</servlet-name>
+        <servlet-class>controller.ManageMyPatientMedicalRecordDetailController</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>PharmacistDashboardController</servlet-name>
         <url-pattern>/pharmacist-dashboard</url-pattern>
@@ -18,6 +26,14 @@
     <servlet-mapping>
         <servlet-name>ReceptionistManageAppointmentController</servlet-name>
         <url-pattern>/receptionist-manage-appointment</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ManageMyPatientMedicalRecordController</servlet-name>
+        <url-pattern>/manage-my-patient-medical-record</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ManageMyPatientMedicalRecordDetailController</servlet-name>
+        <url-pattern>/manage-my-patient-medical-record-detail</url-pattern>
     </servlet-mapping>
     <welcome-file-list>
         <welcome-file>index.jsp</welcome-file>

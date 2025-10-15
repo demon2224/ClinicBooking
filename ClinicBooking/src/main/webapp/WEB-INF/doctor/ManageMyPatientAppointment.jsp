@@ -72,7 +72,7 @@
             <h4 class="text-center mt-3 mb-4">CLINIC</h4>
             <a href="${pageContext.request.contextPath}/doctor-dashboard"><i class="fa-solid fa-gauge me-2"></i>Dashboard</a>
             <a href="${pageContext.request.contextPath}/manage-my-patient-appointment"><i class="fa-solid fa-calendar-days me-2"></i>Manage Appointment</a>
-            <a href="#"><i class="fa-solid fa-user-doctor me-2"></i>Manage Medical Record</a>
+            <a href="${pageContext.request.contextPath}/manage-my-patient-medical-record"><i class="fa-solid fa-user-doctor me-2"></i>Manage Medical Record</a>
             <a href="#"><i class="fa-solid fa-user me-2"></i>Manage Prescription</a>
         </div>
 
@@ -119,31 +119,31 @@
                                         <td>${appointment.patientEmail}</td>
                                         <td>${appointment.patientPhone}</td>
                                         <td><fmt:formatDate value="${appointment.dateBegin}" pattern="yyyy/MM/dd HH:mm"/></td>
-                                <td>${appointment.note}</td>
-                                <td>
-                                    <span class="badge
-                                          <c:choose>
-                                              <c:when test="${appointment.statusName eq 'Pending'}">bg-warning text-dark</c:when>
-                                              <c:when test="${appointment.statusName eq 'Approved'}">bg-primary</c:when>
-                                              <c:when test="${appointment.statusName eq 'Completed'}">bg-success</c:when>
-                                              <c:when test="${appointment.statusName eq 'Canceled'}">bg-danger</c:when>
-                                              <c:otherwise>bg-secondary</c:otherwise>
-                                          </c:choose>">
-                                        ${appointment.statusName}
-                                    </span>
-                                </td>
-                                <td>
-                                    <a href="${pageContext.request.contextPath}/my-patient-appointment-detail?appointmentID=${appointment.appointmentID}"
-                                       class="btn btn-sm btn-info text-white text-decoration-none">
-                                        <i class="fa-solid fa-eye"></i> View Detail
-                                    </a>
-                                </td>
-                                </tr>
-                            </c:forEach>
+                                        <td>${appointment.note}</td>
+                                        <td>
+                                            <span class="badge
+                                                  <c:choose>
+                                                      <c:when test="${appointment.statusName eq 'Pending'}">bg-warning text-dark</c:when>
+                                                      <c:when test="${appointment.statusName eq 'Approved'}">bg-primary</c:when>
+                                                      <c:when test="${appointment.statusName eq 'Completed'}">bg-success</c:when>
+                                                      <c:when test="${appointment.statusName eq 'Canceled'}">bg-danger</c:when>
+                                                      <c:otherwise>bg-secondary</c:otherwise>
+                                                  </c:choose>">
+                                                ${appointment.statusName}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <a href="${pageContext.request.contextPath}/my-patient-appointment-detail?appointmentID=${appointment.appointmentID}"
+                                               class="btn btn-sm btn-info text-white text-decoration-none">
+                                                <i class="fa-solid fa-eye"></i> View Detail
+                                            </a>
+                                        </td>
+                                    </tr>
+                                </c:forEach>
 
-                            <c:if test="${empty myPatientAppointmentList}">
-                                <tr><td colspan="7" class="text-center text-muted">No appointments found.</td></tr>
-                            </c:if>
+                                <c:if test="${empty myPatientAppointmentList}">
+                                    <tr><td colspan="7" class="text-center text-muted">No appointments found.</td></tr>
+                                </c:if>
 
                             </tbody>
                         </table>
