@@ -15,6 +15,10 @@
         <servlet-name>ManageMyPatientMedicalRecordDetailController</servlet-name>
         <servlet-class>controller.ManageMyPatientMedicalRecordDetailController</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>ManageMyFeedbackController</servlet-name>
+        <servlet-class>controller.ManageMyFeedbackController</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>PharmacistDashboardController</servlet-name>
         <url-pattern>/pharmacist-dashboard</url-pattern>
@@ -34,6 +38,10 @@
     <servlet-mapping>
         <servlet-name>ManageMyPatientMedicalRecordDetailController</servlet-name>
         <url-pattern>/manage-my-patient-medical-record-detail</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ManageMyFeedbackController</servlet-name>
+        <url-pattern>/manage-my-feedback</url-pattern>
     </servlet-mapping>
     <welcome-file-list>
         <welcome-file>index.jsp</welcome-file>
