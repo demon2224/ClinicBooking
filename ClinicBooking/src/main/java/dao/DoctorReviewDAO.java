@@ -41,9 +41,9 @@ public class DoctorReviewDAO extends DBContext {
                 + "WHERE dr.DoctorID = ? "
                 + "ORDER BY dr.DateCreate DESC";
 
+        Object[] params = {doctorId};
+        ResultSet rs = executeSelectQuery(sql, params);
         try {
-            Object[] params = {doctorId};
-            ResultSet rs = executeSelectQuery(sql, params);
             if (rs != null) {
                 while (rs.next()) {
                     DoctorReview review = new DoctorReview();
@@ -60,10 +60,11 @@ public class DoctorReviewDAO extends DBContext {
                     review.setReviewerAvatar(rs.getString("ReviewerAvatar"));
                     reviews.add(review);
                 }
-                closeResources(rs);
             }
         } catch (SQLException ex) {
             Logger.getLogger(DoctorReviewDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            closeResources(rs);
         }
         return reviews;
     }
@@ -77,17 +78,18 @@ public class DoctorReviewDAO extends DBContext {
      */
     public double getAverageRatingByDoctorId(int doctorId) {
         String sql = "SELECT AVG(CAST(RateScore AS FLOAT)) AS AvgRating FROM DoctorReview WHERE DoctorID = ?";
+        Object[] params = {doctorId};
+        ResultSet rs = executeSelectQuery(sql, params);
         try {
-            Object[] params = {doctorId};
-            ResultSet rs = executeSelectQuery(sql, params);
             if (rs != null && rs.next()) {
                 // Return the average rating, rounded to one decimal place
                 double avgRating = rs.getDouble("AvgRating");
-                closeResources(rs); // Close the result set
                 return Math.round(avgRating * 10.0) / 10.0;
             }
         } catch (SQLException ex) {
             Logger.getLogger(DoctorReviewDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            closeResources(rs); // Close the result set
         }
         return 0.0;  // Return 0 if no ratings are found or an error occurs
     }
@@ -101,17 +103,18 @@ public class DoctorReviewDAO extends DBContext {
      */
     public int getReviewCountByDoctorId(int doctorId) {
         String sql = "SELECT COUNT(*) AS ReviewCount FROM DoctorReview WHERE DoctorID = ?";
+        Object[] params = {doctorId};
+        ResultSet rs = executeSelectQuery(sql, params);
         try {
-            Object[] params = {doctorId};
-            ResultSet rs = executeSelectQuery(sql, params);
             if (rs != null && rs.next()) {
                 // Return the count of reviews
                 int count = rs.getInt("ReviewCount");
-                closeResources(rs);
                 return count;
             }
         } catch (SQLException ex) {
             Logger.getLogger(DoctorReviewDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            closeResources(rs);
         }
         return 0;  // Return 0 if no reviews are found or an error occurs
     }

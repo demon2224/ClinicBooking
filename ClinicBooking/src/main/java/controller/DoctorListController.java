@@ -24,6 +24,8 @@ import utils.AvatarHandler;
  */
 public class DoctorListController extends HttpServlet {
 
+    private final DoctorDAO doctorDAO = new DoctorDAO();
+
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the
     // + sign on the left to edit the code.">
     /**
@@ -38,8 +40,6 @@ public class DoctorListController extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
-            DoctorDAO doctorDAO = new DoctorDAO();
-
             // Get search parameter from request
             String searchName = request.getParameter("searchName");
 

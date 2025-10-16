@@ -284,6 +284,7 @@ public class DoctorDAO extends DBContext {
                     degree.setDateEarn(rs.getDate("DateEarn"));
                     degree.setGrantor(rs.getString("Grantor"));
                     degree.setDegreeName(rs.getString("DegreeName"));
+
                     degrees.add(degree);
                 }
             }
