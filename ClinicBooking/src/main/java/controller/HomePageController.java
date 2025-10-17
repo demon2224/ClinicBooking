@@ -32,18 +32,24 @@ public class HomePageController extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         HttpSession session = request.getSession();
-        User user = ((new UserDAO()).getUserById(14));
+        User user = ((new UserDAO()).getUserById(7));
         if ((session != null) && (user != null)) {
             session.setAttribute("user", user);
+
         }
-        
+
         // Redirect to Pharmcist Dashboard if the user is a pharmacist
         // Temporary code. Remove later when the login complete and filer complete.
         if (user.getRoleID() == 3) {
             response.sendRedirect(request.getContextPath() + "/pharmacist-dashboard");
             return;
         }
-        
+
+        if (user.getRoleID() == 4) {
+            response.sendRedirect(request.getContextPath() + "/doctor-dashboard");
+            return;
+        }
+
         // Forward to Homepage.jsp
         request.getRequestDispatcher("/WEB-INF/HomePage.jsp").forward(request, response);
     }

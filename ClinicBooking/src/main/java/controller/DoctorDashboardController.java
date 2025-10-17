@@ -17,6 +17,7 @@ import java.util.List;
 import model.Appointment;
 import model.MedicalRecord;
 import model.Prescription;
+import model.User;
 
 /**
  *
@@ -63,7 +64,7 @@ public class DoctorDashboardController extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 //        processRequest(request, response);
-        int doctorID = 7;
+        int doctorID = ((User) request.getSession().getAttribute("user")).getUserID();
         AppointmentDAO appointmentDAO = new AppointmentDAO();
         MedicalRecordDAO medicalRecordDAO = new MedicalRecordDAO();
         PrescriptionDAO prescriptionDAO = new PrescriptionDAO();

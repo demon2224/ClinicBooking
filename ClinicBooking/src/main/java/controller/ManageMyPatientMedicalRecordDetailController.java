@@ -12,6 +12,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import model.User;
 
 /**
  *
@@ -59,7 +60,7 @@ public class ManageMyPatientMedicalRecordDetailController extends HttpServlet {
             throws ServletException, IOException {
 //        processRequest(request, response);
 
-        int doctorID = 7;
+        int doctorID = ((User) request.getSession().getAttribute("user")).getUserID();
         try {
             int medicalRecordID = Integer.parseInt(request.getParameter("medicalRecordID"));
             MedicalRecordDAO medicalRecordDAO = new MedicalRecordDAO();

@@ -13,6 +13,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
 import model.MedicalRecord;
+import model.User;
 
 /**
  *
@@ -59,7 +60,7 @@ public class ManageMyPatientMedicalRecordController extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 //        processRequest(request, response);
-        int doctorID = 7;
+        int doctorID = ((User) request.getSession().getAttribute("user")).getUserID();
 
         String keyword = request.getParameter("keyword");
         MedicalRecordDAO medicalRecordDAO = new MedicalRecordDAO();
