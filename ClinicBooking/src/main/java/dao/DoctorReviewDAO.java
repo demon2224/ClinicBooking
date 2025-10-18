@@ -25,8 +25,9 @@ public class DoctorReviewDAO extends DBContext {
      * Retrieves a list of reviews for a specific doctor.
      *
      * @param doctorId the ID of the doctor whose reviews are being retrieved
-     * @return a list of DoctorReview objects representing the reviews for the doctor, or
-     * an empty list if none are found or an error occurs
+     * @return a list of DoctorReview objects representing the reviews for the
+     *         doctor, or
+     *         an empty list if none are found or an error occurs
      */
     public List<DoctorReview> getReviewsByDoctorId(int doctorId) {
         List<DoctorReview> reviews = new ArrayList<>();
@@ -41,7 +42,7 @@ public class DoctorReviewDAO extends DBContext {
                 + "WHERE dr.DoctorID = ? "
                 + "ORDER BY dr.DateCreate DESC";
 
-        Object[] params = {doctorId};
+        Object[] params = { doctorId };
         ResultSet rs = executeSelectQuery(sql, params);
         try {
             if (rs != null) {
@@ -70,15 +71,17 @@ public class DoctorReviewDAO extends DBContext {
     }
 
     /**
-     * Calculates and returns the average rating for a doctor based on their reviews.
+     * Calculates and returns the average rating for a doctor based on their
+     * reviews.
      *
      * @param doctorId the ID of the doctor whose average rating is being calculated
-     * @return the average rating (rounded to one decimal place) for the doctor, or 0.0 if
-     * no ratings are found or an error occurs
+     * @return the average rating (rounded to one decimal place) for the doctor, or
+     *         0.0 if
+     *         no ratings are found or an error occurs
      */
     public double getAverageRatingByDoctorId(int doctorId) {
         String sql = "SELECT AVG(CAST(RateScore AS FLOAT)) AS AvgRating FROM DoctorReview WHERE DoctorID = ?";
-        Object[] params = {doctorId};
+        Object[] params = { doctorId };
         ResultSet rs = executeSelectQuery(sql, params);
         try {
             if (rs != null && rs.next()) {
@@ -91,19 +94,20 @@ public class DoctorReviewDAO extends DBContext {
         } finally {
             closeResources(rs); // Close the result set
         }
-        return 0.0;  // Return 0 if no ratings are found or an error occurs
+        return 0.0; // Return 0 if no ratings are found or an error occurs
     }
 
     /**
      * Counts and returns the total number of reviews for a doctor.
      *
      * @param doctorId the ID of the doctor whose reviews are being counted
-     * @return the total number of reviews for the doctor, or 0 if none are found or an
-     * error occurs
+     * @return the total number of reviews for the doctor, or 0 if none are found or
+     *         an
+     *         error occurs
      */
     public int getReviewCountByDoctorId(int doctorId) {
         String sql = "SELECT COUNT(*) AS ReviewCount FROM DoctorReview WHERE DoctorID = ?";
-        Object[] params = {doctorId};
+        Object[] params = { doctorId };
         ResultSet rs = executeSelectQuery(sql, params);
         try {
             if (rs != null && rs.next()) {
@@ -116,6 +120,77 @@ public class DoctorReviewDAO extends DBContext {
         } finally {
             closeResources(rs);
         }
-        return 0;  // Return 0 if no reviews are found or an error occurs
+        return 0; // Return 0 if no reviews are found or an error occurs
+    }
+
+    /**
+     * Retrieves a list of reviews written by a specific user/patient.
+     * Includes doctor information for display in patient's feedback management.
+     *
+     * @param userId the ID of the user whose reviews are being retrieved
+     * @return a list of DoctorReview objects representing the reviews written by
+     *         the user, or an empty list if none are found or an error occurs
+     */
+    public List<DoctorReview> getReviewsByUserId(int userId) {
+        List<DoctorReview> reviews = new ArrayList<>();
+
+        String sql = "SELECT dr.DoctorReviewID, dr.UserID, dr.DoctorID, dr.Content, "
+                + "dr.RateScore, dr.DateCreate "
+                + "FROM DoctorReview dr "
+                + "WHERE dr.UserID = ? "
+                + "ORDER BY dr.DateCreate DESC";
+
+        Object[] params = { userId };
+        ResultSet rs = executeSelectQuery(sql, params);
+        try {
+            if (rs != null) {
+                while (rs.next()) {
+                    DoctorReview review = new DoctorReview();
+                    review.setDoctorReviewID(rs.getInt("DoctorReviewID"));
+                    review.setUserID(rs.getInt("UserID"));
+                    review.setDoctorID(rs.getInt("DoctorID"));
+                    review.setContent(rs.getString("Content"));
+                    review.setRateScore(rs.getInt("RateScore"));
+                    // Convert Timestamp to LocalDateTime
+                    Timestamp timestamp = rs.getTimestamp("DateCreate");
+                    if (timestamp != null) {
+                        review.setDateCreate(timestamp.toLocalDateTime());
+                    }
+                    // Get doctor name with separate query
+                    String doctorName = getDoctorNameById(review.getDoctorID());
+                    review.setDoctorName(doctorName != null ? doctorName : "Doctor " + review.getDoctorID());
+
+                    reviews.add(review);
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(DoctorReviewDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            closeResources(rs);
+        }
+        return reviews;
+    }
+
+    /**
+     * Helper method to get doctor name by doctor ID
+     */
+    private String getDoctorNameById(int doctorId) {
+        String sql = "SELECT 'Dr. ' + FirstName + ' ' + LastName AS DoctorName FROM Profile WHERE UserProfileID = ?";
+        Object[] params = { doctorId };
+        ResultSet rs = executeSelectQuery(sql, params);
+
+        try {
+            if (rs != null && rs.next()) {
+                String result = rs.getString("DoctorName");
+                if (result != null && !result.trim().isEmpty()) {
+                    return result;
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(DoctorReviewDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            closeResources(rs);
+        }
+        return "Doctor " + doctorId; 
     }
 }

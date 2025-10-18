@@ -20,8 +20,7 @@ import model.User;
 public class HomePageController extends HttpServlet {
 
     /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
+     * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
      *
      * @param request servlet request
      * @param response servlet response
@@ -32,7 +31,7 @@ public class HomePageController extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         HttpSession session = request.getSession();
-        User user = ((new UserDAO()).getUserById(7));
+        User user = ((new UserDAO()).getUserById(9));
         if ((session != null) && (user != null)) {
             session.setAttribute("user", user);
 
@@ -47,6 +46,10 @@ public class HomePageController extends HttpServlet {
 
         if (user.getRoleID() == 4) {
             response.sendRedirect(request.getContextPath() + "/doctor-dashboard");
+            return;
+        }
+        if (user.getRoleID() == 9) {
+            response.sendRedirect(request.getContextPath() + "/manage-my-feedback");
             return;
         }
 

@@ -21,11 +21,13 @@ public class DoctorReview {
 
     private String reviewerFullName;
     private String reviewerAvatar;
+    private String doctorName;
 
     public DoctorReview() {
     }
 
-    public DoctorReview(int doctorReviewID, int userID, int doctorID, String content, int rateScore, LocalDateTime dateCreate, String reviewerFullName, String reviewerAvatar) {
+    public DoctorReview(int doctorReviewID, int userID, int doctorID, String content, int rateScore,
+            LocalDateTime dateCreate, String reviewerFullName, String reviewerAvatar) {
         this.doctorReviewID = doctorReviewID;
         this.userID = userID;
         this.doctorID = doctorID;
@@ -34,6 +36,13 @@ public class DoctorReview {
         this.dateCreate = dateCreate;
         this.reviewerFullName = reviewerFullName;
         this.reviewerAvatar = reviewerAvatar;
+    }
+
+    // Constructor with doctorName for patient feedback management
+    public DoctorReview(int doctorReviewID, int userID, int doctorID, String content, int rateScore,
+            LocalDateTime dateCreate, String reviewerFullName, String reviewerAvatar, String doctorName) {
+        this(doctorReviewID, userID, doctorID, content, rateScore, dateCreate, reviewerFullName, reviewerAvatar);
+        this.doctorName = doctorName;
     }
 
     public int getDoctorReviewID() {
@@ -98,6 +107,14 @@ public class DoctorReview {
 
     public void setReviewerAvatar(String reviewerAvatar) {
         this.reviewerAvatar = reviewerAvatar;
+    }
+
+    public String getDoctorName() {
+        return doctorName;
+    }
+
+    public void setDoctorName(String doctorName) {
+        this.doctorName = doctorName;
     }
 
 }

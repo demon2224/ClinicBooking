@@ -43,8 +43,8 @@
                                class="${param.activePage == 'prescriptions' ? 'active' : ''}">Manage My Prescriptions</a></li>
                         <li><a href="#"
                                class="${param.activePage == 'invoices' ? 'active' : ''}">Manage My Invoices</a></li>
-                        <li><a href="#"
-                               class="${param.activePage == 'feedbacks' ? 'active' : ''}">My Feedbacks</a></li>
+                        <li><a href="${pageContext.request.contextPath}/manage-my-feedback"
+                               class="${param.activePage == 'manage-feedback' ? 'active' : ''}">My Feedbacks</a></li>
                     </ul>
                 </li>
                 <li>
