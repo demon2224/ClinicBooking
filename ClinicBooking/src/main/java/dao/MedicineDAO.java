@@ -8,11 +8,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import model.MedicineViewModel;
+import model.Medicine;
 import utils.DBContext;
 
 /**
@@ -26,7 +25,7 @@ public class MedicineDAO extends DBContext {
      * 
      * @return a list contain all medicine information
      */
-    public List<MedicineViewModel> getAllMedicines() {
+    public List<Medicine> getAllMedicines() {
         String query = "SELECT m.MedicineID, mt.MedicineTypeName, m.MedicineStatus, m.MedicineName, m.MedicineCode, m.Price, m.Quantity, \n"
                 + "		(SELECT TOP 1 subst.DateImport\n"
                 + "		FROM [dbo].[MedicineStockTransaction] subst\n"
@@ -37,13 +36,13 @@ public class MedicineDAO extends DBContext {
                 + "ON mt.MedicineTypeID = m.MedicineTypeID;";
 
         ResultSet rs = null;
-        List<MedicineViewModel> medicineList = new ArrayList<>();
+        List<Medicine> medicineList = new ArrayList<>();
 
         try {
             rs = executeSelectQuery(query);
             while (rs.next()) {
 
-                MedicineViewModel medicine = new MedicineViewModel();
+                Medicine medicine = new Medicine();
                 medicine.setMedicineId(rs.getInt("MedicineID"));
                 medicine.setMedicineType(rs.getString("MedicineTypeName"));
                 medicine.setMedicineStatus(rs.getBoolean("MedicineStatus"));
@@ -70,7 +69,7 @@ public class MedicineDAO extends DBContext {
      * @param medicineId is the medicine want to get information
      * @return an object contain information of a medicine
      */
-    public MedicineViewModel getMedicineById(int medicineId) {
+    public Medicine getMedicineById(int medicineId) {
         String query = "SELECT m.MedicineID, mt.MedicineTypeName, m.MedicineStatus, m.MedicineName, m.MedicineCode, m.Quantity, m.Price, m.DateCreate, \n"
                 + "             (SELECT TOP 1 subst.DateImport\n"
                 + "		FROM [dbo].[MedicineStockTransaction] subst\n"
@@ -83,13 +82,13 @@ public class MedicineDAO extends DBContext {
 
         ResultSet rs = null;
         Object[] params = {medicineId};
-        MedicineViewModel medicine = null;
+        Medicine medicine = null;
 
         try {
             rs = executeSelectQuery(query, params);
             while (rs.next()) {
 
-                medicine = new MedicineViewModel();
+                medicine = new Medicine();
                 medicine.setMedicineId(rs.getInt("MedicineID"));
                 medicine.setMedicineType(rs.getString("MedicineTypeName"));
                 medicine.setMedicineStatus(rs.getBoolean("MedicineStatus"));
@@ -118,7 +117,7 @@ public class MedicineDAO extends DBContext {
      * @param medicineCode is the code of medicine
      * @return a list contain all medicine match with user search input
      */
-    public List<MedicineViewModel> searchMedicineByTypeNameCode(String medicineType, String medicineName, String medicineCode) {
+    public List<Medicine> searchMedicineByTypeNameCode(String medicineType, String medicineName, String medicineCode) {
         String query = "SELECT m.MedicineID, mt.MedicineTypeName, m.MedicineStatus, m.MedicineName, m.MedicineCode, m.Quantity, m.Price, m.DateCreate, \n"
                 + "		(SELECT TOP 1 subst.DateImport\n"
                 + "		FROM [dbo].[MedicineStockTransaction] subst\n"
@@ -134,13 +133,13 @@ public class MedicineDAO extends DBContext {
             "%" + medicineType + "%",
             "%" + medicineName + "%"};
         ResultSet rs = null;
-        List<MedicineViewModel> medicineList = new ArrayList<>();
+        List<Medicine> medicineList = new ArrayList<>();
 
         try {
             rs = executeSelectQuery(query, params);
 
             while (rs.next()) {
-                MedicineViewModel medicine = new MedicineViewModel();
+                Medicine medicine = new Medicine();
 
                 medicine.setMedicineId(rs.getInt("MedicineID"));
                 medicine.setMedicineType(rs.getString("MedicineTypeName"));
@@ -156,6 +155,8 @@ public class MedicineDAO extends DBContext {
             }
         } catch (SQLException ex) {
             Logger.getLogger(MedicineDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            closeResources(rs);
         }
 
         return medicineList;

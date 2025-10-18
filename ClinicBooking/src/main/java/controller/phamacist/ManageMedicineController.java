@@ -14,9 +14,9 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
+import model.Medicine;
 import model.MedicineStockTransaction;
 import model.MedicineType;
-import model.MedicineViewModel;
 import validate.CreateNewMedicineValidate;
 
 /**
@@ -159,7 +159,7 @@ public class ManageMedicineController extends HttpServlet {
      */
     private void handleSearchRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String searchParam = request.getParameter("search");
-        List<MedicineViewModel> medicineList = null;
+        List<Medicine> medicineList = null;
 
         // Check if the search input is null or not.
         // If it is yes then show user the medicine list.
@@ -176,7 +176,7 @@ public class ManageMedicineController extends HttpServlet {
 
     /**
      * Handle when user want to view detail of a specific medicine.
-     * 
+     *
      * @param request servlet request
      * @param response servlet response
      * @param medicineParam medicine id want to view detail information
@@ -184,7 +184,7 @@ public class ManageMedicineController extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     private void handleViewMedicineDetailRequest(HttpServletRequest request, HttpServletResponse response, int medicineParam) throws ServletException, IOException {
-        MedicineViewModel medicine = medicineDAO.getMedicineById(medicineParam);
+        Medicine medicine = medicineDAO.getMedicineById(medicineParam);
         List<MedicineStockTransaction> medicineStockTransactionList = medicineStockTransactionDAO.getMedicineStockTransactionByMedicineId(medicineParam);
         request.setAttribute("medicine", medicine);
         request.setAttribute("medicineStockTransactionList", medicineStockTransactionList);
@@ -192,16 +192,16 @@ public class ManageMedicineController extends HttpServlet {
     }
 
     /**
-     * Handle when the user request is invalid or an error occur.
-     * Show the user medicine list.
-     * 
+     * Handle when the user request is invalid or an error occur. Show the user
+     * medicine list.
+     *
      * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
     private void handleInvalidRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        List<MedicineViewModel> medicineList = medicineDAO.getAllMedicines();
+        List<Medicine> medicineList = medicineDAO.getAllMedicines();
         request.setAttribute("medicineList", medicineList);
         request.getRequestDispatcher("/WEB-INF/pharmacist/MedicineList.jsp").forward(request, response);
     }
@@ -230,15 +230,16 @@ public class ManageMedicineController extends HttpServlet {
 
     /**
      * Handle when user want to create new medicine.
-     * 
+     *
      * STILL IN PROCESS
-     * 
+     *
      * @param request
-     * @param response 
+     * @param response
      */
     private void handleCreateResponse(HttpServletRequest request, HttpServletResponse response) {
-        String medicineNameParam = request.getParameter("medicineName");
-        String medicineCodeParam = request.getParameter("medicineCode");
+
+        checkMedicineName(request);
+        checkMedicineCode(request);
         String medicineTypeIdParam = request.getParameter("medicineTypeId");
         String quantityParam = request.getParameter("quantity");
         String priceParam = request.getParameter("price");
@@ -248,18 +249,33 @@ public class ManageMedicineController extends HttpServlet {
     }
 
     /**
-     * Check the medicine name is valid or not.
-     * If it invalid then show the error of it.
-     * 
-     * STILL IN PROCESS
-     * 
-     * @param request 
+     * Check the medicine name is valid or not. If it is invalid then show the
+     * error message of it. If it is valid then show the success message.
+     *
+     * Medicine name must not be null, empty or contain anything except
+     * character.
+     *
+     * @param request servlet request
      */
     private void checkMedicineName(HttpServletRequest request) {
         String medicineNameParam = request.getParameter("medicineName");
 
-        if (CreateNewMedicineValidate.isValidMedicineName(medicineNameParam)) {
+        if (CreateNewMedicineValidate.isEmpty(medicineNameParam)) {
+            request.getSession().setAttribute("medicineNameErrorMsg", "The medicine name can't be empty.");
+        } else if (CreateNewMedicineValidate.isValidMedicineName(medicineNameParam)) {
+            request.getSession().setAttribute("medicineNameErrorMsg", "The medicine name only contains character.");
+        } else {
+            request.getSession().setAttribute("medicineNameSuccessMsg", "The mdicine name is valid.");
+        }
+    }
 
+    private void checkMedicineCode(HttpServletRequest request) {
+        String medicineCodeParam = request.getParameter("medicineCode");
+
+        if (CreateNewMedicineValidate.isEmpty(medicineCodeParam)) {
+            request.getSession().setAttribute("medicineCodeErrorMsg", "The medicine code can't be empty.");
+        } else if (CreateNewMedicineValidate.isValidMedicineCodeLength(medicineCodeParam)) {
+            request.getSession().setAttribute("medicineCodeErrorMsg", "The medicine code must be 6 letter length.");
         }
     }
 

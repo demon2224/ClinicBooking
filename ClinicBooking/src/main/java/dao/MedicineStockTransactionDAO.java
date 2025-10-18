@@ -11,8 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import model.Medicine;
 import model.MedicineStockTransaction;
-import model.MedicineViewModel;
 import utils.DBContext;
 
 /**
@@ -44,7 +44,7 @@ public class MedicineStockTransactionDAO extends DBContext {
             if (rs.next()) {
                 MedicineStockTransaction medicineStockTransaction = new MedicineStockTransaction();
 
-                MedicineViewModel medicine = new MedicineViewModel();
+                Medicine medicine = new Medicine();
                 medicine.setMedicineId(rs.getInt("MedicineID"));
                 medicine.setMedicineName(rs.getString("MedicineName"));
                 medicine.setMedicineCode(rs.getString("MedicineCode"));

@@ -36,6 +36,9 @@ public class Medicine {
 
     // The creation date time of the medicine record
     private LocalDateTime dateCreated;
+    
+     // The date time of the last stock transaction for this medicine
+    private LocalDateTime lastStockTransaction;
 
     /**
      * Default constructor for Medicine.
@@ -225,6 +228,38 @@ public class Medicine {
             return "";
         }
         return this.dateCreated.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"));
+    }
+    
+    /**
+     * Gets the date time of the last stock transaction.
+     *
+     * @return The last stock transaction timestamp
+     */
+    public LocalDateTime getLastStockTransaction() {
+        return lastStockTransaction;
+    }
+
+    /**
+     * Sets the date time of the last stock transaction.
+     *
+     * @param lastStockTransaction The last stock transaction timestamp to set
+     */
+    public void setLastStockTransaction(LocalDateTime lastStockTransaction) {
+        this.lastStockTransaction = lastStockTransaction;
+    }
+
+    /**
+     * Formats the last stock transaction timestamp into a display-friendly
+     * string. Returns an empty string if no transaction exists.
+     *
+     * @return Formatted date string in "dd/MM/yyyy HH:mm:ss" format, or empty
+     * string if null
+     */
+    public String getLastStockTransactionFormatDate() {
+        if (this.lastStockTransaction == null) {
+            return "";
+        }
+        return this.lastStockTransaction.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"));
     }
 
 }

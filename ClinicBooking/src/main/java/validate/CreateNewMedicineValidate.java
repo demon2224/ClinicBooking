@@ -27,6 +27,16 @@ public class CreateNewMedicineValidate {
 
     public static final int AVAILABLE_MEDICINE_STATUS = 1;
     public static final int UNAVAILABLE_MEDICINE_STATUS = 0;
+    
+    /**
+     * Check the input is null or empty.
+     * 
+     * @param input is the input need to check
+     * @return True if the input is null or empty. False if not
+     */
+    public static boolean isEmpty(String input) {
+        return input == null || input.isBlank();
+    }
 
     /**
      * Check the name of medicine is valid or not. Valid medicine name is only
