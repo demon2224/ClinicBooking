@@ -4,8 +4,8 @@
  */
 package controller;
 
-import dao.DoctorDAO;
-import dao.UserDAO;
+
+import dao.AppointmentDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -13,9 +13,6 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
-import model.Appointment;
-import model.Doctor;
-import model.Patient;
 
 /**
  *
@@ -61,17 +58,10 @@ public class ReceptionistDashboardController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        dao.AppointmentDAO dao = new dao.AppointmentDAO();
-        try {
-            List<model.Appointment> appointmentList = dao.getAllAppointments();
-            request.setAttribute("appointmentList", appointmentList);
 
             request.getRequestDispatcher("/WEB-INF/receptionist/ReceptionistDashboard.jsp")
                     .forward(request, response);
-        } catch (Exception e) {
-            e.printStackTrace();
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Server error");
-        }
+        
     }
 
     /**

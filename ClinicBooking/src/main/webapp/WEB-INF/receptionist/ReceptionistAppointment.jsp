@@ -12,7 +12,7 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8">
-        <title>Doctor Dashboard</title>
+        <title>Receptionist Dashboard</title>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
         <style>
@@ -71,7 +71,7 @@
             <h4 class="text-center mt-3 mb-4">CLINIC</h4>
             <a href="${pageContext.request.contextPath}/receptionist-dashboard"><i class="fa-solid fa-gauge me-2"></i>Dashboard</a>
             <a href="${pageContext.request.contextPath}/receptionist-manage-appointment?action"><i class="fa-solid fa-calendar-days me-2"></i>Manage Appointment</a>
-            <a href="#"><i class="fa-solid fa-user-doctor me-2"></i>Manage Invoice</a>
+            <a href="${pageContext.request.contextPath}/manage-invoice"><i class="fa-solid fa-user-doctor me-2"></i>Manage Invoice</a>
         </div>
 
         <!-- Main content -->
@@ -164,23 +164,23 @@
                                             </a>
 
                                             <button type="button" 
-                                                    class="btn btn-sm btn-success btn-approve"
-                                                    data-id="${a.appointmentID}" 
-                                                    data-bs-toggle="modal" 
-                                                    data-bs-target="#confirmModal"
-                                                    <c:if test="${a.appointmentStatusID != 1}">disabled</c:if>>
+                                            class="btn btn-sm btn-success btn-approve"
+                                            data-id="${a.appointmentID}" 
+                                            data-bs-toggle="modal" 
+                                            data-bs-target="#confirmModal"
+                                            <c:if test="${a.appointmentStatusID != 1}">disabled</c:if>>
                                                         <i class="fa-solid fa-check"></i> Update
-                                                    </button>
+                                            </button>
 
-                                                    <!-- Cancel button -->
-                                                    <button type="button" 
-                                                            class="btn btn-sm btn-danger btn-cancel"
-                                                            data-id="${a.appointmentID}" 
-                                                    data-bs-toggle="modal" 
-                                                    data-bs-target="#confirmModal"
-                                                    <c:if test="${a.appointmentStatusID == 3 || a.appointmentStatusID == 4}">disabled style="opacity: 0.6;"</c:if>>
+                                            <!-- Cancel button -->
+                                            <button type="button" 
+                                            class="btn btn-sm btn-danger btn-cancel"
+                                            data-id="${a.appointmentID}" 
+                                            data-bs-toggle="modal" 
+                                            data-bs-target="#confirmModal"
+                                            <c:if test="${a.appointmentStatusID == 3 || a.appointmentStatusID == 4}">disabled style="opacity: 0.6;"</c:if>>
                                                         <i class="fa-solid fa-xmark"></i> Cancel
-                                                    </button>
+                                            </button>
 
                                             </td>
                                         </tr>

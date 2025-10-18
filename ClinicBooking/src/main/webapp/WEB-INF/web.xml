@@ -19,6 +19,10 @@
         <servlet-name>ManageMyFeedbackController</servlet-name>
         <servlet-class>controller.ManageMyFeedbackController</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>ManageInvoiceController</servlet-name>
+        <servlet-class>controller.ManageInvoiceController</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>PharmacistDashboardController</servlet-name>
         <url-pattern>/pharmacist-dashboard</url-pattern>
@@ -42,6 +46,10 @@
     <servlet-mapping>
         <servlet-name>ManageMyFeedbackController</servlet-name>
         <url-pattern>/manage-my-feedback</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ManageInvoiceController</servlet-name>
+        <url-pattern>/manage-invoice</url-pattern>
     </servlet-mapping>
     <welcome-file-list>
         <welcome-file>index.jsp</welcome-file>

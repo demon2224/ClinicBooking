@@ -4,23 +4,25 @@
  */
 package controller;
 
-import dao.UserDAO;
+import dao.InvoiceDAO;
 import java.io.IOException;
+import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
-import model.User;
+import java.util.List;
+import model.Invoice;
 
 /**
  *
- * @author Le Anh Tuan - CE180905
+ * @author Ngo Quoc Hung - CE191184
  */
-public class HomePageController extends HttpServlet {
+public class ManageInvoiceController extends HttpServlet {
 
     /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
+     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
+     * methods.
      *
      * @param request servlet request
      * @param response servlet response
@@ -30,31 +32,18 @@ public class HomePageController extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        HttpSession session = request.getSession();
-        User user = ((new UserDAO()).getUserById(14));
-        if ((session != null) && (user != null)) {
-            session.setAttribute("user", user);
-
+        try ( PrintWriter out = response.getWriter()) {
+            /* TODO output your page here. You may use following sample code. */
+            out.println("<!DOCTYPE html>");
+            out.println("<html>");
+            out.println("<head>");
+            out.println("<title>Servlet ManageInvoiceController</title>");
+            out.println("</head>");
+            out.println("<body>");
+            out.println("<h1>Servlet ManageInvoiceController at " + request.getContextPath() + "</h1>");
+            out.println("</body>");
+            out.println("</html>");
         }
-
-        // Redirect to Pharmcist Dashboard if the user is a pharmacist
-        // Temporary code. Remove later when the login complete and filer complete.
-        if (user.getRoleID() == 3) {
-            response.sendRedirect(request.getContextPath() + "/pharmacist-dashboard");
-            return;
-        }
-
-        if (user.getRoleID() == 4) {
-            response.sendRedirect(request.getContextPath() + "/doctor-dashboard");
-            return;
-        }
-        if (user.getRoleID() == 9) {
-            response.sendRedirect(request.getContextPath() + "/manage-my-feedback");
-            return;
-        }
-
-        // Forward to Homepage.jsp
-        request.getRequestDispatcher("/WEB-INF/HomePage.jsp").forward(request, response);
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
@@ -69,7 +58,12 @@ public class HomePageController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        InvoiceDAO dao = new InvoiceDAO();
+        List<Invoice> invoices = dao.getAllInvoices();
+        request.setAttribute("invoices", invoices);
+
+        request.getRequestDispatcher("/WEB-INF/receptionist/ReceptionistInvoice.jsp")
+                .forward(request, response);
     }
 
     /**
@@ -93,7 +87,7 @@ public class HomePageController extends HttpServlet {
      */
     @Override
     public String getServletInfo() {
-        return "Home Page Controller";
+        return "Short description";
     }// </editor-fold>
 
 }
