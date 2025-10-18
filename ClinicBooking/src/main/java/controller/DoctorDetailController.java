@@ -26,21 +26,33 @@ import utils.AvatarHandler;
  */
 public class DoctorDetailController extends HttpServlet {
 
-    private final DoctorDAO doctorDAO = new DoctorDAO();
-    private final DoctorReviewDAO doctorReviewDAO = new DoctorReviewDAO();
+    private DoctorDAO doctorDAO;
+    private DoctorReviewDAO doctorReviewDAO;
 
     /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
+     * Initialize all the necessary DAO using in this controller.
      *
-     * @param request servlet request
+     * @throws ServletException
+     */
+    @Override
+    public void init() throws ServletException {
+        doctorDAO = new DoctorDAO();
+        doctorReviewDAO = new DoctorReviewDAO();
+    }
+
+    /**
+     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
+     * methods.
+     *
+     * @param request  servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * @throws IOException      if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        try ( PrintWriter out = response.getWriter()) {
+        try (PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
             out.println("<!DOCTYPE html>");
             out.println("<html>");
@@ -59,10 +71,10 @@ public class DoctorDetailController extends HttpServlet {
     /**
      * Handles the HTTP <code>GET</code> method.
      *
-     * @param request servlet request
+     * @param request  servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * @throws IOException      if an I/O error occurs
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -91,7 +103,8 @@ public class DoctorDetailController extends HttpServlet {
             double averageRating = doctorReviewDAO.getAverageRatingByDoctorId(doctorId);
             // Count the total number of reviews for the doctor
             int reviewCount = doctorReviewDAO.getReviewCountByDoctorId(doctorId);
-            // Set doctor reviews, average rating, review count, degrees, and doctor details in request attributes
+            // Set doctor reviews, average rating, review count, degrees, and doctor details
+            // in request attributes
             request.setAttribute("doctorReviews", doctorReviews);
             request.setAttribute("averageRating", averageRating);
             request.setAttribute("reviewCount", reviewCount);
@@ -110,10 +123,10 @@ public class DoctorDetailController extends HttpServlet {
     /**
      * Handles the HTTP <code>POST</code> method.
      *
-     * @param request servlet request
+     * @param request  servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * @throws IOException      if an I/O error occurs
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -122,7 +135,8 @@ public class DoctorDetailController extends HttpServlet {
         String doctorId = request.getParameter("id");
         // Initialize the redirect URL to the doctor detail page
         String redirectUrl = request.getContextPath() + DoctorListConstants.DOCTOR_DETAIL_URL;
-        // If doctorId is provided and not empty, append it as a query parameter to the URL
+        // If doctorId is provided and not empty, append it as a query parameter to the
+        // URL
         if (doctorId != null && !doctorId.trim().isEmpty()) {
             redirectUrl += "?id=" + doctorId;
         }

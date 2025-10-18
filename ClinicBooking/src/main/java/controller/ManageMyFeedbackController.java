@@ -6,6 +6,7 @@ package controller;
 
 import constants.ManageMyFeedbackConstants;
 import dao.DoctorReviewDAO;
+import validate.FeedbackValidate;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
@@ -22,18 +23,31 @@ import model.User;
  */
 public class ManageMyFeedbackController extends HttpServlet {
 
+    private DoctorReviewDAO doctorReviewDAO;
+
     /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
+     * Initialize all the necessary DAO using in this controller.
      *
-     * @param request servlet request
+     * @throws ServletException
+     */
+    @Override
+    public void init() throws ServletException {
+        doctorReviewDAO = new DoctorReviewDAO();
+    }
+
+    /**
+     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
+     * methods.
+     *
+     * @param request  servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * @throws IOException      if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        try ( PrintWriter out = response.getWriter()) {
+        try (PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
             out.println("<!DOCTYPE html>");
             out.println("<html>");
@@ -52,10 +66,10 @@ public class ManageMyFeedbackController extends HttpServlet {
     /**
      * Handles the HTTP <code>GET</code> method.
      *
-     * @param request servlet request
+     * @param request  servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * @throws IOException      if an I/O error occurs
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -71,7 +85,7 @@ public class ManageMyFeedbackController extends HttpServlet {
             } else if (action.equals("detail")) {
                 handleViewFeedbackDetail(request, response, userID);
             } else if (action.equals("delete")) {
-                handleDeleteFeedback(request, response, userID);
+                handleDeleteFeedbackPost(request, response, userID);
             } else if (action.equals("edit")) {
                 handleEditFeedback(request, response, userID);
             } else if (action.equals("create")) {
@@ -94,24 +108,13 @@ public class ManageMyFeedbackController extends HttpServlet {
     private void viewMyFeedbacks(HttpServletRequest request, HttpServletResponse response, int userID)
             throws ServletException, IOException {
 
-        DoctorReviewDAO reviewDAO = new DoctorReviewDAO();
-        List<DoctorReview> myReviews = reviewDAO.getReviewsByUserId(userID);
+        List<DoctorReview> myReviews = doctorReviewDAO.getReviewsByUserId(userID);
 
         request.setAttribute("myReviews", myReviews);
         request.setAttribute("totalReviews", myReviews.size());
         request.setAttribute("viewMode", ManageMyFeedbackConstants.VIEW_MODE_LIST);
         request.getRequestDispatcher(ManageMyFeedbackConstants.MANAGE_FEEDBACK_JSP)
                 .forward(request, response);
-    }
-
-    /**
-     * Handle delete feedback - Future implementation
-     */
-    private void handleDeleteFeedback(HttpServletRequest request, HttpServletResponse response, int userID)
-            throws ServletException, IOException {
-
-        request.setAttribute("message", ManageMyFeedbackConstants.MSG_DELETE_PLACEHOLDER);
-        viewMyFeedbacks(request, response, userID);
     }
 
     /**
@@ -122,18 +125,16 @@ public class ManageMyFeedbackController extends HttpServlet {
 
         String reviewIdParam = request.getParameter("reviewId");
 
-        if (reviewIdParam == null || reviewIdParam.trim().isEmpty()) {
+        if (!FeedbackValidate.isValidReviewId(reviewIdParam)) {
             request.setAttribute("errorMessage", ManageMyFeedbackConstants.ERROR_REQUIRED_REVIEW_ID);
             viewMyFeedbacks(request, response, userID);
             return;
         }
 
         try {
-            int reviewId = Integer.parseInt(reviewIdParam);
+            int reviewId = Integer.parseInt(reviewIdParam.trim());
 
-            DoctorReviewDAO reviewDAO = new DoctorReviewDAO();
-
-            List<DoctorReview> myReviews = reviewDAO.getReviewsByUserId(userID);
+            List<DoctorReview> myReviews = doctorReviewDAO.getReviewsByUserId(userID);
             DoctorReview selectedReview = null;
 
             for (DoctorReview review : myReviews) {
@@ -172,10 +173,10 @@ public class ManageMyFeedbackController extends HttpServlet {
     /**
      * Handles the HTTP <code>POST</code> method.
      *
-     * @param request servlet request
+     * @param request  servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * @throws IOException      if an I/O error occurs
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -221,8 +222,7 @@ public class ManageMyFeedbackController extends HttpServlet {
         String content = request.getParameter("content");
         String rateScore = request.getParameter("rateScore");
 
-        if (content != null && content.length() >= ManageMyFeedbackConstants.MIN_CONTENT_LENGTH
-                && content.length() <= ManageMyFeedbackConstants.MAX_CONTENT_LENGTH) {
+        if (FeedbackValidate.isValidContent(content)) {
             request.setAttribute("successMessage", ManageMyFeedbackConstants.MSG_UPDATE_PLACEHOLDER);
         } else {
             request.setAttribute("errorMessage", ManageMyFeedbackConstants.ERROR_CONTENT_LENGTH);
@@ -264,24 +264,15 @@ public class ManageMyFeedbackController extends HttpServlet {
         String content = request.getParameter("content");
         String rateScore = request.getParameter("rateScore");
 
-        if (content != null && content.length() >= ManageMyFeedbackConstants.MIN_CONTENT_LENGTH
-                && content.length() <= ManageMyFeedbackConstants.MAX_CONTENT_LENGTH
-                && rateScore != null) {
-
-            try {
-                int rating = Integer.parseInt(rateScore);
-                if (rating >= ManageMyFeedbackConstants.MIN_RATE_SCORE
-                        && rating <= ManageMyFeedbackConstants.MAX_RATE_SCORE) {
-                    request.setAttribute("successMessage",
-                            ManageMyFeedbackConstants.MSG_CREATE_PLACEHOLDER + doctorID);
-                } else {
-                    request.setAttribute("errorMessage", ManageMyFeedbackConstants.ERROR_INVALID_RATING);
-                }
-            } catch (NumberFormatException e) {
-                request.setAttribute("errorMessage", ManageMyFeedbackConstants.ERROR_INVALID_RATING);
-            }
-        } else {
+        if (FeedbackValidate.isValidFeedbackData(content, rateScore, doctorID)) {
+            request.setAttribute("successMessage",
+                    ManageMyFeedbackConstants.MSG_CREATE_PLACEHOLDER + doctorID);
+        } else if (!FeedbackValidate.isValidContent(content)) {
             request.setAttribute("errorMessage", ManageMyFeedbackConstants.ERROR_CONTENT_LENGTH);
+        } else if (!FeedbackValidate.isValidRating(rateScore)) {
+            request.setAttribute("errorMessage", ManageMyFeedbackConstants.ERROR_INVALID_RATING);
+        } else {
+            request.setAttribute("errorMessage", "Invalid doctor ID.");
         }
 
         viewMyFeedbacks(request, response, userID);
