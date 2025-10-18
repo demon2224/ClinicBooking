@@ -56,10 +56,7 @@ public class ManageMyAppointmentController extends HttpServlet {
 
         // Set attributes for JSP
         request.setAttribute("appointments", appointments);
-        request.setAttribute("userId", user.getUserID());
-        request.setAttribute("userName", user.getAccount().getAccountName());
         request.setAttribute("searchQuery", searchQuery);
-        request.setAttribute("statusFilter", statusFilter);
 
         // Forward to JSP
         request.getRequestDispatcher("/WEB-INF/ManageMyAppointment.jsp").forward(request, response);
@@ -76,9 +73,9 @@ public class ManageMyAppointmentController extends HttpServlet {
 
         if ("cancel".equals(action)) {
             handleCancelAppointment(request, response);
-        } else {
-            response.sendRedirect(request.getContextPath() + "/manage-my-appointments");
+            return;
         }
+        response.sendRedirect(request.getContextPath() + "/manage-my-appointments");
     }
 
     /**
