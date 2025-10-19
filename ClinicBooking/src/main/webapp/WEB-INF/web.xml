@@ -116,15 +116,6 @@
         <servlet-name>DoctorDetailController</servlet-name>
         <url-pattern>/doctor-detail</url-pattern>
     </servlet-mapping>
-    <!-- MyAppointmentDetailController -->
-    <servlet>
-        <servlet-name>MyAppointmentDetailController</servlet-name>
-        <servlet-class>controller.MyAppointmentDetailController</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>MyAppointmentDetailController</servlet-name>
-        <url-pattern>/my-appointment-detail</url-pattern>
-    </servlet-mapping>
     <!-- MyPatientAppointmentDetailController -->
     <servlet>
         <servlet-name>MyPatientAppointmentDetailController</servlet-name>
