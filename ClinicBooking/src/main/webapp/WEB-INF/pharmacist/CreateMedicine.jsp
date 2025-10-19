@@ -98,44 +98,69 @@
                                 <div class="col-md-6">
                                     <label class="form-label required">Medicine Name</label>
                                     <input type="text" class="form-control" name="medicineName" required>
+                                    <div class="text-danger">
+                                        <c:if test="${not empty sessionScope.medicineNameErrorMsg}">                   
+                                            <c:out value="${sessionScope.medicineNameErrorMsg}"/>
+                                        </c:if>
+                                    </div>
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label required">Medicine Code</label>
                                     <input type="text" class="form-control" name="medicineCode" required>
-                                </div>
-                            </div>
-
-                            <div class="row mb-3">
-                                <div class="col-md-4">
-                                    <label class="form-label required">Medicine Type</label>
-                                    <select class="form-select" name="medicineTypeId" required>
-                                        <c:forEach items="${requestScope.medicineTypeList}" var="type">
-                                            <option value="${type.medicineType}">${type.medicineType}</option>
-                                        </c:forEach>
-                                    </select>
-                                </div>
-                                <div class="col-md-4">
-                                    <label class="form-label required">Quantity</label>
-                                    <input type="number" class="form-control" name="quantity" min="0" required>
-                                </div>
-                                <div class="col-md-4">
-                                    <label class="form-label required">Price ($)</label>
-                                    <input type="number" class="form-control" name="price" min="0" step="0.01" required>
+                                    <div class="text-danger">
+                                        <c:if test="${not empty sessionScope.medicineCodeErrorMsg}">                   
+                                            <c:out value="${sessionScope.medicineCodeErrorMsg}"/>
+                                        </c:if>
+                                    </div>
                                 </div>
                             </div>
 
                             <div class="row mb-3">
                                 <div class="col-md-6">
-                                    <label class="form-label required">Date Expire</label>
-                                    <input type="date" class="form-control" name="dateExpire" required>
+                                    <label class="form-label required">Medicine Type</label>
+                                    <select class="form-select" name="medicineType" required>
+                                        <c:forEach items="${requestScope.medicineTypeList}" var="type">
+                                            <option value="${type.medicineType}">
+                                                <c:out value="${type.medicineType}"/>
+                                            </option>
+                                        </c:forEach>
+                                    </select>
+                                    <div class="text-danger">
+                                        <c:if test="${not empty sessionScope.medicineTypeErrorsMsg}">                   
+                                            <c:out value="${sessionScope.medicineTypeErrorsMsg}"/>
+                                        </c:if>
+                                    </div>
                                 </div>
+                                <div class="col-md-6">
+                                    <label class="form-label required">Price ($)</label>
+                                    <input type="number" class="form-control" name="price" min="0" step="0.01" required>
+                                    <div class="text-danger">
+                                        <c:if test="${not empty sessionScope.medicinePriceErrorsMsg}">                   
+                                            <c:out value="${sessionScope.medicinePriceErrorsMsg}"/>
+                                        </c:if>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
                                 <div class="col-md-6">
                                     <label class="form-label required">Status</label>
                                     <select class="form-select" name="medicineStatus">
                                         <option value="1">Available</option>
                                         <option value="0">Unavailable</option>
                                     </select>
+                                    <div class="text-danger">
+                                        <c:if test="${not empty sessionScope.medicineStatusErrorsMsg}">                   
+                                            <c:out value="${sessionScope.medicineStatusErrorsMsg}"/>
+                                        </c:if>
+                                    </div>
                                 </div>
+                            </div>
+
+                            <div class="d-flex justify-content-center mt-3">
+                                <button type="submit" class="btn btn-success px-5 py-2 fw-bold" style="border-radius: 30px;">
+                                    Create
+                                </button>
                             </div>
                         </form>
                     </div>

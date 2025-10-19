@@ -6,6 +6,7 @@ package dao;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +23,7 @@ public class MedicineDAO extends DBContext {
 
     /**
      * Get all record of all medicines.
-     * 
+     *
      * @return a list contain all medicine information
      */
     public List<Medicine> getAllMedicines() {
@@ -65,7 +66,7 @@ public class MedicineDAO extends DBContext {
 
     /**
      * Get a specific medicine information by medicineId.
-     * 
+     *
      * @param medicineId is the medicine want to get information
      * @return an object contain information of a medicine
      */
@@ -111,7 +112,7 @@ public class MedicineDAO extends DBContext {
 
     /**
      * Get all record of all medicine match with user search input.
-     * 
+     *
      * @param medicineType is the type of medicine
      * @param medicineName is the name of medicine
      * @param medicineCode is the code of medicine
@@ -160,6 +161,22 @@ public class MedicineDAO extends DBContext {
         }
 
         return medicineList;
+    }
+
+    public int createNewMedicine(String medicineName, String medicineCode, String medicineType, double price, int status) {
+        String query = "INSERT INTO [dbo].[Medicine] (MedicineTypeID, MedicineStatus, MedicineName, MedicineCode, Price)\n"
+                + "VALUES \n"
+                + "	((SELECT TOP 1 mt.MedicineTypeID\n"
+                + "	FROM [dbo].[MedicineType] mt\n"
+                + "	WHERE mt.MedicineTypeName LIKE ?)\n"
+                + "	, ?, ?, ?, ?);";
+        Object[] params = {medicineType, status, medicineName, medicineCode, price};
+        int rs;
+
+        rs = executeQuery(query, params);
+        closeResources(null);
+
+        return rs;
     }
 
 }

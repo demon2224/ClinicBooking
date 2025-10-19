@@ -223,9 +223,10 @@ public class ManageMedicineController extends HttpServlet {
 
         if (action.equals("create")) {
             handleCreateResponse(request, response);
+            return;
         }
 
-        response.sendRedirect("/manage-medicine");
+        response.sendRedirect(request.getContextPath() + "/manage-medicine");
     }
 
     /**
@@ -236,16 +237,38 @@ public class ManageMedicineController extends HttpServlet {
      * @param request
      * @param response
      */
-    private void handleCreateResponse(HttpServletRequest request, HttpServletResponse response) {
+    private void handleCreateResponse(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
-        checkMedicineName(request);
-        checkMedicineCode(request);
-        String medicineTypeIdParam = request.getParameter("medicineTypeId");
-        String quantityParam = request.getParameter("quantity");
-        String priceParam = request.getParameter("price");
-        String dateExpireParam = request.getParameter("dateExpire");
+        String medicineNameParam = request.getParameter("medicineName");
+        String medicineCodeParam = request.getParameter("medicineCode");
+        String medicineTypeParam = request.getParameter("medicineType");
+        String medicinePriceParam = request.getParameter("price");
         String medicineStatusParam = request.getParameter("medicineStatus");
 
+        boolean isValidMedicineName = isValidMedicineName(request, medicineNameParam);
+        boolean isValidMedicineCode = isValidMedicineCode(request, medicineCodeParam);
+        boolean isValidMedicineType = isValidMedicineType(request, medicineTypeParam);
+        boolean isValidMedicinePrice = isValidMedicinePrice(request, medicinePriceParam);
+        boolean isValidMedicineStatus = isValidMedicineStatus(request, medicineStatusParam);
+
+        if (!isValidMedicineName
+                || !isValidMedicineCode
+                || !isValidMedicineType
+                || !isValidMedicinePrice
+                || !isValidMedicineStatus) {
+            response.sendRedirect(request.getContextPath() + "/manage-medicine?action=create&type=medicine");
+        } else {
+
+            int resultCreate = medicineDAO.createNewMedicine(medicineNameParam, medicineCodeParam, medicineTypeParam, Double.parseDouble(medicinePriceParam), Integer.parseInt(medicineStatusParam));
+            log(resultCreate + "");
+            if (resultCreate != 0) {
+                request.getSession().setAttribute("medicineCreateSuccessMsg", "Create new medicine successfully.");
+            } else {
+                request.getSession().setAttribute("medicineCreateErrorMsg", "Failed to create new medicine.");
+            }
+
+            response.sendRedirect(request.getContextPath() + "/manage-medicine");
+        }
     }
 
     /**
@@ -257,25 +280,91 @@ public class ManageMedicineController extends HttpServlet {
      *
      * @param request servlet request
      */
-    private void checkMedicineName(HttpServletRequest request) {
-        String medicineNameParam = request.getParameter("medicineName");
+    private boolean isValidMedicineName(HttpServletRequest request, String medicineNameParam) {
+        
+        if (request.getSession().getAttribute("medicineNameErrorMsg") != null) {
+            request.getSession().setAttribute("medicineNameErrorMsg", null);
+        }
 
         if (CreateNewMedicineValidate.isEmpty(medicineNameParam)) {
             request.getSession().setAttribute("medicineNameErrorMsg", "The medicine name can't be empty.");
-        } else if (CreateNewMedicineValidate.isValidMedicineName(medicineNameParam)) {
+            return false;
+        } else if (!CreateNewMedicineValidate.isValidMedicineName(medicineNameParam)) {
             request.getSession().setAttribute("medicineNameErrorMsg", "The medicine name only contains character.");
+            return false;
         } else {
-            request.getSession().setAttribute("medicineNameSuccessMsg", "The mdicine name is valid.");
+            return true;
         }
     }
 
-    private void checkMedicineCode(HttpServletRequest request) {
-        String medicineCodeParam = request.getParameter("medicineCode");
+    private boolean isValidMedicineCode(HttpServletRequest request, String medicineCodeParam) {
+        
+        if (request.getSession().getAttribute("medicineCodeErrorMsg") != null) {
+            request.getSession().setAttribute("medicineCodeErrorMsg", null);
+        }
 
         if (CreateNewMedicineValidate.isEmpty(medicineCodeParam)) {
             request.getSession().setAttribute("medicineCodeErrorMsg", "The medicine code can't be empty.");
-        } else if (CreateNewMedicineValidate.isValidMedicineCodeLength(medicineCodeParam)) {
+            return false;
+        } else if (!CreateNewMedicineValidate.isValidMedicineCodeLength(medicineCodeParam)) {
             request.getSession().setAttribute("medicineCodeErrorMsg", "The medicine code must be 6 letter length.");
+            return false;
+        } else if (!CreateNewMedicineValidate.isValidMedicineCode(medicineCodeParam)) {
+            request.getSession().setAttribute("medicineCodeErrorMsg", "Medicine code must be 3 letters followed by 3 numbers (e.g. ABC123).");
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    private boolean isValidMedicineType(HttpServletRequest request, String medicineTypeParam) {
+        
+        if (request.getSession().getAttribute("medicineTypeErrorsMsg") != null) {
+            request.getSession().setAttribute("medicineTypeErrorsMsg", null);
+        }
+
+        if (CreateNewMedicineValidate.isEmpty(medicineTypeParam)) {
+            request.getSession().setAttribute("medicineTypeErrorsMsg", "The medicine type can't be empty.");
+            return false;
+        } else if (!CreateNewMedicineValidate.isValidMedicineType(medicineTypeParam, medicineTypeDAO.getAllMedicineType())) {
+            request.getSession().setAttribute("medicineTypeErrorsMsg", "The medicine type is invalid.");
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    private boolean isValidMedicinePrice(HttpServletRequest request, String medicinePriceParam) {
+        
+        if (request.getSession().getAttribute("medicinePriceErrorsMsg") != null) {
+            request.getSession().setAttribute("medicinePriceErrorsMsg", null);
+        }
+
+        if (CreateNewMedicineValidate.isEmpty(medicinePriceParam)) {
+            request.getSession().setAttribute("medicinePriceErrorsMsg", "The medicine price can't be empty.");
+            return false;
+        } else if (!CreateNewMedicineValidate.isValidMedicinePriceNumber(medicinePriceParam)) {
+            request.getSession().setAttribute("medicinePriceErrorsMsg", "The medicine price must be a positive number.");
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    private boolean isValidMedicineStatus(HttpServletRequest request, String medicineStatusParam) {
+        
+        if (request.getSession().getAttribute("medicineStatusParam") != null) {
+            request.getSession().setAttribute("medicineStatusParam", null);
+        }
+
+        if (CreateNewMedicineValidate.isEmpty(medicineStatusParam)) {
+            request.getSession().setAttribute("medicineStatusErrorsMsg", "The medicine status can't be empty.");
+            return false;
+        } else if (!CreateNewMedicineValidate.isValidMedicineStatus(medicineStatusParam)) {
+            request.getSession().setAttribute("medicineStatusErrorsMsg", "The medicine status must be a valid value.");
+            return false;
+        } else {
+            return true;
         }
     }
 

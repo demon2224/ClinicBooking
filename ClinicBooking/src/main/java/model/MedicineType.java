@@ -11,7 +11,7 @@ package model;
 public class MedicineType {
     
     // The unique identifier for the medicine type
-    private int medicineId;
+    private int medicineTypeId;
     
     // The name/description of the medicine type
     private String medicineType;
@@ -25,11 +25,11 @@ public class MedicineType {
     /**
      * Constructs a MedicineType with specified ID and type name.
      *
-     * @param medicineId   The unique identifier for the medicine type
+     * @param medicineTypeId   The unique identifier for the medicine type
      * @param medicineType The name/description of the medicine type
      */
-    public MedicineType(int medicineId, String medicineType) {
-        this.medicineId = medicineId;
+    public MedicineType(int medicineTypeId, String medicineType) {
+        this.medicineTypeId = medicineTypeId;
         this.medicineType = medicineType;
     }
 
@@ -38,17 +38,17 @@ public class MedicineType {
      *
      * @return The medicine type ID
      */
-    public int getMedicineId() {
-        return medicineId;
+    public int getMedicineTypeId() {
+        return medicineTypeId;
     }
 
     /**
      * Sets the medicine type ID.
      *
-     * @param medicineId The medicine type ID to set
+     * @param medicineTypeId The medicine type ID to set
      */
-    public void setMedicineId(int medicineId) {
-        this.medicineId = medicineId;
+    public void setMedicineId(int medicineTypeId) {
+        this.medicineTypeId = medicineTypeId;
     }
 
     /**

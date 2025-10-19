@@ -27,10 +27,10 @@ public class CreateNewMedicineValidate {
 
     public static final int AVAILABLE_MEDICINE_STATUS = 1;
     public static final int UNAVAILABLE_MEDICINE_STATUS = 0;
-    
+
     /**
      * Check the input is null or empty.
-     * 
+     *
      * @param input is the input need to check
      * @return True if the input is null or empty. False if not
      */
@@ -68,7 +68,7 @@ public class CreateNewMedicineValidate {
      * @return True if medicine code is valid. False if it is invalid
      */
     public static boolean isValidMedicineCodeLength(String medicineCode) {
-        return medicineCode.length() != MEDICINE_CODE_LENGTH;
+        return medicineCode.length() == MEDICINE_CODE_LENGTH;
     }
 
     /**
@@ -80,12 +80,11 @@ public class CreateNewMedicineValidate {
      * @return True if medicine type is valid. False if it is invalid
      */
     public static boolean isValidMedicineType(String medicineType, List<MedicineType> medicineTypeList) {
-        for (MedicineType medicineTypeName : medicineTypeList) {
-            if (medicineTypeName.equals(medicineType)) {
+        for (MedicineType type : medicineTypeList) {
+            if (type.getMedicineType().equals(medicineType)) {
                 return true;
             }
         }
-
         return false;
     }
 
@@ -140,12 +139,12 @@ public class CreateNewMedicineValidate {
      * @return True if medicine price is valid. False if it is invalid
      */
     public static boolean isValidMedicinePriceNumber(String medicinePrice) {
-        int price;
+        double price;
         try {
             if (medicinePrice.length() <= MIN_MEDICINE_PRICE) {
                 throw new NumberFormatException();
             }
-            price = Integer.parseInt(medicinePrice);
+            price = Double.parseDouble(medicinePrice);
         } catch (NumberFormatException ex) {
             return false;
         }
