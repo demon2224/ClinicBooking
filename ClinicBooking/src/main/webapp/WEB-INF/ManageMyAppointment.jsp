@@ -560,8 +560,6 @@
             <!-- Page Header -->
             <div class="page-header">
                 <h1><i class="fas fa-calendar-check"></i> Manage My Appointments</h1>
-                <p>View and manage your appointments</p>
-                <p class="text-muted">Welcome, ${user.fullName}</p>
                 <p class="text-muted">You have ${appointments.size()} appointments</p>
             </div>
 
@@ -661,7 +659,7 @@
                                         </div>
                                     </div>
                                     <div class="appointment-actions">
-                                        <a href="${pageContext.request.contextPath}/my-appointment-detail?id=${appointment.appointmentID}" class="btn-action btn-view">
+                                        <a href="${pageContext.request.contextPath}/manage-my-appointments?id=${appointment.appointmentID}" class="btn-action btn-view">
                                             <i class="fas fa-eye"></i>
                                             View Details
                                         </a>
