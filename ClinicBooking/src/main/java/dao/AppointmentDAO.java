@@ -675,7 +675,6 @@ public class AppointmentDAO extends DBContext {
      * Update appointment by setting status to Approved (status ID = 2) Only if
      * current status is Pending(status ID)
      */
-
     public boolean approvedStatusAppointment(int appointmentId) {
         String sql = "UPDATE Appointment "
                 + "SET AppointmentStatusID = 2 "
@@ -695,6 +694,40 @@ public class AppointmentDAO extends DBContext {
             return false;
         } finally {
             closeResources(null);
+        }
+    }
+
+    /**
+     * Book new appointment for logged-in patient
+     *
+     * @param userId Patient's user ID
+     * @param doctorId Doctor's ID
+     * @param note Appointment note
+     * @param appointmentDateTime Appointment date and time
+     * @return true if appointment is booked successfully
+     */
+    public boolean bookAppointment(int userId, int doctorId, String note, Timestamp appointmentDateTime) {
+        String sql = "INSERT INTO Appointment (UserID, DoctorID, AppointmentStatusID, DateCreate, DateBegin, DateEnd, Note) "
+                + "VALUES (?, ?, ?, GETDATE(), ?, DATEADD(HOUR, 1, ?), ?)";
+
+        // Calculate end time (1 hour after start time) using SQL DATEADD function
+        Object[] params = {
+            userId,
+            doctorId,
+            1, // Status 1 = Pending
+            appointmentDateTime,
+            appointmentDateTime, // DateEnd = DateBegin + 1 hour (calculated by DATEADD)
+            note
+        };
+
+        try {
+            int rowsAffected = executeQuery(sql, params);
+            closeResources(null);
+            return rowsAffected > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+            closeResources(null);
+            return false;
         }
     }
 }

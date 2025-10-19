@@ -6,9 +6,14 @@ package controller;
 
 import dao.AppointmentDAO;
 import dao.UserDAO;
+import dao.DoctorDAO;
 import model.Appointment;
+import model.Doctor;
 import java.io.IOException;
 import java.util.List;
+import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -27,15 +32,17 @@ public class ManageMyAppointmentController extends HttpServlet {
 
     private AppointmentDAO appointmentDAO;
     private UserDAO userDAO;
+    private DoctorDAO doctorDAO;
 
     @Override
     public void init() throws ServletException {
         appointmentDAO = new AppointmentDAO();
         userDAO = new UserDAO();
+        doctorDAO = new DoctorDAO();
     }
 
     /**
-     * Handles GET requests - Display appointments list or appointment detail
+     * Handles GET requests - Display appointments list, appointment detail, or book appointment form
      *
      * @param request
      * @param response
@@ -44,9 +51,17 @@ public class ManageMyAppointmentController extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        // Check if this is a request for appointment detail
+        String action = request.getParameter("action");
         String appointmentIdParam = request.getParameter("id");
+        String doctorIdParam = request.getParameter("doctorId");
 
+        // Check if this is a request for book appointment form
+        if ("bookAppointment".equals(action) && doctorIdParam != null && !doctorIdParam.trim().isEmpty()) {
+            handleBookAppointmentForm(request, response, doctorIdParam);
+            return;
+        }
+
+        // Check if this is a request for appointment detail
         if (appointmentIdParam != null && !appointmentIdParam.trim().isEmpty()) {
             // Handle appointment detail view
             handleAppointmentDetail(request, response, appointmentIdParam);
@@ -58,13 +73,19 @@ public class ManageMyAppointmentController extends HttpServlet {
     }
 
     /**
-     * Handles POST requests - Process actions (cancel, etc.)
+     * Handles POST requests - Process actions (cancel, book appointment, etc.)
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         String action = request.getParameter("action");
+        
+        if ("bookAppointment".equals(action)) {
+            handleBookAppointment(request, response);
+            return;
+        }
+
         String appointmentIdParam = request.getParameter("appointmentId");
 
         // If no appointment ID, redirect to appointments list
@@ -183,6 +204,95 @@ public class ManageMyAppointmentController extends HttpServlet {
 
         // Redirect back to appointments list
         response.sendRedirect(request.getContextPath() + ManageMyAppointmentConstans.BASE_URL);
+    }
+
+    /**
+     * Handle book appointment form display
+     */
+    private void handleBookAppointmentForm(HttpServletRequest request, HttpServletResponse response, String doctorIdParam)
+            throws ServletException, IOException {
+        try {
+            int doctorId = Integer.parseInt(doctorIdParam);
+            
+            // Get doctor information
+            Doctor doctor = doctorDAO.getDoctorById(doctorId);
+            
+            if (doctor == null) {
+                request.getSession().setAttribute("errorMessage", "Doctor not found!");
+                response.sendRedirect(request.getContextPath() + "/doctor-list");
+                return;
+            }
+            
+            // Set attributes for JSP
+            request.setAttribute("doctor", doctor);
+            request.setAttribute("doctorId", doctorId);
+            
+            // Forward to book appointment page
+            request.getRequestDispatcher(ManageMyAppointmentConstans.BOOK_APPOINTMENT_JSP).forward(request, response);
+            
+        } catch (NumberFormatException e) {
+            response.sendRedirect(request.getContextPath() + "/doctor-list");
+        }
+    }
+
+    /**
+     * Handle book appointment submission
+     */
+    private void handleBookAppointment(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        
+        HttpSession session = request.getSession();
+        User user = (User) session.getAttribute("user");
+        
+        if (user == null) {
+            response.sendRedirect(request.getContextPath() + "/login");
+            return;
+        }
+        
+        try {
+            String doctorIdParam = request.getParameter("doctorId");
+            String appointmentDateTimeParam = request.getParameter("appointmentDateTime");
+            String note = request.getParameter("note");
+            
+            if (doctorIdParam == null || appointmentDateTimeParam == null) {
+                session.setAttribute("errorMessage", "Missing required information!");
+                response.sendRedirect(request.getContextPath() + ManageMyAppointmentConstans.BASE_URL);
+                return;
+            }
+            
+            int doctorId = Integer.parseInt(doctorIdParam);
+            
+            // Parse datetime
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
+            java.util.Date parsedDate = dateFormat.parse(appointmentDateTimeParam);
+            Timestamp appointmentDateTime = new Timestamp(parsedDate.getTime());
+            
+            // Check if appointment time is in the future
+            if (appointmentDateTime.before(new Timestamp(System.currentTimeMillis()))) {
+                session.setAttribute("errorMessage", "Appointment time must be in the future!");
+                response.sendRedirect(request.getContextPath() + ManageMyAppointmentConstans.BASE_URL + "?action=bookAppointment&doctorId=" + doctorId);
+                return;
+            }
+            
+            // Book appointment
+            boolean success = appointmentDAO.bookAppointment(user.getUserID(), doctorId, note, appointmentDateTime);
+            
+            if (success) {
+                session.setAttribute("successMessage", "Appointment booked successfully! Your appointment is pending approval.");
+            } else {
+                session.setAttribute("errorMessage", "Failed to book appointment. Please try again.");
+            }
+            
+            // Redirect back to appointments list
+            response.sendRedirect(request.getContextPath() + ManageMyAppointmentConstans.BASE_URL);
+            
+        } catch (NumberFormatException | ParseException e) {
+            session.setAttribute("errorMessage", "Invalid input data!");
+            response.sendRedirect(request.getContextPath() + ManageMyAppointmentConstans.BASE_URL);
+        } catch (Exception e) {
+            session.setAttribute("errorMessage", "An error occurred while booking appointment!");
+            response.sendRedirect(request.getContextPath() + ManageMyAppointmentConstans.BASE_URL);
+        }
     }
 
     @Override

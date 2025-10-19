@@ -15,5 +15,6 @@ public class ManageMyAppointmentConstans {
     public static final String BASE_URL = "/manage-my-appointments";
     public static final String DETAIL_PAGE_JSP = "/WEB-INF/MyAppointmentDetail.jsp";
     public static final String LIST_PAGE_JSP = "/WEB-INF/ManageMyAppointment.jsp";
+    public static final String BOOK_APPOINTMENT_JSP = "/WEB-INF/BookAppointment.jsp";
      
 }

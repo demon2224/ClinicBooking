@@ -7743,3 +7743,438 @@ body.appointment-page {
     transform: translateY(-1px) !important;
     box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4) !important;
 }
+
+/* Modern Book Appointment Design */
+.book-appointment-card {
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+    border: none;
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    position: relative;
+    margin-bottom: 2rem;
+}
+
+.book-appointment-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #2563eb, #7c3aed, #dc2626, #ea580c);
+    background-size: 200% 100%;
+    animation: gradientShift 3s ease-in-out infinite;
+}
+
+@keyframes gradientShift {
+    0%, 100% { background-position: 200% 0; }
+    50% { background-position: -200% 0; }
+}
+
+.gradient-header {
+    background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+    color: white;
+    padding: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.header-icon {
+    width: 60px;
+    height: 60px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    backdrop-filter: blur(10px);
+}
+
+.header-content h3 {
+    margin: 0 0 0.25rem 0;
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.appointment-subtitle {
+    margin: 0;
+    opacity: 0.9;
+    font-size: 0.95rem;
+}
+
+.modern-form {
+    padding: 2.5rem;
+}
+
+.modern-form-group {
+    margin-bottom: 2rem;
+}
+
+.modern-label {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    cursor: pointer;
+}
+
+.label-icon {
+    width: 44px;
+    height: 44px;
+    background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #2563eb;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+    transition: all 0.3s ease;
+}
+
+.modern-label:hover .label-icon {
+    background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+    color: white;
+    transform: scale(1.05);
+}
+
+.label-content {
+    flex: 1;
+}
+
+.label-title {
+    display: block;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #1e293b;
+    margin-bottom: 0.25rem;
+}
+
+.label-subtitle {
+    display: block;
+    font-size: 0.875rem;
+    color: #64748b;
+    font-weight: 400;
+}
+
+.input-wrapper {
+    position: relative;
+}
+
+.modern-input, .modern-textarea {
+    width: 100%;
+    padding: 1rem 1.25rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    font-size: 1rem;
+    background: #ffffff;
+    transition: all 0.3s ease;
+    outline: none;
+    font-family: inherit;
+}
+
+.modern-textarea {
+    resize: vertical;
+    min-height: 120px;
+    line-height: 1.6;
+}
+
+.modern-input:focus, .modern-textarea:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+    transform: translateY(-1px);
+}
+
+.input-border {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, #2563eb, #7c3aed);
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+    border-radius: 1px;
+}
+
+.input-wrapper.focused .input-border {
+    transform: scaleX(1);
+}
+
+.character-counter {
+    position: absolute;
+    bottom: 0.75rem;
+    right: 1rem;
+    font-size: 0.75rem;
+    color: #6b7280;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    backdrop-filter: blur(4px);
+}
+
+.modern-actions {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    justify-content: flex-end;
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid #e2e8f0;
+}
+
+.modern-btn-secondary {
+    padding: 0.875rem 1.5rem;
+    background: #f8fafc;
+    color: #64748b;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.modern-btn-secondary:hover {
+    background: #f1f5f9;
+    border-color: #cbd5e1;
+    color: #475569;
+    transform: translateY(-1px);
+    text-decoration: none;
+}
+
+.modern-btn-primary {
+    padding: 0.875rem 2rem;
+    background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.modern-btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(37, 99, 235, 0.4);
+}
+
+.btn-shine {
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.6s;
+}
+
+.modern-btn-primary:hover .btn-shine {
+    left: 100%;
+}
+
+/* Ripple Effect */
+.ripple {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transform: scale(0);
+    animation: rippleAnimation 0.6s linear;
+    pointer-events: none;
+}
+
+@keyframes rippleAnimation {
+    to {
+        transform: scale(4);
+        opacity: 0;
+    }
+}
+
+/* Enhanced Doctor Info Grid for Book Appointment */
+.book-appointment-card .doctor-info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.25rem;
+}
+
+.book-appointment-card .doctor-info-item {
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.book-appointment-card .doctor-info-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+    border-color: #cbd5e1;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .gradient-header {
+        flex-direction: column;
+        text-align: center;
+        gap: 1rem;
+        padding: 1.5rem;
+    }
+    
+    .modern-form {
+        padding: 1.5rem;
+    }
+    
+    .modern-actions {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+    
+    .modern-btn-secondary,
+    .modern-btn-primary {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .modern-label {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+    
+    .label-icon {
+        align-self: flex-start;
+    }
+}
+
+/* Doctor Information Grid Layout */
+.doctor-info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1rem;
+}
+
+.doctor-info-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1.25rem;
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    transition: all 0.3s ease;
+}
+
+.doctor-info-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    border-color: #cbd5e1;
+}
+
+.doctor-info-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    border-radius: 12px;
+    color: white;
+    font-size: 1.2rem;
+    flex-shrink: 0;
+    box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3);
+}
+
+.doctor-info-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.doctor-info-label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #64748b;
+    margin-bottom: 0.25rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.doctor-info-value {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #1e293b;
+    line-height: 1.4;
+}
+
+/* Doctor Rating Stars */
+.doctor-rating {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.doctor-rating .fas.fa-star {
+    color: #fbbf24;
+    font-size: 1rem;
+}
+
+.doctor-rating .rating-score {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin-left: 0.25rem;
+}
+
+/* Appointment Notes List */
+.appointment-notes-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.appointment-notes-list li {
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #f1f5f9;
+    position: relative;
+    padding-left: 1.5rem;
+}
+
+.appointment-notes-list li:last-child {
+    border-bottom: none;
+}
+
+.appointment-notes-list li:before {
+    content: "•";
+    color: #2563eb;
+    font-weight: bold;
+    position: absolute;
+    left: 0;
+}
+
+/* Responsive doctor info grid */
+@media (max-width: 768px) {
+    .doctor-info-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .doctor-info-item {
+        padding: 1rem;
+    }
+    
+    .doctor-info-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
+    }
+}
