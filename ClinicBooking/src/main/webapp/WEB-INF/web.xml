@@ -203,14 +203,6 @@
             <url-pattern>/doctor-detail</url-pattern>
         </servlet-mapping>
         <servlet>
-            <servlet-name>MyAppointmentDetailController</servlet-name>
-            <servlet-class>controller.MyAppointmentDetailController</servlet-class>
-        </servlet>
-        <servlet-mapping>
-            <servlet-name>MyAppointmentDetailController</servlet-name>
-            <url-pattern>/my-appointment-detail</url-pattern>
-        </servlet-mapping>
-        <servlet>
             <servlet-name>ManageMyPatientAppointment</servlet-name>
             <servlet-class>controller.ManageMyPatientAppointment</servlet-class>
         </servlet>
