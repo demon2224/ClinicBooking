@@ -1,1 +1,0 @@
-Các object chứa data lấy từ db.

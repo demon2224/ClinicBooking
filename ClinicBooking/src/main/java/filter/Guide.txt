@@ -1,1 +1,0 @@
-Lọc người dùng, phân quyền chuyển hướng tương ứng với người dùng.

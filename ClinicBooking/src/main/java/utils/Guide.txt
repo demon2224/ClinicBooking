@@ -1,1 +1,0 @@
-Chưa các lớp xử lí như đường dẫn ảnh và các công cụ cần thiết.
