@@ -9,11 +9,11 @@
     </servlet>
     <servlet>
         <servlet-name>ManageMyPatientMedicalRecordController</servlet-name>
-        <servlet-class>controller.ManageMyPatientMedicalRecordController</servlet-class>
+        <servlet-class>controller.doctor.ManageMyPatientMedicalRecordController</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>ManageMyPatientMedicalRecordDetailController</servlet-name>
-        <servlet-class>controller.ManageMyPatientMedicalRecordDetailController</servlet-class>
+        <servlet-class>controller.doctor.ManageMyPatientMedicalRecordDetailController</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>ManageMyFeedbackController</servlet-name>
@@ -102,7 +102,7 @@
     <!-- DoctorDashboardController -->
     <servlet>
         <servlet-name>DoctorDashboardController</servlet-name>
-        <servlet-class>controller.DoctorDashboardController</servlet-class>
+        <servlet-class>controller.doctor.DoctorDashboardController</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>DoctorDashboardController</servlet-name>
@@ -119,7 +119,7 @@
     <!-- MyPatientAppointmentDetailController -->
     <servlet>
         <servlet-name>MyPatientAppointmentDetailController</servlet-name>
-        <servlet-class>controller.MyPatientAppointmentDetailController</servlet-class>
+        <servlet-class>controller.doctor.MyPatientAppointmentDetailController</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>MyPatientAppointmentDetailController</servlet-name>
@@ -128,7 +128,7 @@
     <!-- MyPatientAppointmentController -->
     <servlet>
         <servlet-name>ManageMyPatientAppointment</servlet-name>
-        <servlet-class>controller.ManageMyPatientAppointmentController</servlet-class>
+        <servlet-class>controller.doctor.ManageMyPatientAppointmentController</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>ManageMyPatientAppointment</servlet-name>

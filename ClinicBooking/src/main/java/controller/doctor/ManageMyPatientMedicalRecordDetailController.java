@@ -2,24 +2,23 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-package controller;
+package controller.doctor;
 
-import dao.AppointmentDAO;
+import dao.MedicalRecordDAO;
+import dao.PrescriptionDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.List;
-import model.Appointment;
 import model.User;
 
 /**
  *
  * @author Le Thien Tri - CE191249
  */
-public class ManageMyPatientAppointmentController extends HttpServlet {
+public class ManageMyPatientMedicalRecordDetailController extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -38,10 +37,10 @@ public class ManageMyPatientAppointmentController extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet ManageMyPatientAppointment</title>");
+            out.println("<title>Servlet ManageMyPatientMedicalRecordDetailController</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet ManageMyPatientAppointment at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet ManageMyPatientMedicalRecordDetailController at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -60,19 +59,19 @@ public class ManageMyPatientAppointmentController extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 //        processRequest(request, response);
-        int doctorID = ((User) request.getSession().getAttribute("user")).getUserID();
-        String keyword = request.getParameter("keyword");
-        AppointmentDAO appointmentDAO = new AppointmentDAO();
-        List<Appointment> list;
 
-        if (keyword != null && !keyword.trim().isEmpty()) {
-            list = appointmentDAO.searchAppointmentsByDoctor(doctorID, keyword);
-        } else {
-            list = appointmentDAO.getAllAppointmentsByDoctorId(doctorID);
+        int doctorID = ((User) request.getSession().getAttribute("user")).getUserID();
+        try {
+            int medicalRecordID = Integer.parseInt(request.getParameter("medicalRecordID"));
+            MedicalRecordDAO medicalRecordDAO = new MedicalRecordDAO();
+            PrescriptionDAO prescriptionDAO = new PrescriptionDAO();
+            request.setAttribute("prescriptionItems", prescriptionDAO.getPrescriptionByDoctorIdAndMedicalRecordID(medicalRecordID, doctorID));
+            request.setAttribute("detailMedicalRecord", medicalRecordDAO.getDetailMedicalRecordById(medicalRecordID, doctorID));
+            request.getRequestDispatcher("/WEB-INF/doctor/MyPatientMedicalRecordDetail.jsp").forward(request, response);
+        } catch (Exception e) {
+            response.sendRedirect(request.getContextPath() + "/manage-my-patient-medical-record");
         }
 
-        request.setAttribute("myPatientAppointmentList", list);
-        request.getRequestDispatcher("/WEB-INF/doctor/ManageMyPatientAppointment.jsp").forward(request, response);
     }
 
     /**
@@ -86,7 +85,7 @@ public class ManageMyPatientAppointmentController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-//        processRequest(request, response);
+        processRequest(request, response);
     }
 
     /**
