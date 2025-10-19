@@ -884,7 +884,7 @@
                             <span class="side-info-value">${doctor.yearExperience} years</span>
                         </div>
                         <div class="doctor-actions">
-                            <a href="#" class="btn-book">
+                            <a href="${pageContext.request.contextPath}/manage-my-appointments?action=bookAppointment&doctorId=${doctor.doctorID}" class="btn-book">
                                 <i class="fas fa-calendar-plus"></i>
                                 Book
                             </a>
