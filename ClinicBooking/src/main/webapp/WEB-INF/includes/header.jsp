@@ -29,7 +29,7 @@
                        class="${param.activePage == 'about' ? 'active' : ''}">About</a>
                 </li>
                 <li>
-                    <a href="${pageContext.request.contextPath}/doctor-list"
+                    <a href="${pageContext.request.contextPath}/doctor"
                        class="${param.activePage == 'doctors' ? 'active' : ''}">Doctors</a>
                 </li>
                 <li class="dropdown">

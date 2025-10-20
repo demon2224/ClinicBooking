@@ -492,16 +492,16 @@
 
         <!-- Search and Filter Section -->
         <div class="doctor-container">
-            <form method="POST" action="${pageContext.request.contextPath}/doctor-list"
+            <form method="POST" action="${pageContext.request.contextPath}/doctor"
                   class="search-filter-form">
                 <input type="hidden" name="action" value="search">
                 <div class="search-bar-wrapper">
                     <!-- Search Input -->
                     <div class="search-input-group">
                         <i class="fas fa-search search-icon"></i>
-                        <input type="text" name="searchName" class="search-input"
+                        <input type="text" name="search" class="search-input"
                                placeholder="Search for Doctors by name..."
-                               value="${searchName != null ? searchName : ''}">
+                               value="${search != null ? search : ''}">
                     </div>
 
                     <!-- Search Button -->
@@ -510,7 +510,7 @@
                     </button>
 
                     <!-- Clear Filters Button -->
-                    <a href="${pageContext.request.contextPath}/doctor-list" class="clear-button">
+                    <a href="${pageContext.request.contextPath}/doctor" class="clear-button">
                         <i class="fas fa-times"></i> Clear
                     </a>
                 </div>
