@@ -50,7 +50,7 @@
             .search-bar-wrapper {
                 display: flex;
                 gap: 1rem;
-                align-items: center;
+                align-items: stretch;
                 justify-content: center;
                 flex-wrap: wrap;
             }
@@ -58,8 +58,8 @@
             .search-input-group {
                 position: relative;
                 flex: 1;
-                min-width: 300px;
-                max-width: 500px;
+                min-width: 200px;
+                max-width: 400px;
             }
 
             .search-icon {
@@ -105,7 +105,13 @@
                 cursor: pointer;
                 transition: all 0.3s ease;
                 white-space: nowrap;
-
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                min-height: 48px;
+                height: 48px;
+                flex-shrink: 0;
+                min-width: 120px;
             }
 
             .search-button:hover {
@@ -119,7 +125,7 @@
             }
 
             .clear-button {
-                padding: 0.7rem 1.8rem;
+                padding: 0.9rem 1.5rem;
                 background-color: white;
                 color: #495057;
                 border: 2px solid #dee2e6;
@@ -130,9 +136,14 @@
                 cursor: pointer;
                 transition: all 0.3s ease;
                 white-space: nowrap;
-                display: inline-flex;
+                display: flex;
                 align-items: center;
-
+                justify-content: center;
+                min-height: 48px;
+                height: 48px;
+                flex-shrink: 0;
+                min-width: 100px;
+                box-sizing: border-box;
             }
 
             .clear-button:hover {
@@ -347,6 +358,25 @@
                 font-size: 0.9rem;
             }
 
+            @media (max-width: 900px) {
+                .search-bar-wrapper {
+                    flex-wrap: wrap;
+                    gap: 0.8rem;
+                    justify-content: stretch;
+                }
+
+                .search-input-group {
+                    min-width: 100%;
+                    flex: none;
+                }
+
+                .search-button,
+                .clear-button {
+                    flex: 1;
+                    min-width: 0;
+                }
+            }
+
             @media (max-width: 1024px) {
                 .search-filter-form {
                     margin: 0 1rem 2rem 1rem;
@@ -356,6 +386,7 @@
                 .search-bar-wrapper {
                     flex-direction: column;
                     gap: 1rem;
+                    align-items: stretch;
                 }
 
                 .search-input-group {
@@ -365,6 +396,17 @@
 
                 .search-input {
                     font-size: 0.95rem;
+                }
+
+                .search-button,
+                .clear-button {
+                    width: 100%;
+                    justify-content: center;
+                    padding: 0.9rem 1.5rem;
+                    font-size: 0.95rem;
+                    height: 48px;
+                    min-height: 48px;
+                    box-sizing: border-box;
                 }
             }
 
@@ -395,6 +437,11 @@
                     width: 100%;
                     justify-content: center;
                     padding: 0.8rem 1.5rem;
+                    font-size: 0.9rem;
+                    border-radius: 10px;
+                    min-height: 48px;
+                    display: flex;
+                    align-items: center;
                 }
 
                 .doctor-grid {
@@ -446,8 +493,14 @@
                 .search-button,
                 .clear-button {
                     padding: 0.75rem 1.2rem;
+                    height: 48px;
                     font-size: 0.85rem;
                     border-radius: 20px;
+                    width: 100%;
+                    justify-content: center;
+                    display: flex;
+                    align-items: center;
+                    white-space: nowrap;
                 }
 
                 h1 {
