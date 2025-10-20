@@ -64,8 +64,15 @@
                                         <div class="info-content">
                                             <h4>Time</h4>
                                             <p>
-                                                <fmt:formatDate value="${appointment.dateBegin}" pattern="hh:mm a"/> -
-                                                <fmt:formatDate value="${appointment.dateEnd}" pattern="hh:mm a"/>
+                                                <fmt:formatDate value="${appointment.dateBegin}" pattern="hh:mm a"/>
+                                                <c:choose>
+                                                    <c:when test="${appointment.dateEnd != null}">
+                                                        - <fmt:formatDate value="${appointment.dateEnd}" pattern="hh:mm a"/>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        - <span class="text-muted">(End time to be determined by doctor)</span>
+                                                    </c:otherwise>
+                                                </c:choose>
                                             </p>
                                         </div>
                                     </div>

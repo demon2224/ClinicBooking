@@ -705,20 +705,20 @@ public class AppointmentDAO extends DBContext {
      * @param userId Patient's user ID
      * @param doctorId Doctor's ID
      * @param note Appointment note
-     * @param appointmentDateTime Appointment date and time
+     * @param appointmentDateTime Appointment start date and time
      * @return true if appointment is booked successfully
+     * @note End time is set to NULL - will be determined by doctor when examination is complete
      */
     public boolean bookAppointment(int userId, int doctorId, String note, Timestamp appointmentDateTime) {
-        String sql = "INSERT INTO Appointment (UserID, DoctorID, AppointmentStatusID, DateCreate, DateBegin, DateEnd, Note) "
-                + "VALUES (?, ?, ?, GETDATE(), ?, DATEADD(HOUR, 1, ?), ?)";
+        String sql = "INSERT INTO Appointment (UserID, DoctorID, AppointmentStatusID, DateBegin, DateEnd, Note) "
+                + "VALUES (?, ?, ?, ?, NULL, ?)";
 
-        // Calculate end time (1 hour after start time) using SQL DATEADD function
+        // DateEnd is NULL - will be set by doctor when examination is complete
         Object[] params = {
             userId,
             doctorId,
             1, // Status 1 = Pending
             appointmentDateTime,
-            appointmentDateTime, // DateEnd = DateBegin + 1 hour (calculated by DATEADD)
             note
         };
 
@@ -731,5 +731,33 @@ public class AppointmentDAO extends DBContext {
             closeResources(null);
             return false;
         }
+    }
+
+    /**
+     * Get the latest appointment for a specific user
+     * 
+     * @param userId Patient's user ID
+     * @return Latest appointment timestamp or null if no appointments found
+     */
+    public Timestamp getLatestAppointmentByUserId(int userId) {
+        String sql = "SELECT TOP 1 DateBegin FROM Appointment "
+                + "WHERE UserID = ? AND AppointmentStatusID IN (1, 2) "
+                + "ORDER BY DateBegin DESC";
+        
+        ResultSet rs = null;
+        try {
+            Object[] params = {userId};
+            rs = executeSelectQuery(sql, params);
+            
+            if (rs.next()) {
+                return rs.getTimestamp("DateBegin");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            closeResources(rs);
+        }
+        
+        return null;
     }
 }

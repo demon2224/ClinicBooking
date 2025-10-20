@@ -12,6 +12,7 @@ import model.Doctor;
 import java.io.IOException;
 import java.util.List;
 import java.sql.Timestamp;
+import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import jakarta.servlet.ServletException;
@@ -21,6 +22,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import model.User;
 import constants.ManageMyAppointmentConstans;
+import validate.BookAppointmentValidate;
+import validate.CancelAppointmentValidate;
 
 /**
  * Controller for viewing and managing user's appointments (list, detail,
@@ -88,7 +91,29 @@ public class ManageMyAppointmentController extends HttpServlet {
 
         String appointmentIdParam = request.getParameter("appointmentId");
 
-        // If no appointment ID, redirect to appointments list
+        if ("cancel".equals(action)) {
+            // Validate appointment ID parameter using CancelAppointmentValidate
+            CancelAppointmentValidate.ValidationResult paramValidation = 
+                CancelAppointmentValidate.validateAppointmentIdParameter(appointmentIdParam);
+            
+            if (!paramValidation.isValid()) {
+                request.getSession().setAttribute("errorMessage", paramValidation.getAllErrorMessages());
+                response.sendRedirect(request.getContextPath() + ManageMyAppointmentConstans.BASE_URL);
+                return;
+            }
+            
+            try {
+                int appointmentId = Integer.parseInt(appointmentIdParam);
+                handleCancelAppointment(request, response, appointmentId);
+                return;
+            } catch (NumberFormatException e) {
+                request.getSession().setAttribute("errorMessage", "Invalid appointment ID format.");
+                response.sendRedirect(request.getContextPath() + ManageMyAppointmentConstans.BASE_URL);
+                return;
+            }
+        }
+
+        // For other actions, validate appointment ID parameter
         if (appointmentIdParam == null || appointmentIdParam.trim().isEmpty()) {
             response.sendRedirect(request.getContextPath() + ManageMyAppointmentConstans.BASE_URL);
             return;
@@ -96,12 +121,6 @@ public class ManageMyAppointmentController extends HttpServlet {
 
         try {
             int appointmentId = Integer.parseInt(appointmentIdParam);
-
-            if ("cancel".equals(action)) {
-                handleCancelAppointment(request, response, appointmentId);
-                return;
-            }
-
             // For other actions or no specific action, redirect back to detail page
             response.sendRedirect(request.getContextPath() + ManageMyAppointmentConstans.BASE_URL + "?id=" + appointmentId);
         } catch (NumberFormatException e) {
@@ -176,34 +195,138 @@ public class ManageMyAppointmentController extends HttpServlet {
     }
 
     /**
-     * Handle appointment cancellation - Only allow cancelling pending
-     * appointments
+     * Handle appointment cancellation - Only allow cancelling pending appointments
      */
     private void handleCancelAppointment(HttpServletRequest request, HttpServletResponse response, int appointmentId)
             throws ServletException, IOException {
+        
+        HttpSession session = request.getSession();
+        User user = (User) session.getAttribute("user");
+        
         try {
-            // Check if appointment can be cancelled (only pending status = 1)
+            // Get appointment from database
             Appointment appointment = appointmentDAO.getAppointmentById(appointmentId);
-
-            if (appointment == null) {
-                request.getSession().setAttribute("errorMessage", "Appointment not found!");
-            } else if (appointment.getAppointmentStatusID() != 1) {
-                request.getSession().setAttribute("errorMessage", "Only pending appointments can be cancelled!");
+            
+            // Validate using CancelAppointmentValidate class
+            CancelAppointmentValidate.ValidationResult validationResult = 
+                CancelAppointmentValidate.validateCancelAppointmentWithUser(
+                    String.valueOf(appointmentId), appointment, user);
+            
+            if (!validationResult.isValid()) {
+                session.setAttribute("errorMessage", validationResult.getAllErrorMessages());
             } else {
+                // Attempt to cancel appointment
                 boolean success = appointmentDAO.cancelMyAppointment(appointmentId);
-
+                
                 if (success) {
-                    request.getSession().setAttribute("successMessage", "Appointment cancelled successfully!");
+                    session.setAttribute("successMessage", "Appointment cancelled successfully!");
                 } else {
-                    request.getSession().setAttribute("errorMessage", "Failed to cancel appointment!");
+                    session.setAttribute("errorMessage", "Failed to cancel appointment. Please try again.");
                 }
             }
+            
         } catch (Exception e) {
-            request.getSession().setAttribute("errorMessage", "Error cancelling appointment!");
+            session.setAttribute("errorMessage", "An error occurred while cancelling appointment!");
         }
 
         // Redirect back to appointments list
         response.sendRedirect(request.getContextPath() + ManageMyAppointmentConstans.BASE_URL);
+    }
+    
+    /**
+     * Check if user has any appointments within 24 hours of the requested time
+     * This method handles gap validation directly in controller
+     * 
+     * @param userId User's ID
+     * @param requestedDateTime Requested appointment date time
+     * @return true if 24-hour gap is maintained, false otherwise
+     */
+    private boolean isValidAppointmentGap(int userId, Timestamp requestedDateTime) {
+        try {
+            // Query to check for appointments within 24 hours before or after requested time
+            String sql = "SELECT COUNT(*) as count FROM Appointment " +
+                        "WHERE UserID = ? AND AppointmentStatusID IN (1, 2) " +
+                        "AND ABS(DATEDIFF(HOUR, DateBegin, ?)) < 24";
+            
+            java.sql.ResultSet rs = null;
+            try {
+                Object[] params = {userId, requestedDateTime};
+                rs = appointmentDAO.executeSelectQuery(sql, params);
+                
+                if (rs.next()) {
+                    int count = rs.getInt("count");
+                    return count == 0; // Return true if no conflicts found
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                appointmentDAO.closeResources(rs);
+            }
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
+        // Default to false (not valid) if any error occurs
+        return false;
+    }
+    
+    /**
+     * Enhanced book appointment with gap validation handled in controller
+     */
+    private void handleBookAppointmentWithGapValidation(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        
+        HttpSession session = request.getSession();
+        User user = (User) session.getAttribute("user");
+        
+        try {
+            String doctorIdParam = request.getParameter("doctorId");
+            String appointmentDateTimeParam = request.getParameter("appointmentDateTime");
+            String note = request.getParameter("note");
+            
+            // Basic validation using BookAppointmentValidate class (without gap validation)
+            BookAppointmentValidate.ValidationResultWithData<BookAppointmentValidate.BookingData> validationResult = 
+                BookAppointmentValidate.validateCompleteBookingWithRequest(user, doctorIdParam, 
+                    appointmentDateTimeParam, note, null);
+            
+            if (!validationResult.isValid()) {
+                session.setAttribute("errorMessage", validationResult.getAllErrorMessages());
+                if (doctorIdParam != null && !doctorIdParam.trim().isEmpty()) {
+                    response.sendRedirect(request.getContextPath() + ManageMyAppointmentConstans.BASE_URL + "?action=bookAppointment&doctorId=" + doctorIdParam);
+                } else {
+                    response.sendRedirect(request.getContextPath() + ManageMyAppointmentConstans.BASE_URL);
+                }
+                return;
+            }
+            
+            // Get validated booking data
+            BookAppointmentValidate.BookingData bookingData = validationResult.getData();
+            
+            // Controller-level gap validation
+            if (!isValidAppointmentGap(bookingData.userId, bookingData.appointmentDateTime)) {
+                session.setAttribute("errorMessage", "You must wait at least 24 hours between appointments. Please choose a different time.");
+                response.sendRedirect(request.getContextPath() + ManageMyAppointmentConstans.BASE_URL + "?action=bookAppointment&doctorId=" + bookingData.doctorId);
+                return;
+            }
+            
+            // Book appointment
+            boolean success = appointmentDAO.bookAppointment(bookingData.userId, bookingData.doctorId, 
+                bookingData.note, bookingData.appointmentDateTime);
+            
+            if (success) {
+                session.setAttribute("successMessage", "Appointment booked successfully! Your appointment is pending approval.");
+            } else {
+                session.setAttribute("errorMessage", "Failed to book appointment. Please try again.");
+            }
+            
+            // Redirect back to appointments list
+            response.sendRedirect(request.getContextPath() + ManageMyAppointmentConstans.BASE_URL);
+            
+        } catch (Exception e) {
+            session.setAttribute("errorMessage", "An error occurred while booking appointment!");
+            response.sendRedirect(request.getContextPath() + ManageMyAppointmentConstans.BASE_URL);
+        }
     }
 
     /**
@@ -244,38 +367,39 @@ public class ManageMyAppointmentController extends HttpServlet {
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
         
-        if (user == null) {
-            response.sendRedirect(request.getContextPath() + "/login");
-            return;
-        }
-        
         try {
             String doctorIdParam = request.getParameter("doctorId");
             String appointmentDateTimeParam = request.getParameter("appointmentDateTime");
             String note = request.getParameter("note");
             
-            if (doctorIdParam == null || appointmentDateTimeParam == null) {
-                session.setAttribute("errorMessage", "Missing required information!");
-                response.sendRedirect(request.getContextPath() + ManageMyAppointmentConstans.BASE_URL);
+            // Basic validation using BookAppointmentValidate class (without gap validation)
+            BookAppointmentValidate.ValidationResultWithData<BookAppointmentValidate.BookingData> validationResult = 
+                BookAppointmentValidate.validateCompleteBookingWithRequest(user, doctorIdParam, 
+                    appointmentDateTimeParam, note, null);
+            
+            if (!validationResult.isValid()) {
+                session.setAttribute("errorMessage", validationResult.getAllErrorMessages());
+                if (doctorIdParam != null && !doctorIdParam.trim().isEmpty()) {
+                    response.sendRedirect(request.getContextPath() + ManageMyAppointmentConstans.BASE_URL + "?action=bookAppointment&doctorId=" + doctorIdParam);
+                } else {
+                    response.sendRedirect(request.getContextPath() + ManageMyAppointmentConstans.BASE_URL);
+                }
                 return;
             }
             
-            int doctorId = Integer.parseInt(doctorIdParam);
+            // Get validated booking data
+            BookAppointmentValidate.BookingData bookingData = validationResult.getData();
             
-            // Parse datetime
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
-            java.util.Date parsedDate = dateFormat.parse(appointmentDateTimeParam);
-            Timestamp appointmentDateTime = new Timestamp(parsedDate.getTime());
-            
-            // Check if appointment time is in the future
-            if (appointmentDateTime.before(new Timestamp(System.currentTimeMillis()))) {
-                session.setAttribute("errorMessage", "Appointment time must be in the future!");
-                response.sendRedirect(request.getContextPath() + ManageMyAppointmentConstans.BASE_URL + "?action=bookAppointment&doctorId=" + doctorId);
+            // Controller-level gap validation (24-hour rule)
+            if (!isValidAppointmentGap(bookingData.userId, bookingData.appointmentDateTime)) {
+                session.setAttribute("errorMessage", "You must wait at least 24 hours between appointments. Please choose a different time.");
+                response.sendRedirect(request.getContextPath() + ManageMyAppointmentConstans.BASE_URL + "?action=bookAppointment&doctorId=" + bookingData.doctorId);
                 return;
             }
             
             // Book appointment
-            boolean success = appointmentDAO.bookAppointment(user.getUserID(), doctorId, note, appointmentDateTime);
+            boolean success = appointmentDAO.bookAppointment(bookingData.userId, bookingData.doctorId, 
+                bookingData.note, bookingData.appointmentDateTime);
             
             if (success) {
                 session.setAttribute("successMessage", "Appointment booked successfully! Your appointment is pending approval.");
@@ -286,9 +410,6 @@ public class ManageMyAppointmentController extends HttpServlet {
             // Redirect back to appointments list
             response.sendRedirect(request.getContextPath() + ManageMyAppointmentConstans.BASE_URL);
             
-        } catch (NumberFormatException | ParseException e) {
-            session.setAttribute("errorMessage", "Invalid input data!");
-            response.sendRedirect(request.getContextPath() + ManageMyAppointmentConstans.BASE_URL);
         } catch (Exception e) {
             session.setAttribute("errorMessage", "An error occurred while booking appointment!");
             response.sendRedirect(request.getContextPath() + ManageMyAppointmentConstans.BASE_URL);

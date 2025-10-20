@@ -108,14 +108,7 @@
                                 <div class="doctor-info-content">
                                     <div class="doctor-info-label">Experience</div>
                                     <div class="doctor-info-value">
-                                        <c:choose>
-                                            <c:when test="${not empty doctor.yearExperience and doctor.yearExperience > 0}">
-                                                ${doctor.yearExperience}+ years
-                                            </c:when>
-                                            <c:otherwise>
-                                                8+ years
-                                            </c:otherwise>
-                                        </c:choose>
+                                        ${doctor.yearExperience}+ years
                                     </div>
                                 </div>
                             </div>
@@ -136,8 +129,8 @@
                                     <i class="fas fa-clock"></i>
                                 </div>
                                 <div class="label-content">
-                                    <span class="label-title">Select Date & Time for Examination</span>
-                                    <span class="label-subtitle">Choose your preferred appointment slot</span>
+                                    <span class="label-title">Select Appointment Start Time</span>
+                                    <span class="label-subtitle">Choose when to start your appointment</span>
                                 </div>
                             </label>
                             <div class="input-wrapper">
@@ -145,9 +138,21 @@
                                        id="appointmentDateTime"
                                        name="appointmentDateTime"
                                        class="form-control modern-input"
-                                       required
-                                       step="900">
+                                       required>
                                 <div class="input-border"></div>
+                                <div class="booking-rules-notice">
+                                    <div class="notice-header">
+                                        <i class="fas fa-info-circle"></i>
+                                        <span>Booking Rules</span>
+                                    </div>
+                                    <ul class="rules-list">
+                                        <li><i class="fas fa-clock"></i> Must book at least 24 hours in advance</li>
+                                        <li><i class="fas fa-calendar-day"></i> Working hours: 7:00 AM - 5:00 PM</li>
+                                        <li><i class="fas fa-calendar-plus"></i> Maximum 30 days in advance</li>
+                                        <li><i class="fas fa-user-clock"></i> 24-hour gap between appointments required</li>
+                                        <li><i class="fas fa-stethoscope"></i> End time determined by doctor when examination complete</li>
+                                    </ul>
+                                </div>
                             </div>
                         </div>
 
@@ -188,5 +193,65 @@
                 </div>
             </div>
         </div>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const noteTextarea = document.getElementById('note');
+                const charCount = document.getElementById('charCount');
+
+                            // Character counter functionality
+                            if (noteTextarea && charCount) {
+                                noteTextarea.addEventListener('input', function () {
+                                    const currentLength = this.value.length;
+                                    charCount.textContent = currentLength;
+
+                                    // Change color based on character count
+                                    if (currentLength > 450) {
+                                        charCount.style.color = '#ef4444';
+                                    } else if (currentLength > 350) {
+                                        charCount.style.color = '#f59e0b';
+                                    } else {
+                                        charCount.style.color = '#6b7280';
+                                    }
+                                });
+                            }
+
+                            // Add focus animations to inputs
+                            const inputs = document.querySelectorAll('.modern-input, .modern-textarea');
+                            inputs.forEach(input => {
+                                input.addEventListener('focus', function () {
+                                    this.parentElement.classList.add('focused');
+                                });
+
+                                input.addEventListener('blur', function () {
+                                    this.parentElement.classList.remove('focused');
+                                });
+                            });
+
+                            // Add ripple effect to buttons
+                            const buttons = document.querySelectorAll('.modern-btn-primary');
+                            buttons.forEach(button => {
+                                button.addEventListener('click', function (e) {
+                                    const ripple = document.createElement('span');
+                                    ripple.className = 'ripple';
+
+                                    const rect = this.getBoundingClientRect();
+                                    const size = Math.max(rect.width, rect.height);
+                                    const x = e.clientX - rect.left - size / 2;
+                                    const y = e.clientY - rect.top - size / 2;
+
+                                    ripple.style.width = ripple.style.height = size + 'px';
+                                    ripple.style.left = x + 'px';
+                                    ripple.style.top = y + 'px';
+
+                                    this.appendChild(ripple);
+
+                                    setTimeout(() => {
+                                        ripple.remove();
+                                    }, 600);
+                                });
+                            });
+                        });
+        </script>
     </body>
 </html>
