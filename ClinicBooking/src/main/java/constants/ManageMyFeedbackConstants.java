@@ -30,10 +30,10 @@ public class ManageMyFeedbackConstants {
     public static final String ERROR_GENERAL = "An error occurred while processing your request.";
     public static final String ERROR_INVALID_RATING = "Rating must be between " + MIN_RATE_SCORE + " and "
             + MAX_RATE_SCORE + ".";
-    public static final String ERROR_INVALID_REVIEW_ID = "Invalid review ID.";
-    public static final String ERROR_INVALID_DOCTOR_ID = "Invalid doctor ID.";
+    public static final String ERROR_INVALID_REVIEW_ID = "The review you requested could not be found.";
+    public static final String ERROR_INVALID_DOCTOR_ID = "Please select a doctor you wish to review.";
     public static final String ERROR_NOT_FOUND = "Review not found!";
-    public static final String ERROR_REQUIRED_REVIEW_ID = "Review ID is required.";
+    public static final String ERROR_REQUIRED_REVIEW_ID = "An error occurred while trying to open this review. Please try again.";
     public static final String ERROR_UNAUTHORIZED_ACCESS = "You don't have permission to view this review.";
 
     // Info messages
