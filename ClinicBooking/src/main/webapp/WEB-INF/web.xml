@@ -23,6 +23,10 @@
         <servlet-name>ManageInvoiceController</servlet-name>
         <servlet-class>controller.ManageInvoiceController</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>DoctorController</servlet-name>
+        <servlet-class>controller.DoctorController</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>PharmacistDashboardController</servlet-name>
         <url-pattern>/pharmacist-dashboard</url-pattern>
@@ -50,6 +54,10 @@
     <servlet-mapping>
         <servlet-name>ManageInvoiceController</servlet-name>
         <url-pattern>/manage-invoice</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>DoctorController</servlet-name>
+        <url-pattern>/doctor</url-pattern>
     </servlet-mapping>
     <welcome-file-list>
         <welcome-file>index.jsp</welcome-file>
@@ -90,15 +98,6 @@
         <servlet-name>ManageMyAppointmentController</servlet-name>
         <url-pattern>/manage-my-appointments</url-pattern>
     </servlet-mapping>
-    <!-- DoctorListController -->
-    <servlet>
-        <servlet-name>DoctorListController</servlet-name>
-        <servlet-class>controller.DoctorListController</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>DoctorListController</servlet-name>
-        <url-pattern>/doctor-list</url-pattern>
-    </servlet-mapping>
     <!-- DoctorDashboardController -->
     <servlet>
         <servlet-name>DoctorDashboardController</servlet-name>
@@ -107,14 +106,6 @@
     <servlet-mapping>
         <servlet-name>DoctorDashboardController</servlet-name>
         <url-pattern>/doctor-dashboard</url-pattern>
-    </servlet-mapping>
-    <servlet>
-        <servlet-name>DoctorDetailController</servlet-name>
-        <servlet-class>controller.DoctorDetailController</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>DoctorDetailController</servlet-name>
-        <url-pattern>/doctor-detail</url-pattern>
     </servlet-mapping>
     <!-- MyPatientAppointmentDetailController -->
     <servlet>
@@ -170,28 +161,12 @@
             <url-pattern>/manage-my-appointments</url-pattern>
         </servlet-mapping>
         <servlet>
-            <servlet-name>DoctorListController</servlet-name>
-            <servlet-class>controller.DoctorListController</servlet-class>
-        </servlet>
-        <servlet-mapping>
-            <servlet-name>DoctorListController</servlet-name>
-            <url-pattern>/doctor-list</url-pattern>
-        </servlet-mapping>
-        <servlet>
             <servlet-name>DoctorDashboardController</servlet-name>
             <servlet-class>controller.DoctorDashboardController</servlet-class>
         </servlet>
         <servlet-mapping>
             <servlet-name>DoctorDashboardController</servlet-name>
             <url-pattern>/doctor-dashboard</url-pattern>
-        </servlet-mapping>
-        <servlet>
-            <servlet-name>DoctorDetailController</servlet-name>
-            <servlet-class>controller.DoctorDetailController</servlet-class>
-        </servlet>
-        <servlet-mapping>
-            <servlet-name>DoctorDetailController</servlet-name>
-            <url-pattern>/doctor-detail</url-pattern>
         </servlet-mapping>
         <servlet>
             <servlet-name>ManageMyPatientAppointment</servlet-name>

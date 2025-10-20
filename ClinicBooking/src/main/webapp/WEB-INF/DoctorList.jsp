@@ -562,7 +562,7 @@
 
                                 <!-- Action Buttons -->
                                 <div class="doctor-actions">
-                                    <a href="${pageContext.request.contextPath}/doctor-detail?id=${doctor.doctorID}"
+                                    <a href="${pageContext.request.contextPath}/doctor?action=detail&id=${doctor.doctorID}"
                                        class="btn-view">View Detail</a>
                                     <a href="${pageContext.request.contextPath}/manage-my-appointments?action=bookAppointment&doctorId=${doctor.doctorID}"
                                        class="btn-book">

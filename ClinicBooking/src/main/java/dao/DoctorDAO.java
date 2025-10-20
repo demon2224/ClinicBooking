@@ -119,7 +119,8 @@ public class DoctorDAO extends DBContext {
                 + "INNER JOIN JobStatus js ON d.JobStatusID = js.JobStatusID "
                 + "WHERE d.JobStatusID = 1 AND u.RoleID = 4";
 
-        ResultSet rs = executeSelectQuery(sql);
+        Object[] params = {};
+        ResultSet rs = executeSelectQuery(sql, params);
         try {
             if (rs != null) {
                 while (rs.next()) {
@@ -185,7 +186,6 @@ public class DoctorDAO extends DBContext {
             sql.append(" AND d.YearExperience >= ?");
             paramsList.add(minExperience);
         }
-        // Convert parameters list to array
         Object[] params = paramsList.toArray();
         ResultSet rs = executeSelectQuery(sql.toString(), params);
         try {
@@ -214,7 +214,8 @@ public class DoctorDAO extends DBContext {
 
         String sql = "SELECT SpecialtyID, SpecialtyName FROM Specialty ORDER BY SpecialtyName";
 
-        ResultSet rs = executeSelectQuery(sql);
+        Object[] params = {};
+        ResultSet rs = executeSelectQuery(sql, params);
         try {
             if (rs != null) {
                 while (rs.next()) {
