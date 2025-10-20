@@ -185,13 +185,18 @@ CREATE TABLE PaymentType (
 	PaymentTypeName VARCHAR(50)
 );
 
+CREATE TABLE InvoiceStatus (
+	InvoiceStatusID INT PRIMARY KEY IDENTITY(1,1),
+	InvoiceStatusName VARCHAR(50) UNIQUE NOT NULL
+);
+
 CREATE TABLE Invoice (
     InvoiceID INT PRIMARY KEY IDENTITY(1,1),
 	MedicalRecordID INT FOREIGN KEY REFERENCES MedicalRecord(MedicalRecordID) NOT NULL,
 	ConsultationFeeID INT FOREIGN KEY REFERENCES ConsultationFee(ConsultationFeeID) NOT NULL,
 	PrescriptionID INT FOREIGN KEY REFERENCES Prescription(PrescriptionID),
 	PaymentTypeID INT FOREIGN KEY REFERENCES PaymentType(PaymentTypeID) NOT NULL,
-    InvoiceStatus BIT DEFAULT 0,
+    InvoiceStatusID INT FOREIGN KEY REFERENCES InvoiceStatus(InvoiceStatusID) DEFAULT 1,
     DateCreate DATETIME DEFAULT GETDATE(),
 	DatePay DATETIME
 );

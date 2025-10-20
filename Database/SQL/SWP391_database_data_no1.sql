@@ -21,6 +21,10 @@ BEGIN
 	VALUES
 		('Pending'),('Delivered'),('Canceled');
 
+	INSERT INTO InvoiceStatus(InvoiceStatusName)
+	VALUES
+		('Pending'),('Paid'),('Canceled');
+
 	INSERT INTO "User"(RoleID)
 	VALUES
 		(5),(5),(5),(5),(5),
@@ -174,8 +178,8 @@ BEGIN
 	VALUES
 		('Cash'),('Credit Card'),('Insurance'),('Online Banking'),('E-Wallet');
 
-	INSERT INTO Invoice(MedicalRecordID, ConsultationFeeID, PrescriptionID, PaymentTypeID, InvoiceStatus)
+	INSERT INTO Invoice(MedicalRecordID, ConsultationFeeID, PrescriptionID, PaymentTypeID, InvoiceStatusID)
 	VALUES
-		(1,1,1,1,1),(2,2,2,2,1),(3,3,3,3,0),(4,4,4,4,1),(5,5,5,5,0);
+		(1,1,1,1,1),(2,2,2,2,1),(3,3,3,3,2),(4,4,4,4,1),(5,5,5,5,2);
 
 END

@@ -15,6 +15,10 @@ BEGIN
 		DBCC CHECKIDENT (Invoice, RESEED, 0);
 		DELETE FROM Invoice;
 
+	IF EXISTS (SELECT 1 FROM InvoiceStatus)
+		DBCC CHECKIDENT (InvoiceStatus, RESEED, 0);
+		DELETE FROM InvoiceStatus;
+
 	IF EXISTS (SELECT 1 FROM PaymentType)
 		DBCC CHECKIDENT (PaymentType, RESEED, 0);
 		DELETE FROM PaymentType;

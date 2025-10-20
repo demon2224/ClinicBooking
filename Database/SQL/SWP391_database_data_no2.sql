@@ -30,11 +30,11 @@ BEGIN
 	(7, 7, 'Fever, Cough', 'Seasonal Flu', 'Prescribed syrup'),
 	(8, 8, 'Routine', 'Healthy', 'No issues');
 
-	INSERT INTO Invoice(MedicalRecordID, ConsultationFeeID, PrescriptionID, PaymentTypeID, InvoiceStatus)
+	INSERT INTO Invoice(MedicalRecordID, ConsultationFeeID, PrescriptionID, PaymentTypeID, InvoiceStatusID)
 	VALUES
 	(6, 1, 6, 1, 1),
 	(7, 1, 7, 2, 1),
-	(8, 1, 8, 3, 0);
+	(8, 1, 8, 3, 3);
 
 	INSERT INTO Appointment(UserID, DoctorID, AppointmentStatusID, DateBegin, DateEnd, Note)
 	VALUES
@@ -60,11 +60,11 @@ BEGIN
 	(10, 10, 'Toothache', 'Dental pain', 'Painkillers prescribed'),
 	(11, 11, 'General check', 'Healthy', 'Routine exam');
 
-	INSERT INTO Invoice(MedicalRecordID, ConsultationFeeID, PrescriptionID, PaymentTypeID, InvoiceStatus)
+	INSERT INTO Invoice(MedicalRecordID, ConsultationFeeID, PrescriptionID, PaymentTypeID, InvoiceStatusID)
 	VALUES
 	(9, 1, 9, 4, 1),
 	(10, 1, 10, 5, 1),
-	(11, 1, 11, 3, 0);
+	(11, 1, 11, 3, 3);
 
 	INSERT INTO Appointment (UserID, DoctorID, AppointmentStatusID, DateBegin, DateEnd, Note)
 	VALUES
@@ -98,7 +98,7 @@ BEGIN
 	(15, 4, 'High blood pressure', 'Hypertension', 'Monitor daily pressure'),
 	(16, 5, 'Severe headache', 'Tension headache', 'Reduce stress and rest');
 
-	INSERT INTO Invoice (MedicalRecordID, ConsultationFeeID, PrescriptionID, PaymentTypeID, InvoiceStatus, DatePay)
+	INSERT INTO Invoice (MedicalRecordID, ConsultationFeeID, PrescriptionID, PaymentTypeID, InvoiceStatusID, DatePay)
 	VALUES
 	(12, 1, 1, 1, 1, '2025-10-10'),
 	(13, 2, 2, 2, 1, '2025-10-15'),
