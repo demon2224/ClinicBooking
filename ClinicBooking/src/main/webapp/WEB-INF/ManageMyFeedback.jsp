@@ -13,7 +13,7 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Manage My Feedback - CLINIC</title>
+        <title>My Feedbacks - CLINIC</title>
 
         <!-- Font Awesome Icons -->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -27,7 +27,7 @@
                 box-sizing: border-box;
             }
 
-            body {
+            body.appointment-page {
                 margin: 0 !important;
                 font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
                 padding-top: 80px !important; /* Space for fixed header */
@@ -35,7 +35,7 @@
                 overflow-x: hidden !important;
             }
 
-            .main-content {
+            .appointment-main-content {
                 padding: 2rem !important;
                 max-width: 1200px !important;
                 margin: 0 auto !important;
@@ -46,8 +46,8 @@
                 flex-direction: column !important;
             }
 
-            .page-header {
-                background: white !important;
+            .appointment-page-header {
+                background: #175CDD !important;
                 padding: 2rem !important;
                 border-radius: 0.5rem !important;
                 box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
@@ -57,14 +57,17 @@
                 order: 1 !important;
             }
 
-            .page-header h1 {
-                color: #175CDD;
+            .appointment-page-header h1 {
+                color: white !important;
                 margin: 0 0 0.5rem 0;
                 font-size: 2rem;
                 font-weight: 600;
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
             }
 
-            .page-header p {
+            .appointment-page-header p {
                 color: #64748b;
                 margin: 0;
                 font-size: 1.1rem;
@@ -243,20 +246,20 @@
                 background: #bbf7d0;
             }
 
-            .alert {
+            .appointment-alert {
                 padding: 1rem;
                 margin-bottom: 1rem;
                 border-radius: 0.375rem;
                 font-weight: 500;
             }
 
-            .alert-success {
+            .appointment-alert-success {
                 background: #dcfce7;
                 color: #166534;
                 border: 1px solid #bbf7d0;
             }
 
-            .alert-error {
+            .appointment-alert-error {
                 background: #fee2e2;
                 color: #dc2626;
                 border: 1px solid #fecaca;
@@ -354,11 +357,11 @@
 
             /* Responsive Design */
             @media (max-width: 768px) {
-                .main-content {
+                .appointment-main-content {
                     padding: 1rem;
                 }
 
-                .page-header {
+                .appointment-page-header {
                     padding: 1.5rem;
                 }
 
@@ -373,48 +376,48 @@
             }
 
             @media (max-width: 480px) {
-                .main-content {
+                .appointment-main-content {
                     padding: 0.5rem;
                 }
 
-                .page-header {
+                .appointment-page-header {
                     padding: 1rem;
                 }
 
-                .page-header h1 {
+                .appointment-page-header h1 {
                     font-size: 1.5rem;
                 }
             }
         </style>
     </head>
-    <body>
+    <body class="appointment-page">
         <!-- Include Header -->
         <jsp:include page="includes/header.jsp">
             <jsp:param name="activePage" value="manage-feedback" />
         </jsp:include>
 
         <!-- Main Content -->
-        <main class="main-content">
+        <main class="appointment-main-content">
             <!-- Page Header -->
-            <div class="page-header">
-                <h1><i class="fas fa-comments"></i> Manage My Feedback</h1>
+            <div class="appointment-page-header">
+                <h1><i class="fas fa-comments"></i> My Feedbacks</h1>
             </div>
 
             <!-- Message Display -->
             <c:if test="${not empty successMessage}">
-                <div class="alert alert-success">
+                <div class="appointment-alert appointment-alert-success">
                     <i class="fas fa-check-circle"></i> ${successMessage}
                 </div>
             </c:if>
 
             <c:if test="${not empty errorMessage}">
-                <div class="alert alert-error">
+                <div class="appointment-alert appointment-alert-error">
                     <i class="fas fa-exclamation-circle"></i> ${errorMessage}
                 </div>
             </c:if>
 
             <c:if test="${not empty message}">
-                <div class="alert alert-success">
+                <div class="appointment-alert appointment-alert-success">
                     <i class="fas fa-info-circle"></i> ${message}
                 </div>
             </c:if>
@@ -448,7 +451,7 @@
                                 New Review
                             </a>
                         </div>
-                        
+
                         <div class="feedback-content">
                             <c:choose>
                                 <c:when test="${empty myReviews}">
@@ -457,7 +460,7 @@
                                         <i class="fas fa-comments"></i>
                                         <h3>No Reviews Found</h3>
                                         <p>You haven't written any reviews yet. Share your experience with doctors!</p>
-                                        <a href="${pageContext.request.contextPath}/manage-my-feedback?action=create" 
+                                        <a href="${pageContext.request.contextPath}/manage-my-feedback?action=create"
                                            class="btn-action btn-create">
                                             <i class="fas fa-plus"></i> Write Your First Review
                                         </a>
@@ -477,38 +480,30 @@
                                                         <i class="fas fa-calendar"></i>
                                                         <c:choose>
                                                             <c:when test="${review.dateCreate != null}">
-                                                                ${review.dateCreate.toLocalDate()} at ${review.dateCreate.toLocalTime().withNano(0)}
+                                                                ${review.dateCreate.toLocalDate()}
                                                             </c:when>
                                                             <c:otherwise>
                                                                 N/A
                                                             </c:otherwise>
                                                         </c:choose>
                                                     </div>
-                                                    <div class="feedback-rating">
-                                                        <div class="rating-stars">
-                                                            <c:forEach begin="1" end="5" var="star">
-                                                                <i class="fas fa-star ${star <= review.rateScore ? '' : 'text-muted'}"></i>
-                                                            </c:forEach>
-                                                        </div>
-                                                        <span class="rating-score">${review.rateScore}/5</span>
-                                                    </div>
                                                 </div>
                                             </div>
-                                            
+
                                             <div class="feedback-content-text">
                                                 ${review.content}
                                             </div>
 
                                             <div class="feedback-actions">
-                                                <a href="${pageContext.request.contextPath}/manage-my-feedback?action=detail&reviewId=${review.doctorReviewID}" 
+                                                <a href="${pageContext.request.contextPath}/manage-my-feedback?action=detail&reviewId=${review.doctorReviewID}"
                                                    class="btn-action btn-view">
-                                                    <i class="fas fa-eye"></i> View Details
+                                                    <i class="fas fa-eye"></i> View Detail
                                                 </a>
-                                                <a href="${pageContext.request.contextPath}/manage-my-feedback?action=edit&reviewId=${review.doctorReviewID}" 
+                                                <a href="${pageContext.request.contextPath}/manage-my-feedback?action=edit&reviewId=${review.doctorReviewID}"
                                                    class="btn-action btn-edit">
                                                     <i class="fas fa-edit"></i> Edit
                                                 </a>
-                                                <button class="btn-action btn-delete" 
+                                                <button class="btn-action btn-delete"
                                                         data-review-id="${review.doctorReviewID}">
                                                     <i class="fas fa-trash"></i> Delete
                                                 </button>

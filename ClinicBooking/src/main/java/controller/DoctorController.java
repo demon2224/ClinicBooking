@@ -31,6 +31,8 @@ public class DoctorController extends HttpServlet {
 
     /**
      * Initialize all necessary DAOs
+     *
+     * @throws jakarta.servlet.ServletException
      */
     @Override
     public void init() throws ServletException {
@@ -79,7 +81,7 @@ public class DoctorController extends HttpServlet {
         String action = request.getParameter("action");
 
         try {
-            if ("detail".equals(action)) {
+            if (action != null && action.equals("detail")) {
                 handleDoctorDetail(request, response);
             } else {
                 handleDoctorList(request, response);
@@ -106,7 +108,7 @@ public class DoctorController extends HttpServlet {
         String action = request.getParameter("action");
 
         try {
-            if ("detail".equals(action)) {
+            if (action.equals("detail")) {
                 handleDoctorDetailPost(request, response);
             } else {
                 handleDoctorListPost(request, response);
@@ -172,9 +174,12 @@ public class DoctorController extends HttpServlet {
                 response.sendRedirect(request.getContextPath() + DoctorConstants.DOCTOR_URL);
                 return;
             }
+
             AvatarHandler.processSingleDoctorAvatar(doctor);
+
             List<DoctorDegree> degrees = doctorDAO.getDoctorDegrees(doctorId);
             List<DoctorReview> doctorReviews = doctorReviewDAO.getReviewsByDoctorId(doctorId);
+
             // Calculate the average rating and review count
             double averageRating = doctorReviewDAO.getAverageRatingByDoctorId(doctorId);
             int reviewCount = doctorReviewDAO.getReviewCountByDoctorId(doctorId);

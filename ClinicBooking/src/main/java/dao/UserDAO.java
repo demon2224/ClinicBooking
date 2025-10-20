@@ -22,8 +22,7 @@ import model.Profile;
 public class UserDAO extends DBContext {
 
     /**
-     * Get user by ID with full information from User, Account, and Profile
-     * tables
+     * Get user by ID with full information from User, Account, and Profile tables
      *
      * @param userId The ID of the user to retrieve
      * @return User object with complete information, null if not found

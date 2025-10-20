@@ -36,18 +36,17 @@ public class ManageMyFeedbackController extends HttpServlet {
     }
 
     /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
+     * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
      *
-     * @param request  servlet request
+     * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException      if an I/O error occurs
+     * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
+        try ( PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
             out.println("<!DOCTYPE html>");
             out.println("<html>");
@@ -66,10 +65,10 @@ public class ManageMyFeedbackController extends HttpServlet {
     /**
      * Handles the HTTP <code>GET</code> method.
      *
-     * @param request  servlet request
+     * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException      if an I/O error occurs
+     * @throws IOException if an I/O error occurs
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -103,7 +102,7 @@ public class ManageMyFeedbackController extends HttpServlet {
     }
 
     /**
-     * View list of user's feedbacks
+     * View list of user's feedback
      */
     private void viewMyFeedbacks(HttpServletRequest request, HttpServletResponse response, int userID)
             throws ServletException, IOException {
@@ -173,10 +172,10 @@ public class ManageMyFeedbackController extends HttpServlet {
     /**
      * Handles the HTTP <code>POST</code> method.
      *
-     * @param request  servlet request
+     * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException      if an I/O error occurs
+     * @throws IOException if an I/O error occurs
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -213,7 +212,7 @@ public class ManageMyFeedbackController extends HttpServlet {
     }
 
     /**
-     * Handle update feedback - Future implementation
+     * Handle update feedback
      */
     private void handleUpdateFeedback(HttpServletRequest request, HttpServletResponse response, int userID)
             throws ServletException, IOException {
@@ -232,7 +231,7 @@ public class ManageMyFeedbackController extends HttpServlet {
     }
 
     /**
-     * Handle delete feedback POST - Future implementation
+     * Handle delete feedback POST
      */
     private void handleDeleteFeedbackPost(HttpServletRequest request, HttpServletResponse response, int userID)
             throws ServletException, IOException {
@@ -243,7 +242,7 @@ public class ManageMyFeedbackController extends HttpServlet {
     }
 
     /**
-     * Show create feedback form - Future implementation
+     * Show create feedback form
      */
     private void handleCreateFeedbackForm(HttpServletRequest request, HttpServletResponse response, int userID)
             throws ServletException, IOException {
@@ -255,7 +254,7 @@ public class ManageMyFeedbackController extends HttpServlet {
     }
 
     /**
-     * Handle create feedback - Future implementation
+     * Handle create feedback
      */
     private void handleCreateFeedback(HttpServletRequest request, HttpServletResponse response, int userID)
             throws ServletException, IOException {
@@ -272,7 +271,7 @@ public class ManageMyFeedbackController extends HttpServlet {
         } else if (!FeedbackValidate.isValidRating(rateScore)) {
             request.setAttribute("errorMessage", ManageMyFeedbackConstants.ERROR_INVALID_RATING);
         } else {
-            request.setAttribute("errorMessage", "Invalid doctor ID.");
+            request.setAttribute("errorMessage", ManageMyFeedbackConstants.ERROR_INVALID_DOCTOR_ID);
         }
 
         viewMyFeedbacks(request, response, userID);
