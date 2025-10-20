@@ -171,26 +171,35 @@ public class MedicineDAO extends DBContext {
                 + "	WHERE mt.MedicineTypeName LIKE ?)\n"
                 + "	, ?, ?, ?, ?);";
         Object[] params = {medicineType, status, medicineName, medicineCode, price};
-        int rs;
-
-        rs = executeQuery(query, params);
+        int rs = executeQuery(query, params);
         closeResources(null);
 
         return rs;
     }
 
-    public int editMedicine(String medicineName, String medicineCode, String medicineType, double price, int status, int medicineID) {
+    public int editMedicine(String medicineName, String medicineCode, String medicineType, double price, int medicineID) {
         String query = "UPDATE [dbo].[Medicine]\n"
                 + "SET MedicineTypeID =\n"
                 + "	(SELECT TOP 1 mt.MedicineTypeID\n"
                 + "	FROM [dbo].[MedicineType] mt\n"
                 + "	WHERE mt.MedicineTypeName LIKE ?)\n"
-                + "	, MedicineStatus = ?, MedicineName = ?, MedicineCode = ?, Price = ?\n"
+                + "	, MedicineName = ?, MedicineCode = ?, Price = ?\n"
                 + "WHERE MedicineID = ?;";
-        Object[] params = {medicineType, status, medicineName, medicineCode, price, medicineID};
-        int rs;
+        Object[] params = {medicineType, medicineName, medicineCode, price, medicineID};
+        
+        int rs = executeQuery(query, params);
+        closeResources(null);
 
-        rs = executeQuery(query, params);
+        return rs;
+    }
+
+    public int deleteMedicine(int status, int medicineID) {
+        String query = "UPDATE [dbo].[Medicine]\n"
+                + "SET MedicineStatus = ?\n"
+                + "WHERE MedicineID = ?;";
+        Object[] params = {status, medicineID};
+        
+        int rs = executeQuery(query, params);
         closeResources(null);
 
         return rs;

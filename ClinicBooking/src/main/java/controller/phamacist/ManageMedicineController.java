@@ -251,7 +251,34 @@ public class ManageMedicineController extends HttpServlet {
             return;
         }
 
+        if (action.equals("delete")) {
+            handleDeleteResponse(request, response);
+            return;
+        }
+
         response.sendRedirect(request.getContextPath() + "/manage-medicine");
+    }
+
+    private void handleDeleteResponse(HttpServletRequest request, HttpServletResponse response) throws IOException {
+
+        String medicineIdParam = request.getParameter("medicineId");
+
+        try {
+
+            int medicineId = Integer.parseInt(medicineIdParam);
+            int newMedicineStatus = medicineDAO.getMedicineById(medicineId).getMedicineStatus() ? 0 : 1;
+            int resultDelete = medicineDAO.deleteMedicine(newMedicineStatus, medicineId);
+
+            if (resultDelete != 0) {
+                request.getSession().setAttribute("medicineDeleteSuccessMsg", "Delete medicine successfully.");
+            } else {
+                request.getSession().setAttribute("medicineDeleteErrorMsg", "Failed to delete medicine.");
+            }
+
+            response.sendRedirect(request.getContextPath() + "/manage-medicine");
+        } catch (NumberFormatException e) {
+            response.sendRedirect(request.getContextPath() + "/manage-medicine");
+        }
     }
 
     private void handleEditResponse(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -267,28 +294,25 @@ public class ManageMedicineController extends HttpServlet {
             String medicineCodeParam = request.getParameter("medicineCode");
             String medicineTypeParam = request.getParameter("medicineType");
             String medicinePriceParam = request.getParameter("price");
-            String medicineStatusParam = request.getParameter("medicineStatus");
 
             boolean isValidMedicineName = isValidMedicineName(request, medicineNameParam);
             boolean isValidMedicineCode = isValidMedicineCode(request, medicineCodeParam);
             boolean isValidMedicineType = isValidMedicineType(request, medicineTypeParam);
             boolean isValidMedicinePrice = isValidMedicinePrice(request, medicinePriceParam);
-            boolean isValidMedicineStatus = isValidMedicineStatus(request, medicineStatusParam);
 
             if (!isValidMedicineName
                     || !isValidMedicineCode
                     || !isValidMedicineType
-                    || !isValidMedicinePrice
-                    || !isValidMedicineStatus) {
+                    || !isValidMedicinePrice) {
                 response.sendRedirect(request.getContextPath() + "/manage-medicine?action=edit&medicineId=" + medicineId);
             } else {
 
-                int resultEdit = medicineDAO.editMedicine(medicineNameParam, medicineCodeParam, medicineTypeParam, Double.parseDouble(medicinePriceParam), Integer.parseInt(medicineStatusParam), medicineId);
+                int resultEdit = medicineDAO.editMedicine(medicineNameParam, medicineCodeParam, medicineTypeParam, Double.parseDouble(medicinePriceParam), medicineId);
 
                 if (resultEdit != 0) {
-                    request.getSession().setAttribute("medicineEditSuccessMsg", "Create new medicine successfully.");
+                    request.getSession().setAttribute("medicineEditSuccessMsg", "Edit medicine successfully.");
                 } else {
-                    request.getSession().setAttribute("medicineEditErrorMsg", "Failed to create new medicine.");
+                    request.getSession().setAttribute("medicineEditErrorMsg", "Failed to edit medicine.");
                 }
 
                 response.sendRedirect(request.getContextPath() + "/manage-medicine");

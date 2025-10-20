@@ -158,10 +158,16 @@
                                             </c:choose>
                                         </td>
                                         <td>
-                                            <a class="btn btn-submit bg-warning text-white" href="${pageContext.request.contextPath}/manage-medicine?action=detail&medicineId=${med.medicineId}">View Detail</a>
-                                            <a class="btn btn-submit bg-primary text-white" href="${pageContext.request.contextPath}/manage-medicine?action=import&medicineId=${med.medicineId}">Import</a>
-                                            <a class="btn btn-submit bg-primary text-white" href="${pageContext.request.contextPath}/manage-medicine?action=edit&medicineId=${med.medicineId}">Edit</a>
-                                            <a class="btn btn-submit bg-danger text-white" href="${pageContext.request.contextPath}/manage-medicine?action=delete&medicineId=${med.medicineId}">Delete</a>
+                                            <div class="d-flex gap-2">
+                                                <a class="btn btn-submit bg-warning text-white" href="${pageContext.request.contextPath}/manage-medicine?action=detail&medicineId=${med.medicineId}">View Detail</a>
+                                                <a class="btn btn-submit bg-primary text-white" href="${pageContext.request.contextPath}/manage-medicine?action=import&medicineId=${med.medicineId}">Import</a>
+                                                <a class="btn btn-submit bg-primary text-white" href="${pageContext.request.contextPath}/manage-medicine?action=edit&medicineId=${med.medicineId}">Edit</a>
+                                                <form method="post" action="${pageContext.request.contextPath}/manage-medicine">
+                                                    <input type="hidden" name="action" value="delete">
+                                                    <input type="hidden" name="medicineId" value="${med.medicineId}">
+                                                    <button class="btn btn-submit bg-danger text-white">Delete</button>
+                                                </form>
+                                            </div>
                                         </td>
                                     </tr>
                                 </c:forEach>

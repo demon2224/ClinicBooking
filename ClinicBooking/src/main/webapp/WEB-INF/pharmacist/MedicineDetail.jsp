@@ -89,11 +89,11 @@
                         <div class="row">
                             <div class="col-4">
                                 Name: 
-                                ${requestScope.medicine.medicineName}
+                                <c:out value="${requestScope.medicine.medicineName}"/>
                             </div>
                             <div class="col-4">
                                 Code: 
-                                ${requestScope.medicine.medicineCode}
+                                <c:out value="${requestScope.medicine.medicineCode}"/>
                             </div>
                             <div class="col-4">
                                 Status: 
@@ -108,11 +108,11 @@
                             </div>
                             <div class="col-4">
                                 Type: 
-                                ${requestScope.medicine.medicineType}
+                                <c:out value="${requestScope.medicine.medicineType}"/>
                             </div>
                             <div class="col-4">
                                 Quantity: 
-                                ${requestScope.medicine.quantity}
+                                <c:out value="${requestScope.medicine.quantity}"/>
                             </div>
                             <div class="col-4">
                                 Price per unit: 
@@ -120,11 +120,18 @@
                             </div>
                             <div class="col-4">
                                 Day create: 
-                                ${requestScope.medicine.dateCreateFormatDate}
+                                <c:out value="${requestScope.medicine.dateCreateFormatDate}"/>
                             </div>
                             <div class="col-4">
                                 Last import: 
-                                ${requestScope.medicine.lastStockTransactionFormatDate}
+                                <c:choose>
+                                    <c:when test="${not empty requestScope.medicine.lastStockTransactionFormatDate}">
+                                        <c:out value="${requestScope.medicine.lastStockTransactionFormatDate}"/>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <c:out value="None"/>
+                                    </c:otherwise>
+                                </c:choose>
                             </div>
                         </div>
                     </div>

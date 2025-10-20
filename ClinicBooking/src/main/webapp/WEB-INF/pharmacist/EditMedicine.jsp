@@ -144,21 +144,6 @@
                                 </div>
                             </div>
 
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <label class="form-label required">Status</label>
-                                    <select class="form-select" name="medicineStatus">
-                                        <option value="1" ${medicine.medicineStatus ? 'selected' : ''}>Available</option>
-                                        <option value="0" ${!medicine.medicineStatus ? 'selected' : ''}>Unavailable</option>
-                                    </select>
-                                    <div class="text-danger">
-                                        <c:if test="${not empty sessionScope.medicineStatusErrorsMsg}">                   
-                                            <c:out value="${sessionScope.medicineStatusErrorsMsg}"/>
-                                        </c:if>
-                                    </div>
-                                </div>
-                            </div>
-
                             <div class="d-flex justify-content-center mt-3">
                                 <button type="submit" class="btn btn-success px-5 py-2 fw-bold" style="border-radius: 30px;">
                                     Edit
