@@ -4,9 +4,6 @@
  */
 package validate;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.List;
 import model.MedicineType;
 
@@ -14,8 +11,8 @@ import model.MedicineType;
  *
  * @author Vu Minh Khang - CE191371
  */
-public class CreateNewMedicineValidate {
-
+public class MedicineInfomationValidate {
+    
     public static final String MEDICINE_NAME_REGEX = "^[a-zA-Z\\s]+$";
     public static final String MEDICINE_CODE_REGEX = "^([a-zA-Z]){3}([0-9]){3}$";
     public static final String DATE_FORMAT = "yyyy-MM-dd";
@@ -153,25 +150,6 @@ public class CreateNewMedicineValidate {
     }
 
     /**
-     * Check the expiry date of medicine is valid or not. Valid expiry date must
-     * be a valid date with format "yyyy-MM-dd" and can not be later than now.
-     *
-     * @param dateStr is the expiry date of medicine
-     * @return True if medicine expiry date is valid. False if it is invalid
-     */
-    public static boolean isValidExpiryDate(String dateStr) {
-        try {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMAT);
-            LocalDate expiryDate = LocalDate.parse(dateStr, formatter);
-            LocalDate today = LocalDate.now();
-
-            return expiryDate.isAfter(today);
-        } catch (DateTimeParseException e) {
-            return false;
-        }
-    }
-
-    /**
      * Check if the status of medicine is valid or not. Valid medicine status
      * can not be anything else except 0 (unavailable) or 1 (available).
      *
@@ -186,5 +164,4 @@ public class CreateNewMedicineValidate {
             return false;
         }
     }
-
 }

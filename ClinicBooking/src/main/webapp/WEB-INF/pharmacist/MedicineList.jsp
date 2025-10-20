@@ -93,7 +93,7 @@
                         <div class="d-flex justify-content-between align-items-center">
                             <h5 class="mb-0">Medicine List</h5>
                             <div>
-                                <a href="${pageContext.request.contextPath}/manage-medicine?action=create&type=medicine" class="btn btn-success">
+                                <a href="${pageContext.request.contextPath}/manage-medicine?action=create" class="btn btn-success">
                                     <i class="fas fa-plus"></i> Add Medicine
                                 </a>
                             </div>
@@ -111,14 +111,18 @@
                                     <th>Quantity</th>
                                     <th>Price Per Unit</th>
                                     <th>Last Import</th>
-                                    <th>Detail</th>
+                                    <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <c:forEach items="${requestScope.medicineList}" var="med" varStatus="item">
                                     <tr>
-                                        <td>${item.count}</td>
-                                        <td>${med.medicineType}</td>
+                                        <td>
+                                            <c:out value="${item.count}"/>
+                                        </td>
+                                        <td>
+                                            <c:out value="${med.medicineType}"/>
+                                        </td>
                                         <c:choose>
                                             <c:when test="${med.medicineStatus}">
                                                 <td>
@@ -131,12 +135,34 @@
                                                 </td>
                                             </c:otherwise>
                                         </c:choose>
-                                        <td>${med.medicineName}</td>
-                                        <td>${med.medicineCode}</td>
-                                        <td>${med.quantity}</td>
-                                        <td><fmt:formatNumber value="${med.price}" type="currency" currencySymbol="$" /></td>
-                                        <td>${med.lastStockTransactionFormatDate}</td>
-                                        <td><a class="btn btn-submit bg-warning" href="${pageContext.request.contextPath}/manage-medicine?action=detail&medicineId=${med.medicineId}">View Detail</a></td>
+                                        <td>
+                                            <c:out value="${med.medicineName}"/>
+                                        </td>
+                                        <td>
+                                            <c:out value="${med.medicineCode}"/>
+                                        </td>
+                                        <td>
+                                            <c:out value="${med.quantity}" />
+                                        </td>
+                                        <td>
+                                            <fmt:formatNumber value="${med.price}" type="currency" currencySymbol="$" />
+                                        </td>
+                                        <td>
+                                            <c:choose>
+                                                <c:when test="${not empty med.lastStockTransactionFormatDate}">
+                                                    <c:out value="${med.lastStockTransactionFormatDate}"/>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <c:out value="None"/>
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </td>
+                                        <td>
+                                            <a class="btn btn-submit bg-warning text-white" href="${pageContext.request.contextPath}/manage-medicine?action=detail&medicineId=${med.medicineId}">View Detail</a>
+                                            <a class="btn btn-submit bg-primary text-white" href="${pageContext.request.contextPath}/manage-medicine?action=import&medicineId=${med.medicineId}">Import</a>
+                                            <a class="btn btn-submit bg-primary text-white" href="${pageContext.request.contextPath}/manage-medicine?action=edit&medicineId=${med.medicineId}">Edit</a>
+                                            <a class="btn btn-submit bg-danger text-white" href="${pageContext.request.contextPath}/manage-medicine?action=delete&medicineId=${med.medicineId}">Delete</a>
+                                        </td>
                                     </tr>
                                 </c:forEach>
                             </tbody>
