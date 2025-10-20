@@ -11,6 +11,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.sql.SQLException;
 import java.util.List;
 import model.Appointment;
 import model.User;
@@ -20,6 +21,18 @@ import model.User;
  * @author Le Thien Tri - CE191249
  */
 public class ManageMyPatientAppointmentController extends HttpServlet {
+
+    private AppointmentDAO appointmentDAO;
+
+    /**
+     * Initialize all the necessary DAO using in this controller.
+     *
+     * @throws ServletException
+     */
+    @Override
+    public void init() throws ServletException {
+        appointmentDAO = new AppointmentDAO();
+    }
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -61,18 +74,60 @@ public class ManageMyPatientAppointmentController extends HttpServlet {
             throws ServletException, IOException {
 //        processRequest(request, response);
         int doctorID = ((User) request.getSession().getAttribute("user")).getUserID();
-        String keyword = request.getParameter("keyword");
-        AppointmentDAO appointmentDAO = new AppointmentDAO();
-        List<Appointment> list;
 
-        if (keyword != null && !keyword.trim().isEmpty()) {
+        String action = request.getParameter("action");
+        if ((action == null) || (action.isEmpty())) {
+            showMyPatientAppointmentList(request, response, doctorID);
+        }
+        if (action.equals("detail")) {
+            showMyPatientAppointmentDetail(request, response, doctorID);
+        }
+
+    }
+
+    /**
+     * Show thông tin danh sách lịch hẹn
+     *
+     * @param request
+     * @param response
+     * @param doctorID
+     * @throws ServletException
+     * @throws IOException
+     */
+    private void showMyPatientAppointmentList(HttpServletRequest request, HttpServletResponse response, int doctorID)
+            throws ServletException, IOException {
+        String keyword = request.getParameter("keyword");
+        List<Appointment> list;
+        if ((keyword != null) && (!keyword.trim().isEmpty())) {
             list = appointmentDAO.searchAppointmentsByDoctor(doctorID, keyword);
         } else {
             list = appointmentDAO.getAllAppointmentsByDoctorId(doctorID);
         }
-
         request.setAttribute("myPatientAppointmentList", list);
         request.getRequestDispatcher("/WEB-INF/doctor/ManageMyPatientAppointment.jsp").forward(request, response);
+    }
+
+    /**
+     * Show chi tiết 1 lịch hẹn
+     *
+     * @param request
+     * @param response
+     * @param doctorID
+     * @throws ServletException
+     * @throws IOException
+     */
+    private void showMyPatientAppointmentDetail(HttpServletRequest request, HttpServletResponse response, int doctorID)
+            throws ServletException, IOException {
+        try {
+            int appointmentID = Integer.parseInt(request.getParameter("appointmentID"));
+            Appointment appointment = appointmentDAO.getDetailAppointmentById(appointmentID, doctorID);
+            if (appointment.getAppointmentID() == appointmentID) {
+                request.setAttribute("detailAppointment", appointment);
+                request.getRequestDispatcher("/WEB-INF/doctor/MyPatientAppointmentDetail.jsp").forward(request, response);
+            }
+        } catch (Exception ex) {
+            response.sendRedirect(request.getContextPath() + "/manage-my-patient-appointment");
+        }
     }
 
     /**

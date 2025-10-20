@@ -133,7 +133,7 @@
                                             </span>
                                         </td>
                                         <td>
-                                            <a href="${pageContext.request.contextPath}/my-patient-appointment-detail?appointmentID=${appointment.appointmentID}"
+                                            <a href="${pageContext.request.contextPath}/manage-my-patient-appointment?action=detail&appointmentID=${appointment.appointmentID}"
                                                class="btn btn-sm btn-info text-white text-decoration-none">
                                                 <i class="fa-solid fa-eye"></i> View Detail
                                             </a>

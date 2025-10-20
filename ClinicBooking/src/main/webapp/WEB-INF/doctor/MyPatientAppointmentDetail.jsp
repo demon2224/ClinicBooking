@@ -11,6 +11,7 @@
 <html>
     <head>
         <title>Patient Appointment Detail (Demo)</title>
+        <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/assets/img/logo.png">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
         <style>
@@ -110,9 +111,6 @@
             <!-- Appointment Info -->
             <h3 class="section-title">Appointment Information</h3>
             <table class="table table-bordered info-table">
-                <tr><th>Appointment ID</th>
-                    <td>${detailAppointment.appointmentID}</td>
-                </tr>
                 <tr>
                     <th>Date Begin</th><td> <fmt:formatDate value="${detailAppointment.dateBegin}" pattern="yyyy/MM/dd HH:mm" /></td>
                 </tr>

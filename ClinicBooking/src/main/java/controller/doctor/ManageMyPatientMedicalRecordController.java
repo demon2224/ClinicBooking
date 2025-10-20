@@ -21,6 +21,18 @@ import model.User;
  */
 public class ManageMyPatientMedicalRecordController extends HttpServlet {
 
+    private MedicalRecordDAO medicalRecordDAO;
+
+    /**
+     * Initialize all the necessary DAO using in this controller.
+     *
+     * @throws ServletException
+     */
+    @Override
+    public void init() throws ServletException {
+        medicalRecordDAO = new MedicalRecordDAO();
+    }
+
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -62,10 +74,12 @@ public class ManageMyPatientMedicalRecordController extends HttpServlet {
 //        processRequest(request, response);
         int doctorID = ((User) request.getSession().getAttribute("user")).getUserID();
 
-        String keyword = request.getParameter("keyword");
-        MedicalRecordDAO medicalRecordDAO = new MedicalRecordDAO();
-        List<MedicalRecord> list;
+    }
 
+    private void showMyPatientAppointmentList(HttpServletRequest request, HttpServletResponse response, int doctorID)
+            throws ServletException, IOException {
+        String keyword = request.getParameter("keyword");
+        List<MedicalRecord> list;
         if (keyword != null && !keyword.trim().isEmpty()) {
             list = medicalRecordDAO.searchMedicalRecordByPatientName(doctorID, keyword);
         } else {

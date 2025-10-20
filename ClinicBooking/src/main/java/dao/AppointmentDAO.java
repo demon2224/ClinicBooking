@@ -360,18 +360,19 @@ public class AppointmentDAO extends DBContext {
                 + "LEFT JOIN Prescription pr ON pr.AppointmentID = a.AppointmentID\n"
                 + "LEFT JOIN MedicalRecord mr ON mr.AppointmentID = a.AppointmentID\n"
                 + "WHERE a.DoctorID = ?";
+        Object[] params = {doctorId};
+        ResultSet rs = executeSelectQuery(sql, params);
         try {
-            Object[] params = {doctorId};
-            ResultSet rs = executeSelectQuery(sql, params);
             if (rs != null) {
                 while (rs.next()) {
                     Appointment appointment = new Appointment(rs.getString("PatientName"), rs.getString("PatientEmail"), rs.getString("PatientPhone"), rs.getTimestamp("DateBegin"), rs.getString("AppointmentNote"), rs.getString("Status"), rs.getInt("AppointmentID"));
                     list.add(appointment);
                 }
-                closeResources(rs);
             }
         } catch (SQLException ex) {
             Logger.getLogger(DoctorDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            closeResources(rs);
         }
 
         return list;
@@ -394,18 +395,19 @@ public class AppointmentDAO extends DBContext {
                 + "LEFT JOIN Prescription pr ON pr.AppointmentID = a.AppointmentID\n"
                 + "LEFT JOIN MedicalRecord mr ON mr.AppointmentID = a.AppointmentID\n"
                 + "WHERE a.DoctorID = ?  ";
+        Object[] params = {doctorId};
+        ResultSet rs = executeSelectQuery(sql, params);
         try {
-            Object[] params = {doctorId};
-            ResultSet rs = executeSelectQuery(sql, params);
             if (rs != null) {
                 while (rs.next()) {
                     Appointment appointment = new Appointment(rs.getString("PatientName"), rs.getString("PatientEmail"), rs.getString("PatientPhone"), rs.getTimestamp("DateBegin"), rs.getString("AppointmentNote"), rs.getString("Status"), rs.getInt("AppointmentID"));
                     list.add(appointment);
                 }
-                closeResources(rs);
             }
         } catch (SQLException ex) {
             Logger.getLogger(DoctorDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            closeResources(rs);
         }
 
         return list;
@@ -433,10 +435,9 @@ public class AppointmentDAO extends DBContext {
                 + "INNER JOIN [Profile] p ON p.UserProfileID = u.UserID\n"
                 + "INNER JOIN AppointmentStatus ast ON ast.AppointmentStatusID = a.AppointmentStatusID\n"
                 + "WHERE a.AppointmentID = ? AND a.DoctorID = ?";
-
+        Object[] params = {appointmentID, doctorId};
+        ResultSet rs = executeSelectQuery(sql, params);
         try {
-            Object[] params = {appointmentID, doctorId};
-            ResultSet rs = executeSelectQuery(sql, params);
 
             if (rs != null && rs.next()) {
                 appointment = new Appointment(
@@ -453,9 +454,10 @@ public class AppointmentDAO extends DBContext {
                         rs.getString("PatientGender")
                 );
             }
-            closeResources(rs);
         } catch (SQLException ex) {
             Logger.getLogger(AppointmentDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            closeResources(rs);
         }
         return appointment;
     }
@@ -485,16 +487,14 @@ public class AppointmentDAO extends DBContext {
 
         sql += "ORDER BY a.DateBegin DESC";
 
+        List<Object> paramsList = new ArrayList<>();
+        paramsList.add(doctorId);
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            paramsList.add("%" + keyword.trim() + "%");
+        }
+        Object[] params = paramsList.toArray();
+        ResultSet rs = executeSelectQuery(sql, params);
         try {
-            List<Object> paramsList = new ArrayList<>();
-            paramsList.add(doctorId);
-
-            if (keyword != null && !keyword.trim().isEmpty()) {
-                paramsList.add("%" + keyword.trim() + "%");
-            }
-            Object[] params = paramsList.toArray();
-
-            ResultSet rs = executeSelectQuery(sql, params);
             if (rs != null) {
                 while (rs.next()) {
                     Appointment appointment = new Appointment(
@@ -508,10 +508,12 @@ public class AppointmentDAO extends DBContext {
                     );
                     list.add(appointment);
                 }
-                closeResources(rs);
+
             }
         } catch (SQLException ex) {
             Logger.getLogger(AppointmentDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            closeResources(rs);
         }
 
         return list;
