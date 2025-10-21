@@ -70,8 +70,8 @@
         <div class="sidebar">
             <h4 class="text-center mt-3 mb-4">CLINIC</h4>
             <a href="${pageContext.request.contextPath}/receptionist-dashboard"><i class="fa-solid fa-gauge me-2"></i>Dashboard</a>
-            <a href="${pageContext.request.contextPath}/receptionist-manage-appointment?action"><i class="fa-solid fa-calendar-days me-2"></i>Manage Appointment</a>
-            <a href="${pageContext.request.contextPath}/manage-invoice"><i class="fa-solid fa-user-doctor me-2"></i>Manage Invoice</a>
+            <a href="${pageContext.request.contextPath}/receptionist-manage-appointment"><i class="fa-solid fa-calendar-days me-2"></i>Manage Appointment</a>
+            <a href="${pageContext.request.contextPath}/manage-invoice"><i class="fa-solid fa-file-invoice-dollar me-2"></i>Manage Invoice</a>
         </div>
 
         <!-- Main content -->
@@ -89,23 +89,28 @@
                     </div>
                 </div>
             </nav>
-            <c:if test="${not empty sessionScope.successMessage}">
-                <div id="successAlert" class="alert alert-success alert-dismissible fade show" role="alert">
-                    ${sessionScope.successMessage}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            <!-- Success Modal -->
+            <div class="modal fade" id="successModal" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content text-center border-0 shadow-lg">
+                        <div class="modal-body p-5">
+                            <i class="fa-solid fa-circle-check text-success fa-4x mb-3"></i>
+                            <h4 class="mb-3 text-success fw-bold">Success!</h4>
+                            <p class="text-secondary mb-4">${sessionScope.successMessage}</p>
+                            <button type="button" class="btn btn-success px-4" data-bs-dismiss="modal">OK</button>
+                        </div>
+                    </div>
                 </div>
-                <c:remove var="successMessage" scope="session"/>
+            </div>
 
+            <c:if test="${not empty sessionScope.successMessage}">
                 <script>
-                    // auto hide after 2 seccond
-                    setTimeout(function () {
-                        var alertEl = document.getElementById('successAlert');
-                        if (alertEl) {
-                            var bsAlert = bootstrap.Alert.getOrCreateInstance(alertEl);
-                            bsAlert.close();
-                        }
-                    }, 2000);
+                    document.addEventListener("DOMContentLoaded", function () {
+                        const modal = new bootstrap.Modal(document.getElementById("successModal"));
+                        modal.show();
+                    });
                 </script>
+                <c:remove var="successMessage" scope="session"/>
             </c:if>
 
 
@@ -119,8 +124,8 @@
                             <i class="fa-solid fa-plus me-1"></i> Add
                         </a>
                     </div>
-                    <div class="card-body">
-                        <table class="table align-middle table-hover">
+                    <div class="table-responsive">
+                        <table class="table table-hover table-bordered align-middle text-center">
                             <thead class="table-primary">
                                 <tr>
                                     <th>#</th>
@@ -163,27 +168,28 @@
                                                 <i class="fa-solid fa-eye"></i> View Detail
                                             </a>
 
-                                            <button type="button" 
-                                            class="btn btn-sm btn-success btn-approve"
-                                            data-id="${a.appointmentID}" 
-                                            data-bs-toggle="modal" 
-                                            data-bs-target="#confirmModal"
-                                            <c:if test="${a.appointmentStatusID != 1}">disabled</c:if>>
+                                            <c:if test="${a.statusName eq 'Pending'}">  
+                                                <button type="button" 
+                                                        class="btn btn-sm btn-success btn-approve"
+                                                        data-id="${a.appointmentID}" 
+                                                        data-bs-toggle="modal" 
+                                                        data-bs-target="#confirmModal"
                                                         <i class="fa-solid fa-check"></i> Update
-                                            </button>
+                                                </button>
+                                            </c:if>            
+
 
                                             <!-- Cancel button -->
-                                            <button type="button" 
-                                            class="btn btn-sm btn-danger btn-cancel"
-                                            data-id="${a.appointmentID}" 
-                                            data-bs-toggle="modal" 
-                                            data-bs-target="#confirmModal"
-                                            <c:if test="${a.appointmentStatusID == 3 || a.appointmentStatusID == 4}">disabled style="opacity: 0.6;"</c:if>>
-                                                        <i class="fa-solid fa-xmark"></i> Cancel
-                                            </button>
-
-                                            </td>
-                                        </tr>
+                                            <c:if test="${a.statusName eq 'Pending' || a.statusName eq 'Approved'}">
+                                                <button type="button" 
+                                                        class="btn btn-sm btn-danger btn-cancel"
+                                                        data-id="${a.appointmentID}" 
+                                                        data-bs-toggle="modal" 
+                                                        data-bs-target="#confirmModal">
+                                                    <i class="fa-solid fa-xmark"></i> Cancel
+                                                </button>
+                                            </c:if>
+                                    </tr>
                                 </c:forEach>
                             </tbody>
                         </table>

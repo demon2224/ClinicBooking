@@ -1,6 +1,6 @@
 <%-- 
     Document   : AppointmentDetail
-    Created on : Oct 11, 2025, 12:53:00 AM
+    Created on : Oct 11, 2025
     Author     : Ngo Quoc Hung - CE191184
 --%>
 
@@ -11,7 +11,7 @@
 <html>
     <head>
         <meta charset="UTF-8">
-        <title>Receptionist Dashboard</title>
+        <title>Appointment Detail</title>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
         <style>
@@ -38,29 +38,14 @@
                 margin-left: 260px;
                 padding: 25px;
             }
-            .card {
-                border-radius: 10px;
+            .section-title {
+                margin-top: 30px;
+                color: #1B5A90;
+                font-weight: bold;
             }
-            .table img {
-                border-radius: 50%;
-                width: 40px;
-                height: 40px;
-            }
-            .status-toggle {
-                width: 40px;
-                height: 20px;
-            }
-            .navbar {
-                background: white;
-                border-bottom: 1px solid #dee2e6;
-            }
-            #Logout {
-                color: red;
-                border-color: red;
-            }
-            #Logout:hover {
-                background-color: red;
-                color: white;
+            th {
+                width: 220px;
+                background-color: #f1f1f1;
             }
         </style>
     </head>
@@ -69,26 +54,26 @@
         <div class="sidebar">
             <h4 class="text-center mt-3 mb-4">CLINIC</h4>
             <a href="${pageContext.request.contextPath}/receptionist-dashboard"><i class="fa-solid fa-gauge me-2"></i>Dashboard</a>
-            <a href="${pageContext.request.contextPath}/receptionist-manage-appointment?action"><i class="fa-solid fa-calendar-days me-2"></i>Manage Appointment</a>
-            <a href="${pageContext.request.contextPath}/manage-invoice"><i class="fa-solid fa-user-doctor me-2"></i>Manage Invoice</a>
+            <a href="${pageContext.request.contextPath}/receptionist-manage-appointment"><i class="fa-solid fa-calendar-days me-2"></i>Manage Appointment</a>
+            <a href="${pageContext.request.contextPath}/manage-invoice"><i class="fa-solid fa-file-invoice-dollar me-2"></i>Manage Invoice</a>
         </div>
 
-        <div class="container">
+        <!-- Main Content -->
+        <div class="main-content">
             <div class="d-flex justify-content-between align-items-center mb-3">
-                <h2>Patient Appointment Detail</h2>
+                <h2><i class="fa-solid fa-calendar-days me-2"></i>Appointment Detail</h2>
             </div>
 
-            <!-- Appointment Info -->
+            <!-- Appointment Information -->
             <h3 class="section-title">Appointment Information</h3>
-            <table class="table table-bordered info-table">
-                <tr><th>Appointment ID</th><td>${appointment.appointmentID}</td></tr>
-                <tr><th>Date Begin</th><td><fmt:formatDate value="${appointment.dateBegin}" pattern="yyyy/MM/dd HH:mm" /></td></tr>
+            <table class="table table-bordered">
+                <tr><th>Date Begin</th><td><fmt:formatDate value="${appointment.dateBegin}" pattern="dd/MM/yyyy HH:mm" /></td></tr>
                 <tr>
                     <th>Date End</th>
                     <td>
                         <c:choose>
                             <c:when test="${appointment.statusName == 'Completed'}">
-                                <fmt:formatDate value="${appointment.dateEnd}" pattern="yyyy/MM/dd HH:mm"/>
+                                <fmt:formatDate value="${appointment.dateEnd}" pattern="dd/MM/yyyy HH:mm"/>
                             </c:when>
                             <c:otherwise>None</c:otherwise>
                         </c:choose>
@@ -112,20 +97,20 @@
                 <tr><th>Appointment Note</th><td>${appointment.note}</td></tr>
             </table>
 
-            <!-- Patient Info -->
+            <!-- Patient Information -->
             <h3 class="section-title">Patient Information</h3>
-            <table class="table table-striped">
+            <table class="table table-bordered">
                 <tr><th>Name</th><td>${appointment.patientName}</td></tr>
                 <tr><th>Email</th><td>${appointment.patientEmail}</td></tr>
                 <tr><th>Phone</th><td>${appointment.patientPhone}</td></tr>
                 <tr><th>Gender</th><td>${appointment.gender}</td></tr>
-                <tr><th>Date of Birth</th><td><fmt:formatDate value="${appointment.doB}" pattern="yyyy/MM/dd" /></td></tr>
+                <tr><th>Date of Birth</th><td><fmt:formatDate value="${appointment.doB}" pattern="dd/MM/yyyy" /></td></tr>
                 <tr><th>Address</th><td>${appointment.address}</td></tr>
             </table>
 
-            <!-- Doctor Info -->
+            <!-- Doctor Information -->
             <h3 class="section-title">Doctor Information</h3>
-            <table class="table table-striped">
+            <table class="table table-bordered">
                 <tr><th>Doctor Name</th><td>${appointment.doctorName}</td></tr>
                 <tr><th>Specialty</th><td>${appointment.specialtyName}</td></tr>
                 <tr><th>Email</th><td>${doctor.email}</td></tr>

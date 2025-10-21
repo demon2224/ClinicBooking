@@ -2,10 +2,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-package controller;
+package controller.receptionist;
 
-
-import dao.AppointmentDAO;
+import dao.InvoiceDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -13,12 +12,13 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
+import model.Invoice;
 
 /**
  *
  * @author Ngo Quoc Hung - CE191184
  */
-public class ReceptionistDashboardController extends HttpServlet {
+public class ManageInvoiceController extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -37,10 +37,10 @@ public class ReceptionistDashboardController extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet ReceptionistDashboardController</title>");
+            out.println("<title>Servlet ManageInvoiceController</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet ReceptionistDashboardController at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet ManageInvoiceController at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -59,9 +59,24 @@ public class ReceptionistDashboardController extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-            request.getRequestDispatcher("/WEB-INF/receptionist/ReceptionistDashboard.jsp")
+        InvoiceDAO dao = new InvoiceDAO();
+        String action = request.getParameter("action");
+
+        if (action != null && action.equals("viewDetail")) {
+            int invoiceId = Integer.parseInt(request.getParameter("id"));
+
+            Invoice invoiceDetail = dao.getInvoiceDetail(invoiceId);
+
+            request.setAttribute("invoiceDetail", invoiceDetail);
+            request.getRequestDispatcher("/WEB-INF/receptionist/InvoiceDetail.jsp")
                     .forward(request, response);
-        
+            return;
+        }
+
+        List<Invoice> invoices = dao.getAllInvoices();
+        request.setAttribute("invoices", invoices);
+        request.getRequestDispatcher("/WEB-INF/receptionist/ReceptionistInvoice.jsp")
+                .forward(request, response);
     }
 
     /**
@@ -75,7 +90,29 @@ public class ReceptionistDashboardController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+
+        String action = request.getParameter("action");
+        int invoiceId = Integer.parseInt(request.getParameter("invoiceId"));
+
+        InvoiceDAO dao = new InvoiceDAO();
+        boolean result = false;
+
+        if ("pay".equals(action)) {
+            result = dao.updateInvoice(invoiceId);
+        } else if ("cancel".equals(action)) {
+        result = dao.cancelInvoice(invoiceId);
+    }
+
+        if (result) {
+            request.setAttribute("message", "Invoice updated successfully!");
+        } else {
+            request.setAttribute("message", "Failed to update invoice!");
+        }
+
+        List<Invoice> invoices = dao.getAllInvoices();
+        request.setAttribute("invoices", invoices);
+        request.getRequestDispatcher("/WEB-INF/receptionist/ReceptionistInvoice.jsp")
+                .forward(request, response);
     }
 
     /**

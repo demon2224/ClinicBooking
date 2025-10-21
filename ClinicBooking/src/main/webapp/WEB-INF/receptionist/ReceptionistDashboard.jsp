@@ -71,8 +71,8 @@
         <div class="sidebar">
             <h4 class="text-center mt-3 mb-4">CLINIC</h4>
             <a href="${pageContext.request.contextPath}/receptionist-dashboard"><i class="fa-solid fa-gauge me-2"></i>Dashboard</a>
-            <a href="${pageContext.request.contextPath}/receptionist-manage-appointment?action"><i class="fa-solid fa-calendar-days me-2"></i>Manage Appointment</a>
-            <a href="${pageContext.request.contextPath}/manage-invoice"><i class="fa-solid fa-user-doctor me-2"></i>Manage Invoice</a>
+            <a href="${pageContext.request.contextPath}/receptionist-manage-appointment"><i class="fa-solid fa-calendar-days me-2"></i>Manage Appointment</a>
+            <a href="${pageContext.request.contextPath}/manage-invoice"><i class="fa-solid fa-file-invoice-dollar me-2"></i>Manage Invoice</a>
         </div>
 
         <!-- Main content -->

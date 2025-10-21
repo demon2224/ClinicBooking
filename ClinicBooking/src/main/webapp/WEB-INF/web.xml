@@ -5,7 +5,7 @@
     <!-- Welcome File List -->
     <servlet>
         <servlet-name>ReceptionistManageAppointmentController</servlet-name>
-        <servlet-class>controller.ReceptionistManageAppointmentController</servlet-class>
+        <servlet-class>controller.receptionist.ReceptionistManageAppointmentController</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>ManageMyPatientMedicalRecordController</servlet-name>
@@ -21,7 +21,7 @@
     </servlet>
     <servlet>
         <servlet-name>ManageInvoiceController</servlet-name>
-        <servlet-class>controller.ManageInvoiceController</servlet-class>
+        <servlet-class>controller.receptionist.ManageInvoiceController</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>DoctorController</servlet-name>
@@ -83,7 +83,7 @@
     <!-- ReceptionistDashboardController -->
     <servlet>
         <servlet-name>ReceptionistDashboardController</servlet-name>
-        <servlet-class>controller.ReceptionistDashboardController</servlet-class>
+        <servlet-class>controller.receptionist.ReceptionistDashboardController</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>ReceptionistDashboardController</servlet-name>

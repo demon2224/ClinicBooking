@@ -11,6 +11,7 @@ import java.sql.Timestamp;
  * @author Ngo Quoc Hung - CE191184
  */
 public class Invoice {
+
     private int invoiceId;
     private String patientName;
     private String doctorName;
@@ -18,6 +19,16 @@ public class Invoice {
     private double fee;
     private String paymentMethod;
     private String status;
+
+    
+    
+    private Timestamp dateCreate;
+    private Timestamp datePay;
+    private int prescriptionID;
+    private String prescriptionNote;
+    private String symptoms;
+    private String diagnosis;
+    private String medicalNote;
 
     public Invoice() {
     }
@@ -87,6 +98,62 @@ public class Invoice {
     public void setStatus(String status) {
         this.status = status;
     }
+
+    public Timestamp getDateCreate() {
+        return dateCreate;
+    }
+
+    public void setDateCreate(Timestamp dateCreate) {
+        this.dateCreate = dateCreate;
+    }
+
+    public Timestamp getDatePay() {
+        return datePay;
+    }
+
+    public void setDatePay(Timestamp datePay) {
+        this.datePay = datePay;
+    }
+
+    public int getPrescriptionID() {
+        return prescriptionID;
+    }
+
+    public void setPrescriptionID(int prescriptionID) {
+        this.prescriptionID = prescriptionID;
+    }
+
+    public String getPrescriptionNote() {
+        return prescriptionNote;
+    }
+
+    public void setPrescriptionNote(String prescriptionNote) {
+        this.prescriptionNote = prescriptionNote;
+    }
+
+    public String getSymptoms() {
+        return symptoms;
+    }
+
+    public void setSymptoms(String symptoms) {
+        this.symptoms = symptoms;
+    }
+
+    public String getDiagnosis() {
+        return diagnosis;
+    }
+
+    public void setDiagnosis(String diagnosis) {
+        this.diagnosis = diagnosis;
+    }
+
+    public String getMedicalNote() {
+        return medicalNote;
+    }
+
+    public void setMedicalNote(String medicalNote) {
+        this.medicalNote = medicalNote;
+    }
     
-    
+
 }

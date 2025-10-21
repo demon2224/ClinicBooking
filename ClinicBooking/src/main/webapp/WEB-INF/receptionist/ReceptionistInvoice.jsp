@@ -70,8 +70,8 @@
         <div class="sidebar">
             <h4 class="text-center mt-3 mb-4">CLINIC</h4>
             <a href="${pageContext.request.contextPath}/receptionist-dashboard"><i class="fa-solid fa-gauge me-2"></i>Dashboard</a>
-            <a href="${pageContext.request.contextPath}/receptionist-manage-appointment?action"><i class="fa-solid fa-calendar-days me-2"></i>Manage Appointment</a>
-            <a href="${pageContext.request.contextPath}/manage-invoice"><i class="fa-solid fa-user-doctor me-2"></i>Manage Invoice</a>
+            <a href="${pageContext.request.contextPath}/receptionist-manage-appointment"><i class="fa-solid fa-calendar-days me-2"></i>Manage Appointment</a>
+            <a href="${pageContext.request.contextPath}/manage-invoice"><i class="fa-solid fa-file-invoice-dollar me-2"></i>Manage Invoice</a>
         </div>
 
         <!-- Main content -->
@@ -95,7 +95,6 @@
                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                 </div>
                 <c:remove var="successMessage" scope="session"/>
-
                 <script>
                     // auto hide after 2 seccond
                     setTimeout(function () {
@@ -115,13 +114,13 @@
                     <div class="card-header bg-white d-flex justify-content-between align-items-center">
                         <h5 class="mb-0">Invoice List</h5>                      
                     </div>
-                    <div class="card-body">
-                        <table class="table align-middle table-hover">
+                    <div class="table-responsive">
+                        <table class="table table-hover table-bordered align-middle text-center">
                             <thead class="table-primary">
                                 <tr>
                                     <th>#</th>
                                     <th>Patient Name</th>
-                                    <th>Patient Name</th>
+                                    <th>Doctor Name</th>
                                     <th>Specialty</th>
                                     <th>Fee</th>
                                     <th>Payment Method</th>
@@ -143,26 +142,42 @@
                                                 <c:when test="${inv.status eq 'Paid'}">
                                                     <span class="badge bg-success">${inv.status}</span>
                                                 </c:when>
-                                                <c:otherwise>
+                                                <c:when test="${inv.status eq 'Pending'}">
                                                     <span class="badge bg-warning text-dark">${inv.status}</span>
+                                                </c:when>
+                                                <c:when test="${inv.status eq 'Canceled'}">
+                                                    <span class="badge bg-danger">${inv.status}</span>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <span class="badge bg-secondary">${inv.status}</span>
                                                 </c:otherwise>
                                             </c:choose>
                                         </td>
                                         <td>
                                             <!-- view detail -->
-                                            <a href="#" class="btn btn-sm btn-info text-white">
+                                            <a href="manage-invoice?action=viewDetail&id=${inv.invoiceId}"
+                                               class="btn btn-sm btn-info text-white">
                                                 <i class="fa-solid fa-eye"></i> View Detail
                                             </a>
 
-                                            <!-- update -->
-                                            <a href="#" class="btn btn-sm btn-success btn-approve">
-                                                <i class="fa-solid fa-pen-to-square"></i> Update
-                                            </a>
+                                            <c:if test="${inv.status eq 'Pending'}">
+                                                <form action="manage-invoice" method="post" style="display:inline;">
+                                                    <input type="hidden" name="invoiceId" value="${inv.invoiceId}">
+                                                    <input type="hidden" name="action" value="pay">
+                                                    <button type="submit" class="btn btn-success btn-sm">
+                                                        <i class="fa-solid fa-check"></i> Update
+                                                    </button>
+                                                </form>
 
-                                            <!-- cancel -->
-                                            <a href="#" class="btn btn-sm btn-danger btn-cancel">
-                                                <i class="fa-solid fa-xmark"></i> Cancel
-                                            </a>
+                                                <form action="manage-invoice" method="post" style="display:inline;">
+                                                    <input type="hidden" name="invoiceId" value="${inv.invoiceId}">
+                                                    <input type="hidden" name="action" value="cancel">
+                                                    <button type="submit" class="btn btn-danger btn-sm">
+                                                        <i class="fa-solid fa-xmark"></i> Cancel
+                                                    </button>
+                                                </form>
+                                            </c:if>
+
                                         </td>
 
                                     </tr>

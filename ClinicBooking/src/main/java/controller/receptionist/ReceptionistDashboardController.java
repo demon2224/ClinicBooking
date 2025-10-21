@@ -2,9 +2,10 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-package controller;
+package controller.receptionist;
 
-import dao.InvoiceDAO;
+
+import dao.AppointmentDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -12,13 +13,12 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
-import model.Invoice;
 
 /**
  *
  * @author Ngo Quoc Hung - CE191184
  */
-public class ManageInvoiceController extends HttpServlet {
+public class ReceptionistDashboardController extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -37,10 +37,10 @@ public class ManageInvoiceController extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet ManageInvoiceController</title>");
+            out.println("<title>Servlet ReceptionistDashboardController</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet ManageInvoiceController at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet ReceptionistDashboardController at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -58,12 +58,10 @@ public class ManageInvoiceController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        InvoiceDAO dao = new InvoiceDAO();
-        List<Invoice> invoices = dao.getAllInvoices();
-        request.setAttribute("invoices", invoices);
 
-        request.getRequestDispatcher("/WEB-INF/receptionist/ReceptionistInvoice.jsp")
-                .forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/receptionist/ReceptionistDashboard.jsp")
+                    .forward(request, response);
+        
     }
 
     /**
