@@ -137,7 +137,7 @@
                                             </span>
                                         </td>
                                         <td>
-                                            <a href="${pageContext.request.contextPath}/manage-my-patient-medical-record-detail?medicalRecordID=${myPatientMedicalRecord.medicalRecordID}"
+                                            <a href="${pageContext.request.contextPath}/manage-my-patient-medical-record?action=detail&medicalRecordID=${myPatientMedicalRecord.medicalRecordID}"
                                                class="btn btn-sm btn-info text-white text-decoration-none">
                                                 <i class="fa-solid fa-eye"></i> View Detail
                                             </a>
