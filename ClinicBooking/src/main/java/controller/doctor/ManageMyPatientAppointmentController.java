@@ -73,14 +73,18 @@ public class ManageMyPatientAppointmentController extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 //        processRequest(request, response);
-        int doctorID = ((User) request.getSession().getAttribute("user")).getUserID();
+        try {
+            int doctorID = ((User) request.getSession().getAttribute("user")).getUserID();
 
-        String action = request.getParameter("action");
-        if ((action == null) || (action.isEmpty())) {
-            showMyPatientAppointmentList(request, response, doctorID);
-        }
-        if (action.equals("detail")) {
-            showMyPatientAppointmentDetail(request, response, doctorID);
+            String action = request.getParameter("action");
+            if ((action == null) || (action.isEmpty())) {
+                showMyPatientAppointmentList(request, response, doctorID);
+            }
+            if (action.equals("detail")) {
+                showMyPatientAppointmentDetail(request, response, doctorID);
+            }
+        } catch (Exception ex) {
+
         }
 
     }

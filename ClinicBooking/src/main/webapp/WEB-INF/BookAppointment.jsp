@@ -33,10 +33,23 @@
             </div>
             <!-- Appointments Section -->
             <div class="appointments-section">
-                <!-- Error Messages -->
+                <!-- Error Modal -->
                 <c:if test="${not empty sessionScope.errorMessage}">
-                    <div class="alert alert-error">
-                        ${sessionScope.errorMessage}
+                    <div id="messageModal" class="modal-overlay">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h3 class="modal-title">
+                                    <i class="fas fa-exclamation-triangle text-error"></i> Error
+                                </h3>
+                                <button type="button" class="modal-close" onclick="closeModal()">&times;</button>
+                            </div>
+                            <div class="modal-body">
+                                <p>${sessionScope.errorMessage}</p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-danger" onclick="closeModal()">Close</button>
+                            </div>
+                        </div>
                     </div>
                     <c:remove var="errorMessage" scope="session"/>
                 </c:if>
@@ -195,7 +208,37 @@
         </div>
 
         <script>
+            // Modal functions
+            function closeModal() {
+                const modal = document.getElementById('messageModal');
+                if (modal) {
+                    modal.style.display = 'none';
+                    document.body.style.overflow = 'auto'; // Re-enable scrolling
+                }
+            }
+
             document.addEventListener('DOMContentLoaded', function () {
+                // Auto show modal on page load if exists
+                const modal = document.getElementById('messageModal');
+                if (modal) {
+                    modal.style.display = 'flex';
+                    document.body.style.overflow = 'hidden'; // Disable scrolling when modal is open
+                    
+                    // Close modal when clicking outside
+                    modal.addEventListener('click', function(e) {
+                        if (e.target === modal) {
+                            closeModal();
+                        }
+                    });
+                    
+                    // Close modal with Escape key
+                    document.addEventListener('keydown', function(e) {
+                        if (e.key === 'Escape') {
+                            closeModal();
+                        }
+                    });
+                }
+
                 const noteTextarea = document.getElementById('note');
                 const charCount = document.getElementById('charCount');
 

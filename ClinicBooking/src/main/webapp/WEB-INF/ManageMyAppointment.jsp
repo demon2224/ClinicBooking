@@ -35,19 +35,67 @@
             <h1><i class="fas fa-calendar-check"></i> Manage My Appointments</h1>
         </div>
         <!-- Message Display -->
-        <c:if test="${not empty sessionScope.successMessage}">
-            <div class="appointment-alert appointment-alert-success">
-                <i class="fas fa-check-circle"></i> ${sessionScope.successMessage}
+        <!-- Success/Error Modal -->
+        <c:if test="${not empty sessionScope.successMessage || not empty sessionScope.errorMessage}">
+            <div id="messageModal" class="modal-overlay">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 class="modal-title">
+                            <c:choose>
+                                <c:when test="${not empty sessionScope.successMessage}">
+                                    <i class="fas fa-check-circle text-success"></i> Success
+                                </c:when>
+                                <c:otherwise>
+                                    <i class="fas fa-exclamation-triangle text-error"></i> Error
+                                </c:otherwise>
+                            </c:choose>
+                        </h3>
+                        <button type="button" class="modal-close" onclick="closeModal()">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <p>
+                            <c:if test="${not empty sessionScope.successMessage}">
+                                ${sessionScope.successMessage}
+                            </c:if>
+                            <c:if test="${not empty sessionScope.errorMessage}">
+                                ${sessionScope.errorMessage}
+                            </c:if>
+                        </p>
+                    </div>
+                    <div class="modal-footer">
+                        <c:choose>
+                            <c:when test="${not empty sessionScope.successMessage}">
+                                <button type="button" class="btn btn-success" onclick="closeModal()">OK</button>
+                            </c:when>
+                            <c:otherwise>
+                                <button type="button" class="btn btn-danger" onclick="closeModal()">Close</button>
+                            </c:otherwise>
+                        </c:choose>
+                    </div>
+                </div>
             </div>
             <c:remove var="successMessage" scope="session"/>
-        </c:if>
-
-        <c:if test="${not empty sessionScope.errorMessage}">
-            <div class="appointment-alert appointment-alert-error">
-                <i class="fas fa-exclamation-circle"></i> ${sessionScope.errorMessage}
-            </div>
             <c:remove var="errorMessage" scope="session"/>
         </c:if>
+
+        <!-- Confirmation Modal for Cancel Action -->
+        <div id="confirmModal" class="modal-overlay" style="display: none;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title">
+                        <i class="fas fa-exclamation-triangle text-warning"></i> Confirm Action
+                    </h3>
+                    <button type="button" class="modal-close" onclick="closeConfirmModal()">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to cancel this appointment? This action cannot be undone.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeConfirmModal()">Cancel</button>
+                    <button type="button" class="btn btn-danger" id="confirmCancelBtn">Yes</button>
+                </div>
+            </div>
+        </div>
 
         <!-- Search and Filter Section -->
         <div class="search-filter-section">
@@ -217,6 +265,73 @@
             });
         });
 
+        // Modal functions
+        function closeModal() {
+            const modal = document.getElementById('messageModal');
+            if (modal) {
+                modal.style.display = 'none';
+                document.body.style.overflow = 'auto'; // Re-enable scrolling
+            }
+        }
+
+        function closeConfirmModal() {
+            const modal = document.getElementById('confirmModal');
+            if (modal) {
+                modal.style.display = 'none';
+                document.body.style.overflow = 'auto'; // Re-enable scrolling
+            }
+        }
+
+        function showConfirmModal(appointmentId) {
+            const modal = document.getElementById('confirmModal');
+            const confirmBtn = document.getElementById('confirmCancelBtn');
+            
+            if (modal && confirmBtn) {
+                modal.style.display = 'flex';
+                document.body.style.overflow = 'hidden'; // Disable scrolling
+                
+                // Store appointment ID for confirmation
+                confirmBtn.setAttribute('data-appointment-id', appointmentId);
+                
+                // Close modal when clicking outside
+                modal.addEventListener('click', function(e) {
+                    if (e.target === modal) {
+                        closeConfirmModal();
+                    }
+                });
+                
+                // Close modal with Escape key
+                document.addEventListener('keydown', function(e) {
+                    if (e.key === 'Escape') {
+                        closeConfirmModal();
+                    }
+                });
+            }
+        }
+
+        // Auto show modal on page load if exists
+        document.addEventListener('DOMContentLoaded', function () {
+            const modal = document.getElementById('messageModal');
+            if (modal) {
+                modal.style.display = 'flex';
+                document.body.style.overflow = 'hidden'; // Disable scrolling when modal is open
+                
+                // Close modal when clicking outside
+                modal.addEventListener('click', function(e) {
+                    if (e.target === modal) {
+                        closeModal();
+                    }
+                });
+                
+                // Close modal with Escape key
+                document.addEventListener('keydown', function(e) {
+                    if (e.key === 'Escape') {
+                        closeModal();
+                    }
+                });
+            }
+        });
+
         // Appointment actions
         document.addEventListener('DOMContentLoaded', function () {
             // Cancel appointment confirmation
@@ -224,28 +339,33 @@
                 button.addEventListener('click', function (e) {
                     e.preventDefault();
                     const appointmentId = this.getAttribute('data-appointment-id');
-                    if (confirm('Are you sure you want to cancel this appointment? This action cannot be undone.')) {
-                        // Create form to submit cancellation
-                        const form = document.createElement('form');
-                        form.method = 'POST';
-                        form.action = '${pageContext.request.contextPath}/manage-my-appointments';
-
-                        const actionInput = document.createElement('input');
-                        actionInput.type = 'hidden';
-                        actionInput.name = 'action';
-                        actionInput.value = 'cancel';
-
-                        const idInput = document.createElement('input');
-                        idInput.type = 'hidden';
-                        idInput.name = 'appointmentId';
-                        idInput.value = appointmentId;
-
-                        form.appendChild(actionInput);
-                        form.appendChild(idInput);
-                        document.body.appendChild(form);
-                        form.submit();
-                    }
+                    showConfirmModal(appointmentId);
                 });
+            });
+
+            // Handle confirm button click
+            document.getElementById('confirmCancelBtn').addEventListener('click', function() {
+                const appointmentId = this.getAttribute('data-appointment-id');
+                
+                // Create form to submit cancellation
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = '${pageContext.request.contextPath}/manage-my-appointments';
+
+                const actionInput = document.createElement('input');
+                actionInput.type = 'hidden';
+                actionInput.name = 'action';
+                actionInput.value = 'cancel';
+
+                const idInput = document.createElement('input');
+                idInput.type = 'hidden';
+                idInput.name = 'appointmentId';
+                idInput.value = appointmentId;
+
+                form.appendChild(actionInput);
+                form.appendChild(idInput);
+                document.body.appendChild(form);
+                form.submit();
             });
         });
     </script>

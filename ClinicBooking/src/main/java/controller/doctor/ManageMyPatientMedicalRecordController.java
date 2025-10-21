@@ -5,6 +5,7 @@
 package controller.doctor;
 
 import dao.MedicalRecordDAO;
+import dao.PrescriptionDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -22,6 +23,7 @@ import model.User;
 public class ManageMyPatientMedicalRecordController extends HttpServlet {
 
     private MedicalRecordDAO medicalRecordDAO;
+    private PrescriptionDAO prescriptionDAO;
 
     /**
      * Initialize all the necessary DAO using in this controller.
@@ -31,6 +33,7 @@ public class ManageMyPatientMedicalRecordController extends HttpServlet {
     @Override
     public void init() throws ServletException {
         medicalRecordDAO = new MedicalRecordDAO();
+        prescriptionDAO = new PrescriptionDAO();
     }
 
     /**
@@ -72,11 +75,32 @@ public class ManageMyPatientMedicalRecordController extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 //        processRequest(request, response);
-        int doctorID = ((User) request.getSession().getAttribute("user")).getUserID();
 
+        try {
+            int doctorID = ((User) request.getSession().getAttribute("user")).getUserID();
+
+            String action = request.getParameter("action");
+            if ((action == null) || (action.isEmpty())) {
+                showMyPatientMedicalRecordList(request, response, doctorID);
+            }
+            if (action.equals("detail")) {
+                showMyPatientMedicalRecordDetail(request, response, doctorID);
+            }
+        } catch (Exception ex) {
+
+        }
     }
 
-    private void showMyPatientAppointmentList(HttpServletRequest request, HttpServletResponse response, int doctorID)
+    /**
+     * Show medical record list
+     *
+     * @param request
+     * @param response
+     * @param doctorID
+     * @throws ServletException
+     * @throws IOException
+     */
+    private void showMyPatientMedicalRecordList(HttpServletRequest request, HttpServletResponse response, int doctorID)
             throws ServletException, IOException {
         String keyword = request.getParameter("keyword");
         List<MedicalRecord> list;
@@ -87,6 +111,27 @@ public class ManageMyPatientMedicalRecordController extends HttpServlet {
         }
         request.setAttribute("myPatientMedicalRecordList", list);
         request.getRequestDispatcher("/WEB-INF/doctor/MyPatientMedicalRecord.jsp").forward(request, response);
+    }
+
+    /**
+     * Show medical record detail
+     *
+     * @param request
+     * @param response
+     * @param doctorID
+     * @throws ServletException
+     * @throws IOException
+     */
+    private void showMyPatientMedicalRecordDetail(HttpServletRequest request, HttpServletResponse response, int doctorID)
+            throws ServletException, IOException {
+        try {
+            int medicalRecordID = Integer.parseInt(request.getParameter("medicalRecordID"));
+            request.setAttribute("prescriptionItems", prescriptionDAO.getPrescriptionByDoctorIdAndMedicalRecordID(medicalRecordID, doctorID));
+            request.setAttribute("detailMedicalRecord", medicalRecordDAO.getDetailMedicalRecordById(medicalRecordID, doctorID));
+            request.getRequestDispatcher("/WEB-INF/doctor/MyPatientMedicalRecordDetail.jsp").forward(request, response);
+        } catch (Exception e) {
+            response.sendRedirect(request.getContextPath() + "/manage-my-patient-medical-record");
+        }
     }
 
     /**
