@@ -4,219 +4,66 @@
  */
 package validate;
 
-import model.Appointment;
-import java.util.ArrayList;
-import java.util.List;
-
 /**
- * Validation class for Cancel Appointment functionality
+ * Validation utility class for Cancel Appointment functionality
  * 
  * @author Le Anh Tuan - CE180905
  */
 public class CancelAppointmentValidate {
     
-    // Appointment status constants
-    private static final int PENDING_STATUS = 1;
-    private static final int APPROVED_STATUS = 2;
-    private static final int COMPLETED_STATUS = 3;
-    private static final int CANCELLED_STATUS = 4;
-    
     /**
-     * Validate appointment ID parameter
+     * Validates appointment ID parameter
      * 
-     * @param appointmentIdParam Appointment ID parameter from request
-     * @return ValidationResult containing validation status and error messages
+     * @param appointmentId Appointment ID to validate
+     * @return true if valid, false otherwise
      */
-    public static ValidationResult validateAppointmentIdParameter(String appointmentIdParam) {
-        List<String> errors = new ArrayList<>();
-        
-        if (appointmentIdParam == null || appointmentIdParam.trim().isEmpty()) {
-            errors.add("Appointment ID is required.");
-        } else {
-            try {
-                int appointmentId = Integer.parseInt(appointmentIdParam);
-                if (appointmentId <= 0) {
-                    errors.add("Invalid appointment ID.");
-                }
-            } catch (NumberFormatException e) {
-                errors.add("Invalid appointment ID format.");
-            }
-        }
-        
-        return new ValidationResult(errors.isEmpty(), errors);
+    public static boolean isValidAppointmentId(int appointmentId) {
+        return appointmentId > 0;
     }
     
     /**
-     * Validate if appointment exists
+     * Validates if appointment exists
      * 
      * @param appointment Appointment object from database
-     * @return ValidationResult containing validation status and error messages
+     * @return true if exists, false otherwise
      */
-    public static ValidationResult validateAppointmentExists(Appointment appointment) {
-        List<String> errors = new ArrayList<>();
-        
-        if (appointment == null) {
-            errors.add("Appointment not found!");
-        }
-        
-        return new ValidationResult(errors.isEmpty(), errors);
+    public static boolean appointmentExists(Object appointment) {
+        return appointment != null;
     }
     
     /**
-     * Validate if appointment can be cancelled
-     * Only pending appointments can be cancelled
+     * Validates if appointment can be cancelled (only pending status)
      * 
-     * @param appointment Appointment object to validate
-     * @return ValidationResult containing validation status and error messages
+     * @param appointmentStatusId Status ID from database
+     * @return true if can be cancelled, false otherwise
      */
-    public static ValidationResult validateAppointmentCancellable(Appointment appointment) {
-        List<String> errors = new ArrayList<>();
-        
-        if (appointment == null) {
-            errors.add("Appointment not found!");
-            return new ValidationResult(false, errors);
-        }
-        
-        int statusId = appointment.getAppointmentStatusID();
-        
-        if (statusId != PENDING_STATUS) {
-            switch (statusId) {
-                case APPROVED_STATUS:
-                    errors.add("Cannot cancel approved appointments. Please contact the clinic to reschedule.");
-                    break;
-                case COMPLETED_STATUS:
-                    errors.add("Cannot cancel completed appointments.");
-                    break;
-                case CANCELLED_STATUS:
-                    errors.add("This appointment is already cancelled.");
-                    break;
-                default:
-                    errors.add("Only pending appointments can be cancelled!");
-                    break;
-            }
-        }
-        
-        return new ValidationResult(errors.isEmpty(), errors);
+    public static boolean canBeCancelled(int appointmentStatusId) {
+        return appointmentStatusId == 1; // Only pending appointments can be cancelled
     }
     
     /**
-     * Validate user ownership of appointment
+     * Validates user ownership of appointment
      * 
-     * @param appointment Appointment object
-     * @param userId Current user's ID
-     * @return ValidationResult containing validation status and error messages
+     * @param appointmentUserId User ID from appointment (from database)
+     * @param currentUserId Current user's ID
+     * @return true if user owns appointment, false otherwise
      */
-    public static ValidationResult validateAppointmentOwnership(Appointment appointment, int userId) {
-        List<String> errors = new ArrayList<>();
-        
-        if (appointment == null) {
-            errors.add("Appointment not found!");
-            return new ValidationResult(false, errors);
-        }
-        
-        if (appointment.getUserID() != userId) {
-            errors.add("You can only cancel your own appointments!");
-        }
-        
-        return new ValidationResult(errors.isEmpty(), errors);
+    public static boolean isOwner(int appointmentUserId, int currentUserId) {
+        return appointmentUserId == currentUserId;
     }
     
     /**
-     * Comprehensive validation for cancel appointment
+     * Validates complete cancel appointment data
      * 
-     * @param appointmentIdParam Appointment ID parameter from request
-     * @param appointment Appointment object from database
-     * @param userId Current user's ID
-     * @return ValidationResult containing validation status and error messages
+     * @param appointmentUserId User ID from appointment (from database)
+     * @param appointmentStatusId Status ID from appointment (from database) 
+     * @param currentUserId Current user's ID
+     * @param appointmentExists Whether appointment exists (from database check)
+     * @return true if all validations pass, false otherwise
      */
-    public static ValidationResult validateCancelAppointment(String appointmentIdParam, Appointment appointment, int userId) {
-        List<String> allErrors = new ArrayList<>();
-        
-        // 1. Validate appointment ID parameter
-        ValidationResult idValidation = validateAppointmentIdParameter(appointmentIdParam);
-        if (!idValidation.isValid()) {
-            allErrors.addAll(idValidation.getErrorMessages());
-            return new ValidationResult(false, allErrors);
-        }
-        
-        // 2. Validate appointment exists
-        ValidationResult existsValidation = validateAppointmentExists(appointment);
-        if (!existsValidation.isValid()) {
-            allErrors.addAll(existsValidation.getErrorMessages());
-            return new ValidationResult(false, allErrors);
-        }
-        
-        // 3. Validate user ownership
-        ValidationResult ownershipValidation = validateAppointmentOwnership(appointment, userId);
-        if (!ownershipValidation.isValid()) {
-            allErrors.addAll(ownershipValidation.getErrorMessages());
-        }
-        
-        // 4. Validate appointment can be cancelled
-        ValidationResult cancellableValidation = validateAppointmentCancellable(appointment);
-        if (!cancellableValidation.isValid()) {
-            allErrors.addAll(cancellableValidation.getErrorMessages());
-        }
-        
-        return new ValidationResult(allErrors.isEmpty(), allErrors);
-    }
-    
-    /**
-     * Validate cancel appointment with user session
-     * 
-     * @param appointmentIdParam Appointment ID parameter from request
-     * @param appointment Appointment object from database
-     * @param user User object from session
-     * @return ValidationResult containing validation status and error messages
-     */
-    public static ValidationResult validateCancelAppointmentWithUser(String appointmentIdParam, Appointment appointment, Object user) {
-        List<String> allErrors = new ArrayList<>();
-        
-        // 1. Validate user session
-        if (user == null) {
-            allErrors.add("Please login to cancel appointments.");
-            return new ValidationResult(false, allErrors);
-        }
-        
-        // 2. Cast user and get user ID
-        model.User validUser = (model.User) user;
-        int userId = validUser.getUserID();
-        
-        // 3. Run comprehensive validation
-        ValidationResult validation = validateCancelAppointment(appointmentIdParam, appointment, userId);
-        if (!validation.isValid()) {
-            allErrors.addAll(validation.getErrorMessages());
-        }
-        
-        return new ValidationResult(allErrors.isEmpty(), allErrors);
-    }
-    
-    /**
-     * Inner class to hold validation results
-     */
-    public static class ValidationResult {
-        private final boolean valid;
-        private final List<String> errorMessages;
-        
-        public ValidationResult(boolean valid, List<String> errorMessages) {
-            this.valid = valid;
-            this.errorMessages = errorMessages;
-        }
-        
-        public boolean isValid() {
-            return valid;
-        }
-        
-        public List<String> getErrorMessages() {
-            return errorMessages;
-        }
-        
-        public String getFirstErrorMessage() {
-            return errorMessages.isEmpty() ? "" : errorMessages.get(0);
-        }
-        
-        public String getAllErrorMessages() {
-            return String.join("<br>", errorMessages);
-        }
+    public static boolean isValidCancelData(int appointmentUserId, int appointmentStatusId, int currentUserId, boolean appointmentExists) {
+        return appointmentExists
+                && isOwner(appointmentUserId, currentUserId)
+                && canBeCancelled(appointmentStatusId);
     }
 }
