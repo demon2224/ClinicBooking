@@ -133,13 +133,10 @@ public class DoctorController extends HttpServlet {
         } else {
             doctors = doctorDAO.getAvailableDoctors();
         }
-        // Process doctor avatars
         AvatarHandler.processDoctorAvatars(doctors);
-        // Set attributes for JSP
         request.setAttribute("doctors", doctors);
         request.setAttribute("totalDoctors", doctors.size());
         request.setAttribute("search", search);
-        // Forward to doctor list JSP
         request.getRequestDispatcher(DoctorConstants.DOCTOR_LIST_JSP).forward(request, response);
     }
 
@@ -181,13 +178,13 @@ public class DoctorController extends HttpServlet {
             List<DoctorReview> doctorReviews = doctorReviewDAO.getReviewsByDoctorId(doctorId);
 
             // Calculate the average rating and review count
-            double averageRating = doctorReviewDAO.getAverageRatingByDoctorId(doctorId);
+            //double averageRating = doctorReviewDAO.getAverageRatingByDoctorId(doctorId);
             int reviewCount = doctorReviewDAO.getReviewCountByDoctorId(doctorId);
-            // Set attributes for JSP
+
             request.setAttribute("doctor", doctor);
             request.setAttribute("degrees", degrees);
             request.setAttribute("doctorReviews", doctorReviews);
-            request.setAttribute("averageRating", averageRating);
+            //request.setAttribute("averageRating", averageRating);
             request.setAttribute("reviewCount", reviewCount);
             request.getRequestDispatcher(DoctorConstants.DOCTOR_DETAIL_JSP).forward(request, response);
         } catch (NumberFormatException e) {

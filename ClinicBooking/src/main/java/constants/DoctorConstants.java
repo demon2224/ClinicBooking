@@ -17,7 +17,6 @@ public class DoctorConstants {
     public static final String DOCTOR_DETAIL_JSP = "/WEB-INF/DoctorDetail.jsp";
     // URLs for DoctorController
     public static final String DOCTOR_URL = "/doctor";
-    public static final String DOCTOR_DETAIL_URL_NEW = "/doctor?action=detail&id=";
     // Encoding and error message
     public static final String URL_ENCODING = "UTF-8";
     public static final String ERROR_MSG = "An error occurred: ";

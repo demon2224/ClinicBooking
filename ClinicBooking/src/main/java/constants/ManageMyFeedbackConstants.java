@@ -36,14 +36,6 @@ public class ManageMyFeedbackConstants {
     public static final String ERROR_REQUIRED_REVIEW_ID = "An error occurred while trying to open this review. Please try again.";
     public static final String ERROR_UNAUTHORIZED_ACCESS = "You don't have permission to view this review.";
 
-    // Info messages
-    public static final String MSG_CREATE_FORM_PLACEHOLDER = "Create feedback form will be implemented later.";
-    public static final String MSG_CREATE_PLACEHOLDER = "Create feedback functionality will be implemented later. DoctorID: ";
-    public static final String MSG_DELETE_PLACEHOLDER = "Delete functionality will be implemented later.";
-    public static final String MSG_DELETE_POST_PLACEHOLDER = "Delete functionality will be implemented later. ReviewID: ";
-    public static final String MSG_EDIT_PLACEHOLDER = "Edit functionality will be implemented later.";
-    public static final String MSG_UPDATE_PLACEHOLDER = "Update functionality will be implemented later.";
-
     // View modes
     public static final String VIEW_MODE_CREATE = "create";
     public static final String VIEW_MODE_DETAIL = "detail";

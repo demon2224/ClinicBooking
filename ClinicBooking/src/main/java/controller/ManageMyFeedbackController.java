@@ -160,12 +160,11 @@ public class ManageMyFeedbackController extends HttpServlet {
     }
 
     /**
-     * Handle edit feedback - Future implementation
+     * Handle edit feedback
      */
     private void handleEditFeedback(HttpServletRequest request, HttpServletResponse response, int userID)
             throws ServletException, IOException {
 
-        request.setAttribute("message", ManageMyFeedbackConstants.MSG_EDIT_PLACEHOLDER);
         viewMyFeedbacks(request, response, userID);
     }
 
@@ -217,16 +216,6 @@ public class ManageMyFeedbackController extends HttpServlet {
     private void handleUpdateFeedback(HttpServletRequest request, HttpServletResponse response, int userID)
             throws ServletException, IOException {
 
-        String reviewID = request.getParameter("reviewID");
-        String content = request.getParameter("content");
-        String rateScore = request.getParameter("rateScore");
-
-        if (FeedbackValidate.isValidContent(content)) {
-            request.setAttribute("successMessage", ManageMyFeedbackConstants.MSG_UPDATE_PLACEHOLDER);
-        } else {
-            request.setAttribute("errorMessage", ManageMyFeedbackConstants.ERROR_CONTENT_LENGTH);
-        }
-
         viewMyFeedbacks(request, response, userID);
     }
 
@@ -236,8 +225,6 @@ public class ManageMyFeedbackController extends HttpServlet {
     private void handleDeleteFeedbackPost(HttpServletRequest request, HttpServletResponse response, int userID)
             throws ServletException, IOException {
 
-        String reviewID = request.getParameter("reviewID");
-        request.setAttribute("message", ManageMyFeedbackConstants.MSG_DELETE_POST_PLACEHOLDER + reviewID);
         viewMyFeedbacks(request, response, userID);
     }
 
@@ -247,10 +234,7 @@ public class ManageMyFeedbackController extends HttpServlet {
     private void handleCreateFeedbackForm(HttpServletRequest request, HttpServletResponse response, int userID)
             throws ServletException, IOException {
 
-        request.setAttribute("message", ManageMyFeedbackConstants.MSG_CREATE_FORM_PLACEHOLDER);
-        request.setAttribute("viewMode", ManageMyFeedbackConstants.VIEW_MODE_CREATE);
-        request.getRequestDispatcher(ManageMyFeedbackConstants.MANAGE_FEEDBACK_JSP)
-                .forward(request, response);
+        viewMyFeedbacks(request, response, userID);
     }
 
     /**
@@ -258,21 +242,6 @@ public class ManageMyFeedbackController extends HttpServlet {
      */
     private void handleCreateFeedback(HttpServletRequest request, HttpServletResponse response, int userID)
             throws ServletException, IOException {
-
-        String doctorID = request.getParameter("doctorID");
-        String content = request.getParameter("content");
-        String rateScore = request.getParameter("rateScore");
-
-        if (FeedbackValidate.isValidFeedbackData(content, rateScore, doctorID)) {
-            request.setAttribute("successMessage",
-                    ManageMyFeedbackConstants.MSG_CREATE_PLACEHOLDER + doctorID);
-        } else if (!FeedbackValidate.isValidContent(content)) {
-            request.setAttribute("errorMessage", ManageMyFeedbackConstants.ERROR_CONTENT_LENGTH);
-        } else if (!FeedbackValidate.isValidRating(rateScore)) {
-            request.setAttribute("errorMessage", ManageMyFeedbackConstants.ERROR_INVALID_RATING);
-        } else {
-            request.setAttribute("errorMessage", ManageMyFeedbackConstants.ERROR_INVALID_DOCTOR_ID);
-        }
 
         viewMyFeedbacks(request, response, userID);
     }

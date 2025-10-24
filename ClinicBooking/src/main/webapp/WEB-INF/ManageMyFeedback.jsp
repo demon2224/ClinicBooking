@@ -402,154 +402,75 @@
             <div class="appointment-page-header">
                 <h1><i class="fas fa-comments"></i> My Feedbacks</h1>
             </div>
-
-            <!-- Message Display -->
-            <c:if test="${not empty successMessage}">
-                <div class="appointment-alert appointment-alert-success">
-                    <i class="fas fa-check-circle"></i> ${successMessage}
+            <div class="feedback-section">
+                <div class="section-header">
+                    <a href="${pageContext.request.contextPath}/manage-my-feedback?action=create"
+                       class="btn-action btn-create">
+                        <i class="fas fa-plus"></i>
+                        New Review
+                    </a>
                 </div>
-            </c:if>
-
-            <c:if test="${not empty errorMessage}">
-                <div class="appointment-alert appointment-alert-error">
-                    <i class="fas fa-exclamation-circle"></i> ${errorMessage}
-                </div>
-            </c:if>
-
-            <c:if test="${not empty message}">
-                <div class="appointment-alert appointment-alert-success">
-                    <i class="fas fa-info-circle"></i> ${message}
-                </div>
-            </c:if>
-
-            <!-- Check view mode -->
-            <c:choose>
-                <c:when test="${viewMode == 'create'}">
-                    <!-- Create View -->
-                    <div class="detail-view">
-                        <div class="detail-header">
-                            <div class="detail-title">Create New Review</div>
-                            <div class="detail-subtitle">Share your experience with a doctor</div>
-                        </div>
-
-                        <div class="empty-state">
-                            <i class="fas fa-plus-circle"></i>
-                            <h3>Create New Review</h3>
-                            <p>Create review functionality will be implemented later.</p>
-                        </div>
-                    </div>
-                </c:when>
-
-                <c:otherwise>
-                    <!-- List View (Default) -->
-                    <!-- Action Section -->
-                    <div class="feedback-section">
-                        <div class="section-header">
-                            <a href="${pageContext.request.contextPath}/manage-my-feedback?action=create"
-                               class="btn-action btn-create">
-                                <i class="fas fa-plus"></i>
-                                New Review
-                            </a>
-                        </div>
-
-                        <div class="feedback-content">
-                            <c:choose>
-                                <c:when test="${empty myReviews}">
-                                    <!-- Empty State -->
-                                    <div class="empty-state">
-                                        <i class="fas fa-comments"></i>
-                                        <h3>No Reviews Found</h3>
-                                        <p>You haven't written any reviews yet. Share your experience with doctors!</p>
-                                        <a href="${pageContext.request.contextPath}/manage-my-feedback?action=create"
-                                           class="btn-action btn-create">
-                                            <i class="fas fa-plus"></i> Write Your First Review
-                                        </a>
-                                    </div>
-                                </c:when>
-                                <c:otherwise>
-                                    <!-- Display Reviews -->
-                                    <c:forEach var="review" items="${myReviews}">
-                                        <div class="feedback-card">
-                                            <div class="feedback-header">
-                                                <div class="feedback-info">
-                                                    <div class="feedback-doctor">
-                                                        <i class="fas fa-user-md"></i>
-                                                        ${review.doctorName != null ? review.doctorName : 'Unknown Doctor'}
-                                                    </div>
-                                                    <div class="feedback-date">
-                                                        <i class="fas fa-calendar"></i>
-                                                        <c:choose>
-                                                            <c:when test="${review.dateCreate != null}">
-                                                                ${review.dateCreate.toLocalDate()}
-                                                            </c:when>
-                                                            <c:otherwise>
-                                                                N/A
-                                                            </c:otherwise>
-                                                        </c:choose>
-                                                    </div>
-                                                </div>
+                <div class="feedback-content">
+                    <c:choose>
+                        <c:when test="${empty myReviews}">
+                            <!-- Empty State -->
+                            <div class="empty-state">
+                                <i class="fas fa-comments"></i>
+                                <h3>No Reviews Found</h3>
+                                <p>You haven't written any reviews yet. Share your experience with doctors!</p>
+                                <a href="${pageContext.request.contextPath}/manage-my-feedback?action=create"
+                                   class="btn-action btn-create">
+                                    <i class="fas fa-plus"></i> Write Your First Review
+                                </a>
+                            </div>
+                        </c:when>
+                        <c:otherwise>
+                            <!-- Display Reviews -->
+                            <c:forEach var="review" items="${myReviews}">
+                                <div class="feedback-card">
+                                    <div class="feedback-header">
+                                        <div class="feedback-info">
+                                            <div class="feedback-doctor">
+                                                <i class="fas fa-user-md"></i>
+                                                ${review.doctorName != null ? review.doctorName : 'Unknown Doctor'}
                                             </div>
-
-                                            <div class="feedback-content-text">
-                                                ${review.content}
-                                            </div>
-
-                                            <div class="feedback-actions">
-                                                <a href="${pageContext.request.contextPath}/manage-my-feedback?action=detail&reviewId=${review.doctorReviewID}"
-                                                   class="btn-action btn-view">
-                                                    <i class="fas fa-eye"></i> View Detail
-                                                </a>
-                                                <a href="${pageContext.request.contextPath}/manage-my-feedback?action=edit&reviewId=${review.doctorReviewID}"
-                                                   class="btn-action btn-edit">
-                                                    <i class="fas fa-edit"></i> Edit
-                                                </a>
-                                                <button class="btn-action btn-delete"
-                                                        data-review-id="${review.doctorReviewID}">
-                                                    <i class="fas fa-trash"></i> Delete
-                                                </button>
+                                            <div class="feedback-date">
+                                                <i class="fas fa-calendar"></i>
+                                                <c:choose>
+                                                    <c:when test="${review.dateCreate != null}">
+                                                        ${review.dateCreate.toLocalDate()}
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        N/A
+                                                    </c:otherwise>
+                                                </c:choose>
                                             </div>
                                         </div>
-                                    </c:forEach>
-                                </c:otherwise>
-                            </c:choose>
-                        </div>
-                    </div>
-                </c:otherwise>
-            </c:choose>
+                                    </div>
+
+                                    <div class="feedback-content-text">
+                                        ${review.content}
+                                    </div>
+
+                                    <div class="feedback-actions">
+                                        <a href="${pageContext.request.contextPath}/manage-my-feedback?action=detail&reviewId=${review.doctorReviewID}"
+                                           class="btn-action btn-view">
+                                            <i class="fas fa-eye"></i> View Detail
+                                        </a>
+                                        <a href="${pageContext.request.contextPath}/manage-my-feedback?action=edit&reviewId=${review.doctorReviewID}"
+                                           class="btn-action btn-edit">
+                                            <i class="fas fa-edit"></i> Edit
+                                        </a>
+                                        <button class="btn-action btn-delete"
+                                                data-review-id="${review.doctorReviewID}">
+                                            <i class="fas fa-trash"></i> Delete
+                                        </button>
+                                    </div>
+                                </div>
+                            </c:forEach>
+                        </c:otherwise>
+                    </c:choose>
+                </div>
         </main>
-
-        <!-- JavaScript for interactivity -->
-        <script>
-            // Delete review confirmation
-            document.addEventListener('DOMContentLoaded', function () {
-                document.querySelectorAll('.btn-delete').forEach(button => {
-                    button.addEventListener('click', function (e) {
-                        e.preventDefault();
-                        const reviewId = this.getAttribute('data-review-id');
-                        if (confirm('Are you sure you want to delete this review? This action cannot be undone.')) {
-                            // Create form to submit deletion
-                            const form = document.createElement('form');
-                            form.method = 'POST';
-                            form.action = '${pageContext.request.contextPath}/manage-my-feedback';
-
-                            const actionInput = document.createElement('input');
-                            actionInput.type = 'hidden';
-                            actionInput.name = 'action';
-                            actionInput.value = 'delete';
-
-                            const idInput = document.createElement('input');
-                            idInput.type = 'hidden';
-                            idInput.name = 'reviewID';
-                            idInput.value = reviewId;
-
-                            form.appendChild(actionInput);
-                            form.appendChild(idInput);
-                            document.body.appendChild(form);
-                            form.submit();
-                        }
-                    });
-                });
-            });
-        </script>
     </body>
 </html>
