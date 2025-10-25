@@ -760,4 +760,46 @@ public class AppointmentDAO extends DBContext {
         
         return null;
     }
+
+    /**
+     * Check if the new appointment time has valid 24-hour gap with all existing appointments
+     * 
+     * @param userId User's ID
+     * @param newAppointmentTime New appointment time to check
+     * @return true if gap is valid, false if conflict found
+     */
+    public boolean isValidAppointmentTimeGap(int userId, Timestamp newAppointmentTime) {
+        String sql = "SELECT DateBegin FROM Appointment "
+                + "WHERE UserID = ? AND AppointmentStatusID IN (1, 2) "
+                + "ORDER BY DateBegin";
+        
+        ResultSet rs = null;
+        try {
+            Object[] params = {userId};
+            rs = executeSelectQuery(sql, params);
+            
+            java.time.LocalDateTime newTime = newAppointmentTime.toLocalDateTime();
+            
+            while (rs.next()) {
+                Timestamp existingAppointment = rs.getTimestamp("DateBegin");
+                java.time.LocalDateTime existingTime = existingAppointment.toLocalDateTime();
+                
+                // Calculate absolute difference in hours
+                long hoursDifference = Math.abs(java.time.Duration.between(existingTime, newTime).toHours());
+                
+                // If any existing appointment is within 24 hours, return false
+                if (hoursDifference < 24) {
+                    return false;
+                }
+            }
+            
+            return true; // All appointments have valid gap
+            
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false; // Return false on error for safety
+        } finally {
+            closeResources(rs);
+        }
+    }
 }

@@ -368,7 +368,7 @@ public class ManageMyAppointmentController extends HttpServlet {
             }
 
             // Check 24-hour gap with existing appointments (database-dependent validation)
-            if (!isValidAppointmentTimeGap(user.getUserID(), appointmentDateTime)) {
+            if (!appointmentDAO.isValidAppointmentTimeGap(user.getUserID(), appointmentDateTime)) {
                 session.setAttribute("errorMessage", "You must wait at least 24 hours between appointments. Please choose a different time.");
                 response.sendRedirect(request.getContextPath() + ManageMyAppointmentConstans.BASE_URL + "?action=bookAppointment&doctorId=" + doctorId);
                 return;
@@ -389,44 +389,6 @@ public class ManageMyAppointmentController extends HttpServlet {
         } catch (Exception e) {
             session.setAttribute("errorMessage", "An error occurred while booking appointment!");
             response.sendRedirect(request.getContextPath() + ManageMyAppointmentConstans.BASE_URL);
-        }
-    }
-
-    /**
-     * Check if the new appointment time has valid 24-hour gap with all existing
-     * appointments
-     *
-     * @param userId User's ID
-     * @param newAppointmentTime New appointment time to check
-     * @return true if gap is valid, false if conflict found
-     */
-    private boolean isValidAppointmentTimeGap(int userId, Timestamp newAppointmentTime) {
-        try {
-            String sql = "SELECT DateBegin FROM Appointment "
-                    + "WHERE UserID = ? AND AppointmentStatusID IN (1, 2) "
-                    + "ORDER BY DateBegin";
-
-            java.sql.ResultSet rs = appointmentDAO.executeSelectQuery(sql, new Object[]{userId});
-            java.time.LocalDateTime newTime = newAppointmentTime.toLocalDateTime();
-
-            while (rs.next()) {
-                Timestamp existingAppointment = rs.getTimestamp("DateBegin");
-                java.time.LocalDateTime existingTime = existingAppointment.toLocalDateTime();
-                
-                long hoursDifference = Math.abs(java.time.Duration.between(existingTime, newTime).toHours());
-
-                if (hoursDifference < 24) {
-                    appointmentDAO.closeResources(rs);
-                    return false; // Too close to an existing appointment
-                }
-            }
-
-            appointmentDAO.closeResources(rs);
-            return true; // Gap is sufficient with all appointments
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false; // Return false on error for safety
         }
     }
 
