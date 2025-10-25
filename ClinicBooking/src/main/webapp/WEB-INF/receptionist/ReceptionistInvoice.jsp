@@ -153,31 +153,34 @@
                                                 </c:otherwise>
                                             </c:choose>
                                         </td>
-                                        <td>
-                                            <!-- view detail -->
-                                            <a href="manage-invoice?action=viewDetail&id=${inv.invoiceId}"
-                                               class="btn btn-sm btn-info text-white">
-                                                <i class="fa-solid fa-eye"></i> View Detail
-                                            </a>
+                                        <td class="text-center">
+                                            <div class="d-flex justify-content-center gap-2">
+                                                <!-- View detail button -->
+                                                <a href="manage-invoice?action=viewDetail&id=${inv.invoiceId}"
+                                                   class="btn btn-sm btn-info text-white">
+                                                    <i class="fa-solid fa-eye"></i> View Detail
+                                                </a>
 
-                                            <c:if test="${inv.status eq 'Pending'}">
+                                                <!-- Update -->
                                                 <form action="manage-invoice" method="post" style="display:inline;">
                                                     <input type="hidden" name="invoiceId" value="${inv.invoiceId}">
                                                     <input type="hidden" name="action" value="pay">
-                                                    <button type="submit" class="btn btn-success btn-sm">
+                                                    <button type="submit" class="btn btn-success btn-sm"
+                                                            style="visibility:${inv.status eq 'Pending' ? 'visible' : 'hidden'};">
                                                         <i class="fa-solid fa-check"></i> Update
                                                     </button>
                                                 </form>
 
+                                                <!-- Cancel -->
                                                 <form action="manage-invoice" method="post" style="display:inline;">
                                                     <input type="hidden" name="invoiceId" value="${inv.invoiceId}">
                                                     <input type="hidden" name="action" value="cancel">
-                                                    <button type="submit" class="btn btn-danger btn-sm">
+                                                    <button type="submit" class="btn btn-danger btn-sm"
+                                                            style="visibility:${inv.status eq 'Pending' ? 'visible' : 'hidden'};">
                                                         <i class="fa-solid fa-xmark"></i> Cancel
                                                     </button>
                                                 </form>
-                                            </c:if>
-
+                                            </div>    
                                         </td>
 
                                     </tr>

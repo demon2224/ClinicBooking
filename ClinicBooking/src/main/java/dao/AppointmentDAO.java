@@ -521,130 +521,78 @@ public class AppointmentDAO extends DBContext {
 
     /**
      * Add appointment if user(patient) already have account get the list
-     * patient, ìf not create user by phone number
+     * patient, if not create user by phone number
      *
      */
     public boolean addAppointment(String existingPatientIdStr, String fullName, String phone,
             boolean gender, int doctorId, String note) {
 
-        Connection conn = null;
-        PreparedStatement psCheck = null;
-        PreparedStatement psUser = null;
-        PreparedStatement psProfile = null;
-        PreparedStatement psAppointment = null;
-        ResultSet rs = null;
-
-        try {
-            conn = getConnection();
+        DBContext db = new DBContext();
+        try ( Connection conn = db.getConnection()) {
             conn.setAutoCommit(false);
 
             int userId = 0;
 
-            // Choose user already have account
             if (existingPatientIdStr != null && !existingPatientIdStr.isEmpty()) {
                 userId = Integer.parseInt(existingPatientIdStr);
             } else {
-                // Check user exit by phone number
                 String sqlCheck = "SELECT UserProfileID FROM Profile WHERE PhoneNumber = ?";
-                psCheck = conn.prepareStatement(sqlCheck);
-                psCheck.setString(1, phone);
-                rs = psCheck.executeQuery();
-                if (rs.next()) {
-                    userId = rs.getInt("UserProfileID");
-                } else {
-                    // Create new patient
-                    psUser = conn.prepareStatement("INSERT INTO [User] (RoleID) VALUES (?)", Statement.RETURN_GENERATED_KEYS);
-                    psUser.setInt(1, 1);
-                    psUser.executeUpdate();
-                    rs = psUser.getGeneratedKeys();
-                    if (rs.next()) {
-                        userId = rs.getInt(1);
+                try ( PreparedStatement psCheck = conn.prepareStatement(sqlCheck)) {
+                    psCheck.setString(1, phone);
+                    try ( ResultSet rs = psCheck.executeQuery()) {
+                        if (rs.next()) {
+                            userId = rs.getInt("UserProfileID");
+                        } else {
+                            String sqlUser = "INSERT INTO [User] (RoleID) VALUES (?)";
+                            try ( PreparedStatement psUser = conn.prepareStatement(sqlUser, Statement.RETURN_GENERATED_KEYS)) {
+                                psUser.setInt(1, 1);
+                                psUser.executeUpdate();
+                                try ( ResultSet rsUser = psUser.getGeneratedKeys()) {
+                                    if (rsUser.next()) {
+                                        userId = rsUser.getInt(1);
+                                    }
+                                }
+                            }
+                            String[] nameParts = fullName.trim().split("\\s+", 2);
+                            String firstName = nameParts[0];
+                            String lastName = nameParts.length > 1 ? nameParts[1] : "";
+
+                            String sqlProfile = "INSERT INTO [Profile] (UserProfileID, FirstName, LastName, PhoneNumber, Gender) VALUES (?, ?, ?, ?, ?)";
+                            try ( PreparedStatement psProfile = conn.prepareStatement(sqlProfile)) {
+                                psProfile.setInt(1, userId);
+                                psProfile.setString(2, firstName);
+                                psProfile.setString(3, lastName);
+                                psProfile.setString(4, phone);
+                                psProfile.setBoolean(5, gender);
+                                psProfile.executeUpdate();
+                            }
+                        }
                     }
-
-                    // Create Profile
-                    String[] nameParts = fullName.trim().split("\\s+", 2);
-                    String firstName = nameParts[0];
-                    String lastName = nameParts.length > 1 ? nameParts[1] : "";
-
-                    psProfile = conn.prepareStatement(
-                            "INSERT INTO [Profile] (UserProfileID, FirstName, LastName, PhoneNumber, Gender) VALUES (?, ?, ?, ?, ?)"
-                    );
-                    psProfile.setInt(1, userId);
-                    psProfile.setString(2, firstName);
-                    psProfile.setString(3, lastName);
-                    psProfile.setString(4, phone);
-                    psProfile.setBoolean(5, gender);
-                    psProfile.executeUpdate();
                 }
             }
 
-            // Add appointment
-            psAppointment = conn.prepareStatement(
-                    "INSERT INTO Appointment (UserID, DoctorID, AppointmentStatusID, DateCreate, DateBegin, DateEnd, Note) "
-                    + "VALUES (?, ?, ?, GETDATE(), ?, ?, ?)"
-            );
-            psAppointment.setInt(1, userId);
-            psAppointment.setInt(2, doctorId);
-            psAppointment.setInt(3, 2); // Approved
+            String sqlAppointment = "INSERT INTO Appointment (UserID, DoctorID, AppointmentStatusID, DateCreate, DateBegin, DateEnd, Note) "
+                    + "VALUES (?, ?, ?, GETDATE(), ?, ?, ?)";
+            try ( PreparedStatement psAppointment = conn.prepareStatement(sqlAppointment)) {
+                psAppointment.setInt(1, userId);
+                psAppointment.setInt(2, doctorId);
+                psAppointment.setInt(3, 2);
 
-            Timestamp dateBegin = new Timestamp(System.currentTimeMillis());
-            Timestamp dateEnd = new Timestamp(System.currentTimeMillis() + 3600 * 1000);
-            psAppointment.setTimestamp(4, dateBegin);
-            psAppointment.setTimestamp(5, dateEnd);
-            psAppointment.setString(6, note);
+                Timestamp dateBegin = new Timestamp(System.currentTimeMillis());
+                Timestamp dateEnd = new Timestamp(System.currentTimeMillis() + 3600 * 1000);
+                psAppointment.setTimestamp(4, dateBegin);
+                psAppointment.setTimestamp(5, dateEnd);
+                psAppointment.setString(6, note);
 
-            psAppointment.executeUpdate();
+                psAppointment.executeUpdate();
+            }
 
             conn.commit();
             return true;
 
         } catch (SQLException e) {
             e.printStackTrace();
-            try {
-                if (conn != null) {
-                    conn.rollback();
-                }
-            } catch (SQLException ex) {
-                ex.printStackTrace();
-            }
             return false;
-        } finally {
-            try {
-                if (rs != null) {
-                    rs.close();
-                }
-            } catch (SQLException e) {
-            }
-            try {
-                if (psCheck != null) {
-                    psCheck.close();
-                }
-            } catch (SQLException e) {
-            }
-            try {
-                if (psUser != null) {
-                    psUser.close();
-                }
-            } catch (SQLException e) {
-            }
-            try {
-                if (psProfile != null) {
-                    psProfile.close();
-                }
-            } catch (SQLException e) {
-            }
-            try {
-                if (psAppointment != null) {
-                    psAppointment.close();
-                }
-            } catch (SQLException e) {
-            }
-            try {
-                if (conn != null) {
-                    conn.close();
-                }
-            } catch (SQLException e) {
-            }
         }
     }
 
@@ -655,21 +603,16 @@ public class AppointmentDAO extends DBContext {
     public boolean cancelAppointment(int appointmentId) {
         String sql = "UPDATE Appointment SET AppointmentStatusID = 4 WHERE AppointmentID = ? AND (AppointmentStatusID = 1 OR AppointmentStatusID = 2)";
 
-        Connection conn = null;
-        PreparedStatement stmt = null;
+        DBContext db = new DBContext();
+        try ( Connection conn = db.getConnection();  PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-        try {
-            conn = getConnection();
-            stmt = conn.prepareStatement(sql);
             stmt.setInt(1, appointmentId);
-
             int rowsAffected = stmt.executeUpdate();
-            return rowsAffected > 0; // true nếu cancel thành công
+            return rowsAffected > 0;
+
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
-        } finally {
-            closeResources(null);
         }
     }
 
@@ -681,21 +624,16 @@ public class AppointmentDAO extends DBContext {
         String sql = "UPDATE Appointment "
                 + "SET AppointmentStatusID = 2 "
                 + "WHERE AppointmentID = ? AND AppointmentStatusID = 1";
-        Connection conn = null;
-        PreparedStatement stmt = null;
+        DBContext db = new DBContext();
+        try ( Connection conn = db.getConnection();  PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-        try {
-            conn = getConnection();
-            stmt = conn.prepareStatement(sql);
             stmt.setInt(1, appointmentId);
-
             int rowsAffected = stmt.executeUpdate();
-            return rowsAffected > 0; // Nếu rowsAffected == 0 nghĩa là appointment không tồn tại hoặc không Pending
+            return rowsAffected > 0;
+
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
-        } finally {
-            closeResources(null);
         }
     }
 
@@ -707,7 +645,8 @@ public class AppointmentDAO extends DBContext {
      * @param note Appointment note
      * @param appointmentDateTime Appointment start date and time
      * @return true if appointment is booked successfully
-     * @note End time is set to NULL - will be determined by doctor when examination is complete
+     * @note End time is set to NULL - will be determined by doctor when
+     * examination is complete
      */
     public boolean bookAppointment(int userId, int doctorId, String note, Timestamp appointmentDateTime) {
         String sql = "INSERT INTO Appointment (UserID, DoctorID, AppointmentStatusID, DateBegin, DateEnd, Note) "
@@ -735,7 +674,7 @@ public class AppointmentDAO extends DBContext {
 
     /**
      * Get the latest appointment for a specific user
-     * 
+     *
      * @param userId Patient's user ID
      * @return Latest appointment timestamp or null if no appointments found
      */
@@ -743,12 +682,12 @@ public class AppointmentDAO extends DBContext {
         String sql = "SELECT TOP 1 DateBegin FROM Appointment "
                 + "WHERE UserID = ? AND AppointmentStatusID IN (1, 2) "
                 + "ORDER BY DateBegin DESC";
-        
+
         ResultSet rs = null;
         try {
             Object[] params = {userId};
             rs = executeSelectQuery(sql, params);
-            
+
             if (rs.next()) {
                 return rs.getTimestamp("DateBegin");
             }
@@ -757,7 +696,7 @@ public class AppointmentDAO extends DBContext {
         } finally {
             closeResources(rs);
         }
-        
+
         return null;
     }
 

@@ -161,35 +161,38 @@
                                                   </c:choose>">
                                                 ${a.statusName}
                                             </span>
-                                        </td>
-                                        <td>
-                                            <a href="${pageContext.request.contextPath}/receptionist-manage-appointment?action=viewDetail&id=${a.appointmentID}"
-                                               class="btn btn-sm btn-info text-white">
-                                                <i class="fa-solid fa-eye"></i> View Detail
-                                            </a>
 
-                                            <c:if test="${a.statusName eq 'Pending'}">  
-                                                <button type="button" 
+                                        <td class="text-center">
+                                            <div class="d-flex justify-content-center gap-2">
+
+                                                <!-- View button -->    
+                                                <a href="${pageContext.request.contextPath}/receptionist-manage-appointment?action=viewDetail&id=${a.appointmentID}"
+                                                   class="btn btn-sm btn-info text-white">
+                                                    <i class="fa-solid fa-eye"></i> View Detail
+                                                </a>
+
+                                                <!-- Update button -->
+                                                <button type="button"
                                                         class="btn btn-sm btn-success btn-approve"
-                                                        data-id="${a.appointmentID}" 
-                                                        data-bs-toggle="modal" 
+                                                        data-id="${a.appointmentID}"
+                                                        data-bs-toggle="modal"
                                                         data-bs-target="#confirmModal"
-                                                        <i class="fa-solid fa-check"></i> Update
-                                                </button>
-                                            </c:if>            
+                                                        style="<c:if test='${a.statusName ne "Pending"}'>visibility:hidden;</c:if>">
+                                                            <i class="fa-solid fa-check"></i> Approve
+                                               </button>
 
-
-                                            <!-- Cancel button -->
-                                            <c:if test="${a.statusName eq 'Pending' || a.statusName eq 'Approved'}">
-                                                <button type="button" 
+                                                <!-- Cancel button -->
+                                                <button type="button"
                                                         class="btn btn-sm btn-danger btn-cancel"
-                                                        data-id="${a.appointmentID}" 
-                                                        data-bs-toggle="modal" 
-                                                        data-bs-target="#confirmModal">
-                                                    <i class="fa-solid fa-xmark"></i> Cancel
+                                                        data-id="${a.appointmentID}"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#confirmModal"
+                                                        style="<c:if test='${!(a.statusName eq "Pending" || a.statusName eq "Approved")}'>visibility:hidden;</c:if>">
+                                                        <i class="fa-solid fa-xmark"></i> Cancel
                                                 </button>
-                                            </c:if>
-                                    </tr>
+                                                </div>
+                                            </td>
+                                        </tr>
                                 </c:forEach>
                             </tbody>
                         </table>
