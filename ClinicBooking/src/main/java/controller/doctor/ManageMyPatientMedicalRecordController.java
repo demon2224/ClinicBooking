@@ -14,6 +14,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
 import model.MedicalRecord;
+import model.Prescription;
 import model.User;
 
 /**
@@ -126,8 +127,12 @@ public class ManageMyPatientMedicalRecordController extends HttpServlet {
             throws ServletException, IOException {
         try {
             int medicalRecordID = Integer.parseInt(request.getParameter("medicalRecordID"));
-            request.setAttribute("prescriptionItems", prescriptionDAO.getPrescriptionByDoctorIdAndMedicalRecordID(medicalRecordID, doctorID));
-            request.setAttribute("detailMedicalRecord", medicalRecordDAO.getDetailMedicalRecordById(medicalRecordID, doctorID));
+            MedicalRecord medicalRecord = medicalRecordDAO.getDetailMedicalRecordById(medicalRecordID, doctorID);
+            List<Prescription> prescription = prescriptionDAO.getPrescriptionByDoctorIdAndMedicalRecordID(medicalRecordID, doctorID);
+            if (medicalRecord.getMedicalRecordID() == medicalRecordID) {
+                request.setAttribute("prescriptionItems", prescription);
+                request.setAttribute("detailMedicalRecord", medicalRecord);
+            }
             request.getRequestDispatcher("/WEB-INF/doctor/MyPatientMedicalRecordDetail.jsp").forward(request, response);
         } catch (Exception e) {
             response.sendRedirect(request.getContextPath() + "/manage-my-patient-medical-record");
