@@ -14,6 +14,7 @@ BEGIN
 		DELETE FROM MedicalRecord;
 
 	IF EXISTS (SELECT 1 FROM ConsultationFee)
+		DBCC CHECKIDENT (ConsultationFee, RESEED, 0);
 		DELETE FROM ConsultationFee;
 
 	IF EXISTS (SELECT 1 FROM MedicineStockTransaction)

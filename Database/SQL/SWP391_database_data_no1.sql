@@ -8,7 +8,7 @@ BEGIN
 	-- ---------- LOOKUP DATA ----------
 	-- Roles (5)
 	INSERT INTO [Role] (RoleName) VALUES
-	('patient'),('doctor'),('pharmacist'),('receptionist'),('admin');
+	('doctor'),('pharmacist'),('receptionist'),('admin');
 
 	-- Specialties (10)
 	INSERT INTO Specialty (SpecialtyName) VALUES
@@ -74,40 +74,40 @@ BEGIN
 	-- We'll create 30 staff, with the first 10 being doctors (RoleID=2), next 5 pharmacists (RoleID=3), next 5 receptionists (RoleID=4), rest mixed including admin (RoleID=5).
 	INSERT INTO Staff (JobStatus, RoleID, AccountName, AccountPassword, Avatar, Bio, FirstName, LastName, DOB, Gender, UserAddress, PhoneNumber, Email)
 	VALUES
-	('Available',2,'staff_doc01','Doc@01','/avatars/s1.png','Cardiologist','Dr. Aaron','Mills','1975-02-02',1,'10 Staff Lane','0911000001','aaron.mills@clinic.com'),
-	('Available',2,'staff_doc02','Doc@02','/avatars/s2.png','Dermatologist','Dr. Bella','Reed','1980-03-03',0,'11 Staff Lane','0911000002','bella.reed@clinic.com'),
-	('Available',2,'staff_doc03','Doc@03','/avatars/s3.png','Pediatrician','Dr. Carl','Perry','1978-04-04',1,'12 Staff Lane','0911000003','carl.perry@clinic.com'),
-	('Available',2,'staff_doc04','Doc@04','/avatars/s4.png','Orthopedist','Dr. Dana','Kim','1972-05-05',0,'13 Staff Lane','0911000004','dana.kim@clinic.com'),
-	('Available',2,'staff_doc05','Doc@05','/avatars/s5.png','Neurologist','Dr. Evan','Stone','1968-06-06',1,'14 Staff Lane','0911000005','evan.stone@clinic.com'),
-	('Available',2,'staff_doc06','Doc@06','/avatars/s6.png','Endocrinologist','Dr. Fiona','Grant','1982-07-07',0,'15 Staff Lane','0911000006','fiona.grant@clinic.com'),
-	('Available',2,'staff_doc07','Doc@07','/avatars/s7.png','Ophthalmologist','Dr. George','Nash','1976-08-08',1,'16 Staff Lane','0911000007','george.nash@clinic.com'),
-	('Available',2,'staff_doc08','Doc@08','/avatars/s8.png','ENT Specialist','Dr. Hannah','Cole','1983-09-09',0,'17 Staff Lane','0911000008','hannah.cole@clinic.com'),
-	('Available',2,'staff_doc09','Doc@09','/avatars/s9.png','Psychiatrist','Dr. Ian','Frost','1974-10-10',1,'18 Staff Lane','0911000009','ian.frost@clinic.com'),
-	('Available',2,'staff_doc10','Doc@10','/avatars/s10.png','General Practitioner','Dr. Jane','Wells','1985-11-11',0,'19 Staff Lane','0911000010','jane.wells@clinic.com'),
+	('Available',1,'staff_doc01','Doc@01','/avatars/s1.png','Cardiologist','Dr. Aaron','Mills','1975-02-02',1,'10 Staff Lane','0911000001','aaron.mills@clinic.com'),
+	('Available',1,'staff_doc02','Doc@02','/avatars/s2.png','Dermatologist','Dr. Bella','Reed','1980-03-03',0,'11 Staff Lane','0911000002','bella.reed@clinic.com'),
+	('Available',1,'staff_doc03','Doc@03','/avatars/s3.png','Pediatrician','Dr. Carl','Perry','1978-04-04',1,'12 Staff Lane','0911000003','carl.perry@clinic.com'),
+	('Available',1,'staff_doc04','Doc@04','/avatars/s4.png','Orthopedist','Dr. Dana','Kim','1972-05-05',0,'13 Staff Lane','0911000004','dana.kim@clinic.com'),
+	('Available',1,'staff_doc05','Doc@05','/avatars/s5.png','Neurologist','Dr. Evan','Stone','1968-06-06',1,'14 Staff Lane','0911000005','evan.stone@clinic.com'),
+	('Available',1,'staff_doc06','Doc@06','/avatars/s6.png','Endocrinologist','Dr. Fiona','Grant','1982-07-07',0,'15 Staff Lane','0911000006','fiona.grant@clinic.com'),
+	('Available',1,'staff_doc07','Doc@07','/avatars/s7.png','Ophthalmologist','Dr. George','Nash','1976-08-08',1,'16 Staff Lane','0911000007','george.nash@clinic.com'),
+	('Available',1,'staff_doc08','Doc@08','/avatars/s8.png','ENT Specialist','Dr. Hannah','Cole','1983-09-09',0,'17 Staff Lane','0911000008','hannah.cole@clinic.com'),
+	('Available',1,'staff_doc09','Doc@09','/avatars/s9.png','Psychiatrist','Dr. Ian','Frost','1974-10-10',1,'18 Staff Lane','0911000009','ian.frost@clinic.com'),
+	('Available',1,'staff_doc10','Doc@10','/avatars/s10.png','General Practitioner','Dr. Jane','Wells','1985-11-11',0,'19 Staff Lane','0911000010','jane.wells@clinic.com'),
 
-	('Available',3,'staff_ph01','Pharm@01','/avatars/s11.png','Senior pharmacist','Karl','Fox','1984-01-01',1,'20 Staff Lane','0911000011','karl.fox@clinic.com'),
-	('Available',3,'staff_ph02','Pharm@02','/avatars/s12.png','Pharmacist','Lena','Bell','1990-02-02',0,'21 Staff Lane','0911000012','lena.bell@clinic.com'),
-	('Available',3,'staff_ph03','Pharm@03','/avatars/s13.png','Pharmacist','Mark','Stone','1986-03-03',1,'22 Staff Lane','0911000013','mark.stone@clinic.com'),
-	('Available',3,'staff_ph04','Pharm@04','/avatars/s14.png','Pharmacy assistant','Nina','Hayes','1992-04-04',0,'23 Staff Lane','0911000014','nina.hayes@clinic.com'),
-	('Available',3,'staff_ph05','Pharm@05','/avatars/s15.png','Pharmacist','Oscar','Rey','1988-05-05',1,'24 Staff Lane','0911000015','oscar.rey@clinic.com'),
+	('Available',2,'staff_ph01','Pharm@01','/avatars/s11.png','Senior pharmacist','Karl','Fox','1984-01-01',1,'20 Staff Lane','0911000011','karl.fox@clinic.com'),
+	('Available',2,'staff_ph02','Pharm@02','/avatars/s12.png','Pharmacist','Lena','Bell','1990-02-02',0,'21 Staff Lane','0911000012','lena.bell@clinic.com'),
+	('Available',2,'staff_ph03','Pharm@03','/avatars/s13.png','Pharmacist','Mark','Stone','1986-03-03',1,'22 Staff Lane','0911000013','mark.stone@clinic.com'),
+	('Available',2,'staff_ph04','Pharm@04','/avatars/s14.png','Pharmacy assistant','Nina','Hayes','1992-04-04',0,'23 Staff Lane','0911000014','nina.hayes@clinic.com'),
+	('Available',2,'staff_ph05','Pharm@05','/avatars/s15.png','Pharmacist','Oscar','Rey','1988-05-05',1,'24 Staff Lane','0911000015','oscar.rey@clinic.com'),
 
-	('Available',4,'staff_rec01','Rec@01','/avatars/s16.png','Front desk','Paula','Grant','1991-06-06',0,'25 Staff Lane','0911000016','paula.grant@clinic.com'),
-	('Available',4,'staff_rec02','Rec@02','/avatars/s17.png','Front desk','Quinn','Baker','1993-07-07',1,'26 Staff Lane','0911000017','quinn.baker@clinic.com'),
-	('Available',4,'staff_rec03','Rec@03','/avatars/s18.png','Front desk','Rita','Young','1994-08-08',0,'27 Staff Lane','0911000018','rita.young@clinic.com'),
-	('Available',4,'staff_rec04','Rec@04','/avatars/s19.png','Front desk','Sam','Lopez','1995-09-09',1,'28 Staff Lane','0911000019','sam.lopez@clinic.com'),
-	('Available',4,'staff_rec05','Rec@05','/avatars/s20.png','Front desk','Tara','Fox','1989-10-10',0,'29 Staff Lane','0911000020','tara.fox@clinic.com'),
+	('Available',3,'staff_rec01','Rec@01','/avatars/s16.png','Front desk','Paula','Grant','1991-06-06',0,'25 Staff Lane','0911000016','paula.grant@clinic.com'),
+	('Available',3,'staff_rec02','Rec@02','/avatars/s17.png','Front desk','Quinn','Baker','1993-07-07',1,'26 Staff Lane','0911000017','quinn.baker@clinic.com'),
+	('Available',3,'staff_rec03','Rec@03','/avatars/s18.png','Front desk','Rita','Young','1994-08-08',0,'27 Staff Lane','0911000018','rita.young@clinic.com'),
+	('Available',3,'staff_rec04','Rec@04','/avatars/s19.png','Front desk','Sam','Lopez','1995-09-09',1,'28 Staff Lane','0911000019','sam.lopez@clinic.com'),
+	('Available',3,'staff_rec05','Rec@05','/avatars/s20.png','Front desk','Tara','Fox','1989-10-10',0,'29 Staff Lane','0911000020','tara.fox@clinic.com'),
 
-	('Available',5,'staff_admin01','Adm@01','/avatars/s21.png','Administrator','Uma','Grant','1980-11-11',0,'30 Staff Lane','0911000021','uma.grant@clinic.com'),
-	('Available',5,'staff_admin02','Adm@02','/avatars/s22.png','IT Admin','Victor','Kim','1983-12-12',1,'31 Staff Lane','0911000022','victor.kim@clinic.com'),
-	('Available',5,'staff_admin03','Adm@03','/avatars/s23.png','Billing Admin','Wendy','Lopez','1979-01-13',0,'32 Staff Lane','0911000023','wendy.lopez@clinic.com'),
-	('Available',5,'staff_admin04','Adm@04','/avatars/s24.png','HR Admin','Xavier','Stone','1972-02-14',1,'33 Staff Lane','0911000024','xavier.stone@clinic.com'),
-	('Available',5,'staff_admin05','Adm@05','/avatars/s25.png','Records Admin','Yara','Hill','1987-03-15',0,'34 Staff Lane','0911000025','yara.hill@clinic.com'),
+	('Available',4,'staff_admin01','Adm@01','/avatars/s21.png','Administrator','Uma','Grant','1980-11-11',0,'30 Staff Lane','0911000021','uma.grant@clinic.com'),
+	('Available',4,'staff_admin02','Adm@02','/avatars/s22.png','IT Admin','Victor','Kim','1983-12-12',1,'31 Staff Lane','0911000022','victor.kim@clinic.com'),
+	('Available',4,'staff_admin03','Adm@03','/avatars/s23.png','Billing Admin','Wendy','Lopez','1979-01-13',0,'32 Staff Lane','0911000023','wendy.lopez@clinic.com'),
+	('Available',4,'staff_admin04','Adm@04','/avatars/s24.png','HR Admin','Xavier','Stone','1972-02-14',1,'33 Staff Lane','0911000024','xavier.stone@clinic.com'),
+	('Available',4,'staff_admin05','Adm@05','/avatars/s25.png','Records Admin','Yara','Hill','1987-03-15',0,'34 Staff Lane','0911000025','yara.hill@clinic.com'),
 
-	('Available',2,'staff_doc11','Doc@11','/avatars/s26.png','Visiting specialist','Zack','Morse','1971-04-16',1,'35 Staff Lane','0911000026','zack.morse@clinic.com'),
-	('Available',2,'staff_doc12','Doc@12','/avatars/s27.png','Visiting specialist','Ava','Noel','1986-05-17',0,'36 Staff Lane','0911000027','ava.noel@clinic.com'),
-	('Available',3,'staff_ph06','Pharm@06','/avatars/s28.png','Pharmacist','Ben','Carter','1991-06-18',1,'37 Staff Lane','0911000028','ben.carter@clinic.com'),
-	('Available',4,'staff_rec06','Rec@06','/avatars/s29.png','Reception','Cara','Miles','1992-07-19',0,'38 Staff Lane','0911000029','cara.miles@clinic.com'),
-	('Available',5,'staff_admin06','Adm@06','/avatars/s30.png','Finance','Drew','Yates','1985-08-20',1,'39 Staff Lane','0911000030','drew.yates@clinic.com');
+	('Available',1,'staff_doc11','Doc@11','/avatars/s26.png','Visiting specialist','Zack','Morse','1971-04-16',1,'35 Staff Lane','0911000026','zack.morse@clinic.com'),
+	('Available',1,'staff_doc12','Doc@12','/avatars/s27.png','Visiting specialist','Ava','Noel','1986-05-17',0,'36 Staff Lane','0911000027','ava.noel@clinic.com'),
+	('Available',2,'staff_ph06','Pharm@06','/avatars/s28.png','Pharmacist','Ben','Carter','1991-06-18',1,'37 Staff Lane','0911000028','ben.carter@clinic.com'),
+	('Available',3,'staff_rec06','Rec@06','/avatars/s29.png','Reception','Cara','Miles','1992-07-19',0,'38 Staff Lane','0911000029','cara.miles@clinic.com'),
+	('Available',4,'staff_admin06','Adm@06','/avatars/s30.png','Finance','Drew','Yates','1985-08-20',1,'39 Staff Lane','0911000030','drew.yates@clinic.com');
 
 	-- ---------- DOCTORS (10 initial doctors linked to StaffIDs 1-10; plus doctor11/12 map to staff 21/22 respectively) ----------
 	-- Need to match StaffIDs: doctors were inserted as first 10 staff rows => StaffID 1..10 for docs, and later 21 and 22 are staff_admin01/admin02? Wait previous insertion order:
