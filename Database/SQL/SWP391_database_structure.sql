@@ -19,43 +19,43 @@ GO
 USE ClinicBookingDatabase
 GO
 
---- ROLE TABLE
-CREATE TABLE "Role" (
-	RoleID INT PRIMARY KEY IDENTITY(1,1),
-	RoleName NVARCHAR(50) UNIQUE NOT NULL
-);
-
---- USER TABLE
-CREATE TABLE "User" (
-	UserID INT PRIMARY KEY IDENTITY(1,1),
-	RoleID INT FOREIGN KEY REFERENCES "Role"(RoleID) NOT NULL DEFAULT 1,
-);
-
---- ACCOUNT TABLE
-CREATE TABLE Account (
-	UserAccountID INT PRIMARY KEY REFERENCES "User"(UserID),
-	AccountName NVARCHAR(255) NOT NULL UNIQUE,
-	AccountPassword NVARCHAR(255) NOT NULL,
+CREATE TABLE Patient (
+	PatientID INT PRIMARY KEY IDENTITY(1,1),
+	AccountName NVARCHAR(255) UNIQUE,
+	AccountPassword NVARCHAR(255),
 	DayCreated DATETIME DEFAULT GETDATE(),
-	Avatar VARCHAR(255),
-	Bio TEXT
-);
-
---- PROFILE TABLE
-CREATE TABLE "Profile" (
-	UserProfileID INT PRIMARY KEY REFERENCES "User"(UserID),
-	FirstName NVARCHAR(255) NOT NULL,
-	LastName NVARCHAR(255) NOT NULL,
+	Avatar NVARCHAR(255),
+	Bio TEXT,
+	FirstName NVARCHAR(255),
+	LastName NVARCHAR(255),
 	DOB DATE,
 	Gender BIT DEFAULT 0,
 	UserAddress TEXT,
-	PhoneNumber VARCHAR(15) UNIQUE,
-	Email VARCHAR(50)
+	PhoneNumber NVARCHAR(15) UNIQUE,
+	Email NVARCHAR(50)
 );
 
-CREATE TABLE JobStatus (
-	JobStatusID INT PRIMARY KEY IDENTITY(1,1),
-	JobStatusDescription NVARCHAR(50) UNIQUE NOT NULL DEFAULT 1
+CREATE TABLE [Role] (
+	RoleID INT PRIMARY KEY IDENTITY(1,1),
+	RoleName NVARCHAR(50) NOT NULL UNIQUE
+);
+
+CREATE TABLE Staff (
+	StaffID INT PRIMARY KEY IDENTITY(1,1),
+	JobStatus VARCHAR(50) DEFAULT 'Unavailable' CHECK (JobStatus IN ('Unavailable', 'Available', 'Retired')) NOT NULL,
+	RoleID INT FOREIGN KEY REFERENCES [Role](RoleID),
+	AccountName NVARCHAR(255) UNIQUE,
+	AccountPassword NVARCHAR(255),
+	DayCreated DATETIME DEFAULT GETDATE(),
+	Avatar NVARCHAR(255),
+	Bio TEXT,
+	FirstName NVARCHAR(255),
+	LastName NVARCHAR(255),
+	DOB DATE,
+	Gender BIT DEFAULT 0,
+	UserAddress TEXT,
+	PhoneNumber NVARCHAR(15) UNIQUE,
+	Email NVARCHAR(50)
 );
 
 CREATE TABLE Specialty (
@@ -64,15 +64,15 @@ CREATE TABLE Specialty (
 );
 
 CREATE TABLE Doctor (
-	DoctorID INT PRIMARY KEY REFERENCES "User"(UserID),
-	JobStatusID INT FOREIGN KEY REFERENCES JobStatus(JobStatusID),
+	DoctorID INT PRIMARY KEY IDENTITY(1,1),
+	StaffID INT FOREIGN KEY REFERENCES Staff(StaffID) NOT NULL,
 	SpecialtyID INT FOREIGN KEY REFERENCES Specialty(SpecialtyID),
 	YearExperience INT
 );
 
 CREATE TABLE Degree (
 	DegreeID INT PRIMARY KEY IDENTITY(1,1),
-	DegreeName VARCHAR(255)
+	DegreeName NVARCHAR(255)
 );
 
 CREATE TABLE DoctorDegree (
@@ -80,68 +80,53 @@ CREATE TABLE DoctorDegree (
 	DegreeID INT FOREIGN KEY REFERENCES Degree(DegreeID),
 	PRIMARY KEY (DoctorID, DegreeID),
 	DateEarn DATE,
-	Grantor VARCHAR(255)
+	Grantor NVARCHAR(255)
 );
 
 CREATE TABLE Receptionist (
-	ReceptionistID INT PRIMARY KEY REFERENCES "User"(UserID),
-	JobStatusID INT FOREIGN KEY REFERENCES JobStatus(JobStatusID)
+	ReceptionistID INT PRIMARY KEY IDENTITY(1,1),
+	StaffID INT FOREIGN KEY REFERENCES Staff(StaffID) NOT NULL
 );
 
 CREATE TABLE Pharmacist (
-	PharmacistID INT PRIMARY KEY REFERENCES "User"(UserID),
-	JobStatusID INT FOREIGN KEY REFERENCES JobStatus(JobStatusID)
+	PharmacistID INT PRIMARY KEY IDENTITY(1,1),
+	StaffID INT FOREIGN KEY REFERENCES Staff(StaffID) NOT NULL
 );
 
 CREATE TABLE DoctorReview (
 	DoctorReviewID INT PRIMARY KEY IDENTITY(1,1),
-	UserID INT FOREIGN KEY REFERENCES "User"(UserID) NOT NULL,
+	PatientID INT FOREIGN KEY REFERENCES Patient (PatientID) NOT NULL,
 	DoctorID INT FOREIGN KEY REFERENCES Doctor(DoctorID) NOT NULL,
 	Content TEXT,
 	RateScore INT,
 	DateCreate DATETIME DEFAULT GETDATE()
 );
 
-CREATE TABLE AppointmentStatus (
-	AppointmentStatusID INT PRIMARY KEY IDENTITY(1,1),
-	AppointmentStatusName VARCHAR(50) UNIQUE NOT NULL
-);
-
 CREATE TABLE Appointment (
 	AppointmentID INT PRIMARY KEY IDENTITY(1,1),
-	UserID INT FOREIGN KEY REFERENCES "User"(UserID) NOT NULL,
+	PatientID INT FOREIGN KEY REFERENCES Patient(PatientID) NOT NULL,
 	DoctorID INT FOREIGN KEY REFERENCES Doctor(DoctorID) NOT NULL,
-	AppointmentStatusID INT FOREIGN KEY REFERENCES AppointmentStatus(AppointmentStatusID) DEFAULT 1,
+	AppointmentStatus NVARCHAR(50) DEFAULT 'Pending' CHECK (AppointmentStatus IN ('Pending', 'Approved', 'Completed', 'Canceled')) NOT NULL,
 	DateCreate DATETIME DEFAULT GETDATE(),
 	DateBegin DATETIME,
 	DateEnd DATETIME,
 	Note TEXT
 );
 
-CREATE TABLE PrescriptionStatus (
-	PrescriptionStatusID INT PRIMARY KEY IDENTITY(1,1),
-	PrescriptionStatusName VARCHAR(50) UNIQUE NOT NULL
-);
-
 CREATE TABLE Prescription (
 	PrescriptionID INT PRIMARY KEY IDENTITY(1,1),
 	AppointmentID INT FOREIGN KEY REFERENCES Appointment(AppointmentID) NOT NULL,
-	PrescriptionStatusID INT FOREIGN KEY REFERENCES PrescriptionStatus(PrescriptionStatusID) DEFAULT 1,
+	PrescriptionStatus NVARCHAR(50) DEFAULT 'Pending' CHECK (PrescriptionStatus IN ('Pending', 'Delivered', 'Canceled')) NOT NULL,
 	DateCreate DATETIME DEFAULT GETDATE(),
 	Note TEXT
 );
 
-CREATE TABLE MedicineType (
-	MedicineTypeID INT PRIMARY KEY IDENTITY(1,1),
-	MedicineTypeName VARCHAR(50) UNIQUE NOT NULL
-);
-
 CREATE TABLE Medicine (
 	MedicineID INT PRIMARY KEY IDENTITY(1,1),
-	MedicineTypeID INT FOREIGN KEY REFERENCES MedicineType(MedicineTypeID) NOT NULL,
+	MedicineType NVARCHAR(50) CHECK (MedicineType IN ('Tablet', 'Capsule', 'Syrup', 'Ointment', 'Drops')) NOT NULL,
 	MedicineStatus BIT DEFAULT 0,
-	MedicineName VARCHAR(200),
-	MedicineCode VARCHAR(100),
+	MedicineName NVARCHAR(200),
+	MedicineCode NVARCHAR(100),
 	Quantity INT DEFAULT 0,
 	Price DECIMAL(20,2) DEFAULT 0,
 	DateCreate DATETIME DEFAULT GETDATE()
@@ -160,7 +145,7 @@ CREATE TABLE MedicineStockTransaction (
 	MedicineID INT FOREIGN KEY REFERENCES Medicine(MedicineID),
 	Quantity INT DEFAULT 0 CHECK (Quantity > 0),
 	DateImport DATETIME DEFAULT GETDATE(),
-	DateExpire DATETIME
+	DateExpire DATETIME NOT NULL
 );
 
 CREATE TABLE ConsultationFee (
@@ -180,23 +165,13 @@ CREATE TABLE MedicalRecord (
     DateCreate DATETIME DEFAULT GETDATE()
 );
 
-CREATE TABLE PaymentType (
-	PaymentTypeID INT PRIMARY KEY IDENTITY(1,1),
-	PaymentTypeName VARCHAR(50)
-);
-
-CREATE TABLE InvoiceStatus (
-	InvoiceStatusID INT PRIMARY KEY IDENTITY(1,1),
-	InvoiceStatusName VARCHAR(50) UNIQUE NOT NULL
-);
-
 CREATE TABLE Invoice (
     InvoiceID INT PRIMARY KEY IDENTITY(1,1),
 	MedicalRecordID INT FOREIGN KEY REFERENCES MedicalRecord(MedicalRecordID) NOT NULL,
 	ConsultationFeeID INT FOREIGN KEY REFERENCES ConsultationFee(ConsultationFeeID) NOT NULL,
 	PrescriptionID INT FOREIGN KEY REFERENCES Prescription(PrescriptionID),
-	PaymentTypeID INT FOREIGN KEY REFERENCES PaymentType(PaymentTypeID) NOT NULL,
-    InvoiceStatusID INT FOREIGN KEY REFERENCES InvoiceStatus(InvoiceStatusID) DEFAULT 1,
+	PaymentType NVARCHAR(50) CHECK (PaymentType IN ('Cash', 'Credit Card', 'Insurance', 'Online Banking', 'E-Wallet')) NOT NULL,
+    InvoiceStatus NVARCHAR(50) CHECK (InvoiceStatus IN ('Pending', 'Paid', 'Canceled')) NOT NULL,
     DateCreate DATETIME DEFAULT GETDATE(),
 	DatePay DATETIME
 );
