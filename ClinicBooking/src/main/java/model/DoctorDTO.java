@@ -10,4 +10,44 @@ package model;
  */
 public class DoctorDTO {
 
+    private int doctorID;
+    private StaffDTO staffID;
+    private SpecialtyDTO specialtyID;
+    private int yearExperience;
+
+    public DoctorDTO() {
+    }
+
+    public int getDoctorID() {
+        return doctorID;
+    }
+
+    public void setDoctorID(int doctorID) {
+        this.doctorID = doctorID;
+    }
+
+    public StaffDTO getStaffID() {
+        return staffID;
+    }
+
+    public void setStaffID(StaffDTO staffID) {
+        this.staffID = staffID;
+    }
+
+    public SpecialtyDTO getSpecialtyID() {
+        return specialtyID;
+    }
+
+    public void setSpecialtyID(SpecialtyDTO specialtyID) {
+        this.specialtyID = specialtyID;
+    }
+
+    public int getYearExperience() {
+        return yearExperience;
+    }
+
+    public void setYearExperience(int yearExperience) {
+        this.yearExperience = yearExperience;
+    }
+
 }

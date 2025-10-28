@@ -10,4 +10,26 @@ package model;
  */
 public class ReceptionistDTO {
 
+    private int receptionistID;
+    private StaffDTO staffID;
+
+    public ReceptionistDTO() {
+    }
+
+    public int getReceptionistID() {
+        return receptionistID;
+    }
+
+    public void setReceptionistID(int receptionistID) {
+        this.receptionistID = receptionistID;
+    }
+
+    public StaffDTO getStaffID() {
+        return staffID;
+    }
+
+    public void setStaffID(StaffDTO staffID) {
+        this.staffID = staffID;
+    }
+
 }

@@ -10,4 +10,26 @@ package model;
  */
 public class PharmacistDTO {
 
+    private int pharmacistID;
+    private StaffDTO staffID;
+
+    public PharmacistDTO() {
+    }
+
+    public int getPharmacistID() {
+        return pharmacistID;
+    }
+
+    public void setPharmacistID(int pharmacistID) {
+        this.pharmacistID = pharmacistID;
+    }
+
+    public StaffDTO getStaffID() {
+        return staffID;
+    }
+
+    public void setStaffID(StaffDTO staffID) {
+        this.staffID = staffID;
+    }
+
 }

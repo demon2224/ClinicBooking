@@ -4,10 +4,88 @@
  */
 package model;
 
+import java.sql.Timestamp;
+
 /**
  *
  * @author Le Thien Tri - CE191249
  */
 public class AppointmentDTO {
+
+    private int appointmentID;
+    private PatientDTO patientID;
+    private DoctorDTO doctorID;
+    private String appointmentStatus;
+    private Timestamp dateCreate;
+    private Timestamp dateBegin;
+    private Timestamp dateEnd;
+    private String note;
+
+    public AppointmentDTO() {
+    }
+
+    public int getAppointmentID() {
+        return appointmentID;
+    }
+
+    public void setAppointmentID(int appointmentID) {
+        this.appointmentID = appointmentID;
+    }
+
+    public PatientDTO getPatientID() {
+        return patientID;
+    }
+
+    public void setPatientID(PatientDTO patientID) {
+        this.patientID = patientID;
+    }
+
+    public DoctorDTO getDoctorID() {
+        return doctorID;
+    }
+
+    public void setDoctorID(DoctorDTO doctorID) {
+        this.doctorID = doctorID;
+    }
+
+    public String getAppointmentStatus() {
+        return appointmentStatus;
+    }
+
+    public void setAppointmentStatus(String appointmentStatus) {
+        this.appointmentStatus = appointmentStatus;
+    }
+
+    public Timestamp getDateCreate() {
+        return dateCreate;
+    }
+
+    public void setDateCreate(Timestamp dateCreate) {
+        this.dateCreate = dateCreate;
+    }
+
+    public Timestamp getDateBegin() {
+        return dateBegin;
+    }
+
+    public void setDateBegin(Timestamp dateBegin) {
+        this.dateBegin = dateBegin;
+    }
+
+    public Timestamp getDateEnd() {
+        return dateEnd;
+    }
+
+    public void setDateEnd(Timestamp dateEnd) {
+        this.dateEnd = dateEnd;
+    }
+
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
+    }
 
 }

@@ -10,4 +10,44 @@ package model;
  */
 public class ConsultationFeeDTO {
 
+    private int consultationFeeID;
+    private DoctorDTO doctorID;
+    private SpecialtyDTO specialtyID;
+    private double fee;
+
+    public ConsultationFeeDTO() {
+    }
+
+    public int getConsultationFeeID() {
+        return consultationFeeID;
+    }
+
+    public void setConsultationFeeID(int consultationFeeID) {
+        this.consultationFeeID = consultationFeeID;
+    }
+
+    public DoctorDTO getDoctorID() {
+        return doctorID;
+    }
+
+    public void setDoctorID(DoctorDTO doctorID) {
+        this.doctorID = doctorID;
+    }
+
+    public SpecialtyDTO getSpecialtyID() {
+        return specialtyID;
+    }
+
+    public void setSpecialtyID(SpecialtyDTO specialtyID) {
+        this.specialtyID = specialtyID;
+    }
+
+    public double getFee() {
+        return fee;
+    }
+
+    public void setFee(double fee) {
+        this.fee = fee;
+    }
+
 }

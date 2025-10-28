@@ -10,4 +10,26 @@ package model;
  */
 public class DegreeDTO {
 
+    private int degreeID;
+    private String degreeName;
+
+    public DegreeDTO() {
+    }
+
+    public int getDegreeID() {
+        return degreeID;
+    }
+
+    public void setDegreeID(int degreeID) {
+        this.degreeID = degreeID;
+    }
+
+    public String getDegreeName() {
+        return degreeName;
+    }
+
+    public void setDegreeName(String degreeName) {
+        this.degreeName = degreeName;
+    }
+
 }
