@@ -16,7 +16,7 @@ public class MedicineDTO {
     private String medicineName;
     private String medicineCode;
     private String medicineType;
-    private int medicineStatus;
+    private boolean medicineStatus;
     private int quantity;
     private double price;
     private Timestamp dateCreate;
@@ -56,11 +56,11 @@ public class MedicineDTO {
         this.medicineType = medicineType;
     }
 
-    public int getMedicineStatus() {
+    public boolean isMedicineStatus() {
         return medicineStatus;
     }
 
-    public void setMedicineStatus(int medicineStatus) {
+    public void setMedicineStatus(boolean medicineStatus) {
         this.medicineStatus = medicineStatus;
     }
 

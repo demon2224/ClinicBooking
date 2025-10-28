@@ -23,7 +23,7 @@ public class StaffDTO {
     private String firstName;
     private String lastName;
     private Timestamp dob;
-    private int gender;
+    private boolean gender;
     private String userAddress;
     private String phoneNumber;
     private String email;
@@ -119,11 +119,11 @@ public class StaffDTO {
         this.dob = dob;
     }
 
-    public int getGender() {
+    public boolean isGender() {
         return gender;
     }
 
-    public void setGender(int gender) {
+    public void setGender(boolean gender) {
         this.gender = gender;
     }
 
