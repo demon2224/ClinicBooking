@@ -597,15 +597,15 @@
                         <c:forEach var="doctor" items="${doctors}">
                             <div class="doctor-card">
                                 <!-- Doctor Avatar -->
-                                <img src="${pageContext.request.contextPath}/${doctor.avatar}"
-                                     alt="Dr. ${doctor.firstName} ${doctor.lastName}" class="doctor-avatar"
+                                <img src="${pageContext.request.contextPath}${doctor.staffID.avatar}"
+                                     alt="Dr. ${doctor.staffID.firstName} ${doctor.staffID.lastName}" class="doctor-avatar"
                                      onerror="this.src='${pageContext.request.contextPath}/assests/img/0.png'">
 
                                 <!-- Doctor Name -->
-                                <h3 class="doctor-name">${doctor.fullName}</h3>
+                                <h3 class="doctor-name">Dr. ${doctor.staffID.firstName} ${doctor.staffID.lastName}</h3>
 
                                 <!-- Doctor Specialty -->
-                                <p class="doctor-specialty">${doctor.specialtyName}</p>
+                                <p class="doctor-specialty">${doctor.specialtyID.specialtyName}</p>
 
                                 <!-- Years Experience -->
                                 <p class="doctor-experience">+${doctor.yearExperience} years exp</p>

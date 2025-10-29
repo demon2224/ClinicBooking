@@ -444,7 +444,7 @@
                         </div>
                         <div class="info-content">
                             <h4>Doctor Name</h4>
-                            <p>${reviewDetail.doctorName != null ? reviewDetail.doctorName : 'Unknown Doctor'}</p>
+                            <p>Dr. ${reviewDetail.doctorID.staffID.firstName} ${reviewDetail.doctorID.staffID.lastName}</p>
                         </div>
                     </div>
                     <div class="info-item">
@@ -472,7 +472,7 @@
                             <p>
                                 <c:choose>
                                     <c:when test="${reviewDetail.dateCreate != null}">
-                                        ${reviewDetail.dateCreate.toLocalDate()}
+                                        <fmt:formatDate value="${reviewDetail.dateCreate}" pattern="yyyy-MM-dd"/>
                                     </c:when>
                                     <c:otherwise>
                                         N/A
@@ -490,7 +490,7 @@
                             <p>
                                 <c:choose>
                                     <c:when test="${reviewDetail.dateCreate != null}">
-                                        ${reviewDetail.dateCreate.toLocalTime().withNano(0)}
+                                        <fmt:formatDate value="${reviewDetail.dateCreate}" pattern="HH:mm:ss"/>
                                     </c:when>
                                     <c:otherwise>
                                         N/A

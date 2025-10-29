@@ -417,11 +417,6 @@
                             <div class="empty-state">
                                 <i class="fas fa-comments"></i>
                                 <h3>No Reviews Found</h3>
-                                <p>You haven't written any reviews yet. Share your experience with doctors!</p>
-                                <a href="${pageContext.request.contextPath}/manage-my-feedback?action=create"
-                                   class="btn-action btn-create">
-                                    <i class="fas fa-plus"></i> Write Your First Review
-                                </a>
                             </div>
                         </c:when>
                         <c:otherwise>
@@ -432,13 +427,13 @@
                                         <div class="feedback-info">
                                             <div class="feedback-doctor">
                                                 <i class="fas fa-user-md"></i>
-                                                ${review.doctorName != null ? review.doctorName : 'Unknown Doctor'}
+                                                Dr. ${review.doctorID.staffID.firstName} ${review.doctorID.staffID.lastName}
                                             </div>
                                             <div class="feedback-date">
                                                 <i class="fas fa-calendar"></i>
                                                 <c:choose>
                                                     <c:when test="${review.dateCreate != null}">
-                                                        ${review.dateCreate.toLocalDate()}
+                                                        <fmt:formatDate value="${review.dateCreate}" pattern="yyyy-MM-dd"/>
                                                     </c:when>
                                                     <c:otherwise>
                                                         N/A
