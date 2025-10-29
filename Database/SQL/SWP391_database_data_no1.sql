@@ -74,16 +74,16 @@ BEGIN
 	-- We'll create 30 staff, with the first 10 being doctors (RoleID=2), next 5 pharmacists (RoleID=3), next 5 receptionists (RoleID=4), rest mixed including admin (RoleID=5).
 	INSERT INTO Staff (JobStatus, RoleID, AccountName, AccountPassword, Avatar, Bio, FirstName, LastName, DOB, Gender, UserAddress, PhoneNumber, Email)
 	VALUES
-	('Available',1,'staff_doc01','Doc@01','/avatars/s1.png','Cardiologist','Dr. Aaron','Mills','1975-02-02',1,'10 Staff Lane','0911000001','aaron.mills@clinic.com'),
-	('Available',1,'staff_doc02','Doc@02','/avatars/s2.png','Dermatologist','Dr. Bella','Reed','1980-03-03',0,'11 Staff Lane','0911000002','bella.reed@clinic.com'),
-	('Available',1,'staff_doc03','Doc@03','/avatars/s3.png','Pediatrician','Dr. Carl','Perry','1978-04-04',1,'12 Staff Lane','0911000003','carl.perry@clinic.com'),
-	('Available',1,'staff_doc04','Doc@04','/avatars/s4.png','Orthopedist','Dr. Dana','Kim','1972-05-05',0,'13 Staff Lane','0911000004','dana.kim@clinic.com'),
-	('Available',1,'staff_doc05','Doc@05','/avatars/s5.png','Neurologist','Dr. Evan','Stone','1968-06-06',1,'14 Staff Lane','0911000005','evan.stone@clinic.com'),
-	('Available',1,'staff_doc06','Doc@06','/avatars/s6.png','Endocrinologist','Dr. Fiona','Grant','1982-07-07',0,'15 Staff Lane','0911000006','fiona.grant@clinic.com'),
-	('Available',1,'staff_doc07','Doc@07','/avatars/s7.png','Ophthalmologist','Dr. George','Nash','1976-08-08',1,'16 Staff Lane','0911000007','george.nash@clinic.com'),
-	('Available',1,'staff_doc08','Doc@08','/avatars/s8.png','ENT Specialist','Dr. Hannah','Cole','1983-09-09',0,'17 Staff Lane','0911000008','hannah.cole@clinic.com'),
-	('Available',1,'staff_doc09','Doc@09','/avatars/s9.png','Psychiatrist','Dr. Ian','Frost','1974-10-10',1,'18 Staff Lane','0911000009','ian.frost@clinic.com'),
-	('Available',1,'staff_doc10','Doc@10','/avatars/s10.png','General Practitioner','Dr. Jane','Wells','1985-11-11',0,'19 Staff Lane','0911000010','jane.wells@clinic.com'),
+	('Available',1,'staff_doc01','Doc@01','/avatars/s1.png','Cardiologist','Aaron','Mills','1975-02-02',1,'10 Staff Lane','0911000001','aaron.mills@clinic.com'),
+	('Available',1,'staff_doc02','Doc@02','/avatars/s2.png','Dermatologist','Bella','Reed','1980-03-03',0,'11 Staff Lane','0911000002','bella.reed@clinic.com'),
+	('Available',1,'staff_doc03','Doc@03','/avatars/s3.png','Pediatrician','Carl','Perry','1978-04-04',1,'12 Staff Lane','0911000003','carl.perry@clinic.com'),
+	('Available',1,'staff_doc04','Doc@04','/avatars/s4.png','Orthopedist','Dana','Kim','1972-05-05',0,'13 Staff Lane','0911000004','dana.kim@clinic.com'),
+	('Available',1,'staff_doc05','Doc@05','/avatars/s5.png','Neurologist','Evan','Stone','1968-06-06',1,'14 Staff Lane','0911000005','evan.stone@clinic.com'),
+	('Available',1,'staff_doc06','Doc@06','/avatars/s6.png','Endocrinologist','Fiona','Grant','1982-07-07',0,'15 Staff Lane','0911000006','fiona.grant@clinic.com'),
+	('Available',1,'staff_doc07','Doc@07','/avatars/s7.png','Ophthalmologist','George','Nash','1976-08-08',1,'16 Staff Lane','0911000007','george.nash@clinic.com'),
+	('Available',1,'staff_doc08','Doc@08','/avatars/s8.png','ENT Specialist','Hannah','Cole','1983-09-09',0,'17 Staff Lane','0911000008','hannah.cole@clinic.com'),
+	('Available',1,'staff_doc09','Doc@09','/avatars/s9.png','Psychiatrist','Ian','Frost','1974-10-10',1,'18 Staff Lane','0911000009','ian.frost@clinic.com'),
+	('Available',1,'staff_doc10','Doc@10','/avatars/s10.png','General Practitioner','Jane','Wells','1985-11-11',0,'19 Staff Lane','0911000010','jane.wells@clinic.com'),
 
 	('Available',2,'staff_ph01','Pharm@01','/avatars/s11.png','Senior pharmacist','Karl','Fox','1984-01-01',1,'20 Staff Lane','0911000011','karl.fox@clinic.com'),
 	('Available',2,'staff_ph02','Pharm@02','/avatars/s12.png','Pharmacist','Lena','Bell','1990-02-02',0,'21 Staff Lane','0911000012','lena.bell@clinic.com'),
@@ -115,7 +115,7 @@ BEGIN
 	-- I'll reference doctor StaffIDs: 1..10, 21,22 (approx). For correct referential mapping, let's select exact StaffIDs: they are assigned sequentially in this insert order: we inserted exactly 30 staff rows; doc11 is 26th, doc12 27th in the block. But to avoid ambiguity, we will insert Doctor rows referencing StaffIDs 1..12. That will map to the first 12 staff which are doctors in our plan.
 
 	INSERT INTO Doctor (StaffID, SpecialtyID, YearExperience) VALUES
-	(1,2,15),  -- Dr. Aaron Mills - Cardiology (SpecialtyID 2)
+	(1,2,15),  -- Aaron Mills - Cardiology (SpecialtyID 2)
 	(2,3,12),  -- Bella - Dermatology (3)
 	(3,4,8),   -- Carl - Pediatrics (4)
 	(4,5,20),  -- Dana - Orthopedics (5)
