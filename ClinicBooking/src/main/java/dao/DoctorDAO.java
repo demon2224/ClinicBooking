@@ -27,65 +27,65 @@ import model.RoleDTO;
  */
 public class DoctorDAO extends DBContext {
 
-    public DoctorDTO getDoctorById(int DoctorId) {
-        String sql = "select s.StaffID,\n"
-                + "d.DoctorID,\n"
-                + "r.RoleID,\n"
-                + "r.RoleName,\n"
-                + "CONCAT(s.LastName,  ' ' , s.FirstName) as DoctorName,\n"
-                + "s.AccountName,\n"
-                + "s.AccountPassword,\n"
-                + "s.DayCreated,\n"
-                + "s.Avatar,\n"
-                + "s.DOB,CASE WHEN s.Gender = 1 THEN 'Male' ELSE 'Female' END as Gender,\n"
-                + "s.UserAddress,\n"
-                + "s.PhoneNumber,\n"
-                + "s.Email\n"
-                + "from Doctor d\n"
-                + "join Staff s on s.StaffID = d.StaffID\n"
-                + "join Role r on r.RoleID = s.RoleID\n"
-                + "where DoctorID = ?";
-        ResultSet rs = null;
-        try {
-            Object[] params = {DoctorId};
-            rs = executeSelectQuery(sql, params);
+    // public DoctorDTO getDoctorById(int DoctorId) {
+    //     String sql = "select s.StaffID,\n"
+    //             + "d.DoctorID,\n"
+    //             + "r.RoleID,\n"
+    //             + "r.RoleName,\n"
+    //             + "CONCAT(s.LastName,  ' ' , s.FirstName) as DoctorName,\n"
+    //             + "s.AccountName,\n"
+    //             + "s.AccountPassword,\n"
+    //             + "s.DayCreated,\n"
+    //             + "s.Avatar,\n"
+    //             + "s.DOB,CASE WHEN s.Gender = 1 THEN 'Male' ELSE 'Female' END as Gender,\n"
+    //             + "s.UserAddress,\n"
+    //             + "s.PhoneNumber,\n"
+    //             + "s.Email\n"
+    //             + "from Doctor d\n"
+    //             + "join Staff s on s.StaffID = d.StaffID\n"
+    //             + "join Role r on r.RoleID = s.RoleID\n"
+    //             + "where DoctorID = ?";
+    //     ResultSet rs = null;
+    //     try {
+    //         Object[] params = {DoctorId};
+    //         rs = executeSelectQuery(sql, params);
 
-            if (rs.next()) {
-                DoctorDTO doctor = new DoctorDTO();
-                StaffDTO staff = new StaffDTO();
-                RoleDTO role = new RoleDTO();
+    //         if (rs.next()) {
+    //             DoctorDTO doctor = new DoctorDTO();
+    //             StaffDTO staff = new StaffDTO();
+    //             RoleDTO role = new RoleDTO();
 
-                // set Staff info
-                staff.setStaffID(rs.getInt("StaffID"));
-                staff.setAccountName(rs.getString("AccountName"));
-                staff.setAccountPassword(rs.getString("AccountPassword"));
-                staff.setDaycreated(rs.getTimestamp("DayCreated"));
-                staff.setAvatar(rs.getString("Avatar"));
-                staff.setDob(rs.getTimestamp("DOB"));
-                staff.setGender(rs.getBoolean("Gender"));
-                staff.setUserAddress(rs.getString("UserAddress"));
-                staff.setPhoneNumber(rs.getString("PhoneNumber"));
-                staff.setEmail(rs.getString("Email"));
+    //             // set Staff info
+    //             staff.setStaffID(rs.getInt("StaffID"));
+    //             staff.setAccountName(rs.getString("AccountName"));
+    //             staff.setAccountPassword(rs.getString("AccountPassword"));
+    //             staff.setDaycreated(rs.getTimestamp("DayCreated"));
+    //             staff.setAvatar(rs.getString("Avatar"));
+    //             staff.setDob(rs.getTimestamp("DOB"));
+    //             staff.setGender(rs.getBoolean("Gender"));
+    //             staff.setUserAddress(rs.getString("UserAddress"));
+    //             staff.setPhoneNumber(rs.getString("PhoneNumber"));
+    //             staff.setEmail(rs.getString("Email"));
 
-                // set Role info (nếu có)
-                role.setRoleID(rs.getInt("RoleID"));
-                role.setRoleName(rs.getString("RoleName"));
-                staff.setRoleID(role);
+    //             // set Role info (nếu có)
+    //             role.setRoleID(rs.getInt("RoleID"));
+    //             role.setRoleName(rs.getString("RoleName"));
+    //             staff.setRoleID(role);
 
-                // set Doctor info
-                doctor.setDoctorID(rs.getInt("DoctorID"));
-                doctor.setStaffID(staff);
+    //             // set Doctor info
+    //             doctor.setDoctorID(rs.getInt("DoctorID"));
+    //             doctor.setStaffID(staff);
 
-                return doctor;
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            closeResources(rs);
-        }
+    //             return doctor;
+    //         }
+    //     } catch (SQLException e) {
+    //         e.printStackTrace();
+    //     } finally {
+    //         closeResources(rs);
+    //     }
 
-        return null;
-    }
+    //     return null;
+    // }
 
 //    /**
 //     * Retrieves a specific doctor by their ID.
@@ -118,6 +118,58 @@ public class DoctorDAO extends DBContext {
 //        return doctor;
 //    }
 //
+
+    /**
+     * Retrieves a specific doctor by their ID.
+     *
+     * @param doctorId The ID of the doctor to be retrieved.
+     * @return A Doctor object or null if not found.
+     */
+    public DoctorDTO getDoctorById(int doctorId) {
+
+        String sql = "SELECT d.DoctorID, d.YearExperience, d.SpecialtyID, "
+                + "st.StaffID, st.FirstName, st.LastName, st.PhoneNumber, st.Email, st.Avatar, st.Bio, st.JobStatus, st.RoleID, "
+                + "s.SpecialtyName "
+                + "FROM Doctor d "
+                + "INNER JOIN Staff st ON d.StaffID = st.StaffID "
+                + "LEFT JOIN Specialty s ON d.SpecialtyID = s.SpecialtyID "
+                + "WHERE d.DoctorID = ? AND st.RoleID = 1";
+
+        DoctorDTO doctor = null;
+        Object[] params = {doctorId};
+        ResultSet rs = executeSelectQuery(sql, params);
+        try {
+            if (rs != null && rs.next()) {
+                doctor = new DoctorDTO();
+                doctor.setDoctorID(rs.getInt("DoctorID"));
+                doctor.setYearExperience(rs.getInt("YearExperience"));
+
+                // Tạo Staff object
+                StaffDTO staff = new StaffDTO();
+                staff.setStaffID(rs.getInt("StaffID"));
+                staff.setFirstName(rs.getString("FirstName"));
+                staff.setLastName(rs.getString("LastName"));
+                staff.setEmail(rs.getString("Email"));
+                staff.setPhoneNumber(rs.getString("PhoneNumber"));
+                staff.setAvatar(rs.getString("Avatar"));
+                staff.setBio(rs.getString("Bio"));
+                staff.setJobStatus(rs.getString("JobStatus"));
+                doctor.setStaffID(staff);
+
+                // Tạo Specialty object
+                SpecialtyDTO specialty = new SpecialtyDTO();
+                specialty.setSpecialtyID(rs.getInt("SpecialtyID"));
+                specialty.setSpecialtyName(rs.getString("SpecialtyName"));
+                doctor.setSpecialtyID(specialty);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(DoctorDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            closeResources(rs);
+        }
+        return doctor;
+    }
+}
 //    /**
 //     * Retrieves doctors by their specialty name.
 //     *
@@ -398,37 +450,6 @@ public class DoctorDAO extends DBContext {
 //        return reviews;
 //    }
 //
-//    /**
-//     * Builds and returns a Doctor object from the current row of a ResultSet.
-//     *
-//     * @param rs the ResultSet positioned at the current doctor record
-//     * @return a fully populated Doctor object created from the ResultSet data
-//     * @throws SQLException if any SQL access or column retrieval error occurs
-//     */
-//    private DoctorDTO createDoctorDTOFromResultSet(ResultSet rs) throws SQLException {
-//
-//        DoctorDTO doctor = new DoctorDTO();
-//        doctor.setDoctorID(rs.getInt("DoctorID"));
-//        doctor.setYearExperience(rs.getInt("YearExperience"));
-//
-//        StaffDTO staff = new StaffDTO();
-//        staff.setStaffID(rs.getInt("StaffID"));
-//        staff.setFirstName(rs.getString("FirstName"));
-//        staff.setLastName(rs.getString("LastName"));
-//        staff.setEmail(rs.getString("Email"));
-//        staff.setPhoneNumber(rs.getString("PhoneNumber"));
-//        staff.setAvatar(rs.getString("Avatar"));
-//        staff.setBio(rs.getString("Bio"));
-//        staff.setJobStatus(rs.getString("JobStatus"));
-//
-//        SpecialtyDTO specialty = new SpecialtyDTO();
-//        specialty.setSpecialtyID(rs.getInt("SpecialtyID"));
-//        specialty.setSpecialtyName(rs.getString("SpecialtyName"));
-//
-//        doctor.setStaffID(staff);
-//        doctor.setSpecialtyID(specialty);
-//        return doctor;
-//    }
 //
 //    /**
 //     * Retrieves all academic degrees earned by a specific doctor.
