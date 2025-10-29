@@ -28,6 +28,28 @@ public class PatientDTO {
     public PatientDTO() {
     }
 
+    /**
+     * Constructor for view my patient appointment list
+     *
+     * @param firstName
+     * @param lastName
+     * @param dob
+     * @param gender
+     * @param userAddress
+     * @param phoneNumber
+     * @param email
+     */
+    public PatientDTO(String firstName, String lastName, Timestamp dob, boolean gender, String userAddress, String phoneNumber, String email) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.dob = dob;
+        this.gender = gender;
+        this.userAddress = userAddress;
+        this.phoneNumber = phoneNumber;
+        this.email = email;
+    }
+
+    // Getter & Setter
     public int getPatientID() {
         return patientID;
     }

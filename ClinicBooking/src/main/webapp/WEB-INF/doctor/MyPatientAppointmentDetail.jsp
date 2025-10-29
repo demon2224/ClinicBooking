@@ -112,14 +112,14 @@
             <h3 class="section-title">Appointment Information</h3>
             <table class="table table-bordered info-table">
                 <tr>
-                    <th>Date Begin</th><td> <fmt:formatDate value="${detailAppointment.dateBegin}" pattern="yyyy/MM/dd HH:mm" /></td>
+                    <th>Date Begin</th><td> <fmt:formatDate value="${detail.dateBegin}" pattern="yyyy/MM/dd HH:mm" /></td>
                 </tr>
                 <tr>
                     <th>Date End</th>
                     <td>
                         <c:choose>
-                            <c:when test="${detailAppointment.statusName == 'Completed'}">
-                                <fmt:formatDate value="${detailAppointment.dateEnd}" pattern="yyyy/MM/dd HH:mm"/>
+                            <c:when test="${detail.appointmentStatus == 'Completed'}">
+                                <fmt:formatDate value="${detail.dateEnd}" pattern="yyyy/MM/dd HH:mm"/>
                             </c:when>
                             <c:otherwise>
                                 None
@@ -133,29 +133,29 @@
                     <td>
                         <span class="badge
                               <c:choose>
-                                  <c:when test="${detailAppointment.statusName eq 'Pending'}">bg-warning text-dark</c:when>
-                                  <c:when test="${detailAppointment.statusName eq 'Approved'}">bg-primary</c:when>
-                                  <c:when test="${detailAppointment.statusName eq 'Completed'}">bg-success</c:when>
-                                  <c:when test="${detailAppointment.statusName eq 'Canceled'}">bg-danger</c:when>
+                                  <c:when test="${detail.appointmentStatus eq 'Pending'}">bg-warning text-dark</c:when>
+                                  <c:when test="${detail.appointmentStatus eq 'Approved'}">bg-primary</c:when>
+                                  <c:when test="${detail.appointmentStatus eq 'Completed'}">bg-success</c:when>
+                                  <c:when test="${detail.appointmentStatus eq 'Canceled'}">bg-danger</c:when>
                                   <c:otherwise>bg-secondary</c:otherwise>
                               </c:choose>">
-                            ${detailAppointment.statusName}
+                            ${detail.appointmentStatus}
                         </span>
                     </td>
                 </tr>
                 <tr><th>Appointment Note</th>
-                    <td>${detailAppointment.note}</td></tr>
+                    <td>${detail.note}</td></tr>
             </table>
 
             <!-- Patient Info -->
             <h3 class="section-title">Patient Information</h3>
             <table class="table table-striped">
-                <tr><th>Name</th><td>${detailAppointment.patientName}</td></tr>
-                <tr><th>Email</th><td>${detailAppointment.patientEmail}</td></tr>
-                <tr><th>Phone</th><td>${detailAppointment.patientPhone}</td></tr>
-                <tr><th>Gender</th><td>${detailAppointment.gender}</td></tr>
-                <tr><th>Date of Birth</th><td> <fmt:formatDate value="${detailAppointment.doB}" pattern="yyyy/MM/dd HH:mm" /></td></tr>
-                <tr><th>Address</th><td>${detailAppointment.address}</td></tr>
+                <tr><th>Name</th><td>${detail.patientID.firstName} ${detail.patientID.lastName}</td></tr>
+                <tr><th>Email</th><td>${detail.patientID.email}</td></tr>
+                <tr><th>Phone</th><td>${detail.patientID.phoneNumber}</td></tr>
+                <tr><th>Gender</th><td>${detail.patientID.gender}</td></tr>
+                <tr><th>Date of Birth</th><td> <fmt:formatDate value="${detail.patientID.dob}" pattern="yyyy/MM/dd" /></td></tr>
+                <tr><th>Address</th><td>${detail.patientID.userAddress}</td></tr>
             </table>
         </div>
     </body>

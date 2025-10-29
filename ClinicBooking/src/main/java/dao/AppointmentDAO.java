@@ -2,23 +2,122 @@
 // * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
 // * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
 // */
-//package dao;
-//
-//import model.AppointmentDTO;
-//import utils.DBContext;
-//import java.sql.*;
-//import java.util.ArrayList;
-//import java.util.List;
-//import java.util.logging.Level;
-//import java.util.logging.Logger;
-//
-///**
-// * Appointment Data Access Object
-// *
-// * @author Le Anh Tuan - CE180905
-// */
-//public class AppointmentDAO extends DBContext {
-//
+package dao;
+
+import model.AppointmentDTO;
+import utils.DBContext;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import model.PatientDTO;
+
+/**
+ * Appointment Data Access Object
+ *
+ * @author Le Anh Tuan - CE180905
+ */
+public class AppointmentDAO extends DBContext {
+
+    /**
+     * Get list patient appointments of doctor by doctor id
+     *
+     * @param doctorID
+     * @return
+     */
+    public List<AppointmentDTO> getPatientAppointmentOfDoctorByID(int doctorID) {
+        List<AppointmentDTO> appointments = new ArrayList<>();
+        String sql = "SELECT a.AppointmentID,\n"
+                + "	p.FirstName,\n"
+                + "	p.LastName,\n"
+                + "	p.Email,\n"
+                + "	p.DOB,\n"
+                + "	CASE WHEN p.Gender = 1 THEN 'Male' ELSE 'Female' END as Gender,\n"
+                + "	p.UserAddress,\n"
+                + "	p.PhoneNumber,\n"
+                + "	a.DateBegin,\n"
+                + "	a.Note,\n"
+                + "	a.AppointmentStatus\n"
+                + "FROM Appointment a\n"
+                + "JOIN Doctor d on a.DoctorID = d.DoctorID\n"
+                + "JOIN Staff s on s.StaffID = d.StaffID\n"
+                + "JOIN Patient p on p.PatientID = a.PatientID\n"
+                + "Where d.DoctorID = ?";
+        Object[] params = {doctorID};
+        ResultSet rs = executeSelectQuery(sql, params);
+        try {
+            if (rs != null) {
+                while (rs.next()) {
+                    PatientDTO patient = new PatientDTO(rs.getString("FirstName"),
+                            rs.getString("LastName"),
+                            rs.getTimestamp("DOB"),
+                            rs.getBoolean("Gender"),
+                            rs.getString("UserAddress"),
+                            rs.getString("PhoneNumber"),
+                            rs.getString("Email"));
+                    AppointmentDTO appointment = new AppointmentDTO(rs.getInt("AppointmentID"),
+                            patient, rs.getString("AppointmentStatus"),
+                            rs.getTimestamp("DateBegin"),
+                            null,
+                            rs.getString("Note"));
+                    appointments.add(appointment);
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(DoctorDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            closeResources(rs);
+        }
+        return appointments;
+    }
+
+    public AppointmentDTO getPatientAppointmentDetailOfDoctorByID(int appointmentID, int doctorID) {
+        AppointmentDTO appointment = null;
+        String sql = "SELECT a.AppointmentID,\n"
+                + "	p.FirstName,\n"
+                + "	p.LastName,\n"
+                + "	p.Email,\n"
+                + "	p.DOB,\n"
+                + "	CASE WHEN p.Gender = 1 THEN 'Male' ELSE 'Female' END as Gender,\n"
+                + "	p.UserAddress,\n"
+                + "	p.PhoneNumber,\n"
+                + "	a.DateBegin,\n"
+                + "     a.DateEnd,\n"
+                + "	a.Note,\n"
+                + "	a.AppointmentStatus\n"
+                + "FROM Appointment a\n"
+                + "JOIN Doctor d on a.DoctorID = d.DoctorID\n"
+                + "JOIN Staff s on s.StaffID = d.StaffID\n"
+                + "JOIN Patient p on p.PatientID = a.PatientID\n"
+                + "Where d.DoctorID = ? AND a.AppointmentID = ?";
+        Object[] params = {doctorID, appointmentID};
+        ResultSet rs = executeSelectQuery(sql, params);
+        try {
+            if (rs != null) {
+                while (rs.next()) {
+                    PatientDTO patient = new PatientDTO(rs.getString("FirstName"),
+                            rs.getString("LastName"),
+                            rs.getTimestamp("DOB"),
+                            rs.getBoolean("Gender"),
+                            rs.getString("UserAddress"),
+                            rs.getString("PhoneNumber"),
+                            rs.getString("Email"));
+                    appointment = new AppointmentDTO(rs.getInt("AppointmentID"),
+                            patient, rs.getString("AppointmentStatus"),
+                            rs.getTimestamp("DateBegin"),
+                            rs.getTimestamp("DateEnd"),
+                            rs.getString("Note"));
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(DoctorDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            closeResources(rs);
+        }
+        return appointment;
+    }
+
 //    /**
 //     * Get all appointments for a specific user
 //     */
@@ -741,4 +840,4 @@
 //            closeResources(rs);
 //        }
 //    }
-//}
+}

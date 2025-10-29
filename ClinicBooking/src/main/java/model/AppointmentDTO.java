@@ -24,6 +24,25 @@ public class AppointmentDTO {
     public AppointmentDTO() {
     }
 
+    /**
+     * Constructor for View My Patient Appointment List
+     *
+     * @param appointmentID
+     * @param patientID
+     * @param appointmentStatus
+     * @param dateBegin
+     * @param note
+     */
+    public AppointmentDTO(int appointmentID, PatientDTO patientID, String appointmentStatus, Timestamp dateBegin, Timestamp dateEnd, String note) {
+        this.appointmentID = appointmentID;
+        this.patientID = patientID;
+        this.appointmentStatus = appointmentStatus;
+        this.dateBegin = dateBegin;
+        this.dateEnd = dateEnd;
+        this.note = note;
+    }
+
+    // Getter & Setter
     public int getAppointmentID() {
         return appointmentID;
     }

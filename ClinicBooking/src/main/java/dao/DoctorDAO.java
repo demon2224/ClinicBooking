@@ -1,31 +1,92 @@
-///*
-// * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
-// * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
-// */
-//package dao;
-//
-//import utils.DBContext;
-//import model.DoctorDTO;
-//import model.DoctorDegreeDTO;
-//import model.DegreeDTO;
-//import model.SpecialtyDTO;
-//import model.StaffDTO;
-//import model.DoctorReviewDTO;
-//import model.PatientDTO;
-//import java.sql.ResultSet;
-//import java.sql.SQLException;
-//import java.util.ArrayList;
-//import java.util.List;
-//import java.util.logging.Level;
-//import java.util.logging.Logger;
-//
-///**
-// * Class for managing doctor data.
-// *
-// * @author Nguyen Minh Khang - CE190728
-// */
-//public class DoctorDAO extends DBContext {
-//
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+package dao;
+
+import utils.DBContext;
+import model.DoctorDTO;
+import model.DoctorDegreeDTO;
+import model.DegreeDTO;
+import model.SpecialtyDTO;
+import model.StaffDTO;
+import model.DoctorReviewDTO;
+import model.PatientDTO;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import model.RoleDTO;
+
+/**
+ * Class for managing doctor data.
+ *
+ * @author Nguyen Minh Khang - CE190728
+ */
+public class DoctorDAO extends DBContext {
+
+    public DoctorDTO getDoctorById(int DoctorId) {
+        String sql = "select s.StaffID,\n"
+                + "d.DoctorID,\n"
+                + "r.RoleID,\n"
+                + "r.RoleName,\n"
+                + "CONCAT(s.LastName,  ' ' , s.FirstName) as DoctorName,\n"
+                + "s.AccountName,\n"
+                + "s.AccountPassword,\n"
+                + "s.DayCreated,\n"
+                + "s.Avatar,\n"
+                + "s.DOB,CASE WHEN s.Gender = 1 THEN 'Male' ELSE 'Female' END as Gender,\n"
+                + "s.UserAddress,\n"
+                + "s.PhoneNumber,\n"
+                + "s.Email\n"
+                + "from Doctor d\n"
+                + "join Staff s on s.StaffID = d.StaffID\n"
+                + "join Role r on r.RoleID = s.RoleID\n"
+                + "where DoctorID = ?";
+        ResultSet rs = null;
+        try {
+            Object[] params = {DoctorId};
+            rs = executeSelectQuery(sql, params);
+
+            if (rs.next()) {
+                DoctorDTO doctor = new DoctorDTO();
+                StaffDTO staff = new StaffDTO();
+                RoleDTO role = new RoleDTO();
+
+                // set Staff info
+                staff.setStaffID(rs.getInt("StaffID"));
+                staff.setAccountName(rs.getString("AccountName"));
+                staff.setAccountPassword(rs.getString("AccountPassword"));
+                staff.setDaycreated(rs.getTimestamp("DayCreated"));
+                staff.setAvatar(rs.getString("Avatar"));
+                staff.setDob(rs.getTimestamp("DOB"));
+                staff.setGender(rs.getBoolean("Gender"));
+                staff.setUserAddress(rs.getString("UserAddress"));
+                staff.setPhoneNumber(rs.getString("PhoneNumber"));
+                staff.setEmail(rs.getString("Email"));
+
+                // set Role info (nếu có)
+                role.setRoleID(rs.getInt("RoleID"));
+                role.setRoleName(rs.getString("RoleName"));
+                staff.setRoleID(role);
+
+                // set Doctor info
+                doctor.setDoctorID(rs.getInt("DoctorID"));
+                doctor.setStaffID(staff);
+
+                return doctor;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            closeResources(rs);
+        }
+
+        return null;
+    }
+
 //    /**
 //     * Retrieves a specific doctor by their ID.
 //     *
@@ -414,4 +475,4 @@
 //        }
 //        return degrees;
 //    }
-//}
+}
