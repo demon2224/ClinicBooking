@@ -541,10 +541,11 @@
             <jsp:param name="activePage" value="doctors" />
         </jsp:include>
 
-        <h1>Doctor List</h1>
-
         <!-- Search and Filter Section -->
         <div class="doctor-container">
+            <div class="appointment-page-header">
+                <h1><i class="fas fa-comments"></i> Doctor List </h1>
+            </div>
             <form method="POST" action="${pageContext.request.contextPath}/doctor"
                   class="search-filter-form">
                 <input type="hidden" name="action" value="search">

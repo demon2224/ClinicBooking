@@ -11,7 +11,7 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Dr.${doctor.firstName} ${doctor.lastName} - CLINIC</title>
+        <title>Dr.${doctor.staffID.firstName} ${doctor.staffID.lastName} - CLINIC</title>
         <!-- Font Awesome Icons -->
         <link rel="stylesheet"
               href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -786,37 +786,40 @@
         <jsp:include page="includes/header.jsp">
             <jsp:param name="activePage" value="doctors" />
         </jsp:include>
-        <h1>Doctor Detail</h1>
+
         <div class="container">
+            <div class="appointment-page-header">
+                <h1><i class="fas fa-comments"></i> Doctor Detail </h1>
+            </div>
             <!-- Doctor Profile Card -->
             <div class="doctor-profile-card">
                 <div class="doctor-header">
                     <!-- Main Doctor Info (Left Side) -->
                     <div class="doctor-main-info">
-                        <img src="${pageContext.request.contextPath}/${doctor.avatar}"
-                             alt="Dr.${doctor.firstName} ${doctor.lastName}" class="doctor-avatar">
+                        <img src="${pageContext.request.contextPath}/${doctor.staffID.avatar}"
+                             alt="Dr.${doctor.staffID.firstName} ${doctor.staffID.lastName}" class="doctor-avatar">
 
                         <div class="doctor-info">
                             <h1 class="doctor-name">
-                                Dr. ${doctor.firstName} ${doctor.lastName}
+                                Dr. ${doctor.staffID.firstName} ${doctor.staffID.lastName}
                             </h1>
-                            <c:if test="${not empty doctor.specialtyName}">
+                            <c:if test="${not empty doctor.specialtyID.specialtyName}">
                                 <p class="doctor-specialty">
                                     <i class="fas fa-stethoscope"></i>
-                                    ${doctor.specialtyName}
+                                    ${doctor.specialtyID.specialtyName}
                                 </p>
                             </c:if>
                             <div class="contact-info">
-                                <c:if test="${not empty doctor.phoneNumber}">
+                                <c:if test="${not empty doctor.staffID.phoneNumber}">
                                     <div class="contact-item">
                                         <i class="fas fa-phone"></i>
-                                        <span>${doctor.phoneNumber}</span>
+                                        <span>${doctor.staffID.phoneNumber}</span>
                                     </div>
                                 </c:if>
-                                <c:if test="${not empty doctor.email}">
+                                <c:if test="${not empty doctor.staffID.email}">
                                     <div class="contact-item">
                                         <i class="fas fa-envelope"></i>
-                                        <span>${doctor.email}</span>
+                                        <span>${doctor.staffID.email}</span>
                                     </div>
                                 </c:if>
                             </div>
@@ -833,7 +836,7 @@
                                             </div>
                                             <div class="qualification-content">
                                                 <div class="qualification-name">
-                                                    ${degree.degreeName}
+                                                    ${degree.degreeID.degreeName}
                                                 </div>
                                                 <div class="qualification-details">
                                                     <i
@@ -868,12 +871,8 @@
                                 <i class="fas fa-check-circle"></i>
                                 Status
                             </span>
-                            <span
-                                class="side-info-value ${doctor.jobStatusID == 1 ? 'status-available' : ''}">
-                                <c:if test="${doctor.jobStatusID == 1}">Available</c:if>
-                                <c:if test="${doctor.jobStatusID != 1}">
-                                    ${doctor.jobStatusDescription}
-                                </c:if>
+                            <span class="side-info-value">
+                                ${doctor.staffID.jobStatus}
                             </span>
                         </div>
                         <div class="side-info-item">
@@ -896,13 +895,13 @@
                 <div class="about-header">
                     <h3 class="about-title">
                         <i class="fas fa-info-circle"></i>
-                        About Dr. ${doctor.firstName} ${doctor.lastName}
+                        About Dr. ${doctor.staffID.firstName} ${doctor.staffID.lastName}
                     </h3>
                 </div>
                 <div class="about-content">
                     <c:choose>
-                        <c:when test="${not empty doctor.bio}">
-                            ${doctor.bio}
+                        <c:when test="${not empty doctor.staffID.bio}">
+                            ${doctor.staffID.bio}
                         </c:when>
                         <c:otherwise>
                             <div class="no-bio">

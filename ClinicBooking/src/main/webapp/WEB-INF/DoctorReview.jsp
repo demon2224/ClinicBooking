@@ -31,10 +31,10 @@
                 <div class="review-item">
                     <div class="reviewer-info">
                         <div class="reviewer-avatar">
-                            ${fn:substring(review.reviewerFullName, 0, 1)}
+                            ${fn:substring(review.patientID.firstName, 0, 1)}
                         </div>
                         <div class="reviewer-details">
-                            <p class="reviewer-name">${review.reviewerFullName}</p>
+                            <p class="reviewer-name">${review.patientID.firstName} ${review.patientID.lastName}</p>
                             <div class="review-meta">
                                 <div class="review-rating">
                                     <div class="rating-stars">
