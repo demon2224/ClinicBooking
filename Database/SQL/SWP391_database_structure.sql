@@ -1,4 +1,4 @@
-USE master
+﻿USE master
 GO
 
 --- DROP DATABASE IF EXIST WITHOUT ANY OBTRUCTION
@@ -33,7 +33,7 @@ CREATE TABLE Patient (
 	UserAddress TEXT,
 	PhoneNumber NVARCHAR(15) UNIQUE,
 	Email NVARCHAR(50),
-	[Hidden] BIT DEFAULT 0
+	[Hidden] BIT DEFAULT 1
 );
 
 CREATE TABLE Staff (
@@ -52,13 +52,13 @@ CREATE TABLE Staff (
 	UserAddress TEXT,
 	PhoneNumber NVARCHAR(15) UNIQUE,
 	Email NVARCHAR(50),
-	[Hidden] BIT DEFAULT 0
+	[Hidden] BIT DEFAULT 1
 );
 
 CREATE TABLE Specialty (
 	SpecialtyID INT PRIMARY KEY IDENTITY(1,1),
 	SpecialtyName NVARCHAR(50),
-	Price DECIMAL(20,2) DEFAULT 0 CHECK (Price > 0)
+	Price DECIMAL(20,2) DEFAULT 0 CHECK (Price >= 0)
 );
 
 CREATE TABLE Doctor (
@@ -91,7 +91,7 @@ CREATE TABLE DoctorReview (
 	Content TEXT,
 	RateScore INT,
 	DateCreate DATETIME DEFAULT GETDATE(),
-	[Hidden] BIT DEFAULT 0
+	[Hidden] BIT DEFAULT 1
 );
 
 CREATE TABLE Appointment (
@@ -103,7 +103,7 @@ CREATE TABLE Appointment (
 	DateBegin DATETIME,
 	DateEnd DATETIME,
 	Note TEXT,
-	[Hidden] BIT DEFAULT 0
+	[Hidden] BIT DEFAULT 1
 );
 
 CREATE TABLE Prescription (
@@ -112,7 +112,7 @@ CREATE TABLE Prescription (
 	PrescriptionStatus NVARCHAR(50) DEFAULT 'Pending' CHECK (PrescriptionStatus IN ('Pending', 'Delivered', 'Canceled')) NOT NULL,
 	DateCreate DATETIME DEFAULT GETDATE(),
 	Note TEXT,
-	[Hidden] BIT DEFAULT 0
+	[Hidden] BIT DEFAULT 1
 );
 
 CREATE TABLE Medicine (
@@ -121,10 +121,10 @@ CREATE TABLE Medicine (
 	MedicineStatus BIT DEFAULT 0,
 	MedicineName NVARCHAR(200),
 	MedicineCode NVARCHAR(50),
-	Quantity INT DEFAULT 0 CHECK (Quantity > 0),
-	Price DECIMAL(20,2) DEFAULT 0 CHECK (Price > 0),
+	Quantity INT DEFAULT 0 CHECK (Quantity >= 0),
+	Price DECIMAL(20,2) DEFAULT 0 CHECK (Price >= 0),
 	DateCreate DATETIME DEFAULT GETDATE(),
-	[Hidden] BIT DEFAULT 0
+	[Hidden] BIT DEFAULT 1
 );
 
 CREATE TABLE PrescriptionItem (
@@ -154,3 +154,32 @@ CREATE TABLE Invoice (
 	DateCreate DATETIME DEFAULT GETDATE(),
 	DatePay DATETIME
 );
+
+GO
+CREATE TRIGGER TR_MedicalRecord_CreateInvoice
+ON [dbo].[MedicalRecord]
+AFTER INSERT
+AS
+BEGIN
+    INSERT INTO [dbo].[Invoice] (MedicalRecordID, PaymentType, InvoiceStatus)
+    SELECT
+        i.MedicalRecordID,
+        'Cash',
+		'Pending'
+    FROM INSERTED i;
+END;
+
+GO
+CREATE TRIGGER TR_Medicine_UpdateMedicineStatus
+ON [dbo].[Medicine]
+AFTER UPDATE
+AS
+BEGIN
+	SET NOCOUNT ON; 
+	UPDATE m
+    SET m.MedicineStatus = 0
+    FROM [dbo].[Medicine] m
+    JOIN inserted i
+	ON m.MedicineID = i.MedicineID
+    WHERE i.Quantity = 0; 
+END;
