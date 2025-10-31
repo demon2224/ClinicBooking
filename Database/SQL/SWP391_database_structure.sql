@@ -32,18 +32,14 @@ CREATE TABLE Patient (
 	Gender BIT DEFAULT 0,
 	UserAddress TEXT,
 	PhoneNumber NVARCHAR(15) UNIQUE,
-	Email NVARCHAR(50)
-);
-
-CREATE TABLE [Role] (
-	RoleID INT PRIMARY KEY IDENTITY(1,1),
-	RoleName NVARCHAR(50) NOT NULL UNIQUE
+	Email NVARCHAR(50),
+	[Hidden] BIT DEFAULT 0
 );
 
 CREATE TABLE Staff (
 	StaffID INT PRIMARY KEY IDENTITY(1,1),
-	JobStatus VARCHAR(50) DEFAULT 'Unavailable' CHECK (JobStatus IN ('Unavailable', 'Available', 'Retired')) NOT NULL,
-	RoleID INT FOREIGN KEY REFERENCES [Role](RoleID),
+	JobStatus VARCHAR(50) DEFAULT 'Available' CHECK (JobStatus IN ('Unavailable', 'Available', 'Retired')) NOT NULL,
+	[Role] VARCHAR(50) CHECK ([Role] IN ('Receptionist', 'Pharmacist', 'Doctor', 'Admin')) NOT NULL,
 	AccountName NVARCHAR(255) UNIQUE,
 	AccountPassword NVARCHAR(255),
 	DayCreated DATETIME DEFAULT GETDATE(),
@@ -55,12 +51,14 @@ CREATE TABLE Staff (
 	Gender BIT DEFAULT 0,
 	UserAddress TEXT,
 	PhoneNumber NVARCHAR(15) UNIQUE,
-	Email NVARCHAR(50)
+	Email NVARCHAR(50),
+	[Hidden] BIT DEFAULT 0
 );
 
 CREATE TABLE Specialty (
 	SpecialtyID INT PRIMARY KEY IDENTITY(1,1),
-	SpecialtyName NVARCHAR(50)
+	SpecialtyName NVARCHAR(50),
+	Price DECIMAL(20,2) DEFAULT 0 CHECK (Price > 0)
 );
 
 CREATE TABLE Doctor (
@@ -72,15 +70,8 @@ CREATE TABLE Doctor (
 
 CREATE TABLE Degree (
 	DegreeID INT PRIMARY KEY IDENTITY(1,1),
-	DegreeName NVARCHAR(255)
-);
-
-CREATE TABLE DoctorDegree (
-	DoctorID INT FOREIGN KEY REFERENCES Doctor(DoctorID),
-	DegreeID INT FOREIGN KEY REFERENCES Degree(DegreeID),
-	PRIMARY KEY (DoctorID, DegreeID),
-	DateEarn DATE,
-	Grantor NVARCHAR(255)
+	DegreeName NVARCHAR(255),
+	DoctorID INT FOREIGN KEY REFERENCES Doctor(DoctorID) NOT NULL,
 );
 
 CREATE TABLE Receptionist (
@@ -99,7 +90,8 @@ CREATE TABLE DoctorReview (
 	DoctorID INT FOREIGN KEY REFERENCES Doctor(DoctorID) NOT NULL,
 	Content TEXT,
 	RateScore INT,
-	DateCreate DATETIME DEFAULT GETDATE()
+	DateCreate DATETIME DEFAULT GETDATE(),
+	[Hidden] BIT DEFAULT 0
 );
 
 CREATE TABLE Appointment (
@@ -110,7 +102,8 @@ CREATE TABLE Appointment (
 	DateCreate DATETIME DEFAULT GETDATE(),
 	DateBegin DATETIME,
 	DateEnd DATETIME,
-	Note TEXT
+	Note TEXT,
+	[Hidden] BIT DEFAULT 0
 );
 
 CREATE TABLE Prescription (
@@ -118,7 +111,8 @@ CREATE TABLE Prescription (
 	AppointmentID INT FOREIGN KEY REFERENCES Appointment(AppointmentID) NOT NULL,
 	PrescriptionStatus NVARCHAR(50) DEFAULT 'Pending' CHECK (PrescriptionStatus IN ('Pending', 'Delivered', 'Canceled')) NOT NULL,
 	DateCreate DATETIME DEFAULT GETDATE(),
-	Note TEXT
+	Note TEXT,
+	[Hidden] BIT DEFAULT 0
 );
 
 CREATE TABLE Medicine (
@@ -126,10 +120,11 @@ CREATE TABLE Medicine (
 	MedicineType NVARCHAR(50) CHECK (MedicineType IN ('Tablet', 'Capsule', 'Syrup', 'Ointment', 'Drops')) NOT NULL,
 	MedicineStatus BIT DEFAULT 0,
 	MedicineName NVARCHAR(200),
-	MedicineCode NVARCHAR(100),
-	Quantity INT DEFAULT 0,
-	Price DECIMAL(20,2) DEFAULT 0,
-	DateCreate DATETIME DEFAULT GETDATE()
+	MedicineCode NVARCHAR(50),
+	Quantity INT DEFAULT 0 CHECK (Quantity > 0),
+	Price DECIMAL(20,2) DEFAULT 0 CHECK (Price > 0),
+	DateCreate DATETIME DEFAULT GETDATE(),
+	[Hidden] BIT DEFAULT 0
 );
 
 CREATE TABLE PrescriptionItem (
@@ -140,38 +135,22 @@ CREATE TABLE PrescriptionItem (
 	Instruction TEXT NOT NULL
 );
 
-CREATE TABLE MedicineStockTransaction (
-	StockTransactionID INT PRIMARY KEY IDENTITY(1,1),
-	MedicineID INT FOREIGN KEY REFERENCES Medicine(MedicineID),
-	Quantity INT DEFAULT 0 CHECK (Quantity > 0),
-	DateImport DATETIME DEFAULT GETDATE(),
-	DateExpire DATETIME NOT NULL
-);
-
-CREATE TABLE ConsultationFee (
-	ConsultationFeeID INT PRIMARY KEY IDENTITY(1,1),
-    DoctorID INT FOREIGN KEY REFERENCES Doctor(DoctorID),
-	SpecialtyID INT FOREIGN KEY REFERENCES Specialty(SpecialtyID),
-    Fee DECIMAL(20,2) DEFAULT 0 NOT NULL
-);
-
 CREATE TABLE MedicalRecord (
 	MedicalRecordID INT PRIMARY KEY IDENTITY(1,1),
-    AppointmentID INT FOREIGN KEY REFERENCES Appointment(AppointmentID) NOT NULL,
+	AppointmentID INT FOREIGN KEY REFERENCES Appointment(AppointmentID) NOT NULL,
 	PrescriptionID INT FOREIGN KEY REFERENCES Prescription(PrescriptionID),
-    Symptoms TEXT,
-    Diagnosis TEXT,
-    Note TEXT,
-    DateCreate DATETIME DEFAULT GETDATE()
+	Symptoms TEXT,
+	Diagnosis TEXT,
+	Note TEXT,
+	DateCreate DATETIME DEFAULT GETDATE()
 );
 
 CREATE TABLE Invoice (
-    InvoiceID INT PRIMARY KEY IDENTITY(1,1),
+	InvoiceID INT PRIMARY KEY IDENTITY(1,1),
 	MedicalRecordID INT FOREIGN KEY REFERENCES MedicalRecord(MedicalRecordID) NOT NULL,
-	ConsultationFeeID INT FOREIGN KEY REFERENCES ConsultationFee(ConsultationFeeID) NOT NULL,
 	PrescriptionID INT FOREIGN KEY REFERENCES Prescription(PrescriptionID),
 	PaymentType NVARCHAR(50) CHECK (PaymentType IN ('Cash', 'Credit Card', 'Insurance', 'Online Banking', 'E-Wallet')) NOT NULL,
-    InvoiceStatus NVARCHAR(50) CHECK (InvoiceStatus IN ('Pending', 'Paid', 'Canceled')) NOT NULL,
-    DateCreate DATETIME DEFAULT GETDATE(),
+	InvoiceStatus NVARCHAR(50) CHECK (InvoiceStatus IN ('Pending', 'Paid', 'Canceled')) NOT NULL,
+	DateCreate DATETIME DEFAULT GETDATE(),
 	DatePay DATETIME
 );

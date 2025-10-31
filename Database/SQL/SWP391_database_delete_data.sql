@@ -13,14 +13,6 @@ BEGIN
 		DBCC CHECKIDENT (MedicalRecord, RESEED, 0);
 		DELETE FROM MedicalRecord;
 
-	IF EXISTS (SELECT 1 FROM ConsultationFee)
-		DBCC CHECKIDENT (ConsultationFee, RESEED, 0);
-		DELETE FROM ConsultationFee;
-
-	IF EXISTS (SELECT 1 FROM MedicineStockTransaction)
-		DBCC CHECKIDENT (MedicineStockTransaction, RESEED, 0);
-		DELETE FROM MedicineStockTransaction;
-
 	IF EXISTS (SELECT 1 FROM PrescriptionItem)
 		DELETE FROM PrescriptionItem;
 
@@ -48,9 +40,6 @@ BEGIN
 		DBCC CHECKIDENT (Receptionist, RESEED, 0);
 		DELETE FROM Receptionist;
 
-	IF EXISTS (SELECT 1 FROM DoctorDegree)
-		DELETE FROM DoctorDegree;
-
 	IF EXISTS (SELECT 1 FROM Degree)
 		DBCC CHECKIDENT (Degree, RESEED, 0);
 		DELETE FROM Degree;
@@ -66,10 +55,6 @@ BEGIN
 	IF EXISTS (SELECT 1 FROM Staff)
 		DBCC CHECKIDENT (Staff, RESEED, 0);
 		DELETE FROM Staff;
-
-	IF EXISTS (SELECT 1 FROM [Role])
-		DBCC CHECKIDENT ([Role], RESEED, 0);
-		DELETE FROM [Role];
 
 	IF EXISTS (SELECT 1 FROM Patient)
 		DBCC CHECKIDENT (Patient, RESEED, 0);
