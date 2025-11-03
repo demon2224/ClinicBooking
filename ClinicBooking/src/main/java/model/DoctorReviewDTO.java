@@ -18,6 +18,7 @@ public class DoctorReviewDTO {
     private String content;
     private int rateScore;
     private Timestamp dateCreate;
+    private boolean hidden;
 
     public DoctorReviewDTO() {
     }
@@ -68,6 +69,14 @@ public class DoctorReviewDTO {
 
     public void setDateCreate(Timestamp dateCreate) {
         this.dateCreate = dateCreate;
+    }
+
+    public boolean isHidden() {
+        return hidden;
+    }
+
+    public void setHidden(boolean hidden) {
+        this.hidden = hidden;
     }
 
 }

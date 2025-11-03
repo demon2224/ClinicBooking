@@ -17,6 +17,7 @@ public class PatientDTO {
     private String accountPassword;
     private Timestamp dayCreated;
     private String avatar;
+    private String bio;
     private String firstName;
     private String lastName;
     private Timestamp dob;
@@ -24,6 +25,7 @@ public class PatientDTO {
     private String userAddress;
     private String phoneNumber;
     private String email;
+    private boolean hidden;
 
     public PatientDTO() {
     }
@@ -144,6 +146,22 @@ public class PatientDTO {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getBio() {
+        return bio;
+    }
+
+    public void setBio(String bio) {
+        this.bio = bio;
+    }
+
+    public boolean isHidden() {
+        return hidden;
+    }
+
+    public void setHidden(boolean hidden) {
+        this.hidden = hidden;
     }
 
 }

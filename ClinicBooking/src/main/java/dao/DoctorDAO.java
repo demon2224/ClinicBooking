@@ -8,7 +8,6 @@ import utils.DBContext;
 import model.DoctorDTO;
 import model.SpecialtyDTO;
 import model.StaffDTO;
-import model.DoctorDegreeDTO;
 import model.DoctorReviewDTO;
 import model.DegreeDTO;
 import model.PatientDTO;
@@ -43,7 +42,7 @@ public class DoctorDAO extends DBContext {
                 + "WHERE d.DoctorID = ? AND st.RoleID = 1";
 
         DoctorDTO doctor = null;
-        Object[] params = { doctorId };
+        Object[] params = {doctorId};
         ResultSet rs = executeSelectQuery(sql, params);
         try {
             if (rs != null && rs.next()) {
@@ -80,7 +79,7 @@ public class DoctorDAO extends DBContext {
     /**
      * Searches for doctors based on multiple criteria.
      *
-     * @param keyword     The search keyword.
+     * @param keyword The search keyword.
      * @param specialtyId The specialty ID to filter by.
      * @return A list of doctors matching the criteria.
      */
@@ -189,43 +188,6 @@ public class DoctorDAO extends DBContext {
     }
 
     /**
-     * Retrieves the degrees of a specific doctor.
-     *
-     * @param doctorId The ID of the doctor.
-     * @return A list of DoctorDegreeDTO for the doctor.
-     */
-    public List<DoctorDegreeDTO> getDoctorDegrees(int doctorId) {
-        String sql = "SELECT d.DegreeID, d.DegreeName, dd.DateEarn, dd.Grantor "
-                + "FROM DoctorDegree dd "
-                + "INNER JOIN Degree d ON dd.DegreeID = d.DegreeID "
-                + "WHERE dd.DoctorID = ?";
-
-        List<DoctorDegreeDTO> degrees = new ArrayList<>();
-        Object[] params = { doctorId };
-        ResultSet rs = executeSelectQuery(sql, params);
-        try {
-            while (rs != null && rs.next()) {
-                DoctorDegreeDTO doctorDegree = new DoctorDegreeDTO();
-
-                DegreeDTO degree = new DegreeDTO();
-                degree.setDegreeID(rs.getInt("DegreeID"));
-                degree.setDegreeName(rs.getString("DegreeName"));
-                doctorDegree.setDegreeID(degree);
-
-                doctorDegree.setDateEarn(rs.getTimestamp("DateEarn"));
-                doctorDegree.setGrantor(rs.getString("Grantor"));
-
-                degrees.add(doctorDegree);
-            }
-        } catch (SQLException ex) {
-            Logger.getLogger(DoctorDAO.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            closeResources(rs);
-        }
-        return degrees;
-    }
-
-    /**
      * Retrieves reviews for a specific doctor.
      *
      * @param doctorId The ID of the doctor.
@@ -239,7 +201,7 @@ public class DoctorDAO extends DBContext {
                 + "WHERE dr.DoctorID = ?";
 
         List<DoctorReviewDTO> reviews = new ArrayList<>();
-        Object[] params = { doctorId };
+        Object[] params = {doctorId};
         ResultSet rs = executeSelectQuery(sql, params);
         try {
             while (rs != null && rs.next()) {
@@ -277,7 +239,7 @@ public class DoctorDAO extends DBContext {
         String sql = "SELECT COUNT(*) AS ReviewCount FROM DoctorReview WHERE DoctorID = ?";
 
         int reviewCount = 0;
-        Object[] params = { doctorId };
+        Object[] params = {doctorId};
         ResultSet rs = executeSelectQuery(sql, params);
         try {
             if (rs != null && rs.next()) {

@@ -12,6 +12,7 @@ public class DegreeDTO {
 
     private int degreeID;
     private String degreeName;
+    private DoctorDTO doctorID;
 
     public DegreeDTO() {
     }
@@ -30,6 +31,14 @@ public class DegreeDTO {
 
     public void setDegreeName(String degreeName) {
         this.degreeName = degreeName;
+    }
+
+    public DoctorDTO getDoctorID() {
+        return doctorID;
+    }
+
+    public void setDoctorID(DoctorDTO doctorID) {
+        this.doctorID = doctorID;
     }
 
 }

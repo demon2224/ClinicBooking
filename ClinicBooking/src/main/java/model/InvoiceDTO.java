@@ -14,7 +14,6 @@ public class InvoiceDTO {
 
     private int invoiceID;
     private MedicalRecordDTO medicalRecordID;
-    private ConsultationFeeDTO consiltationFeeID;
     private PrescriptionDTO prescriptionID;
     private String paymentType;
     private String invoiceStatus;
@@ -38,14 +37,6 @@ public class InvoiceDTO {
 
     public void setMedicalRecordID(MedicalRecordDTO medicalRecordID) {
         this.medicalRecordID = medicalRecordID;
-    }
-
-    public ConsultationFeeDTO getConsiltationFeeID() {
-        return consiltationFeeID;
-    }
-
-    public void setConsiltationFeeID(ConsultationFeeDTO consiltationFeeID) {
-        this.consiltationFeeID = consiltationFeeID;
     }
 
     public PrescriptionDTO getPrescriptionID() {

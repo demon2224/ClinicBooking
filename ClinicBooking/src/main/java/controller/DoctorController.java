@@ -15,7 +15,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.PrintWriter;
 import model.DoctorDTO;
-import model.DoctorDegreeDTO;
 import model.DoctorReviewDTO;
 import utils.AvatarHandler;
 
@@ -38,7 +37,8 @@ public class DoctorController extends HttpServlet {
     }
 
     /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
+     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
+     * methods.
      *
      * @param request servlet request
      * @param response servlet response
@@ -170,7 +170,6 @@ public class DoctorController extends HttpServlet {
                 return;
             }
 
-            List<DoctorDegreeDTO> degrees = doctorDAO.getDoctorDegrees(doctorId);
             List<DoctorReviewDTO> doctorReviews = doctorDAO.getReviewsByDoctorId(doctorId);
 
             // Calculate the average rating and review count
@@ -178,7 +177,6 @@ public class DoctorController extends HttpServlet {
             int reviewCount = doctorDAO.getReviewCountByDoctorId(doctorId);
 
             request.setAttribute("doctor", doctor);
-            request.setAttribute("degrees", degrees);
             request.setAttribute("doctorReviews", doctorReviews);
             // request.setAttribute("averageRating", averageRating);
             request.setAttribute("reviewCount", reviewCount);

@@ -72,6 +72,13 @@ public class AppointmentDAO extends DBContext {
         return appointments;
     }
 
+    /**
+     * Get Detail of Patient Appointment by Doctor Id and Appointment Id.
+     *
+     * @param appointmentID
+     * @param doctorID
+     * @return
+     */
     public AppointmentDTO getPatientAppointmentDetailOfDoctorByID(int appointmentID, int doctorID) {
         AppointmentDTO appointment = null;
         String sql = "SELECT a.AppointmentID,\n"

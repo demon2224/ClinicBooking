@@ -12,6 +12,7 @@ public class SpecialtyDTO {
 
     private int specialtyID;
     private String specialtyName;
+    private double price;
 
     public SpecialtyDTO() {
     }
@@ -30,6 +31,14 @@ public class SpecialtyDTO {
 
     public void setSpecialtyName(String specialtyName) {
         this.specialtyName = specialtyName;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
     }
 
 }

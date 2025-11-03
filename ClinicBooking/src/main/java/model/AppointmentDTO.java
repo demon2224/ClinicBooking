@@ -20,6 +20,7 @@ public class AppointmentDTO {
     private Timestamp dateBegin;
     private Timestamp dateEnd;
     private String note;
+    private boolean hidden;
 
     public AppointmentDTO() {
     }
@@ -105,6 +106,14 @@ public class AppointmentDTO {
 
     public void setNote(String note) {
         this.note = note;
+    }
+
+    public boolean isHidden() {
+        return hidden;
+    }
+
+    public void setHidden(boolean hidden) {
+        this.hidden = hidden;
     }
 
 }

@@ -17,6 +17,7 @@ public class PrescriptionDTO {
     private String prescriptionStatus;
     private Timestamp dateCreate;
     private String note;
+    private boolean hidden;
 
     public PrescriptionDTO() {
     }
@@ -59,6 +60,14 @@ public class PrescriptionDTO {
 
     public void setNote(String note) {
         this.note = note;
+    }
+
+    public boolean isHidden() {
+        return hidden;
+    }
+
+    public void setHidden(boolean hidden) {
+        this.hidden = hidden;
     }
 
 }

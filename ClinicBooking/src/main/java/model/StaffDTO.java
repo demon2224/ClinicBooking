@@ -13,7 +13,7 @@ import java.sql.Timestamp;
 public class StaffDTO {
 
     private int staffID;
-    private RoleDTO roleID;
+    private String role;
     private String jobStatus;
     private String accountName;
     private String accountPassword;
@@ -27,6 +27,7 @@ public class StaffDTO {
     private String userAddress;
     private String phoneNumber;
     private String email;
+    private boolean hidden;
 
     public StaffDTO() {
     }
@@ -37,14 +38,6 @@ public class StaffDTO {
 
     public void setStaffID(int staffID) {
         this.staffID = staffID;
-    }
-
-    public RoleDTO getRoleID() {
-        return roleID;
-    }
-
-    public void setRoleID(RoleDTO roleID) {
-        this.roleID = roleID;
     }
 
     public String getJobStatus() {
@@ -149,6 +142,22 @@ public class StaffDTO {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+    public boolean isHidden() {
+        return hidden;
+    }
+
+    public void setHidden(boolean hidden) {
+        this.hidden = hidden;
     }
 
 }
