@@ -213,203 +213,309 @@ BEGIN
 	('Tablet',1,'Hydrochlorothiazide 25mg','MED-HCTZ-25',120,1.90), -- ID 29
 	('Capsule',1,'Clarithromycin 500mg','MED-CLA-500',50,5.00); -- ID 30
 
-	-- 9. APPOINTMENTS (30) - Phụ thuộc vào Patient (PatientID) và Doctor (DoctorID)
+	-- 9. APPOINTMENTS - Current date: 2025-11-03 (Tuân thủ các quy tắc đặt lịch)
+	-- Rules: 1) Đặt trước 24h, 2) Cách nhau 24h, 3) 7h-17h, 4) Trong 30 ngày, 5) Không trùng giờ bác sĩ, 6) Cách nhau 30 phút
 	INSERT INTO Appointment (PatientID, DoctorID, AppointmentStatus, DateCreate, DateBegin, DateEnd, Note)
 	VALUES
-	(1,1,'Completed','2025-05-01','2025-05-01 09:00','2025-05-01 09:20','Routine check'), -- ID 1
-	(2,1,'Completed','2025-05-02','2025-05-02 10:00','2025-05-02 10:30','Chest pain follow-up'), -- ID 2
-	(3,2,'Completed','2025-05-03','2025-05-03 11:00','2025-05-03 11:20','Skin rash'), -- ID 3
-	(4,3,'Completed','2025-05-04','2025-05-04 09:30','2025-05-04 09:50','Child fever'), -- ID 4
-	(5,4,'Completed','2025-05-05','2025-05-05 14:00','2025-05-05 14:20','Knee pain'), -- ID 5
-	(6,5,'Completed','2025-05-06','2025-05-06 15:00','2025-05-06 15:25','Headache review'), -- ID 6
-	(7,6,'Completed','2025-05-07','2025-05-07 08:30','2025-05-07 08:50','Diabetes review'), -- ID 7
-	(8,7,'Approved','2025-05-08','2025-05-10 10:00','2025-05-10 10:20','Eye check'), -- ID 8
-	(9,8,'Pending','2025-05-09','2025-05-15 11:00','2025-05-15 11:15','Ear pain'), -- ID 9
-	(10,9,'Completed','2025-05-10','2025-05-10 16:00','2025-05-10 16:25','Mental health follow-up'), -- ID 10
-	(11,10,'Completed','2025-05-11','2025-05-11 09:10','2025-05-11 09:25','Blood pressure'), -- ID 11
-	(12,2,'Completed','2025-05-12','2025-05-12 10:15','2025-05-12 10:35','Acne treatment'), -- ID 12
-	(13,3,'Completed','2025-05-13','2025-05-13 11:30','2025-05-13 11:45','Child vaccination'), -- ID 13
-	(14,4,'Completed','2025-05-14','2025-05-14 14:40','2025-05-14 14:55','Fracture check'), -- ID 14
-	(15,5,'Completed','2025-05-15','2025-05-15 15:50','2025-05-15 16:10','Neurology consult'), -- ID 15
-	(16,10,'Canceled','2025-05-16','2025-05-20 08:00','2025-05-20 08:15','Patient canceled'), -- ID 16
-	(17,7,'Completed','2025-05-17','2025-05-17 09:00','2025-05-17 09:20','Cataract review'), -- ID 17
-	(18,8,'Completed','2025-05-18','2025-05-18 10:10','2025-05-18 10:30','Sinusitis'), -- ID 18
-	(19,9,'Completed','2025-05-19','2025-05-19 11:00','2025-05-19 11:25','Depression check'), -- ID 19
-	(20,10,'Completed','2025-05-20','2025-05-20 12:00','2025-05-20 12:20','General check'), -- ID 20
-	(21,1,'Completed','2025-05-21','2025-05-21 09:15','2025-05-21 09:35','Follow up'), -- ID 21
-	(22,2,'Completed','2025-05-22','2025-05-22 10:05','2025-05-22 10:25','Skin follow-up'), -- ID 22
-	(23,3,'Completed','2025-05-23','2025-05-23 11:05','2025-05-23 11:25','Pediatric review'), -- ID 23
-	(24,4,'Completed','2025-05-24','2025-05-24 14:05','2025-05-24 14:25','Orthopedic therapy'), -- ID 24
-	(25,5,'Completed','2025-05-25','2025-05-25 15:05','2025-05-25 15:30','Neuro follow-up'), -- ID 25
-	(26,6,'Completed','2025-05-26','2025-05-26 08:45','2025-05-26 09:05','Endocrine consult'), -- ID 26
-	(27,7,'Pending','2025-05-27','2025-06-01 10:00','2025-06-01 10:20','Eye symptoms'), -- ID 27
-	(28,8,'Approved','2025-05-28','2025-06-03 11:00','2025-06-03 11:30','ENT check'), -- ID 28
-	(29,9,'Completed','2025-05-29','2025-05-29 12:00','2025-05-29 12:25','Psych consult'), -- ID 29
-	(30,10,'Completed','2025-05-30','2025-05-30 13:00','2025-05-30 13:20','General exam'); -- ID 30
+	-- COMPLETED APPOINTMENTS (Trước 03/11/2025) - Patient 1
+	(1,1,'Completed','2025-09-01','2025-09-02 09:00','2025-09-02 09:30','Routine cardiac check'), -- ID 1
+	(1,2,'Completed','2025-09-10','2025-09-11 10:00','2025-09-11 10:30','Skin consultation'), -- ID 2
+	(1,3,'Completed','2025-09-20','2025-09-21 14:00','2025-09-21 14:30','General health check'), -- ID 3
+	(1,4,'Completed','2025-10-01','2025-10-02 11:00','2025-10-02 11:30','Joint pain evaluation'), -- ID 4
+	(1,5,'Completed','2025-10-10','2025-10-11 09:00','2025-10-11 09:30','Headache assessment'), -- ID 5
+	(1,1,'Completed','2025-10-18','2025-10-19 13:00','2025-10-19 13:30','Cardiology follow-up'), -- ID 6
+	(1,6,'Completed','2025-10-25','2025-10-26 15:00','2025-10-26 15:30','Blood sugar check'), -- ID 7
+	(1,7,'Completed','2025-10-28','2025-10-29 10:00','2025-10-29 10:30','Vision screening'), -- ID 8
+	(1,8,'Completed','2025-10-30','2025-10-31 14:00','2025-10-31 14:30','Ear examination'), -- ID 9
+	(1,10,'Completed','2025-11-01','2025-11-02 11:00','2025-11-02 11:30','Annual physical'), -- ID 10
+	
+	-- APPROVED/PENDING APPOINTMENTS (04/11 - 03/12/2025) - Patient 1
+	(1,9,'Approved','2025-11-02','2025-11-05 09:00','2025-11-05 09:30','Stress consultation'), -- ID 11
+	(1,2,'Approved','2025-11-02','2025-11-08 13:00','2025-11-08 13:30','Skin follow-up'), -- ID 12
+	(1,3,'Pending','2025-11-02','2025-11-12 10:00','2025-11-12 10:30','Preventive care'), -- ID 13
+	(1,4,'Pending','2025-11-02','2025-11-16 14:00','2025-11-16 14:30','Orthopedic consultation'), -- ID 14
+	(1,5,'Pending','2025-11-02','2025-11-20 11:00','2025-11-20 11:30','Neurology check'), -- ID 15
+	(1,1,'Pending','2025-11-02','2025-11-25 09:00','2025-11-25 09:30','Cardiac screening'), -- ID 16
+	
+	-- CANCELED APPOINTMENT - Patient 1
+	(1,6,'Canceled','2025-10-20','2025-11-06 08:00','2025-11-06 08:30','Patient canceled'), -- ID 17
+	
+	-- DOCTOR 1 (Cardiologist) - Other Patients (Cách nhau 30 phút)
+	(2,1,'Completed','2025-09-03','2025-09-04 09:30','2025-09-04 10:00','Chest pain follow-up'), -- ID 18
+	(5,1,'Completed','2025-09-15','2025-09-16 10:00','2025-09-16 10:30','Pregnancy heart check'), -- ID 19
+	(6,1,'Completed','2025-09-25','2025-09-26 10:30','2025-09-26 11:00','High cholesterol'), -- ID 20
+	(7,1,'Completed','2025-10-03','2025-10-04 11:00','2025-10-04 11:30','Smoker cardiac screening'), -- ID 21
+	(8,1,'Completed','2025-10-12','2025-10-13 11:30','2025-10-13 12:00','Young adult heart check'), -- ID 22
+	(11,1,'Completed','2025-10-20','2025-10-21 13:30','2025-10-21 14:00','Stress-related heart'), -- ID 23
+	(14,1,'Completed','2025-10-27','2025-10-28 14:00','2025-10-28 14:30','Cardiac monitoring'), -- ID 24
+	(16,1,'Completed','2025-10-29','2025-10-30 14:30','2025-10-30 15:00','Post-fracture cardiac'), -- ID 25
+	(19,1,'Completed','2025-10-31','2025-11-01 15:00','2025-11-01 15:30','Heart check'), -- ID 26
+	(22,1,'Approved','2025-11-02','2025-11-06 09:30','2025-11-06 10:00','Anxiety cardiac screen'), -- ID 27
+	(24,1,'Approved','2025-11-02','2025-11-09 10:00','2025-11-09 10:30','Post-op monitoring'), -- ID 28
+	(26,1,'Approved','2025-11-02','2025-11-13 13:00','2025-11-13 13:30','Thyroid heart eval'), -- ID 29
+	(28,1,'Pending','2025-11-02','2025-11-18 09:30','2025-11-18 10:00','Cardiac check'), -- ID 30
+	(29,1,'Pending','2025-11-02','2025-11-22 14:00','2025-11-22 14:30','Smoker recovery'), -- ID 31
+	(30,1,'Pending','2025-11-02','2025-11-27 15:00','2025-11-27 15:30','Heart screening'), -- ID 32
+	(12,1,'Canceled','2025-10-28','2025-11-10 11:00','2025-11-10 11:30','Teen patient - canceled'), -- ID 33
+	
+	-- OTHER DOCTORS - Various Patients (Completed in past)
+	(3,2,'Completed','2025-09-05','2025-09-06 11:00','2025-09-06 11:30','Skin rash'), -- ID 34
+	(4,3,'Completed','2025-09-12','2025-09-13 09:30','2025-09-13 10:00','Child fever'), -- ID 35
+	(5,4,'Completed','2025-09-18','2025-09-19 14:00','2025-09-19 14:30','Knee pain'), -- ID 36
+	(6,5,'Completed','2025-09-22','2025-09-23 15:00','2025-09-23 15:30','Headache review'), -- ID 37
+	(7,6,'Completed','2025-09-28','2025-09-29 08:00','2025-09-29 08:30','Diabetes review'), -- ID 38
+	(8,7,'Completed','2025-10-05','2025-10-06 10:00','2025-10-06 10:30','Eye check'), -- ID 39
+	(9,8,'Completed','2025-10-08','2025-10-09 11:00','2025-10-09 11:30','Ear pain'), -- ID 40
+	(10,9,'Completed','2025-10-14','2025-10-15 16:00','2025-10-15 16:30','Mental health'), -- ID 41
+	(11,10,'Completed','2025-10-16','2025-10-17 09:00','2025-10-17 09:30','Blood pressure'), -- ID 42
+	(12,2,'Completed','2025-10-21','2025-10-22 10:00','2025-10-22 10:30','Acne treatment'), -- ID 43
+	(13,3,'Completed','2025-10-23','2025-10-24 11:30','2025-10-24 12:00','Child vaccination'), -- ID 44
+	(14,4,'Completed','2025-10-26','2025-10-27 14:30','2025-10-27 15:00','Fracture check'), -- ID 45
+	(15,5,'Completed','2025-10-28','2025-10-29 15:30','2025-10-29 16:00','Neurology consult'), -- ID 46
+	(16,10,'Completed','2025-10-30','2025-10-31 08:00','2025-10-31 08:30','General check'), -- ID 47
+	(17,7,'Completed','2025-11-01','2025-11-02 09:00','2025-11-02 09:30','Cataract review'), -- ID 48
+	
+	-- APPROVED/PENDING - Other Doctors (04/11 - 03/12)
+	(18,8,'Approved','2025-11-02','2025-11-07 10:00','2025-11-07 10:30','Sinusitis'), -- ID 49
+	(19,9,'Approved','2025-11-02','2025-11-11 11:00','2025-11-11 11:30','Depression check'), -- ID 50
+	(20,10,'Approved','2025-11-02','2025-11-14 12:00','2025-11-14 12:30','General check'), -- ID 51
+	(21,2,'Pending','2025-11-02','2025-11-19 13:00','2025-11-19 13:30','Skin consultation'), -- ID 52
+	(22,3,'Pending','2025-11-02','2025-11-23 11:00','2025-11-23 11:30','Pediatric review'), -- ID 53
+	(23,4,'Pending','2025-11-02','2025-11-26 14:00','2025-11-26 14:30','Orthopedic therapy'), -- ID 54
+	(25,5,'Pending','2025-11-02','2025-11-29 15:00','2025-11-29 15:30','Neuro follow-up'), -- ID 55
+	(26,6,'Pending','2025-11-02','2025-12-02 08:30','2025-12-02 09:00','Endocrine consult'), -- ID 56
+	(27,7,'Canceled','2025-10-29','2025-11-15 10:00','2025-11-15 10:30','Patient canceled'), -- ID 57
+	(29,9,'Approved','2025-11-02','2025-11-17 12:00','2025-11-17 12:30','Psych consult'), -- ID 58
+	(30,10,'Approved','2025-11-02','2025-11-21 13:00','2025-11-21 13:30','General exam'); -- ID 59
 
-	-- 10. PRESCRIPTIONS (30) - Phụ thuộc vào Appointment (AppointmentID)
+	-- 10. PRESCRIPTIONS - CHỈ cho Completed appointments (đã khám xong)
+	-- Approved/Pending = chưa khám, không có prescription
+	-- Status: Pending = bác sĩ kê đơn nhưng dược sĩ chưa phát, Delivered = đã phát thuốc
 	INSERT INTO Prescription (AppointmentID, PrescriptionStatus, DateCreate, Note)
 	VALUES
-	(1,'Delivered','2025-05-01','Paracetamol for fever'), -- ID 1
-	(2,'Delivered','2025-05-02','Antibiotics x7 days'), -- ID 2
-	(3,'Delivered','2025-05-03','Topical cream'), -- ID 3
-	(4,'Delivered','2025-05-04','Pediatric syrup'), -- ID 4
-	(5,'Delivered','2025-05-05','Anti-inflammatory'), -- ID 5
-	(6,'Delivered','2025-05-06','Migraine meds'), -- ID 6
-	(7,'Delivered','2025-05-07','Diabetes meds refill'), -- ID 7
-	(8,'Pending','2025-05-08','Eye drops to be approved'), -- ID 8
-	(9,'Pending','2025-05-09','Ear antibiotics pending'), -- ID 9
-	(10,'Delivered','2025-05-10','Mood stabilizer'), -- ID 10
-	(11,'Delivered','2025-05-11','BP medication'), -- ID 11
-	(12,'Delivered','2025-05-12','Acne tablets'), -- ID 12
-	(13,'Delivered','2025-05-13','Vaccination record'), -- ID 13
-	(14,'Delivered','2025-05-14','Analgesics for pain'), -- ID 14
-	(15,'Delivered','2025-05-15','Neuro meds'), -- ID 15
-	(16,'Canceled','2025-05-16','Canceled by patient'), -- ID 16 (Associated with Appt 16 Canceled)
-	(17,'Delivered','2025-05-17','Eye drops post-op'), -- ID 17
-	(18,'Delivered','2025-05-18','Antibiotics for sinus'), -- ID 18
-	(19,'Delivered','2025-05-19','Antidepressant refill'), -- ID 19
-	(20,'Delivered','2025-05-20','General multivitamin'), -- ID 20
-	(21,'Delivered','2025-05-21','Follow up prescription'), -- ID 21
-	(22,'Delivered','2025-05-22','Skin ointments'), -- ID 22
-	(23,'Delivered','2025-05-23','Pediatric meds'), -- ID 23
-	(24,'Delivered','2025-05-24','Joint pain meds'), -- ID 24
-	(25,'Delivered','2025-05-25','Neuro supplement'), -- ID 25
-	(26,'Delivered','2025-05-26','Thyroid medication'), -- ID 26
-	(27,'Pending','2025-05-27','Eye prescription pending'), -- ID 27
-	(28,'Pending','2025-05-28','ENT follow-up'), -- ID 28
-	(29,'Delivered','2025-05-29','Psych medication'), -- ID 29
-	(30,'Delivered','2025-05-30','Routine meds'); -- ID 30
+	-- Completed Appointments (Patient 1: ID 1-10)
+	(1,'Delivered','2025-09-02','Cardiac medication'), -- ID 1
+	(2,'Delivered','2025-09-11','Topical cream for skin'), -- ID 2
+	(3,'Delivered','2025-09-21','General vitamins'), -- ID 3
+	(4,'Pending','2025-10-02','Anti-inflammatory'), -- ID 4
+	(5,'Delivered','2025-10-11','Migraine medication'), -- ID 5
+	(6,'Delivered','2025-10-19','Heart medication refill'), -- ID 6
+	(7,'Delivered','2025-10-26','Diabetes medication'), -- ID 7
+	(8,'Delivered','2025-10-29','Eye drops'), -- ID 8
+	-- ID 9 (Appt 9) - Không kê đơn thuốc
+	(10,'Delivered','2025-11-02','Annual checkup meds'), -- ID 9
+	
+	-- Completed (Doctor 1 - Other Patients: ID 18-26)
+	(18,'Delivered','2025-09-04','Cardiac meds'), -- ID 10
+	(19,'Delivered','2025-09-16','Pregnancy vitamins'), -- ID 11
+	(20,'Delivered','2025-09-26','Cholesterol meds'), -- ID 12
+	(21,'Pending','2025-10-04','Cardiac screening meds - chưa phát'), -- ID 13
+	(22,'Delivered','2025-10-13','Heart medication'), -- ID 14
+	(23,'Delivered','2025-10-21','Stress relief meds'), -- ID 15
+	(24,'Delivered','2025-10-28','Cardiac monitoring meds'), -- ID 16
+	(25,'Delivered','2025-10-30','Post-fracture cardiac meds'), -- ID 17
+	(26,'Pending','2025-11-01','Heart check prescription - chưa phát'), -- ID 18
+	
+	-- Completed (Other Doctors: ID 34-48)
+	(34,'Delivered','2025-09-06','Skin rash ointment'), -- ID 19
+	(35,'Delivered','2025-09-13','Pediatric fever meds'), -- ID 22
+	(36,'Delivered','2025-09-19','Knee pain medication'), -- ID 23
+	(37,'Delivered','2025-09-23','Headache meds'), -- ID 24
+	(38,'Delivered','2025-09-29','Diabetes control'), -- ID 25
+	(39,'Delivered','2025-10-06','Eye drops'), -- ID 26
+	(40,'Pending','2025-10-09','Ear antibiotics - chưa phát'), -- ID 27
+	(41,'Delivered','2025-10-15','Mental health meds'), -- ID 28
+	(42,'Delivered','2025-10-17','BP medication'), -- ID 29
+	-- ID 43 (Appt 43) - Không kê đơn thuốc
+	(44,'Delivered','2025-10-24','Vaccination vitamins'), -- ID 30
+	(45,'Delivered','2025-10-27','Fracture pain relief'), -- ID 31
+	(46,'Pending','2025-10-29','Neurology meds - chưa phát'), -- ID 32
+	(47,'Delivered','2025-10-31','General vitamins'), -- ID 33
+	(48,'Delivered','2025-11-02','Eye care prescription'); -- ID 34
+	
+	-- KHÔNG TẠO prescription cho Approved (ID 11,12,27,28,29,49,50,51,58,59) - chưa khám
+	-- KHÔNG TẠO prescription cho Pending (ID 13-16,30-32,52-56) - chưa duyệt/chưa khám
+	-- KHÔNG TẠO prescription cho Canceled (ID 57) - đã hủy
 
 	-- 11. PRESCRIPTION ITEMS - Phụ thuộc vào Prescription (PrescriptionID) và Medicine (MedicineID)
-	-- Medicine IDs: 1:Paracetamol, 2:Amoxicillin, 3:Cough Syrup, 4:Hydrocortisone, 5:Eye Drops, 6:Ibuprofen, 9:Metformin, 10:Loratadine, 11:Children Multivitamin, 12:Prednisone, 13:Doxycycline, 14:Antifungal Cream, 17:Levothyroxine, 18:Zinc, 20:Antacid, 21:Losartan, 22:Albuterol, 23:Vitamin D, 24:Nitrofurantoin, 25:Tramadol, 28:Gabapentin
 	INSERT INTO PrescriptionItem (PrescriptionID, MedicineID, Dosage, Instruction) VALUES
-	(1,1,2,'Take 2 tablets every 6 hours as needed for fever'), -- Paracetamol
-	(1,22,1,'Take one capsule daily'), -- Albuterol
-	(2,2,1,'One capsule every 8 hours for 7 days'), -- Amoxicillin
-	(2,11,1,'Take multivitamin once daily'), -- Multivitamin
-	(2,6,1,'Ibuprofen if needed'), -- Ibuprofen (Extra)
-	(3,14,2,'Apply twice daily to affected area'), -- Antifungal Cream (Used instead of Hydrocortisone ID 4 - Assuming it's the topical cream)
-	(3,9,1,'Metformin (if diabetic)'), -- Metformin (Extra)
-	(4,3,5,'5ml twice daily for 5 days'), -- Cough Syrup
-	(5,6,1,'Take one tablet every 8 hours after meals'), -- Ibuprofen
-	(5,12,1,'Prednisone short course'), -- Prednisone (Extra)
-	(6,28,1,'Gabapentin 300mg at night'), -- Gabapentin
-	(7,9,1,'Metformin one capsule twice daily'), -- Metformin
-	(7,20,1,'Antacid if needed'), -- Antacid (Extra)
-	(8,5,1,'Eye drops one drop each eye 3x daily'), -- Eye Drops
-	(9,2,1,'Amoxicillin one capsule 3x daily'), -- Amoxicillin
-	(10,28,1,'Gabapentin 300mg at night'), -- Gabapentin
-	(11,21,1,'Losartan 50mg once daily'), -- Losartan
-	(11,8,1,'Aspirin low dose'), -- Aspirin (Extra)
-	(12,10,1,'Loratadine once daily'), -- Loratadine
-	(13,11,1,'Children vitamin syrup 5ml daily'), -- Multivitamin
-	(14,6,1,'Ibuprofen 200mg as needed'), -- Ibuprofen
-	(14,25,1,'Tramadol if severe pain'), -- Tramadol (Extra)
-	(15,28,1,'Gabapentin 300mg daily'), -- Gabapentin
-	(15,17,1,'Levothyroxine per lab orders'), -- Levothyroxine
-	(15,24,1,'Nitrofurantoin for UTI'), -- Nitrofurantoin (Extra)
-	(17,5,1,'Eye drops as directed'), -- Eye Drops
-	(18,2,1,'Amoxicillin one capsule 3x daily'), -- Amoxicillin
-	(19,28,1,'Gabapentin per psychiatrist'), -- Gabapentin
-	(19,10,1,'Loratadine for allergies'), -- Loratadine (Extra)
-	(20,23,1,'Vitamin D once daily'), -- Vitamin D
-	(21,1,2,'Paracetamol 2 tablets if needed'), -- Paracetamol
-	(22,14,2,'Apply ointment twice daily'), -- Antifungal Cream
-	(23,3,5,'Children syrup as prescribed'), -- Cough Syrup
-	(24,6,1,'Ibuprofen as needed'), -- Ibuprofen
-	(24,13,1,'Doxycycline for infection'), -- Doxycycline (Extra)
-	(25,18,1,'Zinc supplement once daily'), -- Zinc
-	(26,17,1,'Levothyroxine per doctor'), -- Levothyroxine
-	(29,28,1,'Gabapentin per psychiatry'), -- Gabapentin
-	(29,1,2,'Paracetamol PRN'), -- Paracetamol (Extra)
-	(30,1,1,'Paracetamol 1-2 tablets for pain'); -- Paracetamol
+	-- Patient 1 Prescriptions (Completed only)
+	(1,21,1,'Losartan 50mg once daily'), -- Cardiac med
+	(1,8,1,'Aspirin low dose'), 
+	(2,14,2,'Apply twice daily'), -- Skin cream
+	(3,23,1,'Vitamin D once daily'), 
+	(4,6,1,'Ibuprofen 200mg as needed'), 
+	(5,28,1,'Gabapentin 300mg at night'), -- Migraine
+	(6,21,1,'Losartan 50mg once daily'), 
+	(7,9,1,'Metformin twice daily'), -- Diabetes
+	(8,5,1,'Eye drops 3x daily'), 
+	-- No prescription for Appt 9
+	(9,23,1,'Vitamin D once daily'),
+	(9,18,1,'Zinc supplement'),
+	-- Doctor 1 Other Patients (Completed)
+	(10,21,1,'Cardiac medication'),
+	(11,23,1,'Pregnancy vitamins'),
+	(11,11,1,'Multivitamin'),
+	(12,9,1,'Cholesterol meds'),
+	(13,21,1,'Cardiac screening meds'),
+	(14,21,1,'Heart medication'),
+	(15,28,1,'Stress relief medication'),
+	(16,21,1,'Cardiac monitoring'),
+	(17,6,1,'Post-fracture pain relief'),
+	(18,21,1,'Heart prescription'),
+	-- Other Doctors (Completed)
+	(19,14,2,'Skin rash ointment'),
+	(20,1,2,'Pediatric fever medication'),
+	(21,6,1,'Knee pain medication'),
+	(22,28,1,'Headache medication'),
+	(23,9,1,'Diabetes control'),
+	(24,5,1,'Eye drops'),
+	(25,2,1,'Ear antibiotics'),
+	(26,28,1,'Mental health medication'),
+	(27,21,1,'BP medication'),
+	-- No prescription for Appt 43
+	(28,11,1,'Vaccination vitamins'),
+	(29,6,1,'Fracture pain relief'),
+	(29,25,1,'Tramadol if needed'),
+	(30,28,1,'Neurology medication'),
+	(31,23,1,'General vitamins'),
+	(32,5,1,'Eye care drops');
 
-	-- 12. MEDICAL RECORDS (30) - Phụ thuộc vào Appointment (AppointmentID) và Prescription (PrescriptionID)
-	-- PrescriptionID có thể là NULL (Nếu DDL cho phép)
+	-- 12. MEDICAL RECORDS - CHỈ cho Completed appointments (đã khám xong)
+	-- Pending/Approved = chưa khám → KHÔNG có medical record
+	-- Canceled = đã hủy (chưa khám) → KHÔNG có medical record
+	-- Medical Record CHỈ được tạo KHI bệnh nhân ĐÃ ĐẾN KHÁM (bác sĩ ghi triệu chứng, chẩn đoán)
 	INSERT INTO MedicalRecord (AppointmentID, PrescriptionID, Symptoms, Diagnosis, Note, DateCreate)
 	VALUES
-	(1,1,'Fever, sore throat','Viral infection','Advised rest and fluids','2025-05-01'), -- Appt 1, Pres 1
-	(2,2,'Chest discomfort','Stable angina','EKG done; refill prescribed','2025-05-02'), -- Appt 2, Pres 2
-	(3,3,'Rash','Contact dermatitis','Avoid allergen','2025-05-03'), -- Appt 3, Pres 3
-	(4,4,'Child fever','Viral illness','Paracetamol given','2025-05-04'), -- Appt 4, Pres 4
-	(5,5,'Knee pain','Sprain','Physical therapy referral','2025-05-05'), -- Appt 5, Pres 5
-	(6,6,'Migraine','Migraine','New med started','2025-05-06'), -- Appt 6, Pres 6
-	(7,7,'High sugar','Type 2 Diabetes','Dose adjusted','2025-05-07'), -- Appt 7, Pres 7
-	(8,8,'Eye irritation','Conjunctivitis','Pending delivery of drops','2025-05-08'), -- Appt 8, Pres 8 (Pending)
-	(9,9,'Ear pain','Otitis media','Await prescription approval','2025-05-09'), -- Appt 9, Pres 9 (Pending)
-	(10,10,'Anxiety','Generalized anxiety disorder','Therapy referral','2025-05-10'), -- Appt 10, Pres 10
-	(11,11,'High BP','Hypertension','BP meds adjusted','2025-05-11'), -- Appt 11, Pres 11
-	(12,12,'Acne','Acne vulgaris','Topical+oral plan','2025-05-12'), -- Appt 12, Pres 12
-	(13,13,'Well child','Healthy','Vaccination recorded','2025-05-13'), -- Appt 13, Pres 13
-	(14,14,'Post fracture review','Healing fracture','Continue physiotherapy','2025-05-14'), -- Appt 14, Pres 14
-	(15,15,'Numbness','Peripheral neuropathy','Electrodiagnostic planned','2025-05-15'), -- Appt 15, Pres 15
-	(16,16,'Canceled appointment','N/A','No record','2025-05-16'), -- Appt 16 (Canceled), Pres 16 (Canceled)
-	(17,17,'Post-op eye','Post-op status','Eye drops prescribed','2025-05-17'), -- Appt 17, Pres 17
-	(18,18,'Sinus pain','Sinusitis','Antibiotic given','2025-05-18'), -- Appt 18, Pres 18
-	(19,19,'Low mood','Major depression','Medication optimized','2025-05-19'), -- Appt 19, Pres 19
-	(20,20,'Routine','Healthy','No issues','2025-05-20'), -- Appt 20, Pres 20
-	(21,21,'Follow up','Stable','Continue meds','2025-05-21'), -- Appt 21, Pres 21
-	(22,22,'Skin follow-up','Resolved','Stop ointment','2025-05-22'), -- Appt 22, Pres 22
-	(23,23,'Pediatric check','Well child','Advised nutrition','2025-05-23'), -- Appt 23, Pres 23
-	(24,24,'Joint pain','Arthritis','Start NSAID','2025-05-24'), -- Appt 24, Pres 24
-	(25,25,'Neuro follow-up','Stable','Continue supplement','2025-05-25'), -- Appt 25, Pres 25
-	(26,26,'Thyroid','Hypothyroidism','Dose stable','2025-05-26'), -- Appt 26, Pres 26
-	(27,27,'Eye blurry','Possible refractive error','Appointment pending','2025-05-27'), -- Appt 27 (Pending), Pres 27 (Pending)
-	(28,28,'ENT complaint','Chronic rhinitis','Further tests scheduled','2025-05-28'), -- Appt 28 (Approved), Pres 28 (Pending)
-	(29,29,'Psych follow-up','Stable on meds','Monitor side effects','2025-05-29'), -- Appt 29, Pres 29
-	(30,30,'Routine','Healthy','Annual exam','2025-05-30'); -- Appt 30, Pres 30
+	-- Patient 1 - Completed (ID 1-10)
+	(1,1,'Chest discomfort','Stable condition','Cardiac check completed','2025-09-02'),
+	(2,2,'Skin irritation','Mild dermatitis','Topical treatment','2025-09-11'),
+	(3,3,'Routine checkup','Healthy','No issues found','2025-09-21'),
+	(4,4,'Joint pain','Minor inflammation','Physical therapy advised','2025-10-02'),
+	(5,5,'Headache','Tension headache','Medication prescribed','2025-10-11'),
+	(6,6,'Heart palpitations','Normal rhythm','Continue monitoring','2025-10-19'),
+	(7,7,'High blood sugar','Diabetes controlled','Medication adjusted','2025-10-26'),
+	(8,8,'Blurry vision','Eye strain','Eye drops prescribed','2025-10-29'),
+	(9,NULL,'Ear discomfort','Minor infection','No medication needed','2025-10-31'),
+	(10,9,'Annual physical','Healthy','All tests normal','2025-11-02'),
+	
+	-- Doctor 1 Other Patients - Completed (ID 18-26)
+	(18,11,'Chest pain','Angina','Cardiac medication','2025-09-04'),
+	(19,12,'Pregnancy checkup','Normal','Vitamins prescribed','2025-09-16'),
+	(20,13,'High cholesterol','Hyperlipidemia','Medication started','2025-09-26'),
+	(21,14,'Cardiac screening','Normal','Preventive care','2025-10-04'),
+	(22,15,'Heart check','Healthy','Continue monitoring','2025-10-13'),
+	(23,16,'Stress-related','Anxiety','Medication prescribed','2025-10-21'),
+	(24,17,'Cardiac monitoring','Stable','Continue treatment','2025-10-28'),
+	(25,18,'Post-fracture check','Healing well','Pain management','2025-10-30'),
+	(26,19,'Heart screening','Normal','Routine checkup','2025-11-01'),
+	
+	-- Other Doctors - Completed (ID 34-48)
+	(34,21,'Skin rash','Contact dermatitis','Ointment prescribed','2025-09-06'),
+	(35,22,'Child fever','Viral infection','Medication given','2025-09-13'),
+	(36,23,'Knee pain','Sprain','Pain relief prescribed','2025-09-19'),
+	(37,24,'Headache','Migraine','Treatment started','2025-09-23'),
+	(38,25,'High sugar','Diabetes','Medication adjusted','2025-09-29'),
+	(39,26,'Eye check','Normal vision','Preventive care','2025-10-06'),
+	(40,27,'Ear pain','Otitis media','Antibiotics given','2025-10-09'),
+	(41,28,'Mental health','Anxiety','Therapy recommended','2025-10-15'),
+	(42,29,'High BP','Hypertension','BP meds prescribed','2025-10-17'),
+	(43,NULL,'Acne','Acne vulgaris','No medication needed','2025-10-22'),
+	(44,30,'Vaccination','Healthy','Vaccination completed','2025-10-24'),
+	(45,31,'Fracture review','Healing','Continue therapy','2025-10-27'),
+	(46,32,'Numbness','Neuropathy','Medication prescribed','2025-10-29'),
+	(47,33,'General check','Healthy','No issues','2025-10-31'),
+	(48,34,'Eye review','Post-op normal','Healing well','2025-11-02');
+	
+	-- KHÔNG TẠO Medical Record cho Canceled (ID 17,33,57) - đã hủy, chưa khám
+	-- KHÔNG TẠO Medical Record cho Approved (ID 11,12,27,28,29,49,50,51,58,59) - chưa khám
+	-- KHÔNG TẠO Medical Record cho Pending (ID 13-16,30-32,52-56) - chưa duyệt/chưa khám
 
-	-- 13. INVOICES (30) - Phụ thuộc vào MedicalRecord (MedicalRecordID) và Prescription (PrescriptionID)
-	-- *SỬA LỖI: Invoice ID 16 phải tham chiếu đến MedicalRecordID 16.*
+	-- 13. INVOICES - TỰ ĐỘNG SINH khi có Medical Record
+	-- Approved/Pending = chưa có Medical Record = chưa có Invoice
+	-- Completed với Prescription.Delivered = Paid
+	-- Completed với Prescription.Pending = Pending (chưa thanh toán do chưa phát thuốc)
+	-- Canceled = Canceled invoice
 	INSERT INTO Invoice (MedicalRecordID, PrescriptionID, PaymentType, InvoiceStatus, DateCreate, DatePay)
 	VALUES
-	(1,1,'Cash','Paid','2025-05-01','2025-05-01'),
-	(2,2,'Credit Card','Paid','2025-05-02','2025-05-02'),
-	(3,3,'E-Wallet','Paid','2025-05-03','2025-05-03'),
-	(4,4,'Cash','Paid','2025-05-04','2025-05-04'),
-	(5,5,'Insurance','Paid','2025-05-05','2025-05-06'),
-	(6,6,'Credit Card','Paid','2025-05-06','2025-05-06'),
-	(7,7,'Cash','Paid','2025-05-07','2025-05-07'),
-	(8,8,'Cash','Pending','2025-05-08',NULL), -- MR 8, Pres 8 (Pending)
-	(9,9,'Cash','Pending','2025-05-09',NULL), -- MR 9, Pres 9 (Pending)
-	(10,10,'Credit Card','Paid','2025-05-10','2025-05-10'),
-	(11,11,'E-Wallet','Paid','2025-05-11','2025-05-11'),
-	(12,12,'Cash','Paid','2025-05-12','2025-05-12'),
-	(13,13,'Insurance','Paid','2025-05-13','2025-05-13'),
-	(14,14,'Credit Card','Paid','2025-05-14','2025-05-14'),
-	(15,15,'Cash','Paid','2025-05-15','2025-05-15'),
-	(16,16,'Cash','Canceled','2025-05-16',NULL), -- MR 16, Pres 16 (Canceled)
-	(17,17,'Credit Card','Paid','2025-05-17','2025-05-17'),
-	(18,18,'E-Wallet','Paid','2025-05-18','2025-05-18'),
-	(19,19,'Cash','Paid','2025-05-19','2025-05-19'),
-	(20,20,'Insurance','Paid','2025-05-20','2025-05-20'),
-	(21,21,'Credit Card','Paid','2025-05-21','2025-05-21'),
-	(22,22,'Cash','Paid','2025-05-22','2025-05-22'),
-	(23,23,'E-Wallet','Paid','2025-05-23','2025-05-23'),
-	(24,24,'Insurance','Paid','2025-05-24','2025-05-24'),
-	(25,25,'Credit Card','Paid','2025-05-25','2025-05-25'),
-	(26,26,'Cash','Paid','2025-05-26','2025-05-26'),
-	(27,27,'Cash','Pending','2025-05-27',NULL), -- MR 27, Pres 27 (Pending)
-	(28,28,'Credit Card','Pending','2025-05-28',NULL), -- MR 28, Pres 28 (Pending)
-	(29,29,'E-Wallet','Paid','2025-05-29','2025-05-29'),
-	(30,30,'Cash','Paid','2025-05-30','2025-05-30');
+	-- Patient 1 - Completed (MR ID 1-10)
+	(1,1,'Credit Card','Paid','2025-09-02','2025-09-02'),
+	(2,2,'E-Wallet','Paid','2025-09-11','2025-09-11'),
+	(3,3,'Cash','Paid','2025-09-21','2025-09-21'),
+	(4,4,'Insurance','Pending','2025-10-02',NULL), -- Prescription.Pending = chưa phát thuốc
+	(5,5,'Credit Card','Paid','2025-10-11','2025-10-11'),
+	(6,6,'E-Wallet','Paid','2025-10-19','2025-10-19'),
+	(7,7,'Cash','Paid','2025-10-26','2025-10-26'),
+	(8,8,'Credit Card','Paid','2025-10-29','2025-10-29'),
+	(9,NULL,'Insurance','Paid','2025-10-31','2025-11-01'), -- No prescription
+	(10,9,'E-Wallet','Paid','2025-11-02','2025-11-02'),
+	
+	-- Doctor 1 Other Patients - Completed (MR ID 11-19)
+	(11,10,'Cash','Paid','2025-09-04','2025-09-04'),
+	(12,11,'Insurance','Paid','2025-09-16','2025-09-17'),
+	(13,12,'Credit Card','Paid','2025-09-26','2025-09-26'),
+	(14,13,'E-Wallet','Pending','2025-10-04',NULL), -- Prescription.Pending
+	(15,14,'Cash','Paid','2025-10-13','2025-10-13'),
+	(16,15,'Credit Card','Paid','2025-10-21','2025-10-21'),
+	(17,16,'Insurance','Paid','2025-10-28','2025-10-29'),
+	(18,17,'E-Wallet','Paid','2025-10-30','2025-10-30'),
+	(19,18,'Cash','Pending','2025-11-01',NULL), -- Prescription.Pending
+	
+	-- Other Doctors - Completed (MR ID 20-34)
+	(20,19,'E-Wallet','Paid','2025-09-06','2025-09-06'),
+	(21,20,'Cash','Paid','2025-09-13','2025-09-13'),
+	(22,21,'Credit Card','Paid','2025-09-19','2025-09-19'),
+	(23,22,'Insurance','Paid','2025-09-23','2025-09-24'),
+	(24,23,'E-Wallet','Paid','2025-09-29','2025-09-29'),
+	(25,24,'Cash','Paid','2025-10-06','2025-10-06'),
+	(26,25,'Credit Card','Pending','2025-10-09',NULL), -- Prescription.Pending
+	(27,26,'Insurance','Paid','2025-10-15','2025-10-16'),
+	(28,27,'E-Wallet','Paid','2025-10-17','2025-10-17'),
+	(29,NULL,'Cash','Paid','2025-10-22','2025-10-22'), -- No prescription
+	(30,28,'Credit Card','Paid','2025-10-24','2025-10-24'),
+	(31,29,'Insurance','Paid','2025-10-27','2025-10-28'),
+	(32,30,'E-Wallet','Pending','2025-10-29',NULL), -- Prescription.Pending
+	(33,31,'Cash','Paid','2025-10-31','2025-10-31'),
+	(34,32,'Credit Card','Paid','2025-11-02','2025-11-02');
+	
+	-- KHÔNG TẠO Invoice cho Approved (ID 11,12,27,28,29,49,50,51,58,59) - chưa có Medical Record
+	-- KHÔNG TẠO Invoice cho Pending (ID 13-16,30-32,52-56) - chưa có Medical Record
 
-	-- ---------- DOCTOR REVIEWS (15 sample) ----------
+	-- ---------- DOCTOR REVIEWS (30 sample) - Chỉ cho Completed appointments ----------
 	INSERT INTO DoctorReview (PatientID, DoctorID, Content, RateScore, DateCreate) VALUES
-	(1,1,'Very professional and attentive',5,'2025-05-02'),
-	(2,1,'Explained clearly',4,'2025-05-03'),
-	(3,2,'Skin cleared up',5,'2025-05-04'),
-	(4,3,'Good with children',5,'2025-05-05'),
-	(5,4,'Helpful and thorough',4,'2025-05-06'),
-	(6,5,'Great neurologist',5,'2025-05-07'),
-	(7,6,'Caring and patient',4,'2025-05-08'),
-	(8,7,'Excellent eye care',5,'2025-05-09'),
-	(9,8,'Helpful ENT consultation',4,'2025-05-10'),
-	(10,9,'Supportive',5,'2025-05-11'),
-	(11,1,'Follow up was useful',4,'2025-05-12'),
-	(12,2,'Good treatment',4,'2025-05-13'),
-	(13,3,'Pediatric nurse supportive',5,'2025-05-14'),
-	(14,4,'Recovery good',5,'2025-05-15'),
-	(15,5,'Professional',5,'2025-05-16');
+	-- Patient 1 reviews (After completed appointments)
+	(1,1,'Very professional cardiologist',5,'2025-09-03'),
+	(1,2,'Excellent dermatologist, very thorough',5,'2025-09-12'),
+	(1,3,'Great general practitioner',4,'2025-09-22'),
+	(1,4,'Helpful orthopedic consultation',4,'2025-10-03'),
+	(1,5,'Experienced neurologist',5,'2025-10-12'),
+	(1,1,'Follow-up was very helpful',5,'2025-10-20'),
+	(1,6,'Good endocrinologist',4,'2025-10-27'),
+	(1,7,'Excellent eye care',5,'2025-10-30'),
+	(1,8,'Professional ENT specialist',4,'2025-11-01'),
+	
+	-- Other patients reviews
+	(2,1,'Cardiac care excellent',5,'2025-09-05'),
+	(5,1,'Very caring doctor',5,'2025-09-17'),
+	(6,1,'Thorough examination',4,'2025-09-27'),
+	(7,1,'Excellent cardiac screening',5,'2025-10-05'),
+	(8,1,'Young and knowledgeable',5,'2025-10-14'),
+	(11,1,'Very professional',4,'2025-10-22'),
+	(14,1,'Great follow-up care',5,'2025-10-29'),
+	(16,1,'Comprehensive check',4,'2025-10-31'),
+	(19,1,'Excellent heart specialist',5,'2025-11-02'),
+	
+	-- Other doctors reviews
+	(3,2,'Skin problem solved',5,'2025-09-07'),
+	(4,3,'Good with children',5,'2025-09-14'),
+	(5,4,'Helpful orthopedist',4,'2025-09-20'),
+	(6,5,'Excellent neurologist',5,'2025-09-24'),
+	(7,6,'Good diabetes management',4,'2025-09-30'),
+	(8,7,'Professional eye doctor',5,'2025-10-07'),
+	(9,8,'ENT specialist helpful',4,'2025-10-10'),
+	(10,9,'Supportive psychiatrist',5,'2025-10-16'),
+	(11,10,'Good general practitioner',4,'2025-10-18'),
+	(12,2,'Acne treatment effective',5,'2025-10-23'),
+	(13,3,'Pediatrician very caring',5,'2025-10-25'),
+	(15,5,'Neurology consultation helpful',4,'2025-10-30');
 END
