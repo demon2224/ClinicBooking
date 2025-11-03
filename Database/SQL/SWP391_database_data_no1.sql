@@ -394,4 +394,22 @@ BEGIN
 	(28,28,'Credit Card','Pending','2025-05-28',NULL), -- MR 28, Pres 28 (Pending)
 	(29,29,'E-Wallet','Paid','2025-05-29','2025-05-29'),
 	(30,30,'Cash','Paid','2025-05-30','2025-05-30');
+
+	-- ---------- DOCTOR REVIEWS (15 sample) ----------
+	INSERT INTO DoctorReview (PatientID, DoctorID, Content, RateScore, DateCreate) VALUES
+	(1,1,'Very professional and attentive',5,'2025-05-02'),
+	(2,1,'Explained clearly',4,'2025-05-03'),
+	(3,2,'Skin cleared up',5,'2025-05-04'),
+	(4,3,'Good with children',5,'2025-05-05'),
+	(5,4,'Helpful and thorough',4,'2025-05-06'),
+	(6,5,'Great neurologist',5,'2025-05-07'),
+	(7,6,'Caring and patient',4,'2025-05-08'),
+	(8,7,'Excellent eye care',5,'2025-05-09'),
+	(9,8,'Helpful ENT consultation',4,'2025-05-10'),
+	(10,9,'Supportive',5,'2025-05-11'),
+	(11,1,'Follow up was useful',4,'2025-05-12'),
+	(12,2,'Good treatment',4,'2025-05-13'),
+	(13,3,'Pediatric nurse supportive',5,'2025-05-14'),
+	(14,4,'Recovery good',5,'2025-05-15'),
+	(15,5,'Professional',5,'2025-05-16');
 END
