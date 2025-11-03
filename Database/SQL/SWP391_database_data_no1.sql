@@ -318,24 +318,39 @@ BEGIN
 	
 	-- Completed (Other Doctors: ID 34-48)
 	(34,'Delivered','2025-09-06','Skin rash ointment'), -- ID 19
-	(35,'Delivered','2025-09-13','Pediatric fever meds'), -- ID 22
-	(36,'Delivered','2025-09-19','Knee pain medication'), -- ID 23
-	(37,'Delivered','2025-09-23','Headache meds'), -- ID 24
-	(38,'Delivered','2025-09-29','Diabetes control'), -- ID 25
-	(39,'Delivered','2025-10-06','Eye drops'), -- ID 26
-	(40,'Pending','2025-10-09','Ear antibiotics - chưa phát'), -- ID 27
-	(41,'Delivered','2025-10-15','Mental health meds'), -- ID 28
-	(42,'Delivered','2025-10-17','BP medication'), -- ID 29
+	(35,'Delivered','2025-09-13','Pediatric fever meds'), -- ID 20
+	(36,'Delivered','2025-09-19','Knee pain medication'), -- ID 21
+	(37,'Delivered','2025-09-23','Headache meds'), -- ID 22
+	(38,'Delivered','2025-09-29','Diabetes control'), -- ID 23
+	(39,'Delivered','2025-10-06','Eye drops'), -- ID 24
+	(40,'Pending','2025-10-09','Ear antibiotics - chưa phát'), -- ID 25
+	(41,'Delivered','2025-10-15','Mental health meds'), -- ID 26
+	(42,'Delivered','2025-10-17','BP medication'), -- ID 27
 	-- ID 43 (Appt 43) - Không kê đơn thuốc
-	(44,'Delivered','2025-10-24','Vaccination vitamins'), -- ID 30
-	(45,'Delivered','2025-10-27','Fracture pain relief'), -- ID 31
-	(46,'Pending','2025-10-29','Neurology meds - chưa phát'), -- ID 32
-	(47,'Delivered','2025-10-31','General vitamins'), -- ID 33
-	(48,'Delivered','2025-11-02','Eye care prescription'); -- ID 34
+	(44,'Delivered','2025-10-24','Vaccination vitamins'), -- ID 28
+	(45,'Delivered','2025-10-27','Fracture pain relief'), -- ID 29
+	(46,'Pending','2025-10-29','Neurology meds - chưa phát'), -- ID 30
+	(47,'Delivered','2025-10-31','General vitamins'), -- ID 31
+	(48,'Delivered','2025-11-02','Eye care prescription'), -- ID 32
 	
-	-- KHÔNG TẠO prescription cho Approved (ID 11,12,27,28,29,49,50,51,58,59) - chưa khám
-	-- KHÔNG TẠO prescription cho Pending (ID 13-16,30-32,52-56) - chưa duyệt/chưa khám
-	-- KHÔNG TẠO prescription cho Canceled (ID 57) - đã hủy
+	-- Approved (Patient 1: ID 11, 12)
+	(11,'Delivered','2025-11-05','Stress relief medication'), -- ID 33
+	(12,'Delivered','2025-11-08','Skin treatment'), -- ID 34
+	
+	-- Approved (Doctor 1 - Other Patients: ID 27, 28, 29)
+	(27,'Delivered','2025-11-06','Anxiety medication'), -- ID 35
+	(28,'Delivered','2025-11-09','Post-op cardiac meds'), -- ID 36
+	(29,'Delivered','2025-11-13','Thyroid medication'), -- ID 37
+	
+	-- Approved (Other Doctors: ID 49, 50, 51, 58, 59)
+	(49,'Delivered','2025-11-07','Sinus medication'), -- ID 38
+	(50,'Delivered','2025-11-11','Antidepressants'), -- ID 39
+	(51,'Delivered','2025-11-14','General vitamins'), -- ID 40
+	(58,'Delivered','2025-11-17','Mental health meds'), -- ID 41
+	(59,'Delivered','2025-11-21','Preventive meds'); -- ID 42
+	
+	-- KHÔNG TẠO prescription cho Pending (ID 13-16,30-32,52-56) - chưa duyệt
+	-- KHÔNG TẠO prescription cho Canceled (ID 17,33,57) - đã hủy
 
 	-- 11. PRESCRIPTION ITEMS - Phụ thuộc vào Prescription (PrescriptionID) và Medicine (MedicineID)
 	INSERT INTO PrescriptionItem (PrescriptionID, MedicineID, Dosage, Instruction) VALUES
@@ -379,12 +394,29 @@ BEGIN
 	(29,25,1,'Tramadol if needed'),
 	(30,28,1,'Neurology medication'),
 	(31,23,1,'General vitamins'),
-	(32,5,1,'Eye care drops');
+	(32,5,1,'Eye care drops'),
+	
+	-- Approved Appointments (Patient 1: ID 11, 12)
+	(33,28,1,'Stress relief meds'),
+	(34,14,2,'Skin treatment cream'),
+	
+	-- Approved (Doctor 1 - Other Patients: ID 27, 28, 29)
+	(35,21,1,'Anxiety cardiac meds'),
+	(36,21,1,'Post-op cardiac meds'),
+	(37,17,1,'Thyroid medication'),
+	
+	-- Approved (Other Doctors: ID 49, 50, 51, 58, 59)
+	(38,2,1,'Sinus antibiotics'),
+	(39,28,1,'Antidepressants'),
+	(40,23,1,'General vitamins'),
+	(41,28,1,'Mental health meds'),
+	(42,23,1,'Preventive vitamins');
 
-	-- 12. MEDICAL RECORDS - CHỈ cho Completed appointments (đã khám xong)
-	-- Pending/Approved = chưa khám → KHÔNG có medical record
-	-- Canceled = đã hủy (chưa khám) → KHÔNG có medical record
-	-- Medical Record CHỈ được tạo KHI bệnh nhân ĐÃ ĐẾN KHÁM (bác sĩ ghi triệu chứng, chẩn đoán)
+	-- 12. MEDICAL RECORDS - Cho Completed và Approved appointments
+	-- Completed = đã khám xong
+	-- Approved = đã duyệt, có thể bắt đầu khám
+	-- Pending = chưa duyệt → KHÔNG có medical record
+	-- Canceled = đã hủy → KHÔNG có medical record
 	INSERT INTO MedicalRecord (AppointmentID, PrescriptionID, Symptoms, Diagnosis, Note, DateCreate)
 	VALUES
 	-- Patient 1 - Completed (ID 1-10)
@@ -411,31 +443,48 @@ BEGIN
 	(26,19,'Heart screening','Normal','Routine checkup','2025-11-01'),
 	
 	-- Other Doctors - Completed (ID 34-48)
-	(34,21,'Skin rash','Contact dermatitis','Ointment prescribed','2025-09-06'),
-	(35,22,'Child fever','Viral infection','Medication given','2025-09-13'),
-	(36,23,'Knee pain','Sprain','Pain relief prescribed','2025-09-19'),
-	(37,24,'Headache','Migraine','Treatment started','2025-09-23'),
-	(38,25,'High sugar','Diabetes','Medication adjusted','2025-09-29'),
-	(39,26,'Eye check','Normal vision','Preventive care','2025-10-06'),
-	(40,27,'Ear pain','Otitis media','Antibiotics given','2025-10-09'),
-	(41,28,'Mental health','Anxiety','Therapy recommended','2025-10-15'),
-	(42,29,'High BP','Hypertension','BP meds prescribed','2025-10-17'),
+	(34,19,'Skin rash','Contact dermatitis','Ointment prescribed','2025-09-06'),
+	(35,20,'Child fever','Viral infection','Medication given','2025-09-13'),
+	(36,21,'Knee pain','Sprain','Pain relief prescribed','2025-09-19'),
+	(37,22,'Headache','Migraine','Treatment started','2025-09-23'),
+	(38,23,'High sugar','Diabetes','Medication adjusted','2025-09-29'),
+	(39,24,'Eye check','Normal vision','Preventive care','2025-10-06'),
+	(40,25,'Ear pain','Otitis media','Antibiotics given','2025-10-09'),
+	(41,26,'Mental health','Anxiety','Therapy recommended','2025-10-15'),
+	(42,27,'High BP','Hypertension','BP meds prescribed','2025-10-17'),
 	(43,NULL,'Acne','Acne vulgaris','No medication needed','2025-10-22'),
-	(44,30,'Vaccination','Healthy','Vaccination completed','2025-10-24'),
-	(45,31,'Fracture review','Healing','Continue therapy','2025-10-27'),
-	(46,32,'Numbness','Neuropathy','Medication prescribed','2025-10-29'),
-	(47,33,'General check','Healthy','No issues','2025-10-31'),
-	(48,34,'Eye review','Post-op normal','Healing well','2025-11-02');
+	(44,28,'Vaccination','Healthy','Vaccination completed','2025-10-24'),
+	(45,29,'Fracture review','Healing','Continue therapy','2025-10-27'),
+	(46,30,'Numbness','Neuropathy','Medication prescribed','2025-10-29'),
+	(47,31,'General check','Healthy','No issues','2025-10-31'),
+	(48,32,'Eye review','Post-op normal','Healing well','2025-11-02'),
 	
-	-- KHÔNG TẠO Medical Record cho Canceled (ID 17,33,57) - đã hủy, chưa khám
-	-- KHÔNG TẠO Medical Record cho Approved (ID 11,12,27,28,29,49,50,51,58,59) - chưa khám
-	-- KHÔNG TẠO Medical Record cho Pending (ID 13-16,30-32,52-56) - chưa duyệt/chưa khám
+	-- Approved - Patient 1 (ID 11, 12)
+	(11,33,'Stress and anxiety','Stress disorder','Counseling recommended','2025-11-05'),
+	(12,34,'Skin irritation','Eczema flare-up','Topical treatment','2025-11-08'),
+	
+	-- Approved - Doctor 1 Other Patients (ID 27, 28, 29)
+	(27,35,'Heart palpitations','Anxiety-induced','Cardiac monitoring','2025-11-06'),
+	(28,36,'Post-operative check','Recovery on track','Continue medication','2025-11-09'),
+	(29,37,'Thyroid symptoms','Hypothyroidism','Medication adjustment','2025-11-13'),
+	
+	-- Approved - Other Doctors (ID 49, 50, 51, 58, 59)
+	(49,38,'Sinus pain','Acute sinusitis','Antibiotics prescribed','2025-11-07'),
+	(50,39,'Depression symptoms','Major depressive disorder','Therapy initiated','2025-11-11'),
+	(51,40,'Routine checkup','Healthy','Preventive care','2025-11-14'),
+	(58,41,'Anxiety disorder','Generalized anxiety','Medication started','2025-11-17'),
+	(59,42,'Annual physical','Normal results','Follow-up in 1 year','2025-11-21');
+	
+	-- KHÔNG TẠO Medical Record cho Canceled (ID 17,33,57) - đã hủy
+	-- KHÔNG TẠO Medical Record cho Pending (ID 13-16,30-32,52-56) - chưa duyệt
 
 	-- 13. INVOICES - TỰ ĐỘNG SINH khi có Medical Record
-	-- Approved/Pending = chưa có Medical Record = chưa có Invoice
-	-- Completed với Prescription.Delivered = Paid
-	-- Completed với Prescription.Pending = Pending (chưa thanh toán do chưa phát thuốc)
-	-- Canceled = Canceled invoice
+	-- Completed = đã khám → có Medical Record → có Invoice
+	-- Approved = đã duyệt → có Medical Record → có Invoice
+	-- Pending = chưa duyệt → KHÔNG có Medical Record → KHÔNG có Invoice
+	-- Canceled = đã hủy → KHÔNG có Medical Record → KHÔNG có Invoice
+	-- Invoice với Prescription.Delivered = Paid
+	-- Invoice với Prescription.Pending = Pending (chưa thanh toán do chưa phát thuốc)
 	INSERT INTO Invoice (MedicalRecordID, PrescriptionID, PaymentType, InvoiceStatus, DateCreate, DatePay)
 	VALUES
 	-- Patient 1 - Completed (MR ID 1-10)
@@ -476,10 +525,26 @@ BEGIN
 	(31,29,'Insurance','Paid','2025-10-27','2025-10-28'),
 	(32,30,'E-Wallet','Pending','2025-10-29',NULL), -- Prescription.Pending
 	(33,31,'Cash','Paid','2025-10-31','2025-10-31'),
-	(34,32,'Credit Card','Paid','2025-11-02','2025-11-02');
+	(34,32,'Credit Card','Paid','2025-11-02','2025-11-02'),
 	
-	-- KHÔNG TẠO Invoice cho Approved (ID 11,12,27,28,29,49,50,51,58,59) - chưa có Medical Record
-	-- KHÔNG TẠO Invoice cho Pending (ID 13-16,30-32,52-56) - chưa có Medical Record
+	-- Approved - Patient 1 (MR ID 35-36)
+	(35,33,'Cash','Paid','2025-11-05','2025-11-05'),
+	(36,34,'E-Wallet','Paid','2025-11-08','2025-11-08'),
+	
+	-- Approved - Doctor 1 Other Patients (MR ID 37-39)
+	(37,35,'Credit Card','Paid','2025-11-06','2025-11-06'),
+	(38,36,'Insurance','Paid','2025-11-09','2025-11-09'),
+	(39,37,'Cash','Paid','2025-11-13','2025-11-13'),
+	
+	-- Approved - Other Doctors (MR ID 40-44)
+	(40,38,'E-Wallet','Paid','2025-11-07','2025-11-07'),
+	(41,39,'Credit Card','Paid','2025-11-11','2025-11-11'),
+	(42,40,'Cash','Paid','2025-11-14','2025-11-14'),
+	(43,41,'Insurance','Paid','2025-11-17','2025-11-17'),
+	(44,42,'E-Wallet','Paid','2025-11-21','2025-11-21');
+	
+	-- KHÔNG TẠO Invoice cho Pending (ID 13-16,30-32,52-56) - chưa duyệt
+	-- KHÔNG TẠO Invoice cho Canceled (ID 17,33,57) - đã hủy
 
 	-- ---------- DOCTOR REVIEWS (30 sample) - Chỉ cho Completed appointments ----------
 	INSERT INTO DoctorReview (PatientID, DoctorID, Content, RateScore, DateCreate) VALUES
