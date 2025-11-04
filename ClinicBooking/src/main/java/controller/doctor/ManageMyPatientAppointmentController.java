@@ -5,6 +5,7 @@
 package controller.doctor;
 
 import dao.AppointmentDAO;
+import dao.MedicalRecordDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -23,6 +24,7 @@ import model.DoctorDTO;
 public class ManageMyPatientAppointmentController extends HttpServlet {
 
     private AppointmentDAO appointmentDAO;
+    private MedicalRecordDAO medicalRecordDAO;
 
     /**
      * Initialize all the necessary DAO using in this controller.
@@ -32,6 +34,7 @@ public class ManageMyPatientAppointmentController extends HttpServlet {
     @Override
     public void init() throws ServletException {
         appointmentDAO = new AppointmentDAO();
+        medicalRecordDAO = new MedicalRecordDAO();
     }
 
     /**
@@ -125,8 +128,10 @@ public class ManageMyPatientAppointmentController extends HttpServlet {
         try {
             int appointmentID = Integer.parseInt(request.getParameter("appointmentID"));
             AppointmentDTO appointment = appointmentDAO.getPatientAppointmentDetailOfDoctorByID(appointmentID, doctorID);
+            boolean isExist = medicalRecordDAO.isExistMedicalRecord(appointmentID);
             if (appointment.getAppointmentID() == appointmentID) {
                 request.setAttribute("detail", appointment);
+                request.setAttribute("isExist", isExist);
                 request.getRequestDispatcher("/WEB-INF/doctor/MyPatientAppointmentDetail.jsp").forward(request, response);
             }
         } catch (Exception ex) {

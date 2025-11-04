@@ -93,19 +93,37 @@
             .sidebar a:hover {
                 background-color: #00D0F1;
             }
+              .btn-create-record {
+        display: inline-block;
+        background: linear-gradient(135deg, #28a745, #00c6a7);
+        color: white;
+        padding: 10px 24px;
+        border-radius: 30px;
+        font-weight: 600;
+        text-decoration: none;
+        box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+        transition: all 0.3s ease;
+    }
+
+    .btn-create-record:hover {
+        background: linear-gradient(135deg, #00e6b8, #32cd32);
+        transform: translateY(-2px);
+        box-shadow: 0 5px 12px rgba(0, 0, 0, 0.25);
+        color: #fff;
+        text-decoration: none;
+    }
+
+    .btn-create-record:active {
+        transform: translateY(0);
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    }
         </style>
     </head>
     <body>
-        <div class="sidebar">
-            <h4 class="text-center mt-3 mb-4">CLINIC</h4>
-            <a href="${pageContext.request.contextPath}/doctor-dashboard"><i class="fa-solid fa-gauge me-2"></i>Dashboard</a>
-            <a href="${pageContext.request.contextPath}/manage-my-patient-appointment"><i class="fa-solid fa-calendar-days me-2"></i>Manage Appointment</a>
-            <a href="${pageContext.request.contextPath}/manage-my-patient-medical-record"><i class="fa-solid fa-user-doctor me-2"></i>Manage Medical Record</a>
-            <a href="#"><i class="fa-solid fa-user me-2"></i>Manage Prescription</a>
-        </div>
+        <%@include file="../includes/DoctorDashboardSidebar.jsp" %>
         <div class="container">
             <div class="d-flex justify-content-between align-items-center mb-3">
-                <h2>Patient Appointment Detail</h2>
+                <h2>Appointment Detail</h2>
             </div>
 
             <!-- Appointment Info -->
@@ -157,6 +175,15 @@
                 <tr><th>Date of Birth</th><td> <fmt:formatDate value="${detail.patientID.dob}" pattern="yyyy/MM/dd" /></td></tr>
                 <tr><th>Address</th><td>${detail.patientID.userAddress}</td></tr>
             </table>
+
+            <c:if test="${ requestScope.isExist}">
+                 <div class="text-center mt-4">
+        <a href="${pageContext.request.contextPath}/manage-my-patient-medical-record?action=create&appointmentID=${detail.appointmentID}"
+           class="btn-create-record">
+            <i class="fa-solid fa-notes-medical me-2"></i> Create Medical Record
+        </a>
+    </div>
+            </c:if>
         </div>
     </body>
 </html>

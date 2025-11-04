@@ -1,24 +1,40 @@
-///*
-// * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
-// * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
-// */
-//package dao;
-//
-//import java.sql.ResultSet;
-//import java.sql.SQLException;
-//import java.util.ArrayList;
-//import java.util.List;
-//import java.util.logging.Level;
-//import java.util.logging.Logger;
-//import model.MedicalRecord;
-//import utils.DBContext;
-//
-///**
-// *
-// * @author Le Thien Tri - CE191249
-// */
-//public class MedicalRecordDAO extends DBContext {
-//
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+package dao;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import utils.DBContext;
+
+/**
+ *
+ * @author Le Thien Tri - CE191249
+ */
+public class MedicalRecordDAO extends DBContext {
+
+    public boolean isExistMedicalRecord(int appointmentID) {
+        String sql = "Select m.MedicalRecordID\n"
+                + "from MedicalRecord m\n"
+                + "JOIN Appointment a on a.AppointmentID = m.AppointmentID\n"
+                + "Where a.AppointmentID = ?";
+        Object[] params = {appointmentID};
+        ResultSet rs = executeSelectQuery(sql, params);
+        boolean isExistMedicalRecord = false;
+        try {
+            isExistMedicalRecord = rs.next();
+        } catch (SQLException ex) {
+            Logger.getLogger(MedicalRecordDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return isExistMedicalRecord;
+    }
+
+}
 //    public List<MedicalRecord> getPatientMedicalRecordByDoctorId(int doctorId) {
 //        List<MedicalRecord> list = new ArrayList<>();
 //        String sql = "				SELECT   mr.MedicalRecordID,\n"

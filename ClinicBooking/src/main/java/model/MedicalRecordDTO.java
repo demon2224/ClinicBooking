@@ -23,6 +23,16 @@ public class MedicalRecordDTO {
     public MedicalRecordDTO() {
     }
 
+    public MedicalRecordDTO(int medicalRecordID, AppointmentDTO appointmentID, PrescriptionDTO prescriptionDTO, String symptoms, String diagnosis, String note, Timestamp dateCreate) {
+        this.medicalRecordID = medicalRecordID;
+        this.appointmentID = appointmentID;
+        this.prescriptionDTO = prescriptionDTO;
+        this.symptoms = symptoms;
+        this.diagnosis = diagnosis;
+        this.note = note;
+        this.dateCreate = dateCreate;
+    }
+
     public int getMedicalRecordID() {
         return medicalRecordID;
     }

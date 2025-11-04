@@ -67,15 +67,7 @@
         </style>
     </head>
     <body>
-        <!-- Sidebar -->
-        <div class="sidebar">
-            <h4 class="text-center mt-3 mb-4">CLINIC</h4>
-            <a href="${pageContext.request.contextPath}/doctor-dashboard"><i class="fa-solid fa-gauge me-2"></i>Dashboard</a>
-            <a href="${pageContext.request.contextPath}/manage-my-patient-appointment"><i class="fa-solid fa-calendar-days me-2"></i>Manage Appointment</a>
-            <a href="${pageContext.request.contextPath}/manage-my-patient-medical-record"><i class="fa-solid fa-user-doctor me-2"></i>Manage Medical Record</a>
-            <a href="#"><i class="fa-solid fa-user me-2"></i>Manage Prescription</a>
-        </div>
-
+        <%@include file="../includes/DoctorDashboardSidebar.jsp" %>
         <!-- Main content -->
         <div class="main-content">
             <nav class="navbar navbar-light">
@@ -97,41 +89,30 @@
                 <!-- Doctors List -->
                 <div class="card mb-4">
                     <div class="card-header bg-white">
-                        <h5 class="mb-0">Patient Appointment List</h5>
+                        <h5 class="mb-0">Appointment List</h5>
                     </div>
                     <div class="card-body">
                         <table class="table align-middle">
                             <thead>
                                 <tr>
+                                    <th>#</th>
                                     <th>Name</th>
                                     <th>Email</th>
                                     <th>Phone</th>
                                     <th>Date Begin</th>
                                     <th>Note</th>
-                                    <th>Status</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <c:forEach var="list" items="${list}">
+                                <c:forEach var="list" items="${list}" varStatus="item">
                                     <tr>
+                                        <td><c:out value="${item.count}"/></td>
                                         <td>${list.patientID.firstName} ${list.patientID.lastName}</td>
                                         <td>${list.patientID.email}</td>
                                         <td>${list.patientID.phoneNumber}</td>
                                         <td><fmt:formatDate value="${list.dateBegin}" pattern="yyyy/MM/dd HH:mm"/></td>
                                         <td>${list.note}</td>
-                                        <td>
-                                            <span class="badge
-                                                  <c:choose>
-                                                      <c:when test="${list.appointmentStatus eq 'Pending'}">bg-warning text-dark</c:when>
-                                                      <c:when test="${list.appointmentStatus eq 'Approved'}">bg-primary</c:when>
-                                                      <c:when test="${list.appointmentStatus eq 'Completed'}">bg-success</c:when>
-                                                      <c:when test="${list.appointmentStatus eq 'Canceled'}">bg-danger</c:when>
-                                                      <c:otherwise>bg-secondary</c:otherwise>
-                                                  </c:choose>">
-                                                ${list.appointmentStatus}
-                                            </span>
-                                        </td>
                                         <td>
                                             <a href="${pageContext.request.contextPath}/manage-my-patient-appointment?action=detail&appointmentID=${list.appointmentID}"
                                                class="btn btn-sm btn-info text-white text-decoration-none">

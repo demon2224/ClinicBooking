@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import model.MedicalRecordDTO;
 import model.PatientDTO;
 
 /**
@@ -43,7 +44,7 @@ public class AppointmentDAO extends DBContext {
                 + "JOIN Doctor d on a.DoctorID = d.DoctorID\n"
                 + "JOIN Staff s on s.StaffID = d.StaffID\n"
                 + "JOIN Patient p on p.PatientID = a.PatientID\n"
-                + "Where d.DoctorID = ?";
+                + "Where d.DoctorID = ? and a.AppointmentStatus = 'Approved' and CAST (a.DateBegin as DATE) = CAST (GETDATE() as DATE)";
         Object[] params = {doctorID};
         ResultSet rs = executeSelectQuery(sql, params);
         try {
@@ -82,22 +83,24 @@ public class AppointmentDAO extends DBContext {
     public AppointmentDTO getPatientAppointmentDetailOfDoctorByID(int appointmentID, int doctorID) {
         AppointmentDTO appointment = null;
         String sql = "SELECT a.AppointmentID,\n"
-                + "	p.FirstName,\n"
-                + "	p.LastName,\n"
-                + "	p.Email,\n"
-                + "	p.DOB,\n"
-                + "	CASE WHEN p.Gender = 1 THEN 'Male' ELSE 'Female' END as Gender,\n"
-                + "	p.UserAddress,\n"
-                + "	p.PhoneNumber,\n"
-                + "	a.DateBegin,\n"
-                + "     a.DateEnd,\n"
-                + "	a.Note,\n"
-                + "	a.AppointmentStatus\n"
-                + "FROM Appointment a\n"
-                + "JOIN Doctor d on a.DoctorID = d.DoctorID\n"
-                + "JOIN Staff s on s.StaffID = d.StaffID\n"
-                + "JOIN Patient p on p.PatientID = a.PatientID\n"
-                + "Where d.DoctorID = ? AND a.AppointmentID = ?";
+                + "                	p.FirstName,\n"
+                + "                	p.LastName,\n"
+                + "                	p.Email,\n"
+                + "                	p.DOB,\n"
+                + "                	CASE WHEN p.Gender = 1 THEN 'Male' ELSE 'Female' END as Gender,\n"
+                + "                	p.UserAddress,\n"
+                + "                	p.PhoneNumber,\n"
+                + "                	a.DateBegin,\n"
+                + "                     a.DateEnd,\n"
+                + "                	a.Note,\n"
+                + "                	a.AppointmentStatus,\n"
+                + "			m.MedicalRecordID\n"
+                + "                FROM Appointment a\n"
+                + "                JOIN Doctor d on a.DoctorID = d.DoctorID\n"
+                + "                JOIN Staff s on s.StaffID = d.StaffID\n"
+                + "                JOIN Patient p on p.PatientID = a.PatientID\n"
+                + "				LEFT JOIN MedicalRecord m on m.AppointmentID = a.AppointmentID\n"
+                + "                Where d.DoctorID = ? and a.AppointmentID = ?";
         Object[] params = {doctorID, appointmentID};
         ResultSet rs = executeSelectQuery(sql, params);
         try {
