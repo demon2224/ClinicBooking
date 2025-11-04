@@ -98,13 +98,13 @@
                                             <p>
                                                 <span class="appointment-status
                                                       <c:choose>
-                                                          <c:when test="${appointment.appointmentStatusID == 2}">status-confirmed</c:when>
-                                                          <c:when test="${appointment.appointmentStatusID == 1}">status-pending</c:when>
-                                                          <c:when test="${appointment.appointmentStatusID == 4}">status-cancelled</c:when>
-                                                          <c:when test="${appointment.appointmentStatusID == 3}">status-completed</c:when>
+                                                          <c:when test="${appointment.appointmentStatus == 'Approved'}">status-approved</c:when>
+                                                          <c:when test="${appointment.appointmentStatus == 'Pending'}">status-pending</c:when>
+                                                          <c:when test="${appointment.appointmentStatus == 'Canceled'}">status-cancelled</c:when>
+                                                          <c:when test="${appointment.appointmentStatus == 'Completed'}">status-completed</c:when>
                                                           <c:otherwise>status-pending</c:otherwise>
                                                       </c:choose>">
-                                                    ${appointment.statusName != null ? appointment.statusName : 'Unknown'}
+                                                    ${appointment.appointmentStatus != null ? appointment.appointmentStatus : 'Unknown'}
                                                 </span>
                                             </p>
                                         </div>
@@ -125,7 +125,7 @@
                                         </div>
                                         <div class="info-content">
                                             <h4>Doctor Name</h4>
-                                            <p>Dr. ${appointment.doctorName != null ? appointment.doctorName : 'Unknown Doctor'}</p>
+                                            <p>Dr. ${appointment.doctorID.staffID.firstName} ${appointment.doctorID.staffID.lastName}</p>
                                         </div>
                                     </div>
                                     <div class="info-item">
@@ -134,7 +134,7 @@
                                         </div>
                                         <div class="info-content">
                                             <h4>Specialty</h4>
-                                            <p>${appointment.specialtyName != null ? appointment.specialtyName : 'General Medicine'}</p>
+                                                <p>${appointment.doctorID.specialtyID.specialtyName != null ? appointment.doctorID.specialtyID.specialtyName : 'General Medicine'}</p>
                                         </div>
                                     </div>
                                     <div class="info-item">
@@ -144,14 +144,45 @@
                                         <div class="info-content">
                                             <h4>Rating</h4>
                                             <p>
-                                                <span class="stars">
-                                                    <i class="fas fa-star"></i>
-                                                    <i class="fas fa-star"></i>
-                                                    <i class="fas fa-star"></i>
-                                                    <i class="fas fa-star"></i>
-                                                    <i class="fas fa-star"></i>
-                                                </span>
-                                                5.0
+                                                <div class="doctor-rating">
+                                                    <c:choose>
+                                                        <c:when test="${averageRating > 0}">
+                                                            <span class="stars">
+                                                                <c:forEach begin="1" end="5" var="star">
+                                                                    <c:choose>
+                                                                        <c:when test="${star <= averageRating}">
+                                                                            <i class="fas fa-star star-filled"></i>
+                                                                        </c:when>
+                                                                        <c:when test="${star - averageRating < 1}">
+                                                                            <i class="fas fa-star-half-alt star-filled"></i>
+                                                                        </c:when>
+                                                                        <c:otherwise>
+                                                                            <i class="far fa-star star-empty"></i>
+                                                                        </c:otherwise>
+                                                                    </c:choose>
+                                                                </c:forEach>
+                                                            </span>
+                                                            <span class="rating-score">
+                                                                <c:choose>
+                                                                    <c:when test="${averageRating % 1 == 0}">
+                                                                        ${averageRating.intValue()}/5
+                                                                    </c:when>
+                                                                    <c:otherwise>
+                                                                        <fmt:formatNumber value="${averageRating}" pattern="#.#"/>/5
+                                                                    </c:otherwise>
+                                                                </c:choose>
+                                                            </span>
+                                                        </c:when>
+                                                        <c:otherwise>
+                                                            <span class="stars">
+                                                                <c:forEach begin="1" end="5" var="star">
+                                                                    <i class="far fa-star star-empty"></i>
+                                                                </c:forEach>
+                                                            </span>
+                                                            <span class="rating-score">No ratings</span>
+                                                        </c:otherwise>
+                                                    </c:choose>
+                                                </div>
                                             </p>
                                         </div>
                                     </div>
@@ -161,7 +192,7 @@
                                         </div>
                                         <div class="info-content">
                                             <h4>Experience</h4>
-                                            <p>8+ years</p>
+                                            <p>${appointment.doctorID.yearExperience}+ years</p>
                                         </div>
                                     </div>
                                 </div>

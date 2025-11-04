@@ -71,7 +71,7 @@
                                 </div>
                                 <div class="doctor-info-content">
                                     <div class="doctor-info-label">Doctor Name</div>
-                                    <div class="doctor-info-value">${doctor.fullName}</div>
+                                    <div class="doctor-info-value">Dr. ${doctor.staffID.firstName} ${doctor.staffID.lastName}</div>
                                 </div>
                             </div>
 
@@ -84,8 +84,8 @@
                                     <div class="doctor-info-label">Specialty</div>
                                     <div class="doctor-info-value">
                                         <c:choose>
-                                            <c:when test="${not empty doctor.specialtyName}">
-                                                ${doctor.specialtyName}
+                                            <c:when test="${not empty doctor.specialtyID.specialtyName}">
+                                                ${doctor.specialtyID.specialtyName}
                                             </c:when>
                                             <c:otherwise>
                                                 General Practice
@@ -104,10 +104,43 @@
                                     <div class="doctor-info-label">Rating</div>
                                     <div class="doctor-info-value">
                                         <div class="doctor-rating">
-                                            <c:forEach var="i" begin="1" end="5">
-                                                <i class="fas fa-star star-filled"></i>
-                                            </c:forEach>
-                                            <span class="rating-score">5.0</span>
+                                            <c:choose>
+                                                <c:when test="${averageRating > 0}">
+                                                    <span class="stars">
+                                                        <c:forEach begin="1" end="5" var="star">
+                                                            <c:choose>
+                                                                <c:when test="${star <= averageRating}">
+                                                                    <i class="fas fa-star star-filled"></i>
+                                                                </c:when>
+                                                                <c:when test="${star - averageRating < 1}">
+                                                                    <i class="fas fa-star-half-alt star-filled"></i>
+                                                                </c:when>
+                                                                <c:otherwise>
+                                                                    <i class="far fa-star star-empty"></i>
+                                                                </c:otherwise>
+                                                            </c:choose>
+                                                        </c:forEach>
+                                                    </span>
+                                                    <span class="rating-score">
+                                                        <c:choose>
+                                                            <c:when test="${averageRating % 1 == 0}">
+                                                                ${averageRating.intValue()}/5
+                                                            </c:when>
+                                                            <c:otherwise>
+                                                                <fmt:formatNumber value="${averageRating}" pattern="#.#"/>/5
+                                                            </c:otherwise>
+                                                        </c:choose>
+                                                    </span>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <span class="stars">
+                                                        <c:forEach begin="1" end="5" var="star">
+                                                            <i class="far fa-star star-empty"></i>
+                                                        </c:forEach>
+                                                    </span>
+                                                    <span class="rating-score">No ratings</span>
+                                                </c:otherwise>
+                                            </c:choose>
                                         </div>
                                     </div>
                                 </div>
@@ -163,7 +196,6 @@
                                         <li><i class="fas fa-calendar-day"></i> Working hours: 7:00 AM - 5:00 PM</li>
                                         <li><i class="fas fa-calendar-plus"></i> Maximum 30 days in advance</li>
                                         <li><i class="fas fa-user-clock"></i> 24-hour gap between appointments required</li>
-                                        <li><i class="fas fa-stethoscope"></i> End time determined by doctor when examination complete</li>
                                     </ul>
                                 </div>
                             </div>
@@ -223,16 +255,16 @@
                 if (modal) {
                     modal.style.display = 'flex';
                     document.body.style.overflow = 'hidden'; // Disable scrolling when modal is open
-                    
+
                     // Close modal when clicking outside
-                    modal.addEventListener('click', function(e) {
+                    modal.addEventListener('click', function (e) {
                         if (e.target === modal) {
                             closeModal();
                         }
                     });
-                    
+
                     // Close modal with Escape key
-                    document.addEventListener('keydown', function(e) {
+                    document.addEventListener('keydown', function (e) {
                         if (e.key === 'Escape') {
                             closeModal();
                         }
@@ -242,59 +274,59 @@
                 const noteTextarea = document.getElementById('note');
                 const charCount = document.getElementById('charCount');
 
-                            // Character counter functionality
-                            if (noteTextarea && charCount) {
-                                noteTextarea.addEventListener('input', function () {
-                                    const currentLength = this.value.length;
-                                    charCount.textContent = currentLength;
+                // Character counter functionality
+                if (noteTextarea && charCount) {
+                    noteTextarea.addEventListener('input', function () {
+                        const currentLength = this.value.length;
+                        charCount.textContent = currentLength;
 
-                                    // Change color based on character count
-                                    if (currentLength > 450) {
-                                        charCount.style.color = '#ef4444';
-                                    } else if (currentLength > 350) {
-                                        charCount.style.color = '#f59e0b';
-                                    } else {
-                                        charCount.style.color = '#6b7280';
-                                    }
-                                });
-                            }
+                        // Change color based on character count
+                        if (currentLength > 450) {
+                            charCount.style.color = '#ef4444';
+                        } else if (currentLength > 350) {
+                            charCount.style.color = '#f59e0b';
+                        } else {
+                            charCount.style.color = '#6b7280';
+                        }
+                    });
+                }
 
-                            // Add focus animations to inputs
-                            const inputs = document.querySelectorAll('.modern-input, .modern-textarea');
-                            inputs.forEach(input => {
-                                input.addEventListener('focus', function () {
-                                    this.parentElement.classList.add('focused');
-                                });
+                // Add focus animations to inputs
+                const inputs = document.querySelectorAll('.modern-input, .modern-textarea');
+                inputs.forEach(input => {
+                    input.addEventListener('focus', function () {
+                        this.parentElement.classList.add('focused');
+                    });
 
-                                input.addEventListener('blur', function () {
-                                    this.parentElement.classList.remove('focused');
-                                });
-                            });
+                    input.addEventListener('blur', function () {
+                        this.parentElement.classList.remove('focused');
+                    });
+                });
 
-                            // Add ripple effect to buttons
-                            const buttons = document.querySelectorAll('.modern-btn-primary');
-                            buttons.forEach(button => {
-                                button.addEventListener('click', function (e) {
-                                    const ripple = document.createElement('span');
-                                    ripple.className = 'ripple';
+                // Add ripple effect to buttons
+                const buttons = document.querySelectorAll('.modern-btn-primary');
+                buttons.forEach(button => {
+                    button.addEventListener('click', function (e) {
+                        const ripple = document.createElement('span');
+                        ripple.className = 'ripple';
 
-                                    const rect = this.getBoundingClientRect();
-                                    const size = Math.max(rect.width, rect.height);
-                                    const x = e.clientX - rect.left - size / 2;
-                                    const y = e.clientY - rect.top - size / 2;
+                        const rect = this.getBoundingClientRect();
+                        const size = Math.max(rect.width, rect.height);
+                        const x = e.clientX - rect.left - size / 2;
+                        const y = e.clientY - rect.top - size / 2;
 
-                                    ripple.style.width = ripple.style.height = size + 'px';
-                                    ripple.style.left = x + 'px';
-                                    ripple.style.top = y + 'px';
+                        ripple.style.width = ripple.style.height = size + 'px';
+                        ripple.style.left = x + 'px';
+                        ripple.style.top = y + 'px';
 
-                                    this.appendChild(ripple);
+                        this.appendChild(ripple);
 
-                                    setTimeout(() => {
-                                        ripple.remove();
-                                    }, 600);
-                                });
-                            });
-                        });
+                        setTimeout(() => {
+                            ripple.remove();
+                        }, 600);
+                    });
+                });
+            });
         </script>
     </body>
 </html>
