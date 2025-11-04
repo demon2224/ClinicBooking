@@ -34,12 +34,12 @@ public class DoctorDAO extends DBContext {
     public DoctorDTO getDoctorById(int doctorId) {
 
         String sql = "SELECT d.DoctorID, d.YearExperience, d.SpecialtyID, "
-                + "st.StaffID, st.FirstName, st.LastName, st.PhoneNumber, st.Email, st.Avatar, st.Bio, st.JobStatus, st.RoleID, "
+                + "st.StaffID, st.FirstName, st.LastName, st.PhoneNumber, st.Email, st.Avatar, st.Bio, st.JobStatus, st.Role, "
                 + "s.SpecialtyName "
                 + "FROM Doctor d "
                 + "INNER JOIN Staff st ON d.StaffID = st.StaffID "
                 + "LEFT JOIN Specialty s ON d.SpecialtyID = s.SpecialtyID "
-                + "WHERE d.DoctorID = ? AND st.RoleID = 1";
+                + "WHERE d.DoctorID = ? AND st.Role = 'Doctor'";
 
         DoctorDTO doctor = null;
         Object[] params = {doctorId};
