@@ -14,6 +14,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.PrintWriter;
+import model.DegreeDTO;
 import model.DoctorDTO;
 import model.DoctorReviewDTO;
 import utils.AvatarHandler;
@@ -40,15 +41,15 @@ public class DoctorController extends HttpServlet {
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
      *
-     * @param request servlet request
+     * @param request  servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * @throws IOException      if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        try ( PrintWriter out = response.getWriter()) {
+        try (PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
             out.println("<!DOCTYPE html>");
             out.println("<html>");
@@ -67,10 +68,10 @@ public class DoctorController extends HttpServlet {
     /**
      * Handles the HTTP <code>GET</code> method.
      *
-     * @param request servlet request
+     * @param request  servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * @throws IOException      if an I/O error occurs
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -94,10 +95,10 @@ public class DoctorController extends HttpServlet {
     /**
      * Handles the HTTP <code>POST</code> method.
      *
-     * @param request servlet request
+     * @param request  servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * @throws IOException      if an I/O error occurs
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -170,15 +171,16 @@ public class DoctorController extends HttpServlet {
                 return;
             }
 
+            List<DegreeDTO> degrees = doctorDAO.getDoctorDegrees(doctorId);
             List<DoctorReviewDTO> doctorReviews = doctorDAO.getReviewsByDoctorId(doctorId);
 
             // Calculate the average rating and review count
-            // double averageRating = doctorDAO.getAverageRatingByDoctorId(doctorId);
+            double averageRating = doctorDAO.getAverageRatingByDoctorId(doctorId);
             int reviewCount = doctorDAO.getReviewCountByDoctorId(doctorId);
 
             request.setAttribute("doctor", doctor);
             request.setAttribute("doctorReviews", doctorReviews);
-            // request.setAttribute("averageRating", averageRating);
+            request.setAttribute("averageRating", averageRating);
             request.setAttribute("reviewCount", reviewCount);
             request.getRequestDispatcher(DoctorConstants.DOCTOR_DETAIL_JSP).forward(request, response);
         } catch (NumberFormatException e) {
@@ -201,9 +203,9 @@ public class DoctorController extends HttpServlet {
      * Build redirect URL with parameters for POST-Redirect-GET pattern
      *
      * @param contextPath Application context path
-     * @param search Doctor name search term (for list view)
-     * @param action Action parameter (for detail view)
-     * @param doctorId Doctor ID (for detail view)
+     * @param search      Doctor name search term (for list view)
+     * @param action      Action parameter (for detail view)
+     * @param doctorId    Doctor ID (for detail view)
      * @return Complete redirect URL with parameters
      */
     private String buildRedirectUrl(String contextPath, String search, String action, String doctorId)

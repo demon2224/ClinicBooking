@@ -789,7 +789,7 @@
 
         <div class="container">
             <div class="appointment-page-header">
-                <h1><i class="fas fa-comments"></i> Doctor Detail </h1>
+                <h1><i class="fas fa-user-md"></i> Doctor Detail </h1>
             </div>
             <!-- Doctor Profile Card -->
             <div class="doctor-profile-card">
@@ -805,7 +805,7 @@
                             </h1>
                             <c:if test="${not empty doctor.specialtyID.specialtyName}">
                                 <p class="doctor-specialty">
-                                    <i class="fas fa-stethoscope"></i>
+                                    <i class="fas fa-user-md"></i>
                                     ${doctor.specialtyID.specialtyName}
                                 </p>
                             </c:if>
@@ -836,16 +836,7 @@
                                             </div>
                                             <div class="qualification-content">
                                                 <div class="qualification-name">
-                                                    ${degree.degreeID.degreeName}
-                                                </div>
-                                                <div class="qualification-details">
-                                                    <i
-                                                        class="fas fa-university"></i>${degree.grantor}
-                                                    <c:if test="${not empty degree.dateEarn}">
-                                                        •
-                                                        <fmt:formatDate value="${degree.dateEarn}"
-                                                                        pattern="MMM yyyy" />
-                                                    </c:if>
+                                                    ${degree.degreeName}
                                                 </div>
                                             </div>
                                         </div>
@@ -862,8 +853,32 @@
                                 Rating
                             </span>
                             <div class="rating-display">
-                                <span class="stars">★★★★☆</span>
-                                <span class="side-info-value">4.0</span>
+                                <c:choose>
+                                    <c:when test="${averageRating > 0}">
+                                        <span class="stars">
+                                            <c:forEach begin="1" end="5" var="star">
+                                                <c:choose>
+                                                    <c:when test="${star <= averageRating}">★</c:when>
+                                                    <c:when test="${star - averageRating < 1}">⯨</c:when>
+                                                    <c:otherwise>☆</c:otherwise>
+                                                </c:choose>
+                                            </c:forEach>
+                                        </span>
+                                        <span class="side-info-value">
+                                            <c:choose>
+                                                <c:when test="${averageRating % 1 == 0}">
+                                                    ${averageRating.intValue()}/5
+                                                </c:when>
+                                                <c:otherwise>
+                                                    ${averageRating}/5
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </span>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <span class="side-info-value">No ratings</span>
+                                    </c:otherwise>
+                                </c:choose>
                             </div>
                         </div>
                         <div class="side-info-item">

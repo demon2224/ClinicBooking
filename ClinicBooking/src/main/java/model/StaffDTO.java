@@ -13,8 +13,8 @@ import java.sql.Timestamp;
 public class StaffDTO {
 
     private int staffID;
-    private String role;
     private String jobStatus;
+    private String role;
     private String accountName;
     private String accountPassword;
     private Timestamp daycreated;
@@ -46,6 +46,14 @@ public class StaffDTO {
 
     public void setJobStatus(String jobStatus) {
         this.jobStatus = jobStatus;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 
     public String getAccountName() {
@@ -142,14 +150,6 @@ public class StaffDTO {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
     }
 
     public boolean isHidden() {

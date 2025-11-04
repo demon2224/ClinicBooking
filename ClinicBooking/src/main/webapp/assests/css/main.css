@@ -8402,6 +8402,155 @@ body.appointment-page {
     transform: translateY(-1px);
 }
 
+/* Reviews Section Styles */
+.reviews-section {
+    background: #ffffff;
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin-top: 2rem;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    border: 1px solid #e9ecef;
+}
+
+.reviews-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #f8f9fa;
+}
+
+.reviews-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #175CDD;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.reviews-title i {
+    color: #ffc107;
+}
+
+.reviews-count {
+    background: #175CDD;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.review-item {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    border-left: 4px solid #175CDD;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.review-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.reviewer-info {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+}
+
+.reviewer-avatar {
+    width: 50px;
+    height: 50px;
+    background: #175CDD;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 1.2rem;
+    margin-right: 1rem;
+    flex-shrink: 0;
+}
+
+.reviewer-details {
+    flex: 1;
+}
+
+.reviewer-name {
+    font-weight: 600;
+    color: #333;
+    margin: 0 0 0.5rem 0;
+    font-size: 1.1rem;
+}
+
+.review-meta {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.review-rating {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.rating-stars {
+    display: flex;
+    gap: 2px;
+}
+
+.rating-star {
+    color: #ffc107;
+    font-size: 0.9rem;
+}
+
+.rating-star.empty {
+    color: #dee2e6;
+}
+
+.rating-score {
+    font-weight: 600;
+    color: #175CDD;
+    font-size: 0.9rem;
+}
+
+.review-date {
+    color: #6c757d;
+    font-size: 0.85rem;
+}
+
+.review-content {
+    color: #555;
+    line-height: 1.6;
+    font-size: 0.95rem;
+    margin-top: 0.5rem;
+}
+
+.no-reviews {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: #6c757d;
+}
+
+.no-reviews i {
+    display: block;
+    margin-bottom: 1rem;
+}
+
+.no-reviews p {
+    margin: 0;
+    font-size: 1.1rem;
+}
+
 /* Mobile responsiveness */
 @media (max-width: 768px) {
     .modal-content {
@@ -8423,5 +8572,28 @@ body.appointment-page {
     
     .modal-title {
         font-size: 1.1rem;
+    }
+    
+    .reviews-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+    
+    .review-meta {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+    
+    .reviewer-info {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+    
+    .reviewer-avatar {
+        margin-right: 0;
+        margin-bottom: 0.5rem;
     }
 }

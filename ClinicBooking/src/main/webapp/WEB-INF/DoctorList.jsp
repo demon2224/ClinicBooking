@@ -44,7 +44,7 @@
                 border-radius: 12px;
                 box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
                 margin: 0 auto 2rem auto;
-                max-width: 800px;
+                max-width: 1200px;
             }
 
             .search-bar-wrapper {
@@ -178,7 +178,7 @@
 
             .doctor-grid {
                 display: grid;
-                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
                 gap: 3.5rem;
                 margin-top: 2rem;
                 justify-items: center;
@@ -188,7 +188,7 @@
                 background-color: white;
                 border: 1px solid #e8ecf0;
                 border-radius: 16px;
-                padding: 2rem 1.5rem 1.5rem 1.5rem;
+                padding: 2rem 2rem 1.5rem 1.5rem;
                 text-align: center;
                 transition: all 0.3s ease;
                 box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
@@ -544,7 +544,7 @@
         <!-- Search and Filter Section -->
         <div class="doctor-container">
             <div class="appointment-page-header">
-                <h1><i class="fas fa-comments"></i> Doctor List </h1>
+                <h1><i class="fas fa-user-md"></i> Doctor List </h1>
             </div>
             <form method="POST" action="${pageContext.request.contextPath}/doctor"
                   class="search-filter-form">

@@ -170,8 +170,12 @@
             }
 
             .rating-stars i {
-                color: #fbbf24;
+                color: #d1d5db;
                 font-size: 1rem;
+            }
+
+            .rating-stars i.active {
+                color: #fbbf24;
             }
 
             .rating-score {
@@ -441,6 +445,15 @@
                                                 </c:choose>
                                             </div>
                                         </div>
+                                    </div>
+
+                                    <div class="feedback-rating">
+                                        <div class="rating-stars">
+                                            <c:forEach begin="1" end="5" var="star">
+                                                <i class="fas fa-star ${star <= review.rateScore ? 'active' : ''}"></i>
+                                            </c:forEach>
+                                        </div>
+                                        <span class="rating-score">${review.rateScore}/5</span>
                                     </div>
 
                                     <div class="feedback-content-text">

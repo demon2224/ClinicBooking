@@ -85,12 +85,12 @@ public class DoctorDAO extends DBContext {
      */
     public List<DoctorDTO> searchDoctors(String keyword, Integer specialtyId) {
         StringBuilder sql = new StringBuilder("SELECT d.DoctorID, d.YearExperience, d.SpecialtyID, "
-                + "st.StaffID, st.FirstName, st.LastName, st.PhoneNumber, st.Email, st.Avatar, st.Bio, st.JobStatus, st.RoleID, "
+                + "st.StaffID, st.FirstName, st.LastName, st.PhoneNumber, st.Email, st.Avatar, st.Bio, st.JobStatus, st.Role, "
                 + "s.SpecialtyName "
                 + "FROM Doctor d "
                 + "INNER JOIN Staff st ON d.StaffID = st.StaffID "
                 + "LEFT JOIN Specialty s ON d.SpecialtyID = s.SpecialtyID "
-                + "WHERE st.RoleID = 1");
+                + "WHERE st.Role = 'Doctor'");
 
         List<Object> params = new ArrayList<>();
 
@@ -146,12 +146,12 @@ public class DoctorDAO extends DBContext {
      */
     public List<DoctorDTO> getAvailableDoctors() {
         String sql = "SELECT d.DoctorID, d.YearExperience, d.SpecialtyID, "
-                + "st.StaffID, st.FirstName, st.LastName, st.PhoneNumber, st.Email, st.Avatar, st.Bio, st.JobStatus, st.RoleID, "
+                + "st.StaffID, st.FirstName, st.LastName, st.PhoneNumber, st.Email, st.Avatar, st.Bio, st.JobStatus, st.Role, "
                 + "s.SpecialtyName "
                 + "FROM Doctor d "
                 + "INNER JOIN Staff st ON d.StaffID = st.StaffID "
                 + "LEFT JOIN Specialty s ON d.SpecialtyID = s.SpecialtyID "
-                + "WHERE st.JobStatus = 'Available' AND st.RoleID = 1";
+                + "WHERE st.JobStatus = 'Available' AND st.Role = 'Doctor'";
 
         List<DoctorDTO> doctors = new ArrayList<>();
         ResultSet rs = executeSelectQuery(sql, null);
@@ -188,14 +188,43 @@ public class DoctorDAO extends DBContext {
     }
 
     /**
+     * Retrieves the degrees of a specific doctor.
+     *
+     * @param doctorId The ID of the doctor.
+     * @return A list of DoctorDegreeDTO for the doctor.
+     */
+    public List<DegreeDTO> getDoctorDegrees(int doctorId) {
+        String sql = "SELECT DegreeID, DegreeName "
+                + "FROM Degree "
+                + "WHERE DoctorID = ?";
+
+        List<DegreeDTO> degrees = new ArrayList<>();
+        Object[] params = { doctorId };
+        ResultSet rs = executeSelectQuery(sql, params);
+        try {
+            while (rs != null && rs.next()) {
+                DegreeDTO degree = new DegreeDTO();
+                degree.setDegreeID(rs.getInt("DegreeID"));
+                degree.setDegreeName(rs.getString("DegreeName"));
+                degrees.add(degree);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(DoctorDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            closeResources(rs);
+        }
+        return degrees;
+    }
+
+    /**
      * Retrieves reviews for a specific doctor.
      *
      * @param doctorId The ID of the doctor.
      * @return A list of DoctorReviewDTO for the doctor.
      */
     public List<DoctorReviewDTO> getReviewsByDoctorId(int doctorId) {
-        String sql = "SELECT dr.Content AS ReviewContent, dr.RateScore AS Rating, dr.DateCreate AS ReviewDate, "
-                + "p.PatientID, p.FirstName AS ReviewerFirstName, p.LastName AS ReviewerLastName "
+        String sql = "SELECT dr.Content, dr.RateScore, dr.DateCreate, "
+                + "p.PatientID, p.FirstName, p.LastName "
                 + "FROM DoctorReview dr "
                 + "INNER JOIN Patient p ON dr.PatientID = p.PatientID "
                 + "WHERE dr.DoctorID = ?";
@@ -206,15 +235,15 @@ public class DoctorDAO extends DBContext {
         try {
             while (rs != null && rs.next()) {
                 DoctorReviewDTO review = new DoctorReviewDTO();
-                review.setContent(rs.getString("ReviewContent"));
-                review.setRateScore(rs.getInt("Rating"));
-                review.setDateCreate(rs.getTimestamp("ReviewDate"));
+                review.setContent(rs.getString("Content"));
+                review.setRateScore(rs.getInt("RateScore"));
+                review.setDateCreate(rs.getTimestamp("DateCreate"));
 
                 // Create PatientDTO
                 PatientDTO patient = new PatientDTO();
                 patient.setPatientID(rs.getInt("PatientID"));
-                patient.setFirstName(rs.getString("ReviewerFirstName"));
-                patient.setLastName(rs.getString("ReviewerLastName"));
+                patient.setFirstName(rs.getString("FirstName"));
+                patient.setLastName(rs.getString("LastName"));
 
                 // Set PatientDTO to DoctorReviewDTO
                 review.setPatientID(patient);
@@ -251,5 +280,84 @@ public class DoctorDAO extends DBContext {
             closeResources(rs);
         }
         return reviewCount;
+    }
+
+    /**
+     * Retrieves reviews for a specific patient (user).
+     *
+     * @param patientId The ID of the patient.
+     * @return A list of DoctorReviewDTO for the patient.
+     */
+    public List<DoctorReviewDTO> getReviewsByUserId(int patientId) {
+        String sql = "SELECT dr.DoctorReviewID, dr.Content, dr.RateScore, dr.DateCreate, "
+                + "d.DoctorID, st.FirstName AS DoctorFirstName, st.LastName AS DoctorLastName, "
+                + "s.SpecialtyName "
+                + "FROM DoctorReview dr "
+                + "INNER JOIN Doctor d ON dr.DoctorID = d.DoctorID "
+                + "INNER JOIN Staff st ON d.StaffID = st.StaffID "
+                + "LEFT JOIN Specialty s ON d.SpecialtyID = s.SpecialtyID "
+                + "WHERE dr.PatientID = ? "
+                + "ORDER BY dr.DateCreate DESC";
+
+        List<DoctorReviewDTO> reviews = new ArrayList<>();
+        Object[] params = { patientId };
+        ResultSet rs = executeSelectQuery(sql, params);
+        try {
+            while (rs != null && rs.next()) {
+                DoctorReviewDTO review = new DoctorReviewDTO();
+                review.setDoctorReviewID(rs.getInt("DoctorReviewID"));
+                review.setContent(rs.getString("Content"));
+                review.setRateScore(rs.getInt("RateScore"));
+                review.setDateCreate(rs.getTimestamp("DateCreate"));
+
+                // Create DoctorDTO with basic info
+                DoctorDTO doctor = new DoctorDTO();
+                doctor.setDoctorID(rs.getInt("DoctorID"));
+
+                StaffDTO staff = new StaffDTO();
+                staff.setFirstName(rs.getString("DoctorFirstName"));
+                staff.setLastName(rs.getString("DoctorLastName"));
+                doctor.setStaffID(staff);
+
+                SpecialtyDTO specialty = new SpecialtyDTO();
+                specialty.setSpecialtyName(rs.getString("SpecialtyName"));
+                doctor.setSpecialtyID(specialty);
+
+                review.setDoctorID(doctor);
+
+                reviews.add(review);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(DoctorDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            closeResources(rs);
+        }
+        return reviews;
+    }
+
+    /**
+     * Calculates the average rating for a specific doctor.
+     *
+     * @param doctorId The ID of the doctor.
+     * @return The average rating as a double, or 0.0 if no reviews exist.
+     */
+    public double getAverageRatingByDoctorId(int doctorId) {
+        String sql = "SELECT AVG(CAST(RateScore AS FLOAT)) AS AverageRating FROM DoctorReview WHERE DoctorID = ?";
+
+        double averageRating = 0.0;
+        Object[] params = { doctorId };
+        ResultSet rs = executeSelectQuery(sql, params);
+        try {
+            if (rs != null && rs.next()) {
+                averageRating = rs.getDouble("AverageRating");
+                // Round to 1 decimal place
+                averageRating = Math.round(averageRating * 10.0) / 10.0;
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(DoctorDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            closeResources(rs);
+        }
+        return averageRating;
     }
 }

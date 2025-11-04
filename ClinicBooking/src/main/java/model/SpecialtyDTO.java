@@ -17,6 +17,12 @@ public class SpecialtyDTO {
     public SpecialtyDTO() {
     }
 
+    public SpecialtyDTO(int specialtyID, String specialtyName, double price) {
+        this.specialtyID = specialtyID;
+        this.specialtyName = specialtyName;
+        this.price = price;
+    }
+
     public int getSpecialtyID() {
         return specialtyID;
     }

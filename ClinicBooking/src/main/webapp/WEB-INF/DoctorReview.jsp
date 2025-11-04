@@ -43,8 +43,16 @@
                                                 class="fas fa-star rating-star ${i <= review.rateScore ? '' : 'empty'}"></i>
                                         </c:forEach>
                                     </div>
-                                    <span
-                                        class="rating-score">${review.rateScore}/5</span>
+                                    <span class="rating-score">
+                                        <c:choose>
+                                            <c:when test="${review.rateScore % 1 == 0}">
+                                                ${review.rateScore.intValue()}/5
+                                            </c:when>
+                                            <c:otherwise>
+                                                ${review.rateScore}/5
+                                            </c:otherwise>
+                                        </c:choose>
+                                    </span>
                                 </div>
                                 <span class="review-date">
                                     ${review.dateCreate.toString().substring(0,
