@@ -8123,15 +8123,31 @@ body.appointment-page {
     gap: 0.5rem;
 }
 
-.doctor-rating .fas.fa-star {
-    color: #fbbf24;
+.doctor-rating .stars {
+    display: flex;
+    align-items: center;
+    gap: 0.2rem;
+    margin-right: 0.5rem;
+}
+
+.doctor-rating .fas.fa-star,
+.doctor-rating .far.fa-star,
+.doctor-rating .fas.fa-star-half-alt {
     font-size: 1rem;
 }
 
+.doctor-rating .star-filled {
+    color: #ffc107;
+}
+
+.doctor-rating .star-empty {
+    color: #dee2e6;
+}
+
 .doctor-rating .rating-score {
-    font-size: 1rem;
-    font-weight: 700;
-    color: #1e293b;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #2c3e50;
     margin-left: 0.25rem;
 }
 
