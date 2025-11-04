@@ -21,6 +21,8 @@ public class AppointmentDTO {
     private Timestamp dateEnd;
     private String note;
     private boolean hidden;
+    
+    
 
     public AppointmentDTO() {
     }
@@ -115,5 +117,31 @@ public class AppointmentDTO {
     public void setHidden(boolean hidden) {
         this.hidden = hidden;
     }
+
+    public String getDoctorName() {
+        if (doctorID != null && doctorID.getStaffID() != null) {
+            return doctorID.getStaffID().getFirstName() + " " + doctorID.getStaffID().getLastName();
+        }
+        return "";
+    }
+
+    public String getSpecialtyName() {
+        if (doctorID != null && doctorID.getSpecialtyID() != null) {
+            return doctorID.getSpecialtyID().getSpecialtyName();
+        }
+        return "";
+    }
+
+    public String getPatientName() {
+        if (patientID != null) {
+            return patientID.getFirstName() + " " + patientID.getLastName();
+        }
+        return "";
+    }
+
+    public String getStatusName() {
+        return appointmentStatus;
+    }
+
 
 }

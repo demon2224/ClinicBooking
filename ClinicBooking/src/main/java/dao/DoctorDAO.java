@@ -199,7 +199,7 @@ public class DoctorDAO extends DBContext {
                 + "WHERE DoctorID = ?";
 
         List<DegreeDTO> degrees = new ArrayList<>();
-        Object[] params = { doctorId };
+        Object[] params = {doctorId};
         ResultSet rs = executeSelectQuery(sql, params);
         try {
             while (rs != null && rs.next()) {
@@ -300,7 +300,7 @@ public class DoctorDAO extends DBContext {
                 + "ORDER BY dr.DateCreate DESC";
 
         List<DoctorReviewDTO> reviews = new ArrayList<>();
-        Object[] params = { patientId };
+        Object[] params = {patientId};
         ResultSet rs = executeSelectQuery(sql, params);
         try {
             while (rs != null && rs.next()) {
@@ -345,7 +345,7 @@ public class DoctorDAO extends DBContext {
         String sql = "SELECT AVG(CAST(RateScore AS FLOAT)) AS AverageRating FROM DoctorReview WHERE DoctorID = ?";
 
         double averageRating = 0.0;
-        Object[] params = { doctorId };
+        Object[] params = {doctorId};
         ResultSet rs = executeSelectQuery(sql, params);
         try {
             if (rs != null && rs.next()) {
@@ -360,4 +360,81 @@ public class DoctorDAO extends DBContext {
         }
         return averageRating;
     }
+
+    /**
+     * Get all specialties from the database.
+     *
+     * @return List of specialties
+     */
+    public List<SpecialtyDTO> getAllSpecialties() {
+        String sql = "SELECT SpecialtyID, SpecialtyName, Price FROM Specialty";
+        List<SpecialtyDTO> specialties = new ArrayList<>();
+        ResultSet rs = null;
+
+        try {
+            rs = executeSelectQuery(sql, null);
+
+            while (rs != null && rs.next()) {
+                SpecialtyDTO s = new SpecialtyDTO();
+                s.setSpecialtyID(rs.getInt("SpecialtyID"));
+                s.setSpecialtyName(rs.getString("SpecialtyName"));
+                s.setPrice(rs.getDouble("Price"));
+                specialties.add(s);
+            }
+
+        } catch (SQLException ex) {
+            Logger.getLogger(DoctorDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            closeResources(rs);
+        }
+
+        return specialties;
+    }
+
+    public List<DoctorDTO> getDoctorsBySpecialty(int specialtyId) {
+        String sql = "SELECT d.DoctorID, d.YearExperience, d.SpecialtyID, "
+                + "st.StaffID, st.FirstName, st.LastName, st.PhoneNumber, st.Email, st.Avatar, st.Bio, st.JobStatus, st.Role, "
+                + "s.SpecialtyName "
+                + "FROM Doctor d "
+                + "INNER JOIN Staff st ON d.StaffID = st.StaffID "
+                + "LEFT JOIN Specialty s ON d.SpecialtyID = s.SpecialtyID "
+                + "WHERE d.SpecialtyID = ? AND st.Role = 'Doctor'";
+
+        List<DoctorDTO> doctors = new ArrayList<>();
+        Object[] params = {specialtyId};
+        ResultSet rs = executeSelectQuery(sql, params);
+
+        try {
+            while (rs != null && rs.next()) {
+                DoctorDTO doctor = new DoctorDTO();
+                doctor.setDoctorID(rs.getInt("DoctorID"));
+                doctor.setYearExperience(rs.getInt("YearExperience"));
+
+                StaffDTO staff = new StaffDTO();
+                staff.setStaffID(rs.getInt("StaffID"));
+                staff.setFirstName(rs.getString("FirstName"));
+                staff.setLastName(rs.getString("LastName"));
+                staff.setEmail(rs.getString("Email"));
+                staff.setPhoneNumber(rs.getString("PhoneNumber"));
+                staff.setAvatar(rs.getString("Avatar"));
+                staff.setBio(rs.getString("Bio"));
+                staff.setJobStatus(rs.getString("JobStatus"));
+                doctor.setStaffID(staff);
+
+                SpecialtyDTO specialty = new SpecialtyDTO();
+                specialty.setSpecialtyID(rs.getInt("SpecialtyID"));
+                specialty.setSpecialtyName(rs.getString("SpecialtyName"));
+                doctor.setSpecialtyID(specialty);
+
+                doctors.add(doctor);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(DoctorDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            closeResources(rs);
+        }
+
+        return doctors;
+    }
+
 }

@@ -177,19 +177,19 @@
                                                         data-id="${a.appointmentID}"
                                                         data-bs-toggle="modal"
                                                         data-bs-target="#confirmModal"
-                                                        style="<c:if test='${a.statusName ne "Pending"}'>visibility:hidden;</c:if>">
-                                                            <i class="fa-solid fa-check"></i> Approve
-                                               </button>
+                                                        style="<c:if test='${a.statusName ne "Pending" and a.statusName ne "Approved"}'>visibility:hidden;</c:if>">
+                                                            <i class="fa-solid fa-check"></i> Update
+                                                        </button>
 
-                                                <!-- Cancel button -->
-                                                <button type="button"
-                                                        class="btn btn-sm btn-danger btn-cancel"
-                                                        data-id="${a.appointmentID}"
+                                                        <!-- Cancel button -->
+                                                        <button type="button"
+                                                                class="btn btn-sm btn-danger btn-cancel"
+                                                                data-id="${a.appointmentID}"
                                                         data-bs-toggle="modal"
                                                         data-bs-target="#confirmModal"
                                                         style="<c:if test='${!(a.statusName eq "Pending" || a.statusName eq "Approved")}'>visibility:hidden;</c:if>">
-                                                        <i class="fa-solid fa-xmark"></i> Cancel
-                                                </button>
+                                                            <i class="fa-solid fa-xmark"></i> Cancel
+                                                        </button>
                                                 </div>
                                             </td>
                                         </tr>

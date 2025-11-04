@@ -90,10 +90,12 @@
                         <div class="mb-3 row">
                             <label class="col-sm-3 col-form-label required">Specialty</label>
                             <div class="col-sm-9">
-                                <select class="form-select" id="specialtySelect" name="specialtyName" required>
+                                <select class="form-select" id="specialtySelect" name="specialtyId" required>
                                     <option value="">-- Select Specialty --</option>
                                     <c:forEach var="s" items="${specialties}">
-                                        <option value="${s[1]}">${s[1]}</option>
+                                        <option value="${s.specialtyID}">
+                                            ${s.specialtyName} - $${s.price}
+                                        </option>
                                     </c:forEach>
                                 </select>
                             </div>
@@ -137,7 +139,7 @@
                                 <select class="form-select" name="existingPatientId" id="existingPatientSelect">
                                     <option value="">-- New Patient --</option>
                                     <c:forEach var="p" items="${patients}">
-                                        <option value="${p.userId}">${p.fullName} - ${p.phone}</option>
+                                        <option value="${p.patientID}">${p.lastName} ${p.firstName} - ${p.phoneNumber}</option>
                                     </c:forEach>
                                 </select>
                             </div>
@@ -188,12 +190,12 @@
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script>
             $('#specialtySelect').change(function () {
-                var specialtyName = $(this).val();
-                if (specialtyName) {
+                var specialtyId = $(this).val(); 
+                if (specialtyId) {
                     $.ajax({
                         url: '${pageContext.request.contextPath}/receptionist-manage-appointment',
                         type: 'get',
-                        data: {action: 'getDoctorsBySpecialty', specialtyName: specialtyName},
+                        data: {action: 'getDoctorsBySpecialty', specialtyId: specialtyId},
                         success: function (data) {
                             var doctorSelect = $('#doctorSelect');
                             doctorSelect.empty();
@@ -210,6 +212,7 @@
                     $('#doctorSelect').empty().append('<option value="">-- Select Doctor --</option>');
                 }
             });
+
 
             function togglePatientFields() {
                 var existingPatient = $('select[name="existingPatientId"]').val();

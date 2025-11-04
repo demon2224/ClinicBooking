@@ -72,34 +72,41 @@
                     <th>Status</th>
                     <td>
                         <c:choose>
-                            <c:when test="${invoiceDetail.status eq 'Paid'}">
+                            <c:when test="${invoiceDetail.invoiceStatus eq 'Paid'}">
                                 <span class="badge bg-success">Paid</span>
                             </c:when>
-                            <c:when test="${invoiceDetail.status eq 'Pending'}">
+                            <c:when test="${invoiceDetail.invoiceStatus eq 'Pending'}">
                                 <span class="badge bg-warning text-dark">Pending</span>
                             </c:when>
-                            <c:when test="${invoiceDetail.status eq 'Canceled'}">
+                            <c:when test="${invoiceDetail.invoiceStatus eq 'Canceled'}">
                                 <span class="badge bg-danger">Canceled</span>
                             </c:when>
                         </c:choose>
                     </td>
                 </tr>
-                <tr><th>Date Created</th>
+                <tr>
+                    <th>Date Created</th>
                     <td><fmt:formatDate value="${invoiceDetail.dateCreate}" pattern="dd/MM/yyyy HH:mm" /></td>
                 </tr>
                 <tr>
                     <th>Date Paid</th>
                     <td>
-                        <c:if test="${not empty invoiceDetail.datePay}">
-                            <fmt:formatDate value="${invoiceDetail.datePay}" pattern="dd/MM/yyyy HH:mm" />
-                        </c:if>
-                        <c:if test="${empty invoiceDetail.datePay}">
-                            <span class="text-muted">Not yet paid</span>
-                        </c:if>
+                        <c:choose>
+                            <c:when test="${not empty invoiceDetail.datePay}">
+                                <fmt:formatDate value="${invoiceDetail.datePay}" pattern="dd/MM/yyyy HH:mm" />
+                            </c:when>
+                            <c:otherwise>
+                                <span class="text-muted">Not yet paid</span>
+                            </c:otherwise>
+                        </c:choose>
                     </td>
                 </tr>
-                <tr><th>Payment Method</th><td>${invoiceDetail.paymentMethod}</td></tr>
-                <tr><th>Consultation Fee</th>
+                <tr>
+                    <th>Payment Method</th>
+                    <td>${invoiceDetail.paymentType}</td>
+                </tr>
+                <tr>
+                    <th>Consultation Fee</th>
                     <td><fmt:formatNumber value="${invoiceDetail.fee}" type="currency" currencySymbol="$"/></td>
                 </tr>
             </table>
@@ -124,27 +131,16 @@
             <h3 class="section-title">Prescription Information</h3>
             <table class="table table-bordered">
                 <tr>
-                    <th>Prescription ID</th>
-                    <td>
-                        <c:choose>
-                            <c:when test="${invoiceDetail.prescriptionID != 0}">
-                                ${invoiceDetail.prescriptionID}
-                            </c:when>
-                            <c:otherwise>
-                                <span class="text-muted">No prescription</span>
-                            </c:otherwise>
-                        </c:choose>
-                    </td>
-                </tr>
-                <tr>
                     <th>Prescription Note</th>
                     <td>
-                        <c:if test="${not empty invoiceDetail.prescriptionNote}">
-                            ${invoiceDetail.prescriptionNote}
-                        </c:if>
-                        <c:if test="${empty invoiceDetail.prescriptionNote}">
-                            <span class="text-muted">No note available</span>
-                        </c:if>
+                        <c:choose>
+                            <c:when test="${not empty invoiceDetail.prescriptionNote}">
+                                ${invoiceDetail.prescriptionNote}
+                            </c:when>
+                            <c:otherwise>
+                                <span class="text-muted">No note available</span>
+                            </c:otherwise>
+                        </c:choose>
                     </td>
                 </tr>
             </table>

@@ -67,7 +67,7 @@ public class PatientDAO extends DBContext {
         List<PatientDTO> patients = new ArrayList<>();
         String sql = "SELECT PatientID, AccountName, FirstName, LastName, PhoneNumber, Email "
                 + "FROM Patient ORDER BY PatientID";
-
+        
         ResultSet rs = null;
         try {
             rs = executeSelectQuery(sql, null);

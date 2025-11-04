@@ -481,29 +481,22 @@ public class AppointmentDAO extends DBContext {
      * Get appointment info with doctor and patient info to view
      */
     public AppointmentDTO getAppointmentByIdFull(int appointmentId) {
-        String sql = "SELECT "
-                + "a.AppointmentID, "
-                + "a.PatientID, "
-                + "a.DoctorID, "
-                + "a.AppointmentStatus, "
-                + "a.DateCreate, "
-                + "a.DateBegin, "
-                + "a.DateEnd, "
-                + "a.Note, "
-                + "p.FirstName AS PatientFirstName, p.LastName AS PatientLastName, "
-                + "p.Email AS PatientEmail, p.PhoneNumber AS PatientPhone, "
-                + "p.DOB AS PatientDOB, p.UserAddress AS PatientAddress, "
-                + "p.Gender AS PatientGender, "
-                + "s.FirstName AS StaffFirstName, s.LastName AS StaffLastName, "
-                + "s.Email AS StaffEmail, s.PhoneNumber AS StaffPhone, "
-                + "s.Gender AS StaffGender, s.UserAddress AS StaffAddress, "
-                + "sp.SpecialtyName, d.YearExperience "
-                + "FROM Appointment a "
-                + "LEFT JOIN Patient p ON a.PatientID = p.PatientID "
-                + "LEFT JOIN Doctor d ON a.DoctorID = d.DoctorID "
-                + "LEFT JOIN Staff s ON d.StaffID = s.StaffID "
-                + "LEFT JOIN Specialty sp ON d.SpecialtyID = sp.SpecialtyID "
-                + "WHERE a.AppointmentID = ?";
+    String sql = "SELECT "
+            + "a.AppointmentID, a.PatientID, a.DoctorID, a.AppointmentStatus, "
+            + "a.DateCreate, a.DateBegin, a.DateEnd, a.Note, "
+            + "p.FirstName AS PatientFirstName, p.LastName AS PatientLastName, "
+            + "p.Email AS PatientEmail, p.PhoneNumber AS PatientPhone, "
+            + "p.DOB AS PatientDOB, p.UserAddress AS PatientAddress, p.Gender AS PatientGender, "
+            + "s.StaffID, s.FirstName AS StaffFirstName, s.LastName AS StaffLastName, "
+            + "s.Email AS StaffEmail, s.PhoneNumber AS StaffPhone, "
+            + "s.Gender AS StaffGender, s.UserAddress AS StaffAddress, "
+            + "sp.SpecialtyName, d.YearExperience "
+            + "FROM Appointment a "
+            + "LEFT JOIN Patient p ON a.PatientID = p.PatientID "
+            + "LEFT JOIN Doctor d ON a.DoctorID = d.DoctorID "
+            + "LEFT JOIN Staff s ON d.StaffID = s.StaffID "
+            + "LEFT JOIN Specialty sp ON d.SpecialtyID = sp.SpecialtyID "
+            + "WHERE a.AppointmentID = ?";
 
         ResultSet rs = null;
         try {
@@ -539,6 +532,7 @@ public class AppointmentDAO extends DBContext {
 
                 // ===== Staff (Doctor personal info) =====
                 StaffDTO staff = new StaffDTO();
+                staff.setStaffID(rs.getInt("StaffID"));
                 staff.setFirstName(rs.getString("StaffFirstName"));
                 staff.setLastName(rs.getString("StaffLastName"));
                 staff.setEmail(rs.getString("StaffEmail"));
@@ -669,7 +663,6 @@ public class AppointmentDAO extends DBContext {
         closeResources(null);
         return rowsAffected > 0;
     }
-    
 
     /**
      * Search appointments by patient ID and doctor name
@@ -899,83 +892,80 @@ public class AppointmentDAO extends DBContext {
 //        return list;
 //    }
 //
-//    /**
-//     * Add appointment if user(patient) already have account get the list
-//     * patient, if not create user by phone number
-//     *
-//     */
-//    public boolean addAppointment(String existingPatientIdStr, String fullName, String phone,
-//            boolean gender, int doctorId, String note) {
-//
-//        DBContext db = new DBContext();
-//        try ( Connection conn = db.getConnection()) {
-//            conn.setAutoCommit(false);
-//
-//            int userId = 0;
-//
-//            if (existingPatientIdStr != null && !existingPatientIdStr.isEmpty()) {
-//                userId = Integer.parseInt(existingPatientIdStr);
-//            } else {
-//                String sqlCheck = "SELECT UserProfileID FROM Profile WHERE PhoneNumber = ?";
-//                try ( PreparedStatement psCheck = conn.prepareStatement(sqlCheck)) {
-//                    psCheck.setString(1, phone);
-//                    try ( ResultSet rs = psCheck.executeQuery()) {
-//                        if (rs.next()) {
-//                            userId = rs.getInt("UserProfileID");
-//                        } else {
-//                            String sqlUser = "INSERT INTO [User] (RoleID) VALUES (?)";
-//                            try ( PreparedStatement psUser = conn.prepareStatement(sqlUser, Statement.RETURN_GENERATED_KEYS)) {
-//                                psUser.setInt(1, 1);
-//                                psUser.executeUpdate();
-//                                try ( ResultSet rsUser = psUser.getGeneratedKeys()) {
-//                                    if (rsUser.next()) {
-//                                        userId = rsUser.getInt(1);
-//                                    }
-//                                }
-//                            }
-//                            String[] nameParts = fullName.trim().split("\\s+", 2);
-//                            String firstName = nameParts[0];
-//                            String lastName = nameParts.length > 1 ? nameParts[1] : "";
-//
-//                            String sqlProfile = "INSERT INTO [Profile] (UserProfileID, FirstName, LastName, PhoneNumber, Gender) VALUES (?, ?, ?, ?, ?)";
-//                            try ( PreparedStatement psProfile = conn.prepareStatement(sqlProfile)) {
-//                                psProfile.setInt(1, userId);
-//                                psProfile.setString(2, firstName);
-//                                psProfile.setString(3, lastName);
-//                                psProfile.setString(4, phone);
-//                                psProfile.setBoolean(5, gender);
-//                                psProfile.executeUpdate();
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-//
-//            String sqlAppointment = "INSERT INTO Appointment (UserID, DoctorID, AppointmentStatusID, DateCreate, DateBegin, DateEnd, Note) "
-//                    + "VALUES (?, ?, ?, GETDATE(), ?, ?, ?)";
-//            try ( PreparedStatement psAppointment = conn.prepareStatement(sqlAppointment)) {
-//                psAppointment.setInt(1, userId);
-//                psAppointment.setInt(2, doctorId);
-//                psAppointment.setInt(3, 2);
-//
-//                Timestamp dateBegin = new Timestamp(System.currentTimeMillis());
-//                Timestamp dateEnd = new Timestamp(System.currentTimeMillis() + 3600 * 1000);
-//                psAppointment.setTimestamp(4, dateBegin);
-//                psAppointment.setTimestamp(5, dateEnd);
-//                psAppointment.setString(6, note);
-//
-//                psAppointment.executeUpdate();
-//            }
-//
-//            conn.commit();
-//            return true;
-//
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//            return false;
-//        }
-//    }
-//
+    /**
+     * Add appointment if patient already exists by phone number or ID. If not,
+     * create a new patient and then insert appointment.
+     */
+    public boolean addAppointment(String existingPatientIdStr, String fullName, String phone,
+            boolean gender, int doctorId, String note) {
+
+        try ( Connection conn = getConnection()) {
+            conn.setAutoCommit(false);
+
+            int patientId = 0;
+
+            if (existingPatientIdStr != null && !existingPatientIdStr.isEmpty()) {
+                patientId = Integer.parseInt(existingPatientIdStr);
+            } else {
+            // check phonenumber already exsit or not
+                String sqlCheck = "SELECT PatientID FROM Patient WHERE PhoneNumber = ?";
+                try ( PreparedStatement psCheck = conn.prepareStatement(sqlCheck)) {
+                    psCheck.setString(1, phone);
+                    try ( ResultSet rs = psCheck.executeQuery()) {
+                        if (rs.next()) {
+                            patientId = rs.getInt("PatientID");
+                        } else {
+                            // add new pateint
+                            String[] nameParts = fullName.trim().split("\\s+", 2);
+                            String firstName = nameParts[0];
+                            String lastName = nameParts.length > 1 ? nameParts[1] : "";
+
+                            String sqlInsert = "INSERT INTO Patient (FirstName, LastName, PhoneNumber, Gender, Hidden) "
+                                    + "VALUES (?, ?, ?, ?, 1)";
+                            try ( PreparedStatement psInsert = conn.prepareStatement(sqlInsert, Statement.RETURN_GENERATED_KEYS)) {
+                                psInsert.setString(1, firstName);
+                                psInsert.setString(2, lastName);
+                                psInsert.setString(3, phone);
+                                psInsert.setBoolean(4, gender);
+                                psInsert.executeUpdate();
+
+                                try ( ResultSet rsGen = psInsert.getGeneratedKeys()) {
+                                    if (rsGen.next()) {
+                                        patientId = rsGen.getInt(1);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            // add new appointmnet
+            String sqlAppointment = "INSERT INTO Appointment "
+                    + "(PatientID, DoctorID, AppointmentStatus, DateCreate, DateBegin, DateEnd, Note, Hidden) "
+                    + "VALUES (?, ?, 'Pending', GETDATE(), ?, ?, ?, 1)";
+            try ( PreparedStatement psAppt = conn.prepareStatement(sqlAppointment)) {
+                Timestamp dateBegin = new Timestamp(System.currentTimeMillis());
+                Timestamp dateEnd = new Timestamp(System.currentTimeMillis() + 3600 * 1000);
+
+                psAppt.setInt(1, patientId);
+                psAppt.setInt(2, doctorId);
+                psAppt.setTimestamp(3, dateBegin);
+                psAppt.setTimestamp(4, dateEnd);
+                psAppt.setString(5, note);
+
+                psAppt.executeUpdate();
+            }
+
+            conn.commit();
+            return true;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     /**
      * Cancel appointment by setting status to Canceled Only if current status
      * is Pending or Approved

@@ -100,23 +100,47 @@
             <!-- Patient Information -->
             <h3 class="section-title">Patient Information</h3>
             <table class="table table-bordered">
-                <tr><th>Name</th><td>${appointment.patientName}</td></tr>
-                <tr><th>Email</th><td>${appointment.patientEmail}</td></tr>
-                <tr><th>Phone</th><td>${appointment.patientPhone}</td></tr>
-                <tr><th>Gender</th><td>${appointment.gender}</td></tr>
-                <tr><th>Date of Birth</th><td><fmt:formatDate value="${appointment.doB}" pattern="dd/MM/yyyy" /></td></tr>
-                <tr><th>Address</th><td>${appointment.address}</td></tr>
+                <tr><th>Patient Name</th><td>${appointment.patientID.firstName} ${appointment.patientID.lastName}</td></tr>
+                <tr><th>Email</th><td>${appointment.patientID.email}</td></tr>
+                <tr><th>Phone</th><td>${appointment.patientID.phoneNumber}</td></tr>
+                <tr><th>Gender</th>
+                    <td>
+                        <c:choose>
+                            <c:when test="${appointment.patientID.gender}">Male</c:when>
+                            <c:otherwise>Female</c:otherwise>
+                        </c:choose>
+                    </td>
+                </tr>
+                <tr><th>Date of Birth</th><td><fmt:formatDate value="${appointment.patientID.dob}" pattern="dd/MM/yyyy" /></td></tr>
+                <tr><th>Address</th><td>${appointment.patientID.userAddress}</td></tr>
             </table>
+
 
             <!-- Doctor Information -->
             <h3 class="section-title">Doctor Information</h3>
             <table class="table table-bordered">
-                <tr><th>Doctor Name</th><td>${appointment.doctorName}</td></tr>
-                <tr><th>Specialty</th><td>${appointment.specialtyName}</td></tr>
-                <tr><th>Email</th><td>${doctor.email}</td></tr>
-                <tr><th>Phone</th><td>${doctor.phoneNumber}</td></tr>
-                <tr><th>Year Experience</th><td>${doctor.yearExperience}</td></tr>
+                <tr>
+                    <th>Doctor Name</th>
+                    <td>${appointment.doctorID.staffID.firstName} ${appointment.doctorID.staffID.lastName}</td>
+                </tr>
+                <tr>
+                    <th>Specialty</th>
+                    <td>${appointment.doctorID.specialtyID.specialtyName}</td>
+                </tr>
+                <tr>
+                    <th>Email</th>
+                    <td>${appointment.doctorID.staffID.email}</td>
+                </tr>
+                <tr>
+                    <th>Phone</th>
+                    <td>${appointment.doctorID.staffID.phoneNumber}</td>
+                </tr>
+                <tr>
+                    <th>Year Experience</th>
+                    <td>${appointment.doctorID.yearExperience}</td>
+                </tr>
             </table>
+
         </div>
     </body>
 </html>

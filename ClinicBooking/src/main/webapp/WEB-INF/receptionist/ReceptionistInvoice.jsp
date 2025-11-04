@@ -136,47 +136,47 @@
                                         <td>${inv.doctorName}</td>
                                         <td>${inv.specialty}</td>
                                         <td><fmt:formatNumber value="${inv.fee}" type="currency" currencySymbol="$"/></td>
-                                        <td>${inv.paymentMethod}</td>
+                                        <td>${inv.paymentType}</td>
                                         <td>
                                             <c:choose>
-                                                <c:when test="${inv.status eq 'Paid'}">
-                                                    <span class="badge bg-success">${inv.status}</span>
+                                                <c:when test="${inv.invoiceStatus eq 'Paid'}">
+                                                    <span class="badge bg-success">${inv.invoiceStatus}</span>
                                                 </c:when>
-                                                <c:when test="${inv.status eq 'Pending'}">
-                                                    <span class="badge bg-warning text-dark">${inv.status}</span>
+                                                <c:when test="${inv.invoiceStatus eq 'Pending'}">
+                                                    <span class="badge bg-warning text-dark">${inv.invoiceStatus}</span>
                                                 </c:when>
-                                                <c:when test="${inv.status eq 'Canceled'}">
-                                                    <span class="badge bg-danger">${inv.status}</span>
+                                                <c:when test="${inv.invoiceStatus eq 'Canceled'}">
+                                                    <span class="badge bg-danger">${inv.invoiceStatus}</span>
                                                 </c:when>
                                                 <c:otherwise>
-                                                    <span class="badge bg-secondary">${inv.status}</span>
+                                                    <span class="badge bg-secondary">${inv.invoiceStatus}</span>
                                                 </c:otherwise>
                                             </c:choose>
                                         </td>
                                         <td class="text-center">
                                             <div class="d-flex justify-content-center gap-2">
                                                 <!-- View detail button -->
-                                                <a href="manage-invoice?action=viewDetail&id=${inv.invoiceId}"
+                                                <a href="manage-invoice?action=viewDetail&id=${inv.invoiceID}"
                                                    class="btn btn-sm btn-info text-white">
                                                     <i class="fa-solid fa-eye"></i> View Detail
                                                 </a>
 
                                                 <!-- Update -->
                                                 <form action="manage-invoice" method="post" style="display:inline;">
-                                                    <input type="hidden" name="invoiceId" value="${inv.invoiceId}">
+                                                    <input type="hidden" name="invoiceId" value="${inv.invoiceID}">
                                                     <input type="hidden" name="action" value="pay">
                                                     <button type="submit" class="btn btn-success btn-sm"
-                                                            style="visibility:${inv.status eq 'Pending' ? 'visible' : 'hidden'};">
+                                                            style="visibility:${inv.invoiceStatus eq 'Pending' ? 'visible' : 'hidden'};">
                                                         <i class="fa-solid fa-check"></i> Update
                                                     </button>
                                                 </form>
 
                                                 <!-- Cancel -->
                                                 <form action="manage-invoice" method="post" style="display:inline;">
-                                                    <input type="hidden" name="invoiceId" value="${inv.invoiceId}">
+                                                    <input type="hidden" name="invoiceId" value="${inv.invoiceID}">
                                                     <input type="hidden" name="action" value="cancel">
                                                     <button type="submit" class="btn btn-danger btn-sm"
-                                                            style="visibility:${inv.status eq 'Pending' ? 'visible' : 'hidden'};">
+                                                            style="visibility:${inv.invoiceStatus eq 'Pending' ? 'visible' : 'hidden'};">
                                                         <i class="fa-solid fa-xmark"></i> Cancel
                                                     </button>
                                                 </form>
@@ -193,24 +193,7 @@
             </div>
         </div>
 
-        <!--         Confirmation Modal 
-                <div class="modal fade" id="confirmModal" tabindex="-1" aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title">Confirm Action</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                            </div>
-                            <div class="modal-body">
-                                Are you sure you want to proceed?
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                <button type="button" class="btn btn-primary" id="confirmActionBtn">Yes</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>-->
+
     </body>
 </html>
 
