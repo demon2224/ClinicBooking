@@ -158,23 +158,23 @@
                                         </div>
                                         <div class="appointment-doctor">
                                             <i class="fas fa-user-md"></i>
-                                            Dr. ${appointment.doctorName != null ? appointment.doctorName : 'Unknown Doctor'}
+                                            Dr. ${appointment.doctorID.staffID.firstName} ${appointment.doctorID.staffID.lastName}
                                         </div>
                                         <div class="appointment-specialty">
                                             <i class="fas fa-stethoscope"></i>
-                                            ${appointment.specialtyName != null ? appointment.specialtyName : 'General'}
+                                            ${appointment.doctorID.specialtyID.specialtyName != null ? appointment.doctorID.specialtyID.specialtyName : 'General'}
                                             <c:if test="${not empty appointment.note}"> - ${appointment.note}</c:if>
                                             </div>
                                         </div>
                                         <div class="appointment-status
                                         <c:choose>
-                                            <c:when test="${appointment.appointmentStatusID == 2}">status-approved</c:when>
-                                            <c:when test="${appointment.appointmentStatusID == 1}">status-pending</c:when>
-                                            <c:when test="${appointment.appointmentStatusID == 4}">status-cancelled</c:when>
-                                            <c:when test="${appointment.appointmentStatusID == 3}">status-completed</c:when>
+                                            <c:when test="${appointment.appointmentStatus == 'Approved'}">status-approved</c:when>
+                                            <c:when test="${appointment.appointmentStatus == 'Pending'}">status-pending</c:when>
+                                            <c:when test="${appointment.appointmentStatus == 'Canceled'}">status-cancelled</c:when>
+                                            <c:when test="${appointment.appointmentStatus == 'Completed'}">status-completed</c:when>
                                             <c:otherwise>status-pending</c:otherwise>
                                         </c:choose>">
-                                        ${appointment.statusName != null ? appointment.statusName : 'Unknown'}
+                                        ${appointment.appointmentStatus != null ? appointment.appointmentStatus : 'Unknown'}
                                     </div>
                                 </div>
                                 <div class="appointment-actions">
@@ -184,7 +184,7 @@
                                     </a>
 
                                     <!-- Only show cancel button for pending appointments -->
-                                    <c:if test="${appointment.appointmentStatusID == 1}">
+                                    <c:if test="${appointment.appointmentStatus == 'Pending'}">
                                         <button class="btn-action btn-cancel"
                                                 data-appointment-id="${appointment.appointmentID}">
                                             <i class="fas fa-times"></i>
@@ -202,14 +202,6 @@
 
     <!-- JavaScript for interactivity -->
     <script>
-        // Cancel appointment function
-        function cancelAppointment(appointmentId) {
-            if (confirm('Are you sure you want to cancel this appointment?')) {
-                // Send request to cancel appointment
-                window.location.href = '${pageContext.request.contextPath}/manage-my-appointments?action=cancel&appointmentId=' + appointmentId;
-            }
-        }
-
         // Dropdown menu functionality
         document.addEventListener('DOMContentLoaded', function () {
             const dropdowns = document.querySelectorAll('.dropdown');
