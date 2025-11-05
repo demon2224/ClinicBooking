@@ -33,7 +33,7 @@ CREATE TABLE Patient (
 	UserAddress TEXT,
 	PhoneNumber NVARCHAR(15) UNIQUE,
 	Email NVARCHAR(50),
-	[Hidden] BIT DEFAULT 1
+	[Hidden] BIT DEFAULT 0
 );
 
 CREATE TABLE Staff (
@@ -52,7 +52,7 @@ CREATE TABLE Staff (
 	UserAddress TEXT,
 	PhoneNumber NVARCHAR(15) UNIQUE,
 	Email NVARCHAR(50),
-	[Hidden] BIT DEFAULT 1
+	[Hidden] BIT DEFAULT 0
 );
 
 CREATE TABLE Specialty (
@@ -71,7 +71,7 @@ CREATE TABLE Doctor (
 CREATE TABLE Degree (
 	DegreeID INT PRIMARY KEY IDENTITY(1,1),
 	DegreeName NVARCHAR(255),
-	DoctorID INT FOREIGN KEY REFERENCES Doctor(DoctorID) NOT NULL,
+	DoctorID INT FOREIGN KEY REFERENCES Doctor(DoctorID) NOT NULL
 );
 
 CREATE TABLE Receptionist (
@@ -91,7 +91,7 @@ CREATE TABLE DoctorReview (
 	Content TEXT,
 	RateScore INT,
 	DateCreate DATETIME DEFAULT GETDATE(),
-	[Hidden] BIT DEFAULT 1
+	[Hidden] BIT DEFAULT 0
 );
 
 CREATE TABLE Appointment (
@@ -103,7 +103,7 @@ CREATE TABLE Appointment (
 	DateBegin DATETIME,
 	DateEnd DATETIME,
 	Note TEXT,
-	[Hidden] BIT DEFAULT 1
+	[Hidden] BIT DEFAULT 0
 );
 
 CREATE TABLE Prescription (
@@ -112,7 +112,7 @@ CREATE TABLE Prescription (
 	PrescriptionStatus NVARCHAR(50) DEFAULT 'Pending' CHECK (PrescriptionStatus IN ('Pending', 'Delivered', 'Canceled')) NOT NULL,
 	DateCreate DATETIME DEFAULT GETDATE(),
 	Note TEXT,
-	[Hidden] BIT DEFAULT 1
+	[Hidden] BIT DEFAULT 0
 );
 
 CREATE TABLE Medicine (
@@ -120,11 +120,11 @@ CREATE TABLE Medicine (
 	MedicineType NVARCHAR(50) CHECK (MedicineType IN ('Tablet', 'Capsule', 'Syrup', 'Ointment', 'Drops')) NOT NULL,
 	MedicineStatus BIT DEFAULT 0,
 	MedicineName NVARCHAR(200),
-	MedicineCode NVARCHAR(50),
+	MedicineCode NVARCHAR(50) UNIQUE,
 	Quantity INT DEFAULT 0 CHECK (Quantity >= 0),
 	Price DECIMAL(20,2) DEFAULT 0 CHECK (Price >= 0),
 	DateCreate DATETIME DEFAULT GETDATE(),
-	[Hidden] BIT DEFAULT 1
+	[Hidden] BIT DEFAULT 0
 );
 
 CREATE TABLE PrescriptionItem (
