@@ -5,6 +5,7 @@
 package model;
 
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 /**
@@ -78,6 +79,20 @@ public class PrescriptionDTO {
 
     public void setPrescriptionItemList(List<PrescriptionItemDTO> prescriptionItemList) {
         this.prescriptionItemList = prescriptionItemList;
+    }
+
+    /**
+     * Formats the creation date into a display-friendly string. Returns an
+     * empty string if the creation date is null.
+     *
+     * @return Formatted date string in "dd/MM/yyyy HH:mm:ss" format, or empty
+     * string if null
+     */
+    public String getDateCreateFormatDate() {
+        if (this.dateCreate == null) {
+            return "";
+        }
+        return new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(this.dateCreate);
     }
 
     @Override

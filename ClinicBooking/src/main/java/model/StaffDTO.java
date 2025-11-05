@@ -159,5 +159,9 @@ public class StaffDTO {
     public void setHidden(boolean hidden) {
         this.hidden = hidden;
     }
+    
+    public String getFullName() {
+        return this.firstName == null && this.lastName == null ? "" : this.firstName + " " + this.lastName;
+    }
 
 }
