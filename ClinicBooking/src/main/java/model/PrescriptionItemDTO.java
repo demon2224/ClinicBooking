@@ -11,8 +11,8 @@ package model;
 public class PrescriptionItemDTO {
 
     private PrescriptionDTO prescriptionID;
-    private MedicineDTO medicineIID;
-    private int Dosage;
+    private MedicineDTO medicineID;
+    private int dosage;
     private String instruction;
 
     public PrescriptionItemDTO() {
@@ -20,8 +20,8 @@ public class PrescriptionItemDTO {
 
     public PrescriptionItemDTO(PrescriptionDTO prescriptionID, MedicineDTO medicineIID, int Dosage, String instruction) {
         this.prescriptionID = prescriptionID;
-        this.medicineIID = medicineIID;
-        this.Dosage = Dosage;
+        this.medicineID = medicineIID;
+        this.dosage = Dosage;
         this.instruction = instruction;
     }
 
@@ -34,19 +34,19 @@ public class PrescriptionItemDTO {
     }
 
     public MedicineDTO getMedicineIID() {
-        return medicineIID;
+        return medicineID;
     }
 
     public void setMedicineIID(MedicineDTO medicineIID) {
-        this.medicineIID = medicineIID;
+        this.medicineID = medicineIID;
     }
 
     public int getDosage() {
-        return Dosage;
+        return dosage;
     }
 
     public void setDosage(int Dosage) {
-        this.Dosage = Dosage;
+        this.dosage = Dosage;
     }
 
     public String getInstruction() {
