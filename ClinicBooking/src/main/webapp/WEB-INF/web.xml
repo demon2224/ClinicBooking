@@ -106,6 +106,16 @@
         <servlet-name>ManageMyAppointmentController</servlet-name>
         <url-pattern>/manage-my-appointments</url-pattern>
     </servlet-mapping>
+    
+    <!-- ManageMyMedicalRecordController -->
+    <servlet>
+        <servlet-name>ManageMyMedicalRecordController</servlet-name>
+        <servlet-class>controller.ManageMyMedicalRecordController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ManageMyMedicalRecordController</servlet-name>
+        <url-pattern>/manage-my-medical-records</url-pattern>
+    </servlet-mapping>
     <!-- DoctorDashboardController -->
     <servlet>
         <servlet-name>DoctorDashboardController</servlet-name>
