@@ -161,12 +161,28 @@ ON [dbo].[MedicalRecord]
 AFTER INSERT
 AS
 BEGIN
+	SET NOCOUNT ON;
     INSERT INTO [dbo].[Invoice] (MedicalRecordID, PaymentType, InvoiceStatus)
     SELECT
         i.MedicalRecordID,
         'Cash',
 		'Pending'
     FROM INSERTED i;
+END;
+
+GO
+CREATE TRIGGER TR_Invoice_InsertPrescription
+ON [dbo].[MedicalRecord]
+AFTER UPDATE
+AS
+BEGIN
+	SET NOCOUNT ON;
+	UPDATE inv
+	SET inv.PrescriptionID = i.PrescriptionID
+	FROM [dbo].[Invoice] inv
+	JOIN inserted i
+	ON inv.MedicalRecordID = i.MedicalRecordID
+	WHERE i.PrescriptionID IS NOT NULL;
 END;
 
 GO
