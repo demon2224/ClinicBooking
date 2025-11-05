@@ -240,6 +240,9 @@ public class MedicalRecordDAO extends DBContext {
         return medicalRecordDetail;
     }
 
+    /**
+     * Get medical records by patient ID - following AppointmentDAO pattern
+     */
     public List<MedicalRecordDTO> getMedicalRecordsByPatientId(int patientId) {
         List<MedicalRecordDTO> medicalRecords = new ArrayList<>();
         String sql = "SELECT mr.MedicalRecordID, mr.Symptoms, mr.Diagnosis, mr.Note, mr.DateCreate, "
@@ -295,6 +298,7 @@ public class MedicalRecordDAO extends DBContext {
                 specialty.setSpecialtyName(rs.getString("SpecialtyName"));
                 doctor.setSpecialtyID(specialty);
 
+                appointment.setDoctorID(doctor);
                 record.setAppointmentID(appointment);
 
                 // PrescriptionDTO if exists
@@ -387,6 +391,11 @@ public class MedicalRecordDAO extends DBContext {
                     PrescriptionDTO prescription = new PrescriptionDTO();
                     prescription.setPrescriptionID(rs.getInt("PrescriptionID"));
                     prescription.setNote(rs.getString("PrescriptionNote"));
+                    
+                    // Load prescription items
+                    List<PrescriptionItemDTO> prescriptionItems = getPrescriptionItemsByPrescriptionId(rs.getInt("PrescriptionID"));
+                    prescription.setPrescriptionItemList(prescriptionItems);
+                    
                     record.setPrescriptionDTO(prescription);
                 }
             }
@@ -471,6 +480,7 @@ public class MedicalRecordDAO extends DBContext {
                 specialty.setSpecialtyName(rs.getString("SpecialtyName"));
                 doctor.setSpecialtyID(specialty);
 
+                appointment.setDoctorID(doctor);
                 record.setAppointmentID(appointment);
 
                 // PrescriptionDTO if exists
