@@ -103,6 +103,7 @@ public class PrescriptionDAO extends DBContext {
             closeResources(rs);
         }
         return prescriptionItemList;
+    }
 
 //    public List<Prescription> getPatientPrescriptionByDoctorId(int doctorId) {
 //        List<Prescription> list = new ArrayList<>();
@@ -363,12 +364,12 @@ public class PrescriptionDAO extends DBContext {
                 medicine.setMedicineCode(rs.getString("MedicineCode"));
                 medicine.setMedicineType(rs.getString("MedicineType"));
                 medicine.setPrice(rs.getDouble("Price"));
-                
+
                 PrescriptionItemDTO prescriptionItem = new PrescriptionItemDTO();
-                prescriptionItem.setMedicineIID(medicine);
+                prescriptionItem.setMedicineID(medicine);
                 prescriptionItem.setDosage(rs.getInt("Dosage"));
                 prescriptionItem.setInstruction(rs.getString("Instruction"));
-                
+
                 prescriptionItemList.add(prescriptionItem);
             }
 
