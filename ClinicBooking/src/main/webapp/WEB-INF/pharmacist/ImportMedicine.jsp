@@ -1,6 +1,6 @@
 <%-- 
-    Document   : EditMedicine
-    Created on : Oct 20, 2025, 9:52:48 AM
+    Document   : ImportMedicine
+    Created on : Oct 20, 2025, 5:44:32 PM
     Author     : Vu Minh Khang - CE191371
 --%>
 
@@ -92,77 +92,63 @@
                     </div>
                     <div class="card-body">
                         <form action="${pageContext.request.contextPath}/manage-medicine" method="POST">
-                            <input type="hidden" name="action" value="edit">
+                            <input type="hidden" name="action" value="import">
                             <input type="hidden" name="medicineID" value="${requestScope.medicine.medicineID}">
 
                             <div class="row mb-3">
                                 <div class="col-md-6">
-                                    <label class="form-label required">Medicine Name</label>
-                                    <input type="text" class="form-control" name="medicineName" value="${requestScope.medicine.medicineName}" required>
-                                    <div class="text-danger">
-                                        <c:if test="${not empty sessionScope.medicineNameErrorMsg}">                   
-                                            <c:out value="${sessionScope.medicineNameErrorMsg}"/>
-                                        </c:if>
+                                    <div class="row">
+                                        <div class="col-md-3 bg-primary">
+                                            <label class="form-label text-light p-1 m-0">Medicine Name: </label>
+                                        </div>
+                                        <div class="col-md-9">
+                                            <c:out value="${requestScope.medicine.medicineName}"/>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
-                                    <label class="form-label required">Medicine Code</label>
-                                    <input type="text" class="form-control" name="medicineCode" value="${requestScope.medicine.medicineCode}" required>
-                                    <div class="text-danger">
-                                        <c:if test="${not empty sessionScope.medicineCodeErrorMsg}">                   
-                                            <c:out value="${sessionScope.medicineCodeErrorMsg}"/>
-                                        </c:if>
+                                    <div class="row">
+                                        <div class="col-md-3 bg-primary">
+                                            <label class="form-label text-light p-1 m-0">Medicine Code: </label>
+                                        </div>
+                                        <div class="col-md-9">
+                                            <c:out value="${requestScope.medicine.medicineCode}"/>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
 
                             <div class="row mb-3">
                                 <div class="col-md-6">
-                                    <label class="form-label required">Medicine Type</label>
-                                    <select class="form-select" name="medicineType" required>
-                                        <c:forEach items="${requestScope.medicineTypeList}" var="type">
-                                            <option value="${type}" 
-                                                    ${requestScope.medicine.medicineType eq type ? 'selected' : ''}>
-                                                <c:out value="${type}"/>
-                                            </option>
-                                        </c:forEach>
-                                    </select>
-                                    <div class="text-danger">
-                                        <c:if test="${not empty sessionScope.medicineTypeErrorMsg}">                   
-                                            <c:out value="${sessionScope.medicineTypeErrorMsg}"/>
-                                        </c:if>
+                                    <div class="row">
+                                        <div class="col-md-3 bg-primary">
+                                            <label class="form-label text-light p-1 m-0">Medicine Type: </label>
+                                        </div>
+                                        <div class="col-md-9">
+                                            <c:out value="${requestScope.medicine.medicineType}"/>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
-                                    <label class="form-label required">Price ($)</label>
-                                    <input type="number" class="form-control" name="price" min="0" step="0.01" value="${requestScope.medicine.price}" required>
-                                    <div class="text-danger">
-                                        <c:if test="${not empty sessionScope.medicinePriceErrorsMsg}">                   
-                                            <c:out value="${sessionScope.medicinePriceErrorsMsg}"/>
-                                        </c:if>
+                                    <div class="row">
+                                        <div class="col-md-3 bg-primary">
+                                            <label class="form-label text-light p-1 m-0">Price ($): </label>
+                                        </div>
+                                        <div class="col-md-9">
+                                            <c:out value="${requestScope.medicine.price}"/>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
 
                             <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <label class="form-label required">Status</label>
-                                    <select class="form-select" name="medicineStatus">
-                                        <option value="1" ${medicine.medicineStatus ? 'selected' : ''}>Available</option>
-                                        <option value="0" ${!medicine.medicineStatus ? 'selected' : ''}>Unavailable</option>
-                                    </select>
-                                    <div class="text-danger">
-                                        <c:if test="${not empty sessionScope.medicineStatusErrorsMsg}">                   
-                                            <c:out value="${sessionScope.medicineStatusErrorsMsg}"/>
-                                        </c:if>
-                                    </div>
-                                </div>
+                                <label class="form-label required">Quantity</label>
+                                <input type="number" name="quantity" required>
                             </div>
-
 
                             <div class="d-flex justify-content-center mt-3">
                                 <button type="submit" class="btn btn-success px-5 py-2 fw-bold" style="border-radius: 30px;">
-                                    Edit
+                                    Import
                                 </button>
                             </div>
                         </form>

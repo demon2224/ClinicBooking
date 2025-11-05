@@ -280,6 +280,7 @@ public class ManageMedicineController extends HttpServlet {
 
                 default:
                     handleInvalidResponse(request, response);
+                    break;
             }
         } catch (IOException e) {
             handleInvalidResponse(request, response);
@@ -321,6 +322,7 @@ public class ManageMedicineController extends HttpServlet {
 
             int medicineID = Integer.parseInt(medicineIDParam);
             boolean deleteResult = medicineDAO.deleteMedicine(medicineID);
+            log(medicineIDParam);
 
             if (deleteResult) {
                 request.getSession().setAttribute("medicineDeleteSuccessMsg", "Delete medicine successfully.");
@@ -359,7 +361,7 @@ public class ManageMedicineController extends HttpServlet {
                     || !isValidMedicineType
                     || !isValidMedicinePrice
                     || !isValidMedicineStatus) {
-                response.sendRedirect(request.getContextPath() + "/manage-medicine?action=edit&medicineId=" + medicineID);
+                response.sendRedirect(request.getContextPath() + "/manage-medicine?action=edit&medicineID=" + medicineID);
             } else {
 
                 boolean editResult = medicineDAO.editMedicine(medicineTypeParam, Integer.parseInt(medicineStatusParam), medicineNameParam, medicineCodeParam, Double.parseDouble(medicinePriceParam), medicineID);

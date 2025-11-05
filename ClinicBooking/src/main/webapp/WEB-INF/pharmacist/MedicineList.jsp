@@ -105,19 +105,18 @@
                                 <tr>
                                     <th>#</th>
                                     <th>Type</th>
-                                    <th>Status</th>
+                                    <th class="col-1">Status</th>
                                     <th>Name</th>
                                     <th>Code</th>
                                     <th>Quantity</th>
                                     <th>Price Per Unit</th>
-                                    <th>Last Import</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <c:forEach items="${requestScope.medicineList}" var="med" varStatus="item">
-                                    <tr>
-                                        <td>
+                                    <tr style="<c:if test='${med.isHidden}'>opacity: 0.5;</c:if>">
+                                            <td>
                                             <c:out value="${item.count}"/>
                                         </td>
                                         <td>
@@ -148,26 +147,18 @@
                                             <fmt:formatNumber value="${med.price}" type="currency" currencySymbol="$" />
                                         </td>
                                         <td>
-                                            <c:choose>
-                                                <c:when test="${not empty med.lastStockTransactionFormatDate}">
-                                                    <c:out value="${med.lastStockTransactionFormatDate}"/>
-                                                </c:when>
-                                                <c:otherwise>
-                                                    <c:out value="None"/>
-                                                </c:otherwise>
-                                            </c:choose>
-                                        </td>
-                                        <td>
-                                            <div class="d-flex gap-2">
-                                                <a class="btn btn-submit bg-warning text-white" href="${pageContext.request.contextPath}/manage-medicine?action=detail&medicineId=${med.medicineId}">View Detail</a>
-                                                <a class="btn btn-submit bg-primary text-white" href="${pageContext.request.contextPath}/manage-medicine?action=import&medicineId=${med.medicineId}">Import</a>
-                                                <a class="btn btn-submit bg-primary text-white" href="${pageContext.request.contextPath}/manage-medicine?action=edit&medicineId=${med.medicineId}">Edit</a>
-                                                <form method="post" action="${pageContext.request.contextPath}/manage-medicine">
-                                                    <input type="hidden" name="action" value="delete">
-                                                    <input type="hidden" name="medicineId" value="${med.medicineId}">
-                                                    <button class="btn btn-submit bg-danger text-white">Delete</button>
-                                                </form>
-                                            </div>
+                                            <c:if test="${not med.isHidden}">
+                                                <div class="d-flex gap-2">
+                                                    <a class="btn btn-submit bg-warning text-white" href="${pageContext.request.contextPath}/manage-medicine?action=detail&medicineID=${med.medicineID}">View Detail</a>
+                                                    <a class="btn btn-submit bg-primary text-white" href="${pageContext.request.contextPath}/manage-medicine?action=import&medicineID=${med.medicineID}">Import</a>
+                                                    <a class="btn btn-submit bg-primary text-white" href="${pageContext.request.contextPath}/manage-medicine?action=edit&medicineID=${med.medicineID}">Edit</a>
+                                                    <form method="post" action="${pageContext.request.contextPath}/manage-medicine">
+                                                        <input type="hidden" name="action" value="delete">
+                                                        <input type="hidden" name="medicineID" value="${med.medicineID}">
+                                                        <button class="btn btn-submit bg-danger text-white">Delete</button>
+                                                    </form>
+                                                </div>
+                                            </c:if>
                                         </td>
                                     </tr>
                                 </c:forEach>

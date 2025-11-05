@@ -11,7 +11,7 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8">
-        <title>Doctor Dashboard</title>
+        <title>Medicine Detail</title>
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assests/css/bootstrap.min.css">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assests/css/all.min.css" />
         <style>
@@ -122,51 +122,7 @@
                                 Day create: 
                                 <c:out value="${requestScope.medicine.dateCreateFormatDate}"/>
                             </div>
-                            <div class="col-4">
-                                Last import: 
-                                <c:choose>
-                                    <c:when test="${not empty requestScope.medicine.lastStockTransactionFormatDate}">
-                                        <c:out value="${requestScope.medicine.lastStockTransactionFormatDate}"/>
-                                    </c:when>
-                                    <c:otherwise>
-                                        <c:out value="None"/>
-                                    </c:otherwise>
-                                </c:choose>
-                            </div>
                         </div>
-                    </div>
-                </div>
-                <div class="card mb-4">
-                    <div class="card-header bg-white">
-                        <h5 class="mb-0">Medicine Transaction History</h5>
-                    </div>
-                    <div class="card-body">
-                        <table class="table align-middle">
-                            <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>Name</th>
-                                    <th>Code</th>
-                                    <th>Quantity</th>
-                                    <th>Total Value</th>
-                                    <th>Day Import</th>
-                                    <th>Day Expire</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <c:forEach items="${requestScope.medicineStockTransactionList}" var="transaction" varStatus="item">
-                                    <tr>
-                                        <td>${item.count}</td>
-                                        <td>${transaction.medicine.medicineName}</td>
-                                        <td>${transaction.medicine.medicineCode}</td>
-                                        <td>${transaction.quantity}</td>
-                                        <td>${transaction.totalValue}</td>
-                                        <td>${transaction.dateImportFormatDate}</td>
-                                        <td>${transaction.dateExpireFormatDate}</td>
-                                    </tr>
-                                </c:forEach>
-                            </tbody>
-                        </table>
                     </div>
                 </div>
             </div>

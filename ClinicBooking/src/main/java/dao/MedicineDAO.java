@@ -28,7 +28,8 @@ public class MedicineDAO extends DBContext {
     public List<MedicineDTO> getAllMedicines() {
 
         String query = "SELECT m.MedicineID, m.MedicineType, m.MedicineStatus, m.MedicineName, m.MedicineCode, m.Quantity, m.Price, m.DateCreate, m.[Hidden]\n"
-                + "FROM [dbo].[Medicine] m;";
+                + "FROM [dbo].[Medicine] m\n"
+                + "ORDER BY Hidden ASC;";
 
         ResultSet rs = null;
         List<MedicineDTO> medicineList = new ArrayList<>();
@@ -39,7 +40,7 @@ public class MedicineDAO extends DBContext {
 
                 MedicineDTO medicine = new MedicineDTO();
                 medicine.setMedicineID(rs.getInt("MedicineID"));
-                medicine.setMedicineType(rs.getString("MedicineTypeName"));
+                medicine.setMedicineType(rs.getString("MedicineType"));
                 medicine.setMedicineStatus(rs.getBoolean("MedicineStatus"));
                 medicine.setMedicineName(rs.getString("MedicineName"));
                 medicine.setMedicineCode(rs.getString("MedicineCode"));
@@ -81,7 +82,7 @@ public class MedicineDAO extends DBContext {
 
                 medicine = new MedicineDTO();
                 medicine.setMedicineID(rs.getInt("MedicineID"));
-                medicine.setMedicineType(rs.getString("MedicineTypeName"));
+                medicine.setMedicineType(rs.getString("MedicineType"));
                 medicine.setMedicineStatus(rs.getBoolean("MedicineStatus"));
                 medicine.setMedicineName(rs.getString("MedicineName"));
                 medicine.setMedicineCode(rs.getString("MedicineCode"));
@@ -128,7 +129,7 @@ public class MedicineDAO extends DBContext {
                 MedicineDTO medicine = new MedicineDTO();
 
                 medicine.setMedicineID(rs.getInt("MedicineID"));
-                medicine.setMedicineType(rs.getString("MedicineTypeName"));
+                medicine.setMedicineType(rs.getString("MedicineType"));
                 medicine.setMedicineStatus(rs.getBoolean("MedicineStatus"));
                 medicine.setMedicineName(rs.getString("MedicineName"));
                 medicine.setMedicineCode(rs.getString("MedicineCode"));
@@ -181,7 +182,7 @@ public class MedicineDAO extends DBContext {
     public boolean deleteMedicine(int medicineID) {
 
         String query = "UPDATE [dbo].[Medicine]\n"
-                + "SET Hidden = 0\n"
+                + "SET Hidden = 1\n"
                 + "WHERE MedicineID = ?;";
         Object[] params = {medicineID};
 
@@ -194,9 +195,8 @@ public class MedicineDAO extends DBContext {
     public boolean importMedicine(int quantity, int medicineID) {
 
         String query = "UPDATE [dbo].[Medicine]\n"
-                + "SET Quantity = ?\n"
-                + "WHERE MedicineID = ?"
-                + "AND Hidden = 1;";
+                + "SET Quantity = Quantity + ?\n"
+                + "WHERE MedicineID = ?;";
         Object[] params = {quantity, medicineID};
 
         int rs = executeQuery(query, params);
