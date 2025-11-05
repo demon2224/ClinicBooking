@@ -355,62 +355,220 @@ BEGIN
 	-- 11. PRESCRIPTION ITEMS - Phụ thuộc vào Prescription (PrescriptionID) và Medicine (MedicineID)
 	INSERT INTO PrescriptionItem (PrescriptionID, MedicineID, Dosage, Instruction) VALUES
 	-- Patient 1 Prescriptions (Completed only)
-	(1,21,1,'Losartan 50mg once daily'), -- Cardiac med
-	(1,8,1,'Aspirin low dose'), 
-	(2,14,2,'Apply twice daily'), -- Skin cream
-	(3,23,1,'Vitamin D once daily'), 
-	(4,6,1,'Ibuprofen 200mg as needed'), 
-	(5,28,1,'Gabapentin 300mg at night'), -- Migraine
-	(6,21,1,'Losartan 50mg once daily'), 
-	(7,9,1,'Metformin twice daily'), -- Diabetes
-	(8,5,1,'Eye drops 3x daily'), 
-	-- No prescription for Appt 9
-	(9,23,1,'Vitamin D once daily'),
-	(9,18,1,'Zinc supplement'),
+	-- Prescription 1: Cardiac medication (3 items)
+	(1,21,30,'1 tablet once daily in the morning'),
+	(1,8,30,'1 tablet once daily with breakfast'),
+	(1,23,30,'1 tablet daily for bone health'),
+	
+	-- Prescription 2: Skin treatment (2 items) 
+	(2,14,1,'Apply to affected area twice daily'),
+	(2,4,1,'Apply thin layer if irritation persists'),
+	
+	-- Prescription 3: General vitamins (2 items)
+	(3,23,60,'1 tablet daily with breakfast'), 
+	(3,18,30,'1 tablet daily for 30 days'),
+	
+	-- Prescription 4: Anti-inflammatory (3 items)
+	(4,6,20,'1 tablet twice daily with food'),
+	(4,26,1,'Apply to wounds as needed'),
+	(4,1,10,'1 tablet as needed for fever'),
+	
+	-- Prescription 5: Migraine treatment (3 items)
+	(5,28,30,'1 capsule at bedtime'),
+	(5,6,20,'1 tablet as needed for headache'),
+	(5,10,14,'1 tablet daily if allergic reaction'),
+	
+	-- Prescription 6: Heart medication refill (2 items)
+	(6,21,30,'1 tablet once daily - continue'),
+	(6,8,30,'1 tablet daily with breakfast'),
+	
+	-- Prescription 7: Diabetes medication (4 items)
+	(7,9,60,'1 tablet twice daily with meals'),
+	(7,23,30,'1 tablet daily'),
+	(7,18,30,'1 tablet daily for healing'),
+	(7,1,10,'1 tablet as needed for pain'),
+	
+	-- Prescription 8: Eye care (2 items)
+	(8,5,3,'1-2 drops 3 times daily'),
+	(8,23,30,'1 tablet daily'),
+	
+	-- Prescription 9: Annual checkup (3 items)
+	(9,23,90,'1 tablet daily for 3 months'),
+	(9,18,30,'1 tablet daily'),
+	(9,11,1,'1 bottle - take as directed'),
+	
 	-- Doctor 1 Other Patients (Completed)
-	(10,21,1,'Cardiac medication'),
-	(11,23,1,'Pregnancy vitamins'),
-	(11,11,1,'Multivitamin'),
-	(12,9,1,'Cholesterol meds'),
-	(13,21,1,'Cardiac screening meds'),
-	(14,21,1,'Heart medication'),
-	(15,28,1,'Stress relief medication'),
-	(16,21,1,'Cardiac monitoring'),
-	(17,6,1,'Post-fracture pain relief'),
-	(18,21,1,'Heart prescription'),
+	-- Prescription 10: Cardiac meds (3 items)
+	(10,21,30,'1 tablet daily for hypertension'),
+	(10,8,30,'1 tablet daily for heart protection'),
+	(10,16,30,'1 tablet daily as prescribed'),
+	
+	-- Prescription 11: Pregnancy vitamins (4 items)
+	(11,23,90,'1 tablet daily for bone health'),
+	(11,11,3,'1 bottle monthly prenatal vitamin'),
+	(11,18,60,'1 tablet daily for immune support'),
+	(11,1,20,'1 tablet as needed for minor pain'),
+	
+	-- Prescription 12: Cholesterol management (3 items)
+	(12,9,60,'1 tablet daily for glucose control'),
+	(12,21,30,'1 tablet daily for blood pressure'),
+	(12,23,30,'1 tablet daily'),
+	
+	-- Prescription 13: Cardiac screening (2 items)
+	(13,21,14,'1 tablet daily for 2 weeks'),
+	(13,8,14,'1 tablet daily for 2 weeks'),
+	
+	-- Prescription 14: Heart medication (3 items)
+	(14,21,30,'1 tablet daily for hypertension'),
+	(14,8,30,'1 tablet daily for heart health'),
+	(14,23,30,'1 tablet daily supplement'),
+	
+	-- Prescription 15: Stress relief (4 items)
+	(15,28,30,'1 capsule at bedtime for anxiety'),
+	(15,10,14,'1 tablet daily if needed'),
+	(15,23,30,'1 tablet daily for mood support'),
+	(15,1,10,'1 tablet as needed for headaches'),
+	
+	-- Prescription 16: Cardiac monitoring (2 items)
+	(16,21,60,'1 tablet daily - 2 month supply'),
+	(16,8,60,'1 tablet daily - continue'),
+	
+	-- Prescription 17: Post-fracture care (4 items)
+	(17,6,40,'1 tablet twice daily for inflammation'),
+	(17,25,20,'1 tablet as needed for severe pain'),
+	(17,23,60,'1 tablet daily for bone healing'),
+	(17,18,30,'1 tablet daily for tissue repair'),
+	
+	-- Prescription 18: Heart check (2 items)
+	(18,21,30,'1 tablet daily maintenance'),
+	(18,23,30,'1 tablet daily supplement'),
+	
 	-- Other Doctors (Completed)
-	(19,14,2,'Skin rash ointment'),
-	(20,1,2,'Pediatric fever medication'),
-	(21,6,1,'Knee pain medication'),
-	(22,28,1,'Headache medication'),
-	(23,9,1,'Diabetes control'),
-	(24,5,1,'Eye drops'),
-	(25,2,1,'Ear antibiotics'),
-	(26,28,1,'Mental health medication'),
-	(27,21,1,'BP medication'),
-	-- No prescription for Appt 43
-	(28,11,1,'Vaccination vitamins'),
-	(29,6,1,'Fracture pain relief'),
-	(29,25,1,'Tramadol if needed'),
-	(30,28,1,'Neurology medication'),
-	(31,23,1,'General vitamins'),
-	(32,5,1,'Eye care drops'),
+	-- Prescription 19: Skin treatment (3 items)
+	(19,14,2,'Apply twice daily to affected area'),
+	(19,4,1,'Apply for inflammation as needed'),
+	(19,26,1,'Apply for healing wounds'),
 	
-	-- Approved Appointments (Patient 1: ID 11, 12)
-	(33,28,1,'Stress relief meds'),
-	(34,14,2,'Skin treatment cream'),
+	-- Prescription 20: Pediatric fever (3 items)
+	(20,1,20,'1/2 tablet twice daily for fever'),
+	(20,11,1,'1 bottle children multivitamin'),
+	(20,23,30,'1/2 tablet daily for recovery'),
 	
-	-- Approved (Doctor 1 - Other Patients: ID 27, 28, 29)
-	(35,21,1,'Anxiety cardiac meds'),
-	(36,21,1,'Post-op cardiac meds'),
-	(37,17,1,'Thyroid medication'),
+	-- Prescription 21: Knee pain (3 items)
+	(21,6,20,'1 tablet twice daily with food'),
+	(21,26,1,'Apply to cuts as needed'),
+	(21,1,10,'1 tablet as backup pain relief'),
 	
-	-- Approved (Other Doctors: ID 49, 50, 51, 58, 59)
-	(38,2,1,'Sinus antibiotics'),
-	(39,28,1,'Antidepressants'),
-	(40,23,1,'General vitamins'),
-	(41,28,1,'Mental health meds'),
-	(42,23,1,'Preventive vitamins');
+	-- Prescription 22: Headache treatment (3 items)
+	(22,28,14,'1 capsule at night for 2 weeks'),
+	(22,6,10,'1 tablet as needed for headache'),
+	(22,1,10,'1 tablet alternate pain relief'),
+	
+	-- Prescription 23: Diabetes control (4 items)
+	(23,9,60,'1 tablet twice daily with meals'),
+	(23,23,30,'1 tablet daily for bone health'),
+	(23,18,30,'1 tablet daily for wound healing'),
+	(23,1,10,'1 tablet as needed for minor pain'),
+	
+	-- Prescription 24: Eye care (2 items)
+	(24,5,2,'1-2 drops 3 times daily'),
+	(24,23,30,'1 tablet daily for general health'),
+	
+	-- Prescription 25: Ear infection (3 items)
+	(25,2,14,'1 capsule twice daily for 7 days'),
+	(25,15,1,'2 drops twice daily in affected ear'),
+	(25,1,10,'1 tablet for pain relief as needed'),
+	
+	-- Prescription 26: Mental health (3 items)
+	(26,28,30,'1 capsule daily for anxiety'),
+	(26,23,30,'1 tablet daily for mood support'),
+	(26,11,1,'1 bottle multivitamin monthly'),
+	
+	-- Prescription 27: Blood pressure (3 items)
+	(27,21,30,'1 tablet daily for hypertension'),
+	(27,29,30,'1 tablet daily as diuretic'),
+	(27,23,30,'1 tablet daily supplement'),
+	
+	-- Prescription 28: Vaccination support (2 items)
+	(28,11,1,'1 bottle for immune support'),
+	(28,23,14,'1 tablet daily for 2 weeks'),
+	
+	-- Prescription 29: Fracture pain management (4 items)
+	(29,6,40,'1 tablet twice daily for inflammation'),
+	(29,25,30,'1 tablet as needed for severe pain'),
+	(29,23,60,'1 tablet daily for bone healing'),
+	(29,18,30,'1 tablet daily for tissue repair'),
+	
+	-- Prescription 30: Neurology treatment (3 items)
+	(30,28,30,'1 capsule daily for neuropathy'),
+	(30,23,30,'1 tablet daily for nerve health'),
+	(30,11,1,'1 bottle multivitamin'),
+	
+	-- Prescription 31: General health (2 items)
+	(31,23,90,'1 tablet daily for 3 months'),
+	(31,18,30,'1 tablet daily for immunity'),
+	
+	-- Prescription 32: Eye post-op care (3 items)
+	(32,5,2,'1-2 drops 4 times daily post-surgery'),
+	(32,23,30,'1 tablet daily for healing'),
+	(32,1,10,'1 tablet as needed for discomfort'),
+	
+	-- Approved Appointments (Patient 1: ID 33, 34)
+	-- Prescription 33: Stress management (4 items)
+	(33,28,30,'1 capsule at bedtime for stress'),
+	(33,10,14,'1 tablet daily for stress allergies'),
+	(33,23,30,'1 tablet daily for mood support'),
+	(33,11,1,'1 bottle multivitamin monthly'),
+	
+	-- Prescription 34: Skin eczema treatment (3 items)
+	(34,14,2,'Apply twice daily to affected area'),
+	(34,4,1,'Apply for inflammation as needed'),
+	(34,23,30,'1 tablet daily for skin health'),
+	
+	-- Approved (Doctor 1 - Other Patients: ID 35, 36, 37)
+	-- Prescription 35: Anxiety cardiac care (4 items)
+	(35,21,30,'1 tablet daily for blood pressure'),
+	(35,8,30,'1 tablet daily for heart protection'),
+	(35,28,30,'1 capsule daily for anxiety'),
+	(35,23,30,'1 tablet daily for mood and bone health'),
+	
+	-- Prescription 36: Post-op cardiac care (3 items)
+	(36,21,60,'1 tablet daily - 2 month supply'),
+	(36,8,60,'1 tablet daily for cardiac protection'),
+	(36,23,30,'1 tablet daily for healing support'),
+	
+	-- Prescription 37: Thyroid treatment (3 items)
+	(37,17,90,'1 capsule daily on empty stomach'),
+	(37,23,30,'1 tablet daily (4 hours after thyroid med)'),
+	(37,18,30,'1 tablet daily for thyroid support'),
+	
+	-- Approved (Other Doctors: ID 38, 39, 40, 41, 42)
+	-- Prescription 38: Sinus infection (4 items)
+	(38,2,14,'1 capsule twice daily for 7 days'),
+	(38,27,1,'2 drops twice daily for congestion'),
+	(38,1,20,'1 tablet twice daily for pain'),
+	(38,10,14,'1 tablet daily for allergic component'),
+	
+	-- Prescription 39: Depression treatment (3 items)
+	(39,28,30,'1 capsule daily for depression anxiety'),
+	(39,23,90,'1 tablet daily for mood support'),
+	(39,11,3,'1 bottle monthly nutritional support'),
+	
+	-- Prescription 40: General wellness (3 items)
+	(40,23,90,'1 tablet daily for 3 months'),
+	(40,18,60,'1 tablet daily for 2 months'),
+	(40,11,1,'1 bottle for overall health'),
+	
+	-- Prescription 41: Anxiety disorder (4 items)
+	(41,28,30,'1 capsule at bedtime for anxiety'),
+	(41,10,30,'1 tablet daily for stress allergies'),
+	(41,23,30,'1 tablet daily for mood stabilization'),
+	(41,1,20,'1 tablet as needed for tension headaches'),
+	
+	-- Prescription 42: Preventive care (3 items)
+	(42,23,90,'1 tablet daily for bone health'),
+	(42,18,60,'1 tablet daily for immune support'),
+	(42,11,3,'1 bottle for comprehensive nutrition');
 
 	-- 12. MEDICAL RECORDS - Cho Completed và Approved appointments
 	-- Completed = đã khám xong
