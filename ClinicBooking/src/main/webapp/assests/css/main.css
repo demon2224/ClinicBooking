@@ -7441,9 +7441,24 @@ section,
 .appointment-specialty {
     color: #64748b;
     font-size: 0.95rem;
+    font-weight: 500;
     display: flex;
     align-items: center;
     gap: 0.5rem;
+}
+
+/* Enhance text content within appointment items */
+.appointment-card p,
+.appointment-card .appointment-specialty,
+.appointment-item p,
+.appointment-item .appointment-specialty {
+    color: #374151;
+    font-weight: 500;
+}
+
+.appointment-card strong,
+.appointment-item strong {
+    font-weight: 600;
 }
 
 .appointment-specialty i {
@@ -8567,6 +8582,66 @@ body.appointment-page {
     font-size: 1.1rem;
 }
 
+/* Medicine List Styles */
+.medicine-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem 2rem;
+}
+
+.medicine-item {
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    padding: 1rem;
+    transition: all 0.3s ease;
+}
+
+.medicine-item:hover {
+    border-color: #dee2e6;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.medicine-info .medicine-name {
+    color: #175CDD;
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}   
+
+.medicine-info .medicine-name i {
+    color: #175CDD;
+}
+
+.medicine-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #6c757d;
+}
+
+.medicine-details-row {
+    display: contents;
+}
+
+.medicine-details span {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.2rem 0;
+    font-weight: 500;
+}
+
+.medicine-details i {
+    color: #175CDD;
+    width: 16px;
+}
+
 /* Mobile responsiveness */
 @media (max-width: 768px) {
     .modal-content {
@@ -8611,5 +8686,24 @@ body.appointment-page {
     .reviewer-avatar {
         margin-right: 0;
         margin-bottom: 0.5rem;
+    }
+    
+    .medicine-details {
+        gap: 0.3rem;
+    }
+    
+    .medicine-list {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .medicine-details-row {
+        display: flex;
+        flex-direction: column;
+        gap: 0.3rem;
+    }
+    
+    .medicine-details span {
+        font-size: 0.85rem;
     }
 }
