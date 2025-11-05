@@ -46,7 +46,9 @@ public class AppointmentDAO extends DBContext {
                 + "JOIN Doctor d on a.DoctorID = d.DoctorID\n"
                 + "JOIN Staff s on s.StaffID = d.StaffID\n"
                 + "JOIN Patient p on p.PatientID = a.PatientID\n"
-                + "Where d.DoctorID = ? and a.AppointmentStatus = 'Approved' and CAST (a.DateBegin as DATE) = CAST (GETDATE() as DATE)";
+                + "Where d.DoctorID = ? "
+                + "and a.AppointmentStatus = 'Approved'";
+//                + "and CAST (a.DateBegin as DATE) = CAST (GETDATE() as DATE)";
         Object[] params = {doctorID};
         ResultSet rs = executeSelectQuery(sql, params);
         try {
@@ -101,7 +103,7 @@ public class AppointmentDAO extends DBContext {
                 + "                JOIN Doctor d on a.DoctorID = d.DoctorID\n"
                 + "                JOIN Staff s on s.StaffID = d.StaffID\n"
                 + "                JOIN Patient p on p.PatientID = a.PatientID\n"
-                + "				LEFT JOIN MedicalRecord m on m.AppointmentID = a.AppointmentID\n"
+                + "		   LEFT JOIN MedicalRecord m on m.AppointmentID = a.AppointmentID\n"
                 + "                Where d.DoctorID = ? and a.AppointmentID = ?";
         Object[] params = {doctorID, appointmentID};
         ResultSet rs = executeSelectQuery(sql, params);
@@ -130,6 +132,59 @@ public class AppointmentDAO extends DBContext {
         return appointment;
     }
 
+    public List<AppointmentDTO> searchPatientAppointmentByPatientName(int doctorID, String keyword) {
+        List<AppointmentDTO> appointments = new ArrayList<>();
+        String sql = "SELECT a.AppointmentID,\n"
+                + "	p.FirstName,\n"
+                + "	p.LastName,\n"
+                + "	p.Email,\n"
+                + "	p.DOB,\n"
+                + "	CASE WHEN p.Gender = 1 THEN 'Male' ELSE 'Female' END as Gender,\n"
+                + "	p.UserAddress,\n"
+                + "	p.PhoneNumber,\n"
+                + "	a.DateBegin,\n"
+                + "	a.Note,\n"
+                + "	a.AppointmentStatus\n"
+                + "FROM Appointment a\n"
+                + "JOIN Doctor d on a.DoctorID = d.DoctorID\n"
+                + "JOIN Staff s on s.StaffID = d.StaffID\n"
+                + "JOIN Patient p on p.PatientID = a.PatientID\n"
+                + "Where d.DoctorID = ? and a.AppointmentStatus = 'Approved'"
+                + "AND CAST (a.DateBegin as DATE) = CAST (GETDATE() as DATE)"
+                + "AND (p.FirstName LIKE ? OR p.LastName LIKE ?)";
+
+        Object[] params = {
+            doctorID,
+            "%" + keyword + "%",
+            "%" + keyword + "%"
+        };
+
+        ResultSet rs = executeSelectQuery(sql, params);
+        try {
+            if (rs != null) {
+                while (rs.next()) {
+                    PatientDTO patient = new PatientDTO(rs.getString("FirstName"),
+                            rs.getString("LastName"),
+                            rs.getTimestamp("DOB"),
+                            rs.getBoolean("Gender"),
+                            rs.getString("UserAddress"),
+                            rs.getString("PhoneNumber"),
+                            rs.getString("Email"));
+                    AppointmentDTO appointment = new AppointmentDTO(rs.getInt("AppointmentID"),
+                            patient, rs.getString("AppointmentStatus"),
+                            rs.getTimestamp("DateBegin"),
+                            null,
+                            rs.getString("Note"));
+                    appointments.add(appointment);
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(DoctorDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            closeResources(rs);
+        }
+        return appointments;
+    }
 
     /*
      * Get all appointments for a specific patient
@@ -274,6 +329,7 @@ public class AppointmentDAO extends DBContext {
 
         return null;
     }
+
     /**
      * Get appointment info with doctor and patient info to view
      */
@@ -642,6 +698,7 @@ public class AppointmentDAO extends DBContext {
         int rowsAffected = db.executeQuery(sql, params);
         return rowsAffected > 0;
     }
+
     /**
      * Get all appointments
      *

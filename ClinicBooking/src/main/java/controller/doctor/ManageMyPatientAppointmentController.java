@@ -103,13 +103,13 @@ public class ManageMyPatientAppointmentController extends HttpServlet {
      */
     private void showMyPatientAppointmentList(HttpServletRequest request, HttpServletResponse response, int doctorID)
             throws ServletException, IOException {
-//        String keyword = request.getParameter("keyword");
+        String keyword = request.getParameter("keyword");
         List<AppointmentDTO> list;
-//        if ((keyword != null) && (!keyword.trim().isEmpty())) {
-//            list = appointmentDAO.searchAppointmentsByDoctor(doctorID, keyword);
-//        } else {
-        list = appointmentDAO.getPatientAppointmentOfDoctorByID(doctorID);
-//        }
+        if ((keyword != null) && (!keyword.trim().isEmpty())) {
+            list = appointmentDAO.searchPatientAppointmentByPatientName(doctorID, keyword);
+        } else {
+            list = appointmentDAO.getPatientAppointmentOfDoctorByID(doctorID);
+        }
         request.setAttribute("list", list);
         request.getRequestDispatcher("/WEB-INF/doctor/ManageMyPatientAppointment.jsp").forward(request, response);
     }

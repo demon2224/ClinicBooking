@@ -96,38 +96,25 @@
                         <table class="table align-middle">
                             <thead>
                                 <tr>
-                                    <th>ID</th>
+                                    <th>#</th>
                                     <th>Name</th>
+                                    <th>Symptoms</th>
                                     <th>Diagnosis</th>
-                                    <th>Appointment Date</th>
+                                    <th>Note</th>
                                     <th>Record Create Date</th>   
-                                    <th>Appointment Status</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <c:forEach var="myPatientMedicalRecord" items="${myPatientMedicalRecordList}">
+                                <c:forEach var="myPatientMedicalRecord" items="${myPatientMedicalRecordList}" varStatus="item">
                                     <tr>
-                                        <td>${myPatientMedicalRecord.medicalRecordID}</td>
-                                        <td>${myPatientMedicalRecord.patientName}</td>
+                                        <td><c:out value="${item.count}"/></td>
+                                        <td>${myPatientMedicalRecord.appointmentID.patientID.firstName} ${myPatientMedicalRecord.appointmentID.patientID.lastName}</td>
+                                        <td>${myPatientMedicalRecord.symptoms}</td>
                                         <td>${myPatientMedicalRecord.diagnosis}</td>
+                                        <td>${myPatientMedicalRecord.note}</td>
                                         <td>
-                                            <fmt:formatDate value="${myPatientMedicalRecord.appointmentDateBegin}" pattern="yyyy/MM/dd HH:mm" />
-                                        </td>
-                                        <td>
-                                            <fmt:formatDate value="${myPatientMedicalRecord.medicalRecordDateCreate}" pattern="yyyy/MM/dd HH:mm" />
-                                        </td>
-                                        <td>
-                                            <span class="badge
-                                                  <c:choose>
-                                                      <c:when test="${myPatientMedicalRecord.appointmentStatus eq 'Pending'}">bg-warning text-dark</c:when>
-                                                      <c:when test="${myPatientMedicalRecord.appointmentStatus eq 'Approved'}">bg-primary</c:when>
-                                                      <c:when test="${myPatientMedicalRecord.appointmentStatus eq 'Completed'}">bg-success</c:when>
-                                                      <c:when test="${myPatientMedicalRecord.appointmentStatus eq 'Canceled'}">bg-danger</c:when>
-                                                      <c:otherwise>bg-secondary</c:otherwise>
-                                                  </c:choose>">
-                                                ${myPatientMedicalRecord.appointmentStatus}
-                                            </span>
+                                            <fmt:formatDate value="${myPatientMedicalRecord.dateCreate}" pattern="yyyy/MM/dd HH:mm" />
                                         </td>
                                         <td>
                                             <a href="${pageContext.request.contextPath}/manage-my-patient-medical-record?action=detail&medicalRecordID=${myPatientMedicalRecord.medicalRecordID}"

@@ -5,6 +5,7 @@
 package model;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 /**
  *
@@ -18,6 +19,7 @@ public class PrescriptionDTO {
     private Timestamp dateCreate;
     private String note;
     private boolean hidden;
+    private List<PrescriptionItemDTO> prescriptionItemList;
 
     public PrescriptionDTO() {
     }
@@ -68,6 +70,19 @@ public class PrescriptionDTO {
 
     public void setHidden(boolean hidden) {
         this.hidden = hidden;
+    }
+
+    public List<PrescriptionItemDTO> getPrescriptionItemList() {
+        return prescriptionItemList;
+    }
+
+    public void setPrescriptionItemList(List<PrescriptionItemDTO> prescriptionItemList) {
+        this.prescriptionItemList = prescriptionItemList;
+    }
+
+    @Override
+    public String toString() {
+        return "PrescriptionDTO{" + "prescriptionID=" + prescriptionID + ", appointmentID=" + appointmentID + ", prescriptionStatus=" + prescriptionStatus + ", dateCreate=" + dateCreate + ", note=" + note + ", hidden=" + hidden + '}';
     }
 
 }

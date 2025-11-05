@@ -10,6 +10,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import model.AppointmentDTO;
+import model.MedicalRecordDTO;
+import model.PatientDTO;
+import model.PrescriptionDTO;
 import utils.DBContext;
 
 /**
@@ -18,6 +22,12 @@ import utils.DBContext;
  */
 public class MedicalRecordDAO extends DBContext {
 
+    /**
+     * Check Medical record of one appointment exist or not
+     *
+     * @param appointmentID
+     * @return
+     */
     public boolean isExistMedicalRecord(int appointmentID) {
         String sql = "Select m.MedicalRecordID\n"
                 + "from MedicalRecord m\n"
@@ -30,187 +40,199 @@ public class MedicalRecordDAO extends DBContext {
             isExistMedicalRecord = rs.next();
         } catch (SQLException ex) {
             Logger.getLogger(MedicalRecordDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            closeResources(rs);
         }
         return isExistMedicalRecord;
     }
 
+    /**
+     * Get patient medical record list by doctorID
+     *
+     * @param doctorID
+     * @return
+     */
+    public List<MedicalRecordDTO> getPatientMedicalRecordListByDoctorID(int doctorID) {
+        List<MedicalRecordDTO> medicalRecords = new ArrayList<>();
+        String sql = "Select p.FirstName,\n"
+                + "p.LastName,\n"
+                + "m.MedicalRecordID,\n"
+                + "m.Symptoms,\n"
+                + "m.Diagnosis,\n"
+                + "m.Note,\n"
+                + "m.DateCreate\n"
+                + "From MedicalRecord m\n"
+                + "Join Appointment a on a.AppointmentID = m.AppointmentID\n"
+                + "Join Patient p on p.PatientID = a.PatientID\n"
+                + "Where a.DoctorID = ?\n"
+                + "order by DateCreate desc";
+        Object[] params = {doctorID};
+        ResultSet rs = executeSelectQuery(sql, params);
+        try {
+            if (rs != null) {
+                while (rs.next()) {
+                    // Patient
+                    PatientDTO patient = new PatientDTO();
+                    patient.setFirstName(rs.getString("FirstName"));
+                    patient.setLastName(rs.getString("LastName"));
+                    AppointmentDTO appointment = new AppointmentDTO();
+                    appointment.setPatientID(patient);
+                    // Medical Record
+                    MedicalRecordDTO medicalRecord = new MedicalRecordDTO();
+                    medicalRecord.setMedicalRecordID(rs.getInt("MedicalRecordID"));
+                    medicalRecord.setAppointmentID(appointment);
+                    medicalRecord.setSymptoms(rs.getString("Symptoms"));
+                    medicalRecord.setDiagnosis(rs.getString("Diagnosis"));
+                    medicalRecord.setNote(rs.getString("Note"));
+                    medicalRecord.setDateCreate(rs.getTimestamp("DateCreate"));
+                    // Add medical record into list.
+                    medicalRecords.add(medicalRecord);
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(DoctorDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            closeResources(rs);
+        }
+        return medicalRecords;
+    }
+
+    /**
+     * Get patient medical record list by doctorID
+     *
+     * @param doctorID
+     * @return
+     */
+    public List<MedicalRecordDTO> searchPatientMedicalRecordListByPatientName(int doctorID, String keyword) {
+        List<MedicalRecordDTO> medicalRecords = new ArrayList<>();
+        String sql = "Select p.FirstName,\n"
+                + "p.LastName,\n"
+                + "m.MedicalRecordID,\n"
+                + "m.Symptoms,\n"
+                + "m.Diagnosis,\n"
+                + "m.Note,\n"
+                + "m.DateCreate\n"
+                + "From MedicalRecord m\n"
+                + "Join Appointment a on a.AppointmentID = m.AppointmentID\n"
+                + "Join Patient p on p.PatientID = a.PatientID\n"
+                + "Where a.DoctorID = ?\n"
+                + "And (p.FirstName LIKE ? OR p.LastName LIKE ?)"
+                + "order by DateCreate desc";
+        Object[] params = {doctorID,
+            "%" + keyword + "%",
+            "%" + keyword + "%"};
+        ResultSet rs = executeSelectQuery(sql, params);
+        try {
+            if (rs != null) {
+                while (rs.next()) {
+                    // Patient
+                    PatientDTO patient = new PatientDTO();
+                    patient.setFirstName(rs.getString("FirstName"));
+                    patient.setLastName(rs.getString("LastName"));
+                    AppointmentDTO appointment = new AppointmentDTO();
+                    appointment.setPatientID(patient);
+                    // Medical Record
+                    MedicalRecordDTO medicalRecord = new MedicalRecordDTO();
+                    medicalRecord.setMedicalRecordID(rs.getInt("MedicalRecordID"));
+                    medicalRecord.setAppointmentID(appointment);
+                    medicalRecord.setSymptoms(rs.getString("Symptoms"));
+                    medicalRecord.setDiagnosis(rs.getString("Diagnosis"));
+                    medicalRecord.setNote(rs.getString("Note"));
+                    medicalRecord.setDateCreate(rs.getTimestamp("DateCreate"));
+                    // Add medical record into list.
+                    medicalRecords.add(medicalRecord);
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(DoctorDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            closeResources(rs);
+        }
+        return medicalRecords;
+    }
+
+    /**
+     * Retrieves detailed information of a patient's medical record for a
+     * specific doctor and medical record.
+     *
+     * @param doctorID
+     * @param medicalRecordID
+     * @return
+     */
+    public MedicalRecordDTO getPatientMedicalRecordDetailByDoctorIDAndMedicalRecordID(int doctorID, int medicalRecordID) {
+        MedicalRecordDTO medicalRecordDetail = null;
+        String sql = "Select m.MedicalRecordID,\n"
+                + "m.Symptoms,\n"
+                + "m.Diagnosis,\n"
+                + "m.Note as MedicalRecordNote,\n"
+                + "m.DateCreate as MedicalRecordDateCreate,\n"
+                + "a.AppointmentID,\n"
+                + "a.AppointmentStatus,\n"
+                + "a.DateBegin as AppointmentDateBegin,\n"
+                + "a.DateEnd as AppointmentDateEnd,\n"
+                + "a.Note as AppointmentNote,\n"
+                + "pa.FirstName,\n"
+                + "pa.LastName,\n"
+                + "pa.DOB,\n"
+                + "pa.Gender,\n"
+                + "pa.UserAddress,\n"
+                + "pa.Email,\n"
+                + "p.PrescriptionID,\n"
+                + "p.PrescriptionStatus,\n"
+                + "p.DateCreate as PrescriptionDateCreate,\n"
+                + "p.Note as PrescriptionNote,\n"
+                + "p.Hidden as PrescriptionHidden\n"
+                + "From MedicalRecord m\n"
+                + "Join Appointment a on a.AppointmentID = m.AppointmentID\n"
+                + "Join Prescription p on p.AppointmentID = a.AppointmentID\n"
+                + "Join Patient pa on pa.PatientID = a.PatientID\n"
+                + "Where a.DoctorID = ? and m.MedicalRecordID = ?";
+        Object[] params = {doctorID, medicalRecordID};
+        ResultSet rs = executeSelectQuery(sql, params);
+        try {
+            if (rs != null) {
+                while (rs.next()) {
+                    // Patient
+                    PatientDTO patient = new PatientDTO();
+                    patient.setFirstName(rs.getString("FirstName"));
+                    patient.setLastName(rs.getString("LastName"));
+                    patient.setDob(rs.getTimestamp("DOB"));
+                    patient.setGender(rs.getBoolean("Gender"));
+                    patient.setUserAddress(rs.getString("UserAddress"));
+                    patient.setEmail(rs.getString("Email"));
+                    // Appointment
+                    AppointmentDTO appointment = new AppointmentDTO();
+                    appointment.setAppointmentID(rs.getInt("AppointmentID"));
+                    appointment.setPatientID(patient);
+                    appointment.setAppointmentStatus(rs.getString("AppointmentStatus"));
+                    appointment.setDateBegin(rs.getTimestamp("AppointmentDateBegin"));
+                    appointment.setDateEnd(rs.getTimestamp("AppointmentDateEnd"));
+                    appointment.setNote(rs.getString("AppointmentNote"));
+                    // Prescription
+                    PrescriptionDTO prescription = new PrescriptionDTO();
+                    prescription.setPrescriptionID(rs.getInt("PrescriptionID"));
+                    prescription.setAppointmentID(appointment);
+                    prescription.setPrescriptionStatus(rs.getString("PrescriptionStatus"));
+                    prescription.setDateCreate(rs.getTimestamp("PrescriptionDateCreate"));
+                    prescription.setNote(rs.getString("PrescriptionNote"));
+                    prescription.setHidden(rs.getBoolean("PrescriptionHidden"));
+                    // Medical Record
+                    MedicalRecordDTO medicalRecord = new MedicalRecordDTO();
+                    medicalRecord.setMedicalRecordID(rs.getInt("MedicalRecordID"));
+                    medicalRecord.setAppointmentID(appointment);
+                    medicalRecord.setPrescriptionDTO(prescription);
+                    medicalRecord.setSymptoms(rs.getString("Symptoms"));
+                    medicalRecord.setDiagnosis(rs.getString("Diagnosis"));
+                    medicalRecord.setNote(rs.getString("MedicalRecordNote"));
+                    medicalRecord.setDateCreate(rs.getTimestamp("MedicalRecordDateCreate"));
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(DoctorDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            closeResources(rs);
+        }
+        return medicalRecordDetail;
+    }
+
 }
-//    public List<MedicalRecord> getPatientMedicalRecordByDoctorId(int doctorId) {
-//        List<MedicalRecord> list = new ArrayList<>();
-//        String sql = "				SELECT   mr.MedicalRecordID,\n"
-//                + "                p.FirstName + ' ' + p.LastName AS PatientName,\n"
-//                + "                    a.DateBegin AS AppointmentDate,\n"
-//                + "                    mr.Diagnosis,\n"
-//                + "                    ast.AppointmentStatusName,\n"
-//                + "                    ps.PrescriptionStatusName AS PrescriptionStatus,\n"
-//                + "                    mr.DateCreate AS RecordCreatedDate\n"
-//                + "                FROM MedicalRecord mr\n"
-//                + "                INNER JOIN Appointment a ON mr.AppointmentID = a.AppointmentID\n"
-//                + "                INNER JOIN AppointmentStatus ast on a.AppointmentStatusID = ast.AppointmentStatusID\n"
-//                + "                INNER JOIN [User] u ON a.UserID = u.UserID\n"
-//                + "                INNER JOIN [Profile] p ON p.UserProfileID = u.UserID\n"
-//                + "                LEFT JOIN Prescription pr ON mr.PrescriptionID = pr.PrescriptionID\n"
-//                + "                LEFT JOIN PrescriptionStatus ps ON pr.PrescriptionStatusID = ps.PrescriptionStatusID\n"
-//                + "                WHERE a.DoctorID = ? and ast.AppointmentStatusName = 'completed'\n"
-//                + "                ORDER BY mr.DateCreate DESC";
-//        try {
-//            Object[] params = {doctorId};
-//            ResultSet rs = executeSelectQuery(sql, params);
-//            if (rs != null) {
-//                while (rs.next()) {
-//                    MedicalRecord medicalRecord = new MedicalRecord(rs.getString("Diagnosis"),
-//                            rs.getString("PatientName"),
-//                            rs.getTimestamp("AppointmentDate"),
-//                            rs.getString("AppointmentStatusName"),
-//                            rs.getTimestamp("RecordCreatedDate"),
-//                            rs.getInt("MedicalRecordID"));
-//                    list.add(medicalRecord);
-//                }
-//                closeResources(rs);
-//            }
-//        } catch (SQLException ex) {
-//            Logger.getLogger(DoctorDAO.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-//
-//        return list;
-//    }
-//
-//    public List<MedicalRecord> searchMedicalRecordByPatientName(int doctorId, String keyword) {
-//        List<MedicalRecord> list = new ArrayList<>();
-//
-//        String sql = "SELECT MedicalRecordID, \n"
-//                + "  p.FirstName + ' ' + p.LastName AS PatientName,\n"
-//                + "    a.DateBegin AS AppointmentDate,\n"
-//                + "    mr.Diagnosis,\n"
-//                + "    ast.AppointmentStatusName,\n"
-//                + "    ps.PrescriptionStatusName AS PrescriptionStatus,\n"
-//                + "    mr.DateCreate AS RecordCreatedDate\n"
-//                + "FROM MedicalRecord mr\n"
-//                + "INNER JOIN Appointment a ON mr.AppointmentID = a.AppointmentID\n"
-//                + "INNER JOIN AppointmentStatus ast on a.AppointmentStatusID = ast.AppointmentStatusID\n"
-//                + "INNER JOIN [User] u ON a.UserID = u.UserID\n"
-//                + "INNER JOIN [Profile] p ON p.UserProfileID = u.UserID\n"
-//                + "LEFT JOIN Prescription pr ON mr.PrescriptionID = pr.PrescriptionID\n"
-//                + "LEFT JOIN PrescriptionStatus ps ON pr.PrescriptionStatusID = ps.PrescriptionStatusID\n"
-//                + "WHERE a.DoctorID = ? AND ast.AppointmentStatusName = 'completed'\n";
-//
-//        if (keyword != null && !keyword.trim().isEmpty()) {
-//            sql += "AND (p.FirstName + ' ' + p.LastName LIKE ?) ";
-//        }
-//
-//        sql += "ORDER BY mr.DateCreate DESC;";
-//
-//        try {
-//            List<Object> paramsList = new ArrayList<>();
-//            paramsList.add(doctorId);
-//
-//            if (keyword != null && !keyword.trim().isEmpty()) {
-//                paramsList.add("%" + keyword.trim() + "%");
-//            }
-//            Object[] params = paramsList.toArray();
-//
-//            ResultSet rs = executeSelectQuery(sql, params);
-//            if (rs != null) {
-//                while (rs.next()) {
-//                    MedicalRecord medicalRecord = new MedicalRecord(rs.getString("Diagnosis"),
-//                            rs.getString("PatientName"),
-//                            rs.getTimestamp("AppointmentDate"),
-//                            rs.getString("AppointmentStatusName"),
-//                            rs.getTimestamp("RecordCreatedDate"),
-//                            rs.getInt("MedicalRecordID"));
-//                    list.add(medicalRecord);
-//                }
-//                closeResources(rs);
-//            }
-//        } catch (SQLException ex) {
-//            Logger.getLogger(AppointmentDAO.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-//
-//        return list;
-//    }
-//
-//    public MedicalRecord getDetailMedicalRecordById(int medicalRecordID, int doctorId) {
-//        MedicalRecord medicalRecord = null;
-//
-//        String sql = "SELECT \n"
-//                + "    a.AppointmentID,\n"
-//                + "    a.DateBegin,\n"
-//                + "    a.DateEnd,\n"
-//                + "    ast.AppointmentStatusName AS AppointmentStatus,\n"
-//                + "    a.Note AS AppointmentNote,\n"
-//                + "    p.FirstName + ' ' + p.LastName AS PatientName,\n"
-//                + "    p.Email AS PatientEmail,\n"
-//                + "    p.PhoneNumber AS PatientPhone,\n"
-//                + "    CASE WHEN p.Gender = 1 THEN 'Male' ELSE 'Female' END AS PatientGender,\n"
-//                + "    p.DOB AS PatientDOB,\n"
-//                + "    p.UserAddress AS PatientAddress,\n"
-//                + "    mr.MedicalRecordID,\n"
-//                + "    mr.Symptoms,\n"
-//                + "    mr.Diagnosis,\n"
-//                + "    mr.Note AS MedicalRecordNote,\n"
-//                + "    mr.DateCreate AS RecordCreatedDate,\n"
-//                + "    pr.PrescriptionID,\n"
-//                + "    pr.Note AS PrescriptionNote,\n"
-//                + "    ps.PrescriptionStatusName AS PrescriptionStatus,\n"
-//                + "    inv.InvoiceID,\n"
-//                + "	CASE WHEN inv.InvoiceStatus = 1 THEN 'Paid' ELSE 'Unpaid' END AS InvoiceStatus,\n"
-//                + "    inv.DateCreate AS InvoiceCreatedDate,\n"
-//                + "    inv.DatePay,\n"
-//                + "    pt.PaymentTypeName,\n"
-//                + "      cf.Fee + ISNULL(\n"
-//                + "        (SELECT SUM(mi.Price)\n"
-//                + "         FROM PrescriptionItem pi\n"
-//                + "         INNER JOIN Medicine mi ON pi.MedicineID = mi.MedicineID\n"
-//                + "         WHERE pi.PrescriptionID = pr.PrescriptionID), 0\n"
-//                + "    ) AS TotalFee\n"
-//                + "FROM MedicalRecord mr\n"
-//                + "INNER JOIN Appointment a ON mr.AppointmentID = a.AppointmentID\n"
-//                + "INNER JOIN [User] u ON a.UserID = u.UserID\n"
-//                + "INNER JOIN [Profile] p ON p.UserProfileID = u.UserID\n"
-//                + "INNER JOIN AppointmentStatus ast ON ast.AppointmentStatusID = a.AppointmentStatusID\n"
-//                + "LEFT JOIN Prescription pr ON mr.PrescriptionID = pr.PrescriptionID\n"
-//                + "LEFT JOIN PrescriptionItem pi on pi.PrescriptionID = pr.PrescriptionID\n"
-//                + "LEFT JOIN Medicine mi on mi.MedicineID = pi.MedicineID\n"
-//                + "LEFT JOIN PrescriptionStatus ps ON pr.PrescriptionStatusID = ps.PrescriptionStatusID\n"
-//                + "LEFT JOIN Invoice inv ON inv.MedicalRecordID = mr.MedicalRecordID\n"
-//                + "LEFT JOIN ConsultationFee cf ON inv.ConsultationFeeID = cf.ConsultationFeeID\n"
-//                + "LEFT JOIN PaymentType pt ON inv.PaymentTypeID = pt.PaymentTypeID\n"
-//                + "WHERE mr.MedicalRecordID = ? AND a.DoctorID = ? AND ast.AppointmentStatusName = 'Completed';";
-//
-//        try {
-//            Object[] params = {medicalRecordID, doctorId};
-//            ResultSet rs = executeSelectQuery(sql, params);
-//            if (rs != null && rs.next()) {
-//                medicalRecord = new MedicalRecord(rs.getInt("MedicalRecordID"),
-//                        rs.getInt("AppointmentID"),
-//                        rs.getInt("PrescriptionID"),
-//                        rs.getString("Symptoms"),
-//                        rs.getString("Diagnosis"),
-//                        rs.getString("MedicalRecordNote"),
-//                        rs.getTimestamp("RecordCreatedDate"),
-//                        rs.getString("PatientName"),
-//                        rs.getString("PatientEmail"),
-//                        rs.getString("PatientPhone"),
-//                        rs.getString("PatientGender"),
-//                        rs.getString("PatientAddress"),
-//                        rs.getTimestamp("PatientDOB"),
-//                        rs.getString("AppointmentStatus"),
-//                        rs.getTimestamp("DateBegin"),
-//                        rs.getTimestamp("DateEnd"),
-//                        rs.getString("AppointmentNote"),
-//                        rs.getString("PrescriptionStatus"),
-//                        rs.getString("PrescriptionNote"),
-//                        rs.getInt("InvoiceID"),
-//                        rs.getTimestamp("DatePay"),
-//                        rs.getString("InvoiceStatus"),
-//                        rs.getString("PaymentTypeName"),
-//                        rs.getTimestamp("InvoiceCreatedDate"),
-//                        rs.getInt("TotalFee"));
-//            }
-//            closeResources(rs);
-//        } catch (SQLException ex) {
-//            Logger.getLogger(AppointmentDAO.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-//        return medicalRecord;
-//    }
-//}
