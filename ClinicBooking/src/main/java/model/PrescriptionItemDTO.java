@@ -15,6 +15,9 @@ public class PrescriptionItemDTO {
     private int Dosage;
     private String instruction;
 
+    public PrescriptionItemDTO() {
+    }
+
     public PrescriptionItemDTO(PrescriptionDTO prescriptionID, MedicineDTO medicineIID, int Dosage, String instruction) {
         this.prescriptionID = prescriptionID;
         this.medicineIID = medicineIID;
