@@ -37,8 +37,8 @@
                     <ul class="dropdown-menu">
                         <li><a href="${pageContext.request.contextPath}/manage-my-appointments"
                                class="${param.activePage == 'manage-appointments' ? 'active' : ''}">Manage My Appointments</a></li>
-                        <li><a href="#"
-                               class="${param.activePage == 'medical-records' ? 'active' : ''}">Manage My Medical Records</a></li>
+                        <li><a href="${pageContext.request.contextPath}/manage-my-medical-records"
+                               class="${param.activePage == 'manage-medical-records' ? 'active' : ''}">Manage My Medical Records</a></li>
                         <li><a href="#"
                                class="${param.activePage == 'prescriptions' ? 'active' : ''}">Manage My Prescriptions</a></li>
                         <li><a href="#"
