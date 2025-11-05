@@ -10,7 +10,14 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import model.AppointmentDTO;
+import model.DoctorDTO;
 import model.InvoiceDTO;
+import model.MedicalRecordDTO;
+import model.PatientDTO;
+import model.PrescriptionDTO;
+import model.SpecialtyDTO;
+import model.StaffDTO;
 import utils.DBContext;
 
 /**
@@ -24,18 +31,19 @@ public class InvoiceDAO extends DBContext {
 
         String sql = "SELECT "
                 + " i.InvoiceID, "
-                + " CONCAT(p.FirstName, ' ', p.LastName) AS PatientName, "
-                + " CONCAT(ds.FirstName, ' ', ds.LastName) AS DoctorName, "
-                + " s.SpecialtyName AS Specialty, "
-                + " ISNULL(s.Price,0) AS ConsultationFee, "
-                + " i.PaymentType AS PaymentType, "
-                + " i.InvoiceStatus AS InvoiceStatus, "
-                + " i.DateCreate, "
-                + " i.DatePay, "
+                + " p.FirstName AS PatientFirstName, p.LastName AS PatientLastName, "
+                + " p.DOB, p.Gender, p.UserAddress, p.PhoneNumber, p.Email, "
+                + " ds.FirstName AS DoctorFirstName, ds.LastName AS DoctorLastName, "
+                + " s.SpecialtyID, s.SpecialtyName, ISNULL(s.Price,0) AS ConsultationFee, "
+                + " ISNULL(s.Price,0) + ISNULL(( "
+                + "     SELECT SUM(pi.Dosage * m.Price) "
+                + "     FROM PrescriptionItem pi "
+                + "     JOIN Medicine m ON pi.MedicineID = m.MedicineID "
+                + "     WHERE pi.PrescriptionID = pre.PrescriptionID "
+                + " ),0) AS TotalFee, "
+                + " i.PaymentType, i.InvoiceStatus, i.DateCreate, i.DatePay, "
                 + " pre.Note AS PrescriptionNote, "
-                + " mr.Symptoms, "
-                + " mr.Diagnosis, "
-                + " mr.Note AS MedicalNote "
+                + " mr.Symptoms, mr.Diagnosis, mr.Note AS MedicalNote "
                 + "FROM Invoice i "
                 + "JOIN MedicalRecord mr ON i.MedicalRecordID = mr.MedicalRecordID "
                 + "JOIN Appointment a ON mr.AppointmentID = a.AppointmentID "
@@ -47,26 +55,67 @@ public class InvoiceDAO extends DBContext {
                 + "WHERE i.InvoiceID = ?";
 
         try ( Connection conn = getConnection();  PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, invoiceId);
 
-            try ( ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    invoice = new InvoiceDTO();
-                    invoice.setInvoiceID(rs.getInt("InvoiceID"));
-                    invoice.setPatientName(rs.getString("PatientName"));
-                    invoice.setDoctorName(rs.getString("DoctorName"));
-                    invoice.setSpecialty(rs.getString("Specialty"));
-                    invoice.setFee(rs.getDouble("ConsultationFee"));
-                    invoice.setPaymentType(rs.getString("PaymentType"));
-                    invoice.setInvoiceStatus(rs.getString("InvoiceStatus"));
-                    invoice.setDateCreate(rs.getTimestamp("DateCreate"));
-                    invoice.setDatePay(rs.getTimestamp("DatePay"));
-                    invoice.setPrescriptionNote(rs.getString("PrescriptionNote"));
-                    invoice.setSymptoms(rs.getString("Symptoms"));
-                    invoice.setDiagnosis(rs.getString("Diagnosis"));
-                    invoice.setMedicalNote(rs.getString("MedicalNote"));
-                }
+            ps.setInt(1, invoiceId);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                // Patient
+                PatientDTO patient = new PatientDTO(
+                        rs.getString("PatientFirstName"),
+                        rs.getString("PatientLastName"),
+                        rs.getTimestamp("DOB"),
+                        rs.getBoolean("Gender"),
+                        rs.getString("UserAddress"),
+                        rs.getString("PhoneNumber"),
+                        rs.getString("Email")
+                );
+
+                // Staff (Doctor)
+                StaffDTO staff = new StaffDTO();
+                staff.setFirstName(rs.getString("DoctorFirstName"));
+                staff.setLastName(rs.getString("DoctorLastName"));
+
+                // Specialty
+                SpecialtyDTO specialty = new SpecialtyDTO();
+                specialty.setSpecialtyID(rs.getInt("SpecialtyID"));
+                specialty.setSpecialtyName(rs.getString("SpecialtyName"));
+                specialty.setPrice(rs.getDouble("ConsultationFee"));
+
+                // Doctor
+                DoctorDTO doctor = new DoctorDTO();
+                doctor.setStaffID(staff);
+                doctor.setSpecialtyID(specialty);
+
+                // Appointment
+                AppointmentDTO appointment = new AppointmentDTO();
+                appointment.setPatientID(patient);
+                appointment.setDoctorID(doctor);
+
+                // MedicalRecord
+                MedicalRecordDTO medicalRecord = new MedicalRecordDTO();
+                medicalRecord.setAppointmentID(appointment);
+                medicalRecord.setSymptoms(rs.getString("Symptoms"));
+                medicalRecord.setDiagnosis(rs.getString("Diagnosis"));
+                medicalRecord.setNote(rs.getString("MedicalNote"));
+
+                // Prescription
+                PrescriptionDTO prescription = new PrescriptionDTO();
+                prescription.setNote(rs.getString("PrescriptionNote"));
+
+                // Invoice
+                invoice = new InvoiceDTO();
+                invoice.setInvoiceID(rs.getInt("InvoiceID"));
+                invoice.setMedicalRecordID(medicalRecord);
+                invoice.setSpecialtyID(specialty);
+                invoice.setPaymentType(rs.getString("PaymentType"));
+                invoice.setInvoiceStatus(rs.getString("InvoiceStatus"));
+                invoice.setDateCreate(rs.getTimestamp("DateCreate"));
+                invoice.setDatePay(rs.getTimestamp("DatePay"));
+                invoice.setPrescriptionID(prescription);
+                invoice.setTotalFee(rs.getDouble("TotalFee"));
             }
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -76,11 +125,12 @@ public class InvoiceDAO extends DBContext {
 
     public List<InvoiceDTO> getAllInvoices() {
         List<InvoiceDTO> list = new ArrayList<>();
+
         String sql = "SELECT "
                 + " i.InvoiceID, "
-                + " p.FirstName + ' ' + p.LastName AS PatientName, "
-                + " ds.FirstName + ' ' + ds.LastName AS DoctorName, "
-                + " s.SpecialtyName AS Specialty, "
+                + " p.FirstName AS PatientFirstName, p.LastName AS PatientLastName, "
+                + " ds.FirstName AS DoctorFirstName, ds.LastName AS DoctorLastName, "
+                + " s.SpecialtyID, s.SpecialtyName, s.Price AS ConsultationFee, "
                 + " i.PaymentType, "
                 + " i.InvoiceStatus, "
                 + " i.DateCreate, "
@@ -100,36 +150,59 @@ public class InvoiceDAO extends DBContext {
                 + " i.InvoiceID, "
                 + " p.FirstName, p.LastName, "
                 + " ds.FirstName, ds.LastName, "
-                + " s.SpecialtyName, "
+                + " s.SpecialtyID, s.SpecialtyName, s.Price, "
                 + " i.PaymentType, "
                 + " i.InvoiceStatus, "
                 + " i.DateCreate, "
-                + " i.DatePay, "
-                + " s.Price "
+                + " i.DatePay "
                 + "ORDER BY i.InvoiceID DESC";
 
-        DBContext db = new DBContext();
-        ResultSet rs = null;
-        try {
-            rs = db.executeSelectQuery(sql);
-            while (rs != null && rs.next()) {
-                InvoiceDTO inv = new InvoiceDTO(
-                        rs.getInt("InvoiceID"),
-                        rs.getString("PatientName"),
-                        rs.getString("DoctorName"),
-                        rs.getString("Specialty"),
-                        rs.getString("PaymentType"),
-                        rs.getString("InvoiceStatus"),
-                        rs.getTimestamp("DateCreate"),
-                        rs.getTimestamp("DatePay"),
-                        rs.getDouble("TotalAmount")
-                );
-                list.add(inv);
+        try ( Connection conn = getConnection();  PreparedStatement ps = conn.prepareStatement(sql);  ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                // Patient
+                PatientDTO patient = new model.PatientDTO();
+                patient.setFirstName(rs.getString("PatientFirstName"));
+                patient.setLastName(rs.getString("PatientLastName"));
+
+                // Staff (for doctor)
+                StaffDTO staff = new model.StaffDTO();
+                staff.setFirstName(rs.getString("DoctorFirstName"));
+                staff.setLastName(rs.getString("DoctorLastName"));
+
+                // Doctor 
+                DoctorDTO doctor = new model.DoctorDTO();
+                doctor.setStaffID(staff);
+
+                // Appointment 
+                AppointmentDTO appointment = new model.AppointmentDTO();
+                appointment.setPatientID(patient);
+                appointment.setDoctorID(doctor);
+
+                // MedicalRecord 
+                MedicalRecordDTO medicalRecord = new model.MedicalRecordDTO();
+                medicalRecord.setAppointmentID(appointment);
+
+                // Specialty
+                SpecialtyDTO specialty = new model.SpecialtyDTO();
+                specialty.setSpecialtyID(rs.getInt("SpecialtyID"));
+                specialty.setSpecialtyName(rs.getString("SpecialtyName"));
+                specialty.setPrice(rs.getDouble("TotalAmount"));
+
+                // Invoice
+                InvoiceDTO invoice = new InvoiceDTO();
+                invoice.setInvoiceID(rs.getInt("InvoiceID"));
+                invoice.setMedicalRecordID(medicalRecord);
+                invoice.setSpecialtyID(specialty);
+                invoice.setPaymentType(rs.getString("PaymentType"));
+                invoice.setInvoiceStatus(rs.getString("InvoiceStatus"));
+                invoice.setDateCreate(rs.getTimestamp("DateCreate"));
+                invoice.setDatePay(rs.getTimestamp("DatePay"));
+
+                list.add(invoice);
             }
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            db.closeResources(rs);
         }
 
         return list;

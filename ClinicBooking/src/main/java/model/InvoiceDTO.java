@@ -15,45 +15,15 @@ public class InvoiceDTO {
     private int invoiceID;
     private MedicalRecordDTO medicalRecordID;
     private PrescriptionDTO prescriptionID;
+    private SpecialtyDTO specialtyID;
     private String paymentType;
     private String invoiceStatus;
     private Timestamp dateCreate;
     private Timestamp datePay;
-
-    // add more fileds
-    private String patientName;
-    private String doctorName;
-    private String specialty;
-    private double fee;
-    private String prescriptionNote;
-    private String symptoms;
-    private String diagnosis;
-    private String medicalNote;
+    
+    private double totalFee;
 
     public InvoiceDTO() {
-    }
-
-    public InvoiceDTO(int invoiceID, MedicalRecordDTO medicalRecordID, PrescriptionDTO prescriptionID, String paymentType, String invoiceStatus, Timestamp datePay) {
-        this.invoiceID = invoiceID;
-        this.medicalRecordID = medicalRecordID;
-        this.prescriptionID = prescriptionID;
-        this.paymentType = paymentType;
-        this.invoiceStatus = invoiceStatus;
-        this.datePay = datePay;
-    }
-
-    public InvoiceDTO(int invoiceID, String patientName, String doctorName, String specialty,
-            String paymentType,String invoiceStatus, Timestamp dateCreate, Timestamp datePay,
-            double fee) {
-        this.invoiceID = invoiceID;
-        this.patientName = patientName;
-        this.doctorName = doctorName;
-        this.specialty = specialty;
-        this.paymentType = paymentType;
-        this.invoiceStatus = invoiceStatus;
-        this.dateCreate = dateCreate;
-        this.datePay = datePay;
-        this.fee = fee;
     }
 
     public int getInvoiceID() {
@@ -112,70 +82,20 @@ public class InvoiceDTO {
         this.datePay = datePay;
     }
 
-    public String getPatientName() {
-        return patientName;
+    public SpecialtyDTO getSpecialtyID() {
+        return specialtyID;
     }
 
-    public void setPatientName(String patientName) {
-        this.patientName = patientName;
+    public void setSpecialtyID(SpecialtyDTO specialtyID) {
+        this.specialtyID = specialtyID;
     }
 
-    public String getDoctorName() {
-        return doctorName;
+    public double getTotalFee() {
+        return totalFee;
     }
 
-    public void setDoctorName(String doctorName) {
-        this.doctorName = doctorName;
+    public void setTotalFee(double totalFee) {
+        this.totalFee = totalFee;
     }
-
-    public String getSpecialty() {
-        return specialty;
-    }
-
-    public void setSpecialty(String specialty) {
-        this.specialty = specialty;
-    }
-
-    public double getFee() {
-        return fee;
-    }
-
-    public void setFee(double fee) {
-        this.fee = fee;
-    }
-
-
-
-    public String getPrescriptionNote() {
-        return prescriptionNote;
-    }
-
-    public void setPrescriptionNote(String prescriptionNote) {
-        this.prescriptionNote = prescriptionNote;
-    }
-
-    public String getSymptoms() {
-        return symptoms;
-    }
-
-    public void setSymptoms(String symptoms) {
-        this.symptoms = symptoms;
-    }
-
-    public String getDiagnosis() {
-        return diagnosis;
-    }
-
-    public void setDiagnosis(String diagnosis) {
-        this.diagnosis = diagnosis;
-    }
-
-    public String getMedicalNote() {
-        return medicalNote;
-    }
-
-    public void setMedicalNote(String medicalNote) {
-        this.medicalNote = medicalNote;
-    }
-
+    
 }

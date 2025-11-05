@@ -106,25 +106,39 @@
                     <td>${invoiceDetail.paymentType}</td>
                 </tr>
                 <tr>
-                    <th>Consultation Fee</th>
-                    <td><fmt:formatNumber value="${invoiceDetail.fee}" type="currency" currencySymbol="$"/></td>
+                    <th>Total Fee</th>
+                    <td><fmt:formatNumber value="${invoiceDetail.totalFee}" type="currency" currencySymbol="$"/></td>
                 </tr>
             </table>
 
             <!-- Patient Information -->
             <h3 class="section-title">Patient Information</h3>
             <table class="table table-bordered">
-                <tr><th>Patient Name</th><td>${invoiceDetail.patientName}</td></tr>
-                <tr><th>Symptoms</th><td>${invoiceDetail.symptoms}</td></tr>
-                <tr><th>Diagnosis</th><td>${invoiceDetail.diagnosis}</td></tr>
-                <tr><th>Medical Note</th><td>${invoiceDetail.medicalNote}</td></tr>
+                <tr>
+                    <th>Patient Name</th>
+                    <td>
+                        ${invoiceDetail.medicalRecordID.appointmentID.patientID.firstName}
+                        ${invoiceDetail.medicalRecordID.appointmentID.patientID.lastName}
+                    </td>
+                </tr>
+                <tr><th>Symptoms</th><td>${invoiceDetail.medicalRecordID.symptoms}</td></tr>
+                <tr><th>Diagnosis</th><td>${invoiceDetail.medicalRecordID.diagnosis}</td></tr>
+                <tr><th>Medical Note</th><td>${invoiceDetail.medicalRecordID.note}</td></tr>
             </table>
 
             <!-- Doctor Information -->
             <h3 class="section-title">Doctor Information</h3>
             <table class="table table-bordered">
-                <tr><th>Doctor Name</th><td>${invoiceDetail.doctorName}</td></tr>
-                <tr><th>Specialty</th><td>${invoiceDetail.specialty}</td></tr>
+                <tr>
+                    <th>Doctor Name</th>
+                    <td>
+                        ${invoiceDetail.medicalRecordID.appointmentID.doctorID.staffID.firstName}
+                        ${invoiceDetail.medicalRecordID.appointmentID.doctorID.staffID.lastName}
+                    </td>
+                </tr>
+                <tr><th>Specialty</th><td>${invoiceDetail.specialtyID.specialtyName}</td></tr>
+                <tr><th>Consultation Fee</th><td><fmt:formatNumber value="${invoiceDetail.specialtyID.price}" type="currency" currencySymbol="$"/></td>
+
             </table>
 
             <!-- Prescription Information -->
@@ -134,8 +148,8 @@
                     <th>Prescription Note</th>
                     <td>
                         <c:choose>
-                            <c:when test="${not empty invoiceDetail.prescriptionNote}">
-                                ${invoiceDetail.prescriptionNote}
+                            <c:when test="${not empty invoiceDetail.prescriptionID.note}">
+                                ${invoiceDetail.prescriptionID.note}
                             </c:when>
                             <c:otherwise>
                                 <span class="text-muted">No note available</span>

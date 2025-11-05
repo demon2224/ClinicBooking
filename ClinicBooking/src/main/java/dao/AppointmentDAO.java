@@ -492,7 +492,6 @@ public class AppointmentDAO extends DBContext {
                 specialty.setSpecialtyName(rs.getString("SpecialtyName"));
                 doctor.setSpecialtyID(specialty);
 
-                // --- Gán doctor vào appointment ---
                 appointment.setDoctorID(doctor);
 
                 appointments.add(appointment);
@@ -674,9 +673,9 @@ public class AppointmentDAO extends DBContext {
                 + " WHERE AppointmentID = ? AND "
                 + "(AppointmentStatus = 'Pending' OR AppointmentStatus = 'Approved')";
 
-        DBContext db = new DBContext();
+
         Object[] params = {appointmentId};
-        int rowsAffected = db.executeQuery(sql, params);
+        int rowsAffected = executeQuery(sql, params);
         return rowsAffected > 0;
     }
 
@@ -693,9 +692,9 @@ public class AppointmentDAO extends DBContext {
                 + "ELSE AppointmentStatus "
                 + "END "
                 + "WHERE AppointmentID = ?";
-        DBContext db = new DBContext();
+        
         Object[] params = {appointmentId};
-        int rowsAffected = db.executeQuery(sql, params);
+        int rowsAffected = executeQuery(sql, params);
         return rowsAffected > 0;
     }
 

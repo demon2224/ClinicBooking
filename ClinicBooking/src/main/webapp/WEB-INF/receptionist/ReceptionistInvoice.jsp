@@ -132,10 +132,18 @@
                                 <c:forEach var="inv" items="${invoices}" varStatus="loop">
                                     <tr>
                                         <td>${loop.index + 1}</td>
-                                        <td>${inv.patientName}</td>
-                                        <td>${inv.doctorName}</td>
-                                        <td>${inv.specialty}</td>
-                                        <td><fmt:formatNumber value="${inv.fee}" type="currency" currencySymbol="$"/></td>
+                                        <td>
+                                            ${inv.medicalRecordID.appointmentID.patientID.firstName}
+                                            ${inv.medicalRecordID.appointmentID.patientID.lastName}
+                                        </td>
+                                        <td>
+                                            ${inv.medicalRecordID.appointmentID.doctorID.staffID.firstName}
+                                            ${inv.medicalRecordID.appointmentID.doctorID.staffID.lastName}
+                                        </td>
+                                        <td>${inv.specialtyID.specialtyName}</td>
+                                        <td>
+                                            <fmt:formatNumber value="${inv.specialtyID.price}" type="currency" currencySymbol="$"/>
+                                        </td>
                                         <td>${inv.paymentType}</td>
                                         <td>
                                             <c:choose>
@@ -153,15 +161,15 @@
                                                 </c:otherwise>
                                             </c:choose>
                                         </td>
+
+                                        <!-- Action -->
                                         <td class="text-center">
                                             <div class="d-flex justify-content-center gap-2">
-                                                <!-- View detail button -->
                                                 <a href="manage-invoice?action=viewDetail&id=${inv.invoiceID}"
                                                    class="btn btn-sm btn-info text-white">
                                                     <i class="fa-solid fa-eye"></i> View Detail
                                                 </a>
 
-                                                <!-- Update -->
                                                 <form action="manage-invoice" method="post" style="display:inline;">
                                                     <input type="hidden" name="invoiceId" value="${inv.invoiceID}">
                                                     <input type="hidden" name="action" value="pay">
@@ -171,7 +179,6 @@
                                                     </button>
                                                 </form>
 
-                                                <!-- Cancel -->
                                                 <form action="manage-invoice" method="post" style="display:inline;">
                                                     <input type="hidden" name="invoiceId" value="${inv.invoiceID}">
                                                     <input type="hidden" name="action" value="cancel">
@@ -180,13 +187,11 @@
                                                         <i class="fa-solid fa-xmark"></i> Cancel
                                                     </button>
                                                 </form>
-                                            </div>    
+                                            </div>
                                         </td>
-
                                     </tr>
                                 </c:forEach>
                             </tbody>
-
                         </table>
                     </div>
                 </div>          
