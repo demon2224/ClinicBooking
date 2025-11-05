@@ -644,60 +644,60 @@ BEGIN
 	-- Invoice với Prescription.Delivered = Paid
 	-- Invoice với Prescription.Pending = Pending (chưa thanh toán do chưa phát thuốc)
 	-- Patient 1 - Completed (MR ID 1-10)
-	UPDATE Invoice SET PaymentType='Credit Card', InvoiceStatus='Paid', DatePay='2025-09-02' WHERE MedicalRecordID=1 AND PrescriptionID=1;
-	UPDATE Invoice SET PaymentType='E-Wallet', InvoiceStatus='Paid', DatePay='2025-09-11' WHERE MedicalRecordID=2 AND PrescriptionID=2;
-	UPDATE Invoice SET PaymentType='Cash', InvoiceStatus='Paid', DatePay='2025-09-21' WHERE MedicalRecordID=3 AND PrescriptionID=3;
-	UPDATE Invoice SET PaymentType='Insurance', InvoiceStatus='Pending', DatePay=NULL WHERE MedicalRecordID=4 AND PrescriptionID=4;
-	UPDATE Invoice SET PaymentType='Credit Card', InvoiceStatus='Paid', DatePay='2025-10-11' WHERE MedicalRecordID=5 AND PrescriptionID=5;
-	UPDATE Invoice SET PaymentType='E-Wallet', InvoiceStatus='Paid', DatePay='2025-10-19' WHERE MedicalRecordID=6 AND PrescriptionID=6;
-	UPDATE Invoice SET PaymentType='Cash', InvoiceStatus='Paid', DatePay='2025-10-26' WHERE MedicalRecordID=7 AND PrescriptionID=7;
-	UPDATE Invoice SET PaymentType='Credit Card', InvoiceStatus='Paid', DatePay='2025-10-29' WHERE MedicalRecordID=8 AND PrescriptionID=8;
-	UPDATE Invoice SET PaymentType='Insurance', InvoiceStatus='Paid', DatePay='2025-11-01' WHERE MedicalRecordID=9 AND PrescriptionID IS NULL;
-	UPDATE Invoice SET PaymentType='E-Wallet', InvoiceStatus='Paid', DatePay='2025-11-02' WHERE MedicalRecordID=10 AND PrescriptionID=9;
+	UPDATE Invoice SET MedicalRecordID=1, PrescriptionID=1, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay='2025-09-02' WHERE InvoiceID=1;
+	UPDATE Invoice SET MedicalRecordID=2, PrescriptionID=2, PaymentType='E-Wallet', InvoiceStatus='Paid', DatePay='2025-09-11' WHERE InvoiceID=2;
+	UPDATE Invoice SET MedicalRecordID=3, PrescriptionID=3, PaymentType='Cash', InvoiceStatus='Paid', DatePay='2025-09-21' WHERE InvoiceID=3;
+	UPDATE Invoice SET MedicalRecordID=4, PrescriptionID=4, PaymentType='Insurance', InvoiceStatus='Pending', DatePay=NULL WHERE InvoiceID=4;
+	UPDATE Invoice SET MedicalRecordID=5, PrescriptionID=5, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay='2025-10-11' WHERE InvoiceID=5;
+	UPDATE Invoice SET MedicalRecordID=6, PrescriptionID=6, PaymentType='E-Wallet', InvoiceStatus='Paid', DatePay='2025-10-19' WHERE InvoiceID=6;
+	UPDATE Invoice SET MedicalRecordID=7, PrescriptionID=7, PaymentType='Cash', InvoiceStatus='Paid', DatePay='2025-10-26' WHERE InvoiceID=7;
+	UPDATE Invoice SET MedicalRecordID=8, PrescriptionID=8, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay='2025-10-29' WHERE InvoiceID=8;
+	UPDATE Invoice SET MedicalRecordID=9, PrescriptionID=NULL, PaymentType='Insurance', InvoiceStatus='Paid', DatePay='2025-11-01' WHERE InvoiceID=9;
+	UPDATE Invoice SET MedicalRecordID=10, PrescriptionID=9, PaymentType='E-Wallet', InvoiceStatus='Paid', DatePay='2025-11-02' WHERE InvoiceID=10;
 
 	-- Doctor 1 Other Patients - Completed (MR ID 11-19)
-	UPDATE Invoice SET PaymentType='Cash', InvoiceStatus='Paid', DatePay='2025-09-04' WHERE MedicalRecordID=11 AND PrescriptionID=10;
-	UPDATE Invoice SET PaymentType='Insurance', InvoiceStatus='Paid', DatePay='2025-09-17' WHERE MedicalRecordID=12 AND PrescriptionID=11;
-	UPDATE Invoice SET PaymentType='Credit Card', InvoiceStatus='Paid', DatePay='2025-09-26' WHERE MedicalRecordID=13 AND PrescriptionID=12;
-	UPDATE Invoice SET PaymentType='E-Wallet', InvoiceStatus='Pending', DatePay=NULL WHERE MedicalRecordID=14 AND PrescriptionID=13;
-	UPDATE Invoice SET PaymentType='Cash', InvoiceStatus='Paid', DatePay='2025-10-13' WHERE MedicalRecordID=15 AND PrescriptionID=14;
-	UPDATE Invoice SET PaymentType='Credit Card', InvoiceStatus='Paid', DatePay='2025-10-21' WHERE MedicalRecordID=16 AND PrescriptionID=15;
-	UPDATE Invoice SET PaymentType='Insurance', InvoiceStatus='Paid', DatePay='2025-10-29' WHERE MedicalRecordID=17 AND PrescriptionID=16;
-	UPDATE Invoice SET PaymentType='E-Wallet', InvoiceStatus='Paid', DatePay='2025-10-30' WHERE MedicalRecordID=18 AND PrescriptionID=17;
-	UPDATE Invoice SET PaymentType='Cash', InvoiceStatus='Pending', DatePay=NULL WHERE MedicalRecordID=19 AND PrescriptionID=18;
+	UPDATE Invoice SET MedicalRecordID=11, PrescriptionID=10, PaymentType='Cash', InvoiceStatus='Paid', DatePay='2025-09-04' WHERE InvoiceID=11;
+	UPDATE Invoice SET MedicalRecordID=12, PrescriptionID=11, PaymentType='Insurance', InvoiceStatus='Paid', DatePay='2025-09-17' WHERE InvoiceID=12;
+	UPDATE Invoice SET MedicalRecordID=13, PrescriptionID=12, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay='2025-09-26' WHERE InvoiceID=13;
+	UPDATE Invoice SET MedicalRecordID=14, PrescriptionID=13, PaymentType='E-Wallet', InvoiceStatus='Pending', DatePay=NULL WHERE InvoiceID=14;
+	UPDATE Invoice SET MedicalRecordID=15, PrescriptionID=14, PaymentType='Cash', InvoiceStatus='Paid', DatePay='2025-10-13' WHERE InvoiceID=15;
+	UPDATE Invoice SET MedicalRecordID=16, PrescriptionID=15, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay='2025-10-21' WHERE InvoiceID=16;
+	UPDATE Invoice SET MedicalRecordID=17, PrescriptionID=16, PaymentType='Insurance', InvoiceStatus='Paid', DatePay='2025-10-29' WHERE InvoiceID=17;
+	UPDATE Invoice SET MedicalRecordID=18, PrescriptionID=17, PaymentType='E-Wallet', InvoiceStatus='Paid', DatePay='2025-10-30' WHERE InvoiceID=18;
+	UPDATE Invoice SET MedicalRecordID=19, PrescriptionID=18, PaymentType='Cash', InvoiceStatus='Pending', DatePay=NULL WHERE InvoiceID=19;
 
 	-- Other Doctors - Completed (MR ID 20-34)
-	UPDATE Invoice SET PaymentType='E-Wallet', InvoiceStatus='Paid', DatePay='2025-09-06' WHERE MedicalRecordID=20 AND PrescriptionID=19;
-	UPDATE Invoice SET PaymentType='Cash', InvoiceStatus='Paid', DatePay='2025-09-13' WHERE MedicalRecordID=21 AND PrescriptionID=20;
-	UPDATE Invoice SET PaymentType='Credit Card', InvoiceStatus='Paid', DatePay='2025-09-19' WHERE MedicalRecordID=22 AND PrescriptionID=21;
-	UPDATE Invoice SET PaymentType='Insurance', InvoiceStatus='Paid', DatePay='2025-09-24' WHERE MedicalRecordID=23 AND PrescriptionID=22;
-	UPDATE Invoice SET PaymentType='E-Wallet', InvoiceStatus='Paid', DatePay='2025-09-29' WHERE MedicalRecordID=24 AND PrescriptionID=23;
-	UPDATE Invoice SET PaymentType='Cash', InvoiceStatus='Paid', DatePay='2025-10-06' WHERE MedicalRecordID=25 AND PrescriptionID=24;
-	UPDATE Invoice SET PaymentType='Credit Card', InvoiceStatus='Pending', DatePay=NULL WHERE MedicalRecordID=26 AND PrescriptionID=25;
-	UPDATE Invoice SET PaymentType='Insurance', InvoiceStatus='Paid', DatePay='2025-10-16' WHERE MedicalRecordID=27 AND PrescriptionID=26;
-	UPDATE Invoice SET PaymentType='E-Wallet', InvoiceStatus='Paid', DatePay='2025-10-17' WHERE MedicalRecordID=28 AND PrescriptionID=27;
-	UPDATE Invoice SET PaymentType='Cash', InvoiceStatus='Paid', DatePay='2025-10-22' WHERE MedicalRecordID=29 AND PrescriptionID IS NULL;
-	UPDATE Invoice SET PaymentType='Credit Card', InvoiceStatus='Paid', DatePay='2025-10-24' WHERE MedicalRecordID=30 AND PrescriptionID=28;
-	UPDATE Invoice SET PaymentType='Insurance', InvoiceStatus='Paid', DatePay='2025-10-28' WHERE MedicalRecordID=31 AND PrescriptionID=29;
-	UPDATE Invoice SET PaymentType='E-Wallet', InvoiceStatus='Pending', DatePay=NULL WHERE MedicalRecordID=32 AND PrescriptionID=30;
-	UPDATE Invoice SET PaymentType='Cash', InvoiceStatus='Paid', DatePay='2025-10-31' WHERE MedicalRecordID=33 AND PrescriptionID=31;
-	UPDATE Invoice SET PaymentType='Credit Card', InvoiceStatus='Paid', DatePay='2025-11-02' WHERE MedicalRecordID=34 AND PrescriptionID=32;
+	UPDATE Invoice SET MedicalRecordID=20, PrescriptionID=19, PaymentType='E-Wallet', InvoiceStatus='Paid', DatePay='2025-09-06' WHERE InvoiceID=20;
+	UPDATE Invoice SET MedicalRecordID=21, PrescriptionID=20, PaymentType='Cash', InvoiceStatus='Paid', DatePay='2025-09-13' WHERE InvoiceID=21;
+	UPDATE Invoice SET MedicalRecordID=22, PrescriptionID=21, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay='2025-09-19' WHERE InvoiceID=22;
+	UPDATE Invoice SET MedicalRecordID=23, PrescriptionID=22, PaymentType='Insurance', InvoiceStatus='Paid', DatePay='2025-09-24' WHERE InvoiceID=23;
+	UPDATE Invoice SET MedicalRecordID=24, PrescriptionID=23, PaymentType='E-Wallet', InvoiceStatus='Paid', DatePay='2025-09-29' WHERE InvoiceID=24;
+	UPDATE Invoice SET MedicalRecordID=25, PrescriptionID=24, PaymentType='Cash', InvoiceStatus='Paid', DatePay='2025-10-06' WHERE InvoiceID=25;
+	UPDATE Invoice SET MedicalRecordID=26, PrescriptionID=25, PaymentType='Credit Card', InvoiceStatus='Pending', DatePay=NULL WHERE InvoiceID=26;
+	UPDATE Invoice SET MedicalRecordID=27, PrescriptionID=26, PaymentType='Insurance', InvoiceStatus='Paid', DatePay='2025-10-16' WHERE InvoiceID=27;
+	UPDATE Invoice SET MedicalRecordID=28, PrescriptionID=27, PaymentType='E-Wallet', InvoiceStatus='Paid', DatePay='2025-10-17' WHERE InvoiceID=28;
+	UPDATE Invoice SET MedicalRecordID=29, PrescriptionID=NULL, PaymentType='Cash', InvoiceStatus='Paid', DatePay='2025-10-22' WHERE InvoiceID=29;
+	UPDATE Invoice SET MedicalRecordID=30, PrescriptionID=28, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay='2025-10-24' WHERE InvoiceID=30;
+	UPDATE Invoice SET MedicalRecordID=31, PrescriptionID=29, PaymentType='Insurance', InvoiceStatus='Paid', DatePay='2025-10-28' WHERE InvoiceID=31;
+	UPDATE Invoice SET MedicalRecordID=32, PrescriptionID=30, PaymentType='E-Wallet', InvoiceStatus='Pending', DatePay=NULL WHERE InvoiceID=32;
+	UPDATE Invoice SET MedicalRecordID=33, PrescriptionID=31, PaymentType='Cash', InvoiceStatus='Paid', DatePay='2025-10-31' WHERE InvoiceID=33;
+	UPDATE Invoice SET MedicalRecordID=34, PrescriptionID=32, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay='2025-11-02' WHERE InvoiceID=34;
 
 	-- Approved - Patient 1 (MR ID 35-36)
-	UPDATE Invoice SET PaymentType='Cash', InvoiceStatus='Paid', DatePay='2025-11-05' WHERE MedicalRecordID=35 AND PrescriptionID=33;
-	UPDATE Invoice SET PaymentType='E-Wallet', InvoiceStatus='Paid', DatePay='2025-11-08' WHERE MedicalRecordID=36 AND PrescriptionID=34;
+	UPDATE Invoice SET MedicalRecordID=35, PrescriptionID=33, PaymentType='Cash', InvoiceStatus='Paid', DatePay='2025-11-05' WHERE InvoiceID=35;
+	UPDATE Invoice SET MedicalRecordID=36, PrescriptionID=34, PaymentType='E-Wallet', InvoiceStatus='Paid', DatePay='2025-11-08' WHERE InvoiceID=36;
 
 	-- Approved - Doctor 1 Other Patients (MR ID 37-39)
-	UPDATE Invoice SET PaymentType='Credit Card', InvoiceStatus='Paid', DatePay='2025-11-06' WHERE MedicalRecordID=37 AND PrescriptionID=35;
-	UPDATE Invoice SET PaymentType='Insurance', InvoiceStatus='Paid', DatePay='2025-11-09' WHERE MedicalRecordID=38 AND PrescriptionID=36;
-	UPDATE Invoice SET PaymentType='Cash', InvoiceStatus='Paid', DatePay='2025-11-13' WHERE MedicalRecordID=39 AND PrescriptionID=37;
+	UPDATE Invoice SET MedicalRecordID=37, PrescriptionID=35, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay='2025-11-06' WHERE InvoiceID=37;
+	UPDATE Invoice SET MedicalRecordID=38, PrescriptionID=36, PaymentType='Insurance', InvoiceStatus='Paid', DatePay='2025-11-09' WHERE InvoiceID=38;
+	UPDATE Invoice SET MedicalRecordID=39, PrescriptionID=37, PaymentType='Cash', InvoiceStatus='Paid', DatePay='2025-11-13' WHERE InvoiceID=39;
 
 	-- Approved - Other Doctors (MR ID 40-44)
-	UPDATE Invoice SET PaymentType='E-Wallet', InvoiceStatus='Paid', DatePay='2025-11-07' WHERE MedicalRecordID=40 AND PrescriptionID=38;
-	UPDATE Invoice SET PaymentType='Credit Card', InvoiceStatus='Paid', DatePay='2025-11-11' WHERE MedicalRecordID=41 AND PrescriptionID=39;
-	UPDATE Invoice SET PaymentType='Cash', InvoiceStatus='Paid', DatePay='2025-11-14' WHERE MedicalRecordID=42 AND PrescriptionID=40;
-	UPDATE Invoice SET PaymentType='Insurance', InvoiceStatus='Paid', DatePay='2025-11-17' WHERE MedicalRecordID=43 AND PrescriptionID=41;
-	UPDATE Invoice SET PaymentType='E-Wallet', InvoiceStatus='Paid', DatePay='2025-11-21' WHERE MedicalRecordID=44 AND PrescriptionID=42;
+	UPDATE Invoice SET MedicalRecordID=40, PrescriptionID=38, PaymentType='E-Wallet', InvoiceStatus='Paid', DatePay='2025-11-07' WHERE InvoiceID=40;
+	UPDATE Invoice SET MedicalRecordID=41, PrescriptionID=39, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay='2025-11-11' WHERE InvoiceID=41;
+	UPDATE Invoice SET MedicalRecordID=42, PrescriptionID=40, PaymentType='Cash', InvoiceStatus='Paid', DatePay='2025-11-14' WHERE InvoiceID=42;
+	UPDATE Invoice SET MedicalRecordID=43, PrescriptionID=41, PaymentType='Insurance', InvoiceStatus='Paid', DatePay='2025-11-17' WHERE InvoiceID=43;
+	UPDATE Invoice SET MedicalRecordID=44, PrescriptionID=42, PaymentType='E-Wallet', InvoiceStatus='Paid', DatePay='2025-11-21' WHERE InvoiceID=44;
 	
 	-- KHÔNG TẠO Invoice cho Pending (ID 13-16,30-32,52-56) - chưa duyệt
 	-- KHÔNG TẠO Invoice cho Canceled (ID 17,33,57) - đã hủy
