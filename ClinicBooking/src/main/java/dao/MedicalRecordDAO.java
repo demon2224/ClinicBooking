@@ -165,7 +165,7 @@ public class MedicalRecordDAO extends DBContext {
      * @return
      */
     public MedicalRecordDTO getPatientMedicalRecordDetailByDoctorIDAndMedicalRecordID(int doctorID, int medicalRecordID) {
-        MedicalRecordDTO medicalRecordDetail = null;
+        MedicalRecordDTO medicalRecordDetail = new MedicalRecordDTO();
         String sql = "Select m.MedicalRecordID,\n"
                 + "m.Symptoms,\n"
                 + "m.Diagnosis,\n"
@@ -176,21 +176,17 @@ public class MedicalRecordDAO extends DBContext {
                 + "a.DateBegin as AppointmentDateBegin,\n"
                 + "a.DateEnd as AppointmentDateEnd,\n"
                 + "a.Note as AppointmentNote,\n"
-                + "pa.FirstName,\n"
-                + "pa.LastName,\n"
-                + "pa.DOB,\n"
-                + "pa.Gender,\n"
-                + "pa.UserAddress,\n"
-                + "pa.Email,\n"
-                + "p.PrescriptionID,\n"
-                + "p.PrescriptionStatus,\n"
-                + "p.DateCreate as PrescriptionDateCreate,\n"
-                + "p.Note as PrescriptionNote,\n"
-                + "p.Hidden as PrescriptionHidden\n"
+                + "p.PatientID,\n"
+                + "p.FirstName,\n"
+                + "p.LastName,\n"
+                + "p.DOB,\n"
+                + "p.Gender,\n"
+                + "p.UserAddress,\n"
+                + "p.Email,\n"
+                + "p.PhoneNumber\n"
                 + "From MedicalRecord m\n"
                 + "Join Appointment a on a.AppointmentID = m.AppointmentID\n"
-                + "Join Prescription p on p.AppointmentID = a.AppointmentID\n"
-                + "Join Patient pa on pa.PatientID = a.PatientID\n"
+                + "Join Patient p on p.PatientID = a.PatientID\n"
                 + "Where a.DoctorID = ? and m.MedicalRecordID = ?";
         Object[] params = {doctorID, medicalRecordID};
         ResultSet rs = executeSelectQuery(sql, params);
@@ -205,6 +201,7 @@ public class MedicalRecordDAO extends DBContext {
                     patient.setGender(rs.getBoolean("Gender"));
                     patient.setUserAddress(rs.getString("UserAddress"));
                     patient.setEmail(rs.getString("Email"));
+                    patient.setPhoneNumber(rs.getString("PhoneNumber"));
                     // Appointment
                     AppointmentDTO appointment = new AppointmentDTO();
                     appointment.setAppointmentID(rs.getInt("AppointmentID"));
@@ -213,23 +210,13 @@ public class MedicalRecordDAO extends DBContext {
                     appointment.setDateBegin(rs.getTimestamp("AppointmentDateBegin"));
                     appointment.setDateEnd(rs.getTimestamp("AppointmentDateEnd"));
                     appointment.setNote(rs.getString("AppointmentNote"));
-                    // Prescription
-                    PrescriptionDTO prescription = new PrescriptionDTO();
-                    prescription.setPrescriptionID(rs.getInt("PrescriptionID"));
-                    prescription.setAppointmentID(appointment);
-                    prescription.setPrescriptionStatus(rs.getString("PrescriptionStatus"));
-                    prescription.setDateCreate(rs.getTimestamp("PrescriptionDateCreate"));
-                    prescription.setNote(rs.getString("PrescriptionNote"));
-                    prescription.setHidden(rs.getBoolean("PrescriptionHidden"));
                     // Medical Record
-                    MedicalRecordDTO medicalRecord = new MedicalRecordDTO();
-                    medicalRecord.setMedicalRecordID(rs.getInt("MedicalRecordID"));
-                    medicalRecord.setAppointmentID(appointment);
-                    medicalRecord.setPrescriptionDTO(prescription);
-                    medicalRecord.setSymptoms(rs.getString("Symptoms"));
-                    medicalRecord.setDiagnosis(rs.getString("Diagnosis"));
-                    medicalRecord.setNote(rs.getString("MedicalRecordNote"));
-                    medicalRecord.setDateCreate(rs.getTimestamp("MedicalRecordDateCreate"));
+                    medicalRecordDetail.setMedicalRecordID(rs.getInt("MedicalRecordID"));
+                    medicalRecordDetail.setAppointmentID(appointment);
+                    medicalRecordDetail.setSymptoms(rs.getString("Symptoms"));
+                    medicalRecordDetail.setDiagnosis(rs.getString("Diagnosis"));
+                    medicalRecordDetail.setNote(rs.getString("MedicalRecordNote"));
+                    medicalRecordDetail.setDateCreate(rs.getTimestamp("MedicalRecordDateCreate"));
                 }
             }
         } catch (SQLException ex) {
@@ -391,11 +378,11 @@ public class MedicalRecordDAO extends DBContext {
                     PrescriptionDTO prescription = new PrescriptionDTO();
                     prescription.setPrescriptionID(rs.getInt("PrescriptionID"));
                     prescription.setNote(rs.getString("PrescriptionNote"));
-                    
+
                     // Load prescription items
                     List<PrescriptionItemDTO> prescriptionItems = getPrescriptionItemsByPrescriptionId(rs.getInt("PrescriptionID"));
                     prescription.setPrescriptionItemList(prescriptionItems);
-                    
+
                     record.setPrescriptionDTO(prescription);
                 }
             }

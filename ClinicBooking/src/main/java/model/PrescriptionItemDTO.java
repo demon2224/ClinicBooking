@@ -18,9 +18,9 @@ public class PrescriptionItemDTO {
     public PrescriptionItemDTO() {
     }
 
-    public PrescriptionItemDTO(PrescriptionDTO prescriptionID, MedicineDTO medicineIID, int Dosage, String instruction) {
+    public PrescriptionItemDTO(PrescriptionDTO prescriptionID, MedicineDTO medicineID, int Dosage, String instruction) {
         this.prescriptionID = prescriptionID;
-        this.medicineID = medicineIID;
+        this.medicineID = medicineID;
         this.dosage = Dosage;
         this.instruction = instruction;
     }
@@ -33,11 +33,11 @@ public class PrescriptionItemDTO {
         this.prescriptionID = prescriptionID;
     }
 
-    public MedicineDTO getMedicineIID() {
+    public MedicineDTO getMedicineID() {
         return medicineID;
     }
 
-    public void setMedicineIID(MedicineDTO medicineIID) {
+    public void setMedicineID(MedicineDTO medicineIID) {
         this.medicineID = medicineIID;
     }
 

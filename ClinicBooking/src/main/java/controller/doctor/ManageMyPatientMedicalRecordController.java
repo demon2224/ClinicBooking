@@ -5,6 +5,7 @@
 package controller.doctor;
 
 import dao.MedicalRecordDAO;
+import dao.PrescriptionDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -14,6 +15,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
 import model.DoctorDTO;
 import model.MedicalRecordDTO;
+import model.PrescriptionDTO;
+import model.PrescriptionItemDTO;
 
 /**
  *
@@ -22,6 +25,7 @@ import model.MedicalRecordDTO;
 public class ManageMyPatientMedicalRecordController extends HttpServlet {
 
     private MedicalRecordDAO medicalRecordDAO;
+    private PrescriptionDAO prescriptionDAO;
 
     /**
      * Initialize all the necessary DAO using in this controller.
@@ -31,6 +35,7 @@ public class ManageMyPatientMedicalRecordController extends HttpServlet {
     @Override
     public void init() throws ServletException {
         medicalRecordDAO = new MedicalRecordDAO();
+        prescriptionDAO = new PrescriptionDAO();
     }
 
     /**
@@ -84,7 +89,7 @@ public class ManageMyPatientMedicalRecordController extends HttpServlet {
                 showMyPatientMedicalRecordDetail(request, response, doctorID);
             }
         } catch (Exception ex) {
-
+            log("Error");
         }
     }
 
@@ -124,12 +129,18 @@ public class ManageMyPatientMedicalRecordController extends HttpServlet {
         try {
             int medicalRecordID = Integer.parseInt(request.getParameter("medicalRecordID"));
             MedicalRecordDTO medicalRecord = medicalRecordDAO.getPatientMedicalRecordDetailByDoctorIDAndMedicalRecordID(doctorID, medicalRecordID);
+            boolean isExist = prescriptionDAO.isExistPrescription(medicalRecordID);
+            List<PrescriptionItemDTO> list;
+            list = prescriptionDAO.getPrescriptionByDoctorIDAndMedicalRecordID(doctorID, medicalRecordID);
             if (medicalRecord.getMedicalRecordID() == medicalRecordID) {
-                request.setAttribute("detailMedicalRecord", medicalRecord);
+                request.setAttribute("detail", medicalRecord);
+                request.setAttribute("isExist", isExist);
+                request.setAttribute("list", list);
             }
             request.getRequestDispatcher("/WEB-INF/doctor/MyPatientMedicalRecordDetail.jsp").forward(request, response);
         } catch (Exception e) {
             response.sendRedirect(request.getContextPath() + "/manage-my-patient-medical-record");
+            log("Erro2");
         }
     }
 
