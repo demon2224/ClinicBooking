@@ -94,6 +94,21 @@ public class PrescriptionDTO {
         }
         return new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(this.dateCreate);
     }
+    
+    public double getTotalValue() {
+        if (this.prescriptionItemList == null) {
+            return 0.0;
+        }
+        return calculateTotalValue();
+    }
+    
+    private double calculateTotalValue() {
+        double totalValue = 0.0;
+        for (PrescriptionItemDTO prescriptionItemDTO : prescriptionItemList) {
+            totalValue += prescriptionItemDTO.getSubTotal();
+        }
+        return totalValue;
+    }
 
     @Override
     public String toString() {

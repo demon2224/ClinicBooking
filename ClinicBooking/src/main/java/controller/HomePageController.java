@@ -32,15 +32,22 @@ public class HomePageController extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         HttpSession session = request.getSession();
-        PatientDTO patient = ((new PatientDAO()).getPatientById(1)); // Get first patient for demo
-        if ((session != null) && (patient != null)) {
-            session.setAttribute("patient", patient); // Changed from "user" to "patient"
-        }
+//        PatientDTO patient = ((new PatientDAO()).getPatientById(1)); // Get first patient for demo
+//        if ((session != null) && (patient != null)) {
+//            session.setAttribute("patient", patient); // Changed from "user" to "patient"
+//        }
+
+        // Redirect to Pharmcist Dashboard if the user is a pharmacist
+        // Temporary code. Remove later when the login complete and filer complete.
+//        if (user.getRoleID() == 3) {
+            response.sendRedirect(request.getContextPath() + "/pharmacist-dashboard");
+//            return;
+//        }
 
         // Since Patient table doesn't have RoleID, redirect to patient homepage
         // Remove role-based redirects as patients don't have roles
         // Forward to Homepage.jsp
-        request.getRequestDispatcher("/WEB-INF/HomePage.jsp").forward(request, response);
+//        request.getRequestDispatcher("/WEB-INF/HomePage.jsp").forward(request, response);
     }
 
     /**

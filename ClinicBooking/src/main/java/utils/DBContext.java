@@ -20,7 +20,7 @@ public class DBContext {
 
     private final String DB_URL = "jdbc:sqlserver://127.0.0.1:1433;databaseName=clinicbookingdatabase;encrypt=false";
     private final String DB_USER = "sa";
-    private final String DB_PWD = "123456";
+    private final String DB_PWD = "18122005";
 
     private Connection conn;
     private PreparedStatement statement;
@@ -99,6 +99,7 @@ public class DBContext {
     
     /**
      * Close ResultSet, PreparedStatement, and Connection safely
+     * @param rs the ResultSet need to close
      */
     public void closeResources(ResultSet rs) {
         try {
