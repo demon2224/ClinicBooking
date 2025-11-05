@@ -163,8 +163,7 @@
                                         <div class="appointment-specialty">
                                             <i class="fas fa-stethoscope"></i>
                                             ${appointment.doctorID.specialtyID.specialtyName != null ? appointment.doctorID.specialtyID.specialtyName : 'General'}
-                                            <c:if test="${not empty appointment.note}"> - ${appointment.note}</c:if>
-                                            </div>
+                                        </div>
                                         </div>
                                         <div class="appointment-status
                                         <c:choose>
