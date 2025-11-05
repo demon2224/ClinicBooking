@@ -781,13 +781,14 @@ public class AppointmentDAO extends DBContext {
             Object[] params = {patientId};
             rs = executeSelectQuery(sql, params);
 
-            java.time.LocalDateTime newTime = newAppointmentTime.toLocalDateTime();
-
             while (rs.next()) {
                 Timestamp existingAppointment = rs.getTimestamp("DateBegin");
-                java.time.LocalDateTime existingTime = existingAppointment.toLocalDateTime();
-
-                long hoursDifference = Math.abs(java.time.Duration.between(existingTime, newTime).toHours());
+                
+                // Calculate absolute difference in milliseconds
+                long timeDifferenceMs = Math.abs(existingAppointment.getTime() - newAppointmentTime.getTime());
+                
+                // Convert to hours (1 hour = 3,600,000 milliseconds)
+                long hoursDifference = timeDifferenceMs / (60 * 60 * 1000);
 
                 if (hoursDifference < 24) {
                     return false;
@@ -862,14 +863,14 @@ public class AppointmentDAO extends DBContext {
             Object[] params = {doctorId, newAppointmentTime};
             rs = executeSelectQuery(sql, params);
 
-            java.time.LocalDateTime newTime = newAppointmentTime.toLocalDateTime();
-
             while (rs.next()) {
                 Timestamp existingAppointment = rs.getTimestamp("DateBegin");
-                java.time.LocalDateTime existingTime = existingAppointment.toLocalDateTime();
-
-                // Calculate absolute difference in minutes
-                long minutesDifference = Math.abs(java.time.Duration.between(existingTime, newTime).toMinutes());
+                
+                // Calculate absolute difference in milliseconds
+                long timeDifferenceMs = Math.abs(existingAppointment.getTime() - newAppointmentTime.getTime());
+                
+                // Convert to minutes (1 minute = 60,000 milliseconds)
+                long minutesDifference = timeDifferenceMs / (60 * 1000);
 
                 // If any existing appointment is within 30 minutes, return false
                 if (minutesDifference < 30) {
