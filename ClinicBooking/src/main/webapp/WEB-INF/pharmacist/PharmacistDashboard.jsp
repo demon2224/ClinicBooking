@@ -67,7 +67,7 @@
     </head>
     <body>
         <!-- Sidebar -->
-        <%@include file="PharmacistDashboardSidebar.jsp" %>
+        <%@include file="../includes/PharmacistDashboardSidebar.jsp" %>
 
         <!-- Main content -->
         <div class="main-content">

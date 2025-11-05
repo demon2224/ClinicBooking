@@ -108,7 +108,7 @@ public class ManageMedicineController extends HttpServlet {
                     handleInvalidRequest(request, response);
                     break;
             }
-        } catch (ServletException | IOException e) {
+        } catch (ServletException | IOException | NullPointerException e) {
             // If an exception occur then show the user the medicine list.
             handleInvalidRequest(request, response);
         }
@@ -282,7 +282,7 @@ public class ManageMedicineController extends HttpServlet {
                     handleInvalidResponse(request, response);
                     break;
             }
-        } catch (IOException e) {
+        } catch (IOException | NullPointerException e) {
             handleInvalidResponse(request, response);
         }
     }
