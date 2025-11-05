@@ -16,7 +16,11 @@ import jakarta.servlet.http.HttpServletResponse;
  *
  * @author Vu Minh Khang - CE191371
  */
-public class ManagePrescriptionController extends HttpServlet {
+public class PharmacistManagePrescriptionController extends HttpServlet {
+
+    @Override
+    public void init() throws ServletException {
+    }
    
     /** 
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
@@ -53,8 +57,53 @@ public class ManagePrescriptionController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
-        processRequest(request, response);
-    } 
+//        processRequest(request, response);
+
+        String action = request.getParameter("action");
+
+         try {
+            switch (action) {
+
+                // If the action is detail then show the user the detail of specific medicine.
+                case "detail":
+//                    handleViewMedicineDetailRequest(request, response);
+                    break;
+
+                // If the action is search then show the user the list of.all medicine that match with user input.
+                case "search":
+//                    handleSearchRequest(request, response);
+                    break;
+
+                // If the action is create then show the user the view when create new medicine.
+                case "create":
+//                    handleCreateRequest(request, response);
+                    return;
+
+                // If the action is edit then show the user the view when edit a medicine.
+                case "edit":
+//                    handleEditRequest(request, response);
+                    break;
+
+                // If the action is import then show the user the view when import a medicine.
+                case "import":
+//                    handleImportRequest(request, response);
+                    break;
+
+                // If the action is not all of above then show the user the medicine list.
+                default:
+                    handleInvalidRequest(request, response);
+                    break;
+            }
+        } catch (ServletException | IOException | NullPointerException e) {
+            // If an exception occur then show the user the medicine list.
+            handleInvalidRequest(request, response);
+        }
+    }
+    
+    private void handleInvalidRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        
+        request.getRequestDispatcher("/WEB-INF/pharmacist/MedicineList.jsp").forward(request, response);
+    }
 
     /** 
      * Handles the HTTP <code>POST</code> method.
@@ -66,7 +115,9 @@ public class ManagePrescriptionController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
-        processRequest(request, response);
+//        processRequest(request, response);
+
+        response.sendRedirect(request.getContextPath() + "/pharmacist-manage-prescription");
     }
 
     /** 

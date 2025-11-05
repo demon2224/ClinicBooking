@@ -28,8 +28,8 @@
         <servlet-class>controller.DoctorController</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>ManagePrescriptionController</servlet-name>
-        <servlet-class>controller.phamacist.ManagePrescriptionController</servlet-class>
+        <servlet-name>PharmacistManagePrescriptionController</servlet-name>
+        <servlet-class>controller.phamacist.PharmacistManagePrescriptionController</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>PharmacistDashboardController</servlet-name>
@@ -64,8 +64,8 @@
         <url-pattern>/doctor</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>ManagePrescriptionController</servlet-name>
-        <url-pattern>/manage-prescription</url-pattern>
+        <servlet-name>PharmacistManagePrescriptionController</servlet-name>
+        <url-pattern>/pharmacist-manage-prescription</url-pattern>
     </servlet-mapping>
     <welcome-file-list>
         <welcome-file>index.jsp</welcome-file>
