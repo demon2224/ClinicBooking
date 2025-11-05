@@ -14,8 +14,8 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.PrintWriter;
-import model.DegreeDTO;
 import model.DoctorDTO;
+import model.DegreeDTO;
 import model.DoctorReviewDTO;
 import utils.AvatarHandler;
 
@@ -38,18 +38,17 @@ public class DoctorController extends HttpServlet {
     }
 
     /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
+     * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
      *
-     * @param request  servlet request
+     * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException      if an I/O error occurs
+     * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
+        try ( PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
             out.println("<!DOCTYPE html>");
             out.println("<html>");
@@ -68,10 +67,10 @@ public class DoctorController extends HttpServlet {
     /**
      * Handles the HTTP <code>GET</code> method.
      *
-     * @param request  servlet request
+     * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException      if an I/O error occurs
+     * @throws IOException if an I/O error occurs
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -95,10 +94,10 @@ public class DoctorController extends HttpServlet {
     /**
      * Handles the HTTP <code>POST</code> method.
      *
-     * @param request  servlet request
+     * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException      if an I/O error occurs
+     * @throws IOException if an I/O error occurs
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -124,18 +123,23 @@ public class DoctorController extends HttpServlet {
             throws ServletException, IOException {
 
         String search = request.getParameter("search");
+        String specialty = request.getParameter("specialty");
         List<DoctorDTO> doctors;
 
         // Determine search strategy based on criteria
-        if (search != null && !search.trim().isEmpty()) {
-            doctors = doctorDAO.searchDoctors(search, null);
+        if ((search != null && !search.trim().isEmpty()) || (specialty != null && !specialty.trim().isEmpty())) {
+            doctors = doctorDAO.searchDoctors(search, specialty);
         } else {
             doctors = doctorDAO.getAvailableDoctors();
         }
+        // Process doctor avatars
         AvatarHandler.processDoctorAvatars(doctors);
+        // Set attributes for JSP
         request.setAttribute("doctors", doctors);
         request.setAttribute("totalDoctors", doctors.size());
         request.setAttribute("search", search);
+        request.setAttribute("specialty", specialty);
+
         request.getRequestDispatcher(DoctorConstants.DOCTOR_LIST_JSP).forward(request, response);
     }
 
@@ -146,7 +150,8 @@ public class DoctorController extends HttpServlet {
             throws IOException {
 
         String search = request.getParameter("search");
-        String redirectUrl = buildRedirectUrl(request.getContextPath(), search, null, null);
+        String specialty = request.getParameter("specialty");
+        String redirectUrl = buildRedirectUrl(request.getContextPath(), search, specialty, null, null);
         response.sendRedirect(redirectUrl);
     }
 
@@ -171,14 +176,16 @@ public class DoctorController extends HttpServlet {
                 return;
             }
 
+            AvatarHandler.processSingleDoctorAvatar(doctor);
+
             List<DegreeDTO> degrees = doctorDAO.getDoctorDegrees(doctorId);
             List<DoctorReviewDTO> doctorReviews = doctorDAO.getReviewsByDoctorId(doctorId);
 
-            // Calculate the average rating and review count
             double averageRating = doctorDAO.getAverageRatingByDoctorId(doctorId);
             int reviewCount = doctorDAO.getReviewCountByDoctorId(doctorId);
 
             request.setAttribute("doctor", doctor);
+            request.setAttribute("degrees", degrees);
             request.setAttribute("doctorReviews", doctorReviews);
             request.setAttribute("averageRating", averageRating);
             request.setAttribute("reviewCount", reviewCount);
@@ -195,7 +202,7 @@ public class DoctorController extends HttpServlet {
             throws IOException {
 
         String doctorId = request.getParameter("id");
-        String redirectUrl = buildRedirectUrl(request.getContextPath(), null, "detail", doctorId);
+        String redirectUrl = buildRedirectUrl(request.getContextPath(), null, null, "detail", doctorId);
         response.sendRedirect(redirectUrl);
     }
 
@@ -203,12 +210,13 @@ public class DoctorController extends HttpServlet {
      * Build redirect URL with parameters for POST-Redirect-GET pattern
      *
      * @param contextPath Application context path
-     * @param search      Doctor name search term (for list view)
-     * @param action      Action parameter (for detail view)
-     * @param doctorId    Doctor ID (for detail view)
+     * @param search Doctor name search term (for list view)
+     * @param specialty Specialty name search term (for list view)
+     * @param action Action parameter (for detail view)
+     * @param doctorId Doctor ID (for detail view)
      * @return Complete redirect URL with parameters
      */
-    private String buildRedirectUrl(String contextPath, String search, String action, String doctorId)
+    private String buildRedirectUrl(String contextPath, String search, String specialty, String action, String doctorId)
             throws IOException {
 
         StringBuilder url = new StringBuilder(contextPath + DoctorConstants.DOCTOR_URL);
@@ -229,6 +237,12 @@ public class DoctorController extends HttpServlet {
         if (search != null && !search.trim().isEmpty()) {
             url.append(hasParams ? "&" : "?");
             url.append("search=").append(URLEncoder.encode(search.trim(), DoctorConstants.URL_ENCODING));
+            hasParams = true;
+        }
+        // Add specialty parameter for list view
+        if (specialty != null && !specialty.trim().isEmpty()) {
+            url.append(hasParams ? "&" : "?");
+            url.append("specialty=").append(URLEncoder.encode(specialty.trim(), DoctorConstants.URL_ENCODING));
         }
         return url.toString();
     }

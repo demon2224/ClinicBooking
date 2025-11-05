@@ -20,7 +20,7 @@
                     ${reviewCount} Reviews
                 </c:when>
                 <c:otherwise>
-                    No Reviews
+                    0 Reviews
                 </c:otherwise>
             </c:choose>
         </span>

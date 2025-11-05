@@ -147,7 +147,7 @@ public class ReceptionistManageAppointmentController extends HttpServlet {
 
     private void handleAddAppointmentForm(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        List<SpecialtyDTO> specialties = doctorDAO.getAllSpecialties();
+        List<String[]> specialties = doctorDAO.getAllSpecialties();
         List<PatientDTO> patients = patientDAO.getAllPatients();
 
         request.setAttribute("specialties", specialties);
@@ -157,8 +157,8 @@ public class ReceptionistManageAppointmentController extends HttpServlet {
 
     private void handleGetDoctorsBySpecialty(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
-        int specialtyId = Integer.parseInt(request.getParameter("specialtyId"));
-        List<DoctorDTO> doctors = doctorDAO.getDoctorsBySpecialty(specialtyId);
+        int specialtyID = Integer.parseInt(request.getParameter("specialtyID"));
+        List<DoctorDTO> doctors = doctorDAO.getDoctorsBySpecialty(specialtyID);
 
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");

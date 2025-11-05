@@ -10,8 +10,8 @@ package constants;
  */
 public class DoctorConstants {
 
-    // Job status id
-    public static final int AVAILABLE_ID = 1;
+    // Job status string
+    public static final String AVAILABLE_STATUS = "Available";
     // JSP and URL constants
     public static final String DOCTOR_LIST_JSP = "/WEB-INF/DoctorList.jsp";
     public static final String DOCTOR_DETAIL_JSP = "/WEB-INF/DoctorDetail.jsp";

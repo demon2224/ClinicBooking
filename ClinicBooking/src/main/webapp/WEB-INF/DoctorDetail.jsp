@@ -478,6 +478,8 @@
                 font-weight: 600;
                 font-size: 1.1rem;
                 flex-shrink: 0;
+                position: relative;
+                left: 10px;
             }
 
             .reviewer-details {
@@ -529,6 +531,8 @@
                 line-height: 1.6;
                 margin-top: 0.8rem;
                 font-size: 0.95rem;
+                position: relative;
+                left: 10px;
             }
 
             .no-reviews {

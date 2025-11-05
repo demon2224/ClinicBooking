@@ -6,17 +6,17 @@ package dao;
 
 import utils.DBContext;
 import model.DoctorDTO;
-import model.SpecialtyDTO;
-import model.StaffDTO;
-import model.DoctorReviewDTO;
-import model.DegreeDTO;
 import model.PatientDTO;
+import model.StaffDTO;
+import model.SpecialtyDTO;
+import model.DegreeDTO;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import model.DoctorReviewDTO;
 
 /**
  * Class for managing doctor data.
@@ -29,44 +29,25 @@ public class DoctorDAO extends DBContext {
      * Retrieves a specific doctor by their ID.
      *
      * @param doctorId The ID of the doctor to be retrieved.
-     * @return A Doctor object or null if not found.
+     * @return A DoctorDTO object or null if not found.
      */
     public DoctorDTO getDoctorById(int doctorId) {
 
-        String sql = "SELECT d.DoctorID, d.YearExperience, d.SpecialtyID, "
-                + "st.StaffID, st.FirstName, st.LastName, st.PhoneNumber, st.Email, st.Avatar, st.Bio, st.JobStatus, st.Role, "
-                + "s.SpecialtyName "
+        String sql = "SELECT d.DoctorID, d.StaffID, d.SpecialtyID, d.YearExperience, "
+                + "st.FirstName, st.LastName, st.PhoneNumber, st.Email, "
+                + "st.Avatar, st.Bio, st.JobStatus, st.[Role], "
+                + "s.SpecialtyName, s.Price "
                 + "FROM Doctor d "
                 + "INNER JOIN Staff st ON d.StaffID = st.StaffID "
-                + "LEFT JOIN Specialty s ON d.SpecialtyID = s.SpecialtyID "
-                + "WHERE d.DoctorID = ? AND st.Role = 'Doctor'";
+                + "INNER JOIN Specialty s ON d.SpecialtyID = s.SpecialtyID "
+                + "WHERE d.DoctorID = ? AND st.[Role] = 'Doctor'";
 
         DoctorDTO doctor = null;
         Object[] params = {doctorId};
         ResultSet rs = executeSelectQuery(sql, params);
         try {
             if (rs != null && rs.next()) {
-                doctor = new DoctorDTO();
-                doctor.setDoctorID(rs.getInt("DoctorID"));
-                doctor.setYearExperience(rs.getInt("YearExperience"));
-
-                // Tạo Staff object
-                StaffDTO staff = new StaffDTO();
-                staff.setStaffID(rs.getInt("StaffID"));
-                staff.setFirstName(rs.getString("FirstName"));
-                staff.setLastName(rs.getString("LastName"));
-                staff.setEmail(rs.getString("Email"));
-                staff.setPhoneNumber(rs.getString("PhoneNumber"));
-                staff.setAvatar(rs.getString("Avatar"));
-                staff.setBio(rs.getString("Bio"));
-                staff.setJobStatus(rs.getString("JobStatus"));
-                doctor.setStaffID(staff);
-
-                // Tạo Specialty object
-                SpecialtyDTO specialty = new SpecialtyDTO();
-                specialty.setSpecialtyID(rs.getInt("SpecialtyID"));
-                specialty.setSpecialtyName(rs.getString("SpecialtyName"));
-                doctor.setSpecialtyID(specialty);
+                doctor = createDoctorFromResultSet(rs);
             }
         } catch (SQLException ex) {
             Logger.getLogger(DoctorDAO.class.getName()).log(Level.SEVERE, null, ex);
@@ -77,84 +58,24 @@ public class DoctorDAO extends DBContext {
     }
 
     /**
-     * Searches for doctors based on multiple criteria.
+     * Retrieves doctors by their specialty name.
      *
-     * @param keyword The search keyword.
-     * @param specialtyId The specialty ID to filter by.
-     * @return A list of doctors matching the criteria.
+     * @param specialtyID
+     * @return A list of DoctorDTO objects.
      */
-    public List<DoctorDTO> searchDoctors(String keyword, Integer specialtyId) {
-        StringBuilder sql = new StringBuilder("SELECT d.DoctorID, d.YearExperience, d.SpecialtyID, "
-                + "st.StaffID, st.FirstName, st.LastName, st.PhoneNumber, st.Email, st.Avatar, st.Bio, st.JobStatus, st.Role, "
-                + "s.SpecialtyName "
-                + "FROM Doctor d "
-                + "INNER JOIN Staff st ON d.StaffID = st.StaffID "
-                + "LEFT JOIN Specialty s ON d.SpecialtyID = s.SpecialtyID "
-                + "WHERE st.Role = 'Doctor'");
-
-        List<Object> params = new ArrayList<>();
-
-        if (keyword != null && !keyword.trim().isEmpty()) {
-            sql.append(" AND (st.FirstName LIKE ? OR st.LastName LIKE ? OR s.SpecialtyName LIKE ?)");
-            params.add("%" + keyword + "%");
-            params.add("%" + keyword + "%");
-            params.add("%" + keyword + "%");
-        }
-        if (specialtyId != null) {
-            sql.append(" AND d.SpecialtyID = ?");
-            params.add(specialtyId);
-        }
-
-        List<DoctorDTO> doctors = new ArrayList<>();
-        ResultSet rs = executeSelectQuery(sql.toString(), params.toArray());
-        try {
-            while (rs != null && rs.next()) {
-                DoctorDTO doctor = new DoctorDTO();
-                doctor.setDoctorID(rs.getInt("DoctorID"));
-                doctor.setYearExperience(rs.getInt("YearExperience"));
-
-                StaffDTO staff = new StaffDTO();
-                staff.setStaffID(rs.getInt("StaffID"));
-                staff.setFirstName(rs.getString("FirstName"));
-                staff.setLastName(rs.getString("LastName"));
-                staff.setEmail(rs.getString("Email"));
-                staff.setPhoneNumber(rs.getString("PhoneNumber"));
-                staff.setAvatar(rs.getString("Avatar"));
-                staff.setBio(rs.getString("Bio"));
-                staff.setJobStatus(rs.getString("JobStatus"));
-                doctor.setStaffID(staff);
-
-                SpecialtyDTO specialty = new SpecialtyDTO();
-                specialty.setSpecialtyID(rs.getInt("SpecialtyID"));
-                specialty.setSpecialtyName(rs.getString("SpecialtyName"));
-                doctor.setSpecialtyID(specialty);
-
-                doctors.add(doctor);
-            }
-        } catch (SQLException ex) {
-            Logger.getLogger(DoctorDAO.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            closeResources(rs);
-        }
-        return doctors;
-    }
-
-    /**
-     * Retrieves a list of available doctors.
-     *
-     * @return A list of available doctors.
-     */
-    public List<DoctorDTO> getAvailableDoctors() {
+    public List<DoctorDTO> getDoctorsBySpecialty(int specialtyID) {
         String sql = "SELECT d.DoctorID, d.YearExperience, d.SpecialtyID, "
                 + "st.StaffID, st.FirstName, st.LastName, st.PhoneNumber, st.Email, st.Avatar, st.Bio, st.JobStatus, st.Role, "
                 + "s.SpecialtyName "
                 + "FROM Doctor d "
                 + "INNER JOIN Staff st ON d.StaffID = st.StaffID "
                 + "LEFT JOIN Specialty s ON d.SpecialtyID = s.SpecialtyID "
-                + "WHERE st.JobStatus = 'Available' AND st.Role = 'Doctor'";
+                + "WHERE d.SpecialtyID = ? AND st.Role = 'Doctor'";
 
         List<DoctorDTO> doctors = new ArrayList<>();
-        ResultSet rs = executeSelectQuery(sql, null);
+        Object[] params = {specialtyID};
+        ResultSet rs = executeSelectQuery(sql, params);
+
         try {
             while (rs != null && rs.next()) {
                 DoctorDTO doctor = new DoctorDTO();
@@ -188,25 +109,184 @@ public class DoctorDAO extends DBContext {
     }
 
     /**
-     * Retrieves the degrees of a specific doctor.
+     * Retrieves available doctors (JobStatus = 'Available').
      *
-     * @param doctorId The ID of the doctor.
-     * @return A list of DoctorDegreeDTO for the doctor.
+     * @return A list of available DoctorDTO objects.
+     */
+    public List<DoctorDTO> getAvailableDoctors() {
+
+        List<DoctorDTO> doctors = new ArrayList<>();
+
+        String sql = "SELECT d.DoctorID, d.StaffID, d.SpecialtyID, d.YearExperience, "
+                + "st.FirstName, st.LastName, st.PhoneNumber, st.Email, "
+                + "st.Avatar, st.Bio, st.JobStatus, st.[Role], "
+                + "s.SpecialtyName, s.Price "
+                + "FROM Doctor d "
+                + "INNER JOIN Staff st ON d.StaffID = st.StaffID "
+                + "INNER JOIN Specialty s ON d.SpecialtyID = s.SpecialtyID "
+                + "WHERE st.JobStatus = 'Available' AND st.[Role] = 'Doctor'";
+
+        Object[] params = {};
+        ResultSet rs = executeSelectQuery(sql, params);
+        try {
+            if (rs != null) {
+                while (rs.next()) {
+                    DoctorDTO doctor = createDoctorFromResultSet(rs);
+                    doctors.add(doctor);
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(DoctorDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            closeResources(rs);
+        }
+        return doctors;
+    }
+
+    /**
+     * Search doctors by name and specialty only.
+     *
+     * @param searchName The doctor's name to search for (can be partial match).
+     * @param specialtyName The specialty name to filter (null or empty for all).
+     * @return A list of DoctorDTO objects matching the search criteria.
+     */
+    public List<DoctorDTO> searchDoctors(String searchName, String specialtyName) {
+
+        List<DoctorDTO> doctors = new ArrayList<>();
+
+        StringBuilder sql = new StringBuilder(
+                "SELECT d.DoctorID, d.StaffID, d.SpecialtyID, d.YearExperience, "
+                + "st.FirstName, st.LastName, st.PhoneNumber, st.Email, "
+                + "st.Avatar, st.Bio, st.JobStatus, st.[Role], "
+                + "s.SpecialtyName, s.Price "
+                + "FROM Doctor d "
+                + "INNER JOIN Staff st ON d.StaffID = st.StaffID "
+                + "INNER JOIN Specialty s ON d.SpecialtyID = s.SpecialtyID "
+                + "WHERE st.[Role] = 'Doctor' AND st.JobStatus = 'Available'");
+
+        // Build parameters list dynamically
+        List<Object> paramsList = new ArrayList<>();
+
+        // Add search conditions dynamically
+        if (searchName != null && !searchName.trim().isEmpty()) {
+            sql.append(" AND (st.FirstName LIKE ? OR st.LastName LIKE ?)");
+            String searchPattern = "%" + searchName.trim() + "%";
+            paramsList.add(searchPattern);
+            paramsList.add(searchPattern);
+        }
+        if (specialtyName != null && !specialtyName.trim().isEmpty()) {
+            sql.append(" AND s.SpecialtyName = ?");
+            paramsList.add(specialtyName.trim());
+        }
+
+        Object[] params = paramsList.toArray();
+        ResultSet rs = executeSelectQuery(sql.toString(), params);
+        try {
+            if (rs != null) {
+                while (rs.next()) {
+                    DoctorDTO doctor = createDoctorFromResultSet(rs);
+                    doctors.add(doctor);
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(DoctorDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            closeResources(rs);
+        }
+        return doctors;
+    }
+
+    /**
+     * Get all specialties from the database.
+     *
+     * @return A list of specialty names and IDs.
+     */
+    public List<String[]> getAllSpecialties() {
+
+        List<String[]> specialties = new ArrayList<>();
+
+        String sql = "SELECT SpecialtyID, SpecialtyName FROM Specialty ORDER BY SpecialtyName";
+
+        Object[] params = {};
+        ResultSet rs = executeSelectQuery(sql, params);
+        try {
+            if (rs != null) {
+                while (rs.next()) {
+                    String[] specialty = new String[2];
+                    specialty[0] = String.valueOf(rs.getInt("SpecialtyID"));
+                    specialty[1] = rs.getString("SpecialtyName");
+                    specialties.add(specialty);
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(DoctorDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            closeResources(rs);
+        }
+        return specialties;
+    }
+
+    /**
+     * Builds and returns a DoctorDTO object from the current row of a ResultSet.
+     *
+     * @param rs the ResultSet positioned at the current doctor record
+     * @return a fully populated DoctorDTO object created from the ResultSet data
+     * @throws SQLException if any SQL access or column retrieval error occurs
+     */
+    private DoctorDTO createDoctorFromResultSet(ResultSet rs) throws SQLException {
+
+        DoctorDTO doctor = new DoctorDTO();
+        doctor.setDoctorID(rs.getInt("DoctorID"));
+        doctor.setYearExperience(rs.getInt("YearExperience"));
+
+        // Create StaffDTO
+        StaffDTO staff = new StaffDTO();
+        staff.setStaffID(rs.getInt("StaffID"));
+        staff.setFirstName(rs.getString("FirstName"));
+        staff.setLastName(rs.getString("LastName"));
+        staff.setEmail(rs.getString("Email"));
+        staff.setPhoneNumber(rs.getString("PhoneNumber"));
+        staff.setAvatar(rs.getString("Avatar"));
+        staff.setBio(rs.getString("Bio"));
+        staff.setJobStatus(rs.getString("JobStatus"));
+        staff.setRole(rs.getString("Role"));
+        doctor.setStaffID(staff);
+
+        // Create SpecialtyDTO
+        SpecialtyDTO specialty = new SpecialtyDTO();
+        specialty.setSpecialtyID(rs.getInt("SpecialtyID"));
+        specialty.setSpecialtyName(rs.getString("SpecialtyName"));
+        specialty.setPrice(rs.getDouble("Price"));
+        doctor.setSpecialtyID(specialty);
+
+        return doctor;
+    }
+
+    /**
+     * Retrieves all academic degrees earned by a specific doctor.
+     *
+     * @param doctorId the ID of the doctor whose degrees are being retrieved
+     * @return a list of DegreeDTO objects representing the doctor's degrees, or an empty
+     * list if none are found or an error occurs
      */
     public List<DegreeDTO> getDoctorDegrees(int doctorId) {
-        String sql = "SELECT DegreeID, DegreeName "
-                + "FROM Degree "
-                + "WHERE DoctorID = ?";
 
         List<DegreeDTO> degrees = new ArrayList<>();
+
+        String sql = "SELECT DegreeID, DegreeName, DoctorID "
+                + "FROM Degree "
+                + "WHERE DoctorID = ? ORDER BY DegreeID";
+
         Object[] params = {doctorId};
         ResultSet rs = executeSelectQuery(sql, params);
         try {
-            while (rs != null && rs.next()) {
-                DegreeDTO degree = new DegreeDTO();
-                degree.setDegreeID(rs.getInt("DegreeID"));
-                degree.setDegreeName(rs.getString("DegreeName"));
-                degrees.add(degree);
+            if (rs != null) {
+                while (rs.next()) {
+                    DegreeDTO degree = new DegreeDTO();
+                    degree.setDegreeID(rs.getInt("DegreeID"));
+                    degree.setDegreeName(rs.getString("DegreeName"));
+                    degrees.add(degree);
+                }
             }
         } catch (SQLException ex) {
             Logger.getLogger(DoctorDAO.class.getName()).log(Level.SEVERE, null, ex);
@@ -228,7 +308,6 @@ public class DoctorDAO extends DBContext {
                 + "FROM DoctorReview dr "
                 + "INNER JOIN Patient p ON dr.PatientID = p.PatientID "
                 + "WHERE dr.DoctorID = ?";
-
         List<DoctorReviewDTO> reviews = new ArrayList<>();
         Object[] params = {doctorId};
         ResultSet rs = executeSelectQuery(sql, params);
@@ -247,7 +326,6 @@ public class DoctorDAO extends DBContext {
 
                 // Set PatientDTO to DoctorReviewDTO
                 review.setPatientID(patient);
-
                 reviews.add(review);
             }
         } catch (SQLException ex) {
@@ -256,30 +334,6 @@ public class DoctorDAO extends DBContext {
             closeResources(rs);
         }
         return reviews;
-    }
-
-    /**
-     * Retrieves the count of reviews for a specific doctor.
-     *
-     * @param doctorId The ID of the doctor.
-     * @return The count of reviews for the doctor.
-     */
-    public int getReviewCountByDoctorId(int doctorId) {
-        String sql = "SELECT COUNT(*) AS ReviewCount FROM DoctorReview WHERE DoctorID = ?";
-
-        int reviewCount = 0;
-        Object[] params = {doctorId};
-        ResultSet rs = executeSelectQuery(sql, params);
-        try {
-            if (rs != null && rs.next()) {
-                reviewCount = rs.getInt("ReviewCount");
-            }
-        } catch (SQLException ex) {
-            Logger.getLogger(DoctorDAO.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            closeResources(rs);
-        }
-        return reviewCount;
     }
 
     /**
@@ -362,79 +416,27 @@ public class DoctorDAO extends DBContext {
     }
 
     /**
-     * Get all specialties from the database.
+     * Retrieves the count of reviews for a specific doctor.
      *
-     * @return List of specialties
+     * @param doctorId The ID of the doctor.
+     * @return The count of reviews for the doctor.
      */
-    public List<SpecialtyDTO> getAllSpecialties() {
-        String sql = "SELECT SpecialtyID, SpecialtyName, Price FROM Specialty";
-        List<SpecialtyDTO> specialties = new ArrayList<>();
-        ResultSet rs = null;
+    public int getReviewCountByDoctorId(int doctorId) {
+        String sql = "SELECT COUNT(*) AS ReviewCount FROM DoctorReview WHERE DoctorID = ?";
 
-        try {
-            rs = executeSelectQuery(sql, null);
-
-            while (rs != null && rs.next()) {
-                SpecialtyDTO s = new SpecialtyDTO();
-                s.setSpecialtyID(rs.getInt("SpecialtyID"));
-                s.setSpecialtyName(rs.getString("SpecialtyName"));
-                s.setPrice(rs.getDouble("Price"));
-                specialties.add(s);
-            }
-
-        } catch (SQLException ex) {
-            Logger.getLogger(DoctorDAO.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            closeResources(rs);
-        }
-
-        return specialties;
-    }
-
-    public List<DoctorDTO> getDoctorsBySpecialty(int specialtyId) {
-        String sql = "SELECT d.DoctorID, d.YearExperience, d.SpecialtyID, "
-                + "st.StaffID, st.FirstName, st.LastName, st.PhoneNumber, st.Email, st.Avatar, st.Bio, st.JobStatus, st.Role, "
-                + "s.SpecialtyName "
-                + "FROM Doctor d "
-                + "INNER JOIN Staff st ON d.StaffID = st.StaffID "
-                + "LEFT JOIN Specialty s ON d.SpecialtyID = s.SpecialtyID "
-                + "WHERE d.SpecialtyID = ? AND st.Role = 'Doctor'";
-
-        List<DoctorDTO> doctors = new ArrayList<>();
-        Object[] params = {specialtyId};
+        int reviewCount = 0;
+        Object[] params = {doctorId};
         ResultSet rs = executeSelectQuery(sql, params);
-
         try {
-            while (rs != null && rs.next()) {
-                DoctorDTO doctor = new DoctorDTO();
-                doctor.setDoctorID(rs.getInt("DoctorID"));
-                doctor.setYearExperience(rs.getInt("YearExperience"));
-
-                StaffDTO staff = new StaffDTO();
-                staff.setStaffID(rs.getInt("StaffID"));
-                staff.setFirstName(rs.getString("FirstName"));
-                staff.setLastName(rs.getString("LastName"));
-                staff.setEmail(rs.getString("Email"));
-                staff.setPhoneNumber(rs.getString("PhoneNumber"));
-                staff.setAvatar(rs.getString("Avatar"));
-                staff.setBio(rs.getString("Bio"));
-                staff.setJobStatus(rs.getString("JobStatus"));
-                doctor.setStaffID(staff);
-
-                SpecialtyDTO specialty = new SpecialtyDTO();
-                specialty.setSpecialtyID(rs.getInt("SpecialtyID"));
-                specialty.setSpecialtyName(rs.getString("SpecialtyName"));
-                doctor.setSpecialtyID(specialty);
-
-                doctors.add(doctor);
+            if (rs != null && rs.next()) {
+                reviewCount = rs.getInt("ReviewCount");
             }
         } catch (SQLException ex) {
             Logger.getLogger(DoctorDAO.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             closeResources(rs);
         }
-
-        return doctors;
+        return reviewCount;
     }
 
 }
