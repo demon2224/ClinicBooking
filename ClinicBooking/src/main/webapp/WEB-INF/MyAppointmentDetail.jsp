@@ -195,6 +195,15 @@
                                             <p>${appointment.doctorID.yearExperience}+ years</p>
                                         </div>
                                     </div>
+                                    <div class="info-item">
+                                        <div class="info-icon">
+                                            <i class="fas fa-envelope"></i>
+                                        </div>
+                                        <div class="info-content">
+                                            <h4>Contact</h4>
+                                            <p>${appointment.doctorID.staffID.email}</p>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 
