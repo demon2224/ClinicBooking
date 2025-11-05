@@ -110,7 +110,7 @@
                             <i class="fas fa-search"></i>
                             <input type="text"
                                    name="search"
-                                   placeholder="Search for doctors by name..."
+                                   placeholder="Search by doctor name or specialty..."
                                    value="${searchQuery}"
                                    class="search-input" />
                         </div>
