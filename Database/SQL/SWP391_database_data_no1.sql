@@ -21,75 +21,84 @@ BEGIN
 	-- 2. PATIENTS (30) - Không phụ thuộc
 	INSERT INTO Patient (AccountName, AccountPassword, Avatar, Bio, FirstName, LastName, DOB, Gender, UserAddress, PhoneNumber, Email)
 	VALUES
-	('patient01','Pass@01',NULL,'No allergies','Alice','Brown','1985-03-12',0,'123 Elm St, Springfield','0901000001','alice.brown@example.com'),
-	('patient02','Pass@02',NULL,'Diabetic','Bob','Smith','1978-07-04',1,'45 Oak Ave, Springfield','0901000002','bob.smith@example.com'),
-	('patient03','Pass@03',NULL,'Asthma','Cathy','Johnson','1992-11-21',0,'78 Pine Rd, Springfield','0901000003','cathy.johnson@example.com'),
-	('patient04','Pass@04',NULL,'Hypertension','David','Lee','1969-01-30',1,'9 Maple St, Springfield','0901000004','david.lee@example.com'),
-	('patient05','Pass@05',NULL,'Pregnant','Emma','Garcia','1990-05-14',0,'12 Birch Ln, Springfield','0901000005','emma.garcia@example.com'),
-	('patient06','Pass@06',NULL,'High cholesterol','Frank','Martinez','1982-12-08',1,'34 Cedar Blvd, Springfield','0901000006','frank.martinez@example.com'),
-	('patient07','Pass@07',NULL,'Smoker','Grace','Lopez','1975-09-19',0,'56 Willow Way, Springfield','0901000007','grace.lopez@example.com'),
-	('patient08','Pass@08',NULL,'None','Henry','Gonzalez','2000-02-02',1,'99 Aspen Dr, Springfield','0901000008','henry.gonzalez@example.com'),
-	('patient09','Pass@09',NULL,'Allergic to penicillin','Ivy','Wilson','1988-08-08',0,'101 Poplar Cir, Springfield','0901000009','ivy.wilson@example.com'),
-	('patient10','Pass@10',NULL,'Seasonal allergies','Jack','Anderson','1995-06-15',1,'121 Spruce St, Springfield','0901000010','jack.anderson@example.com'),
-	('patient11','Pass@11',NULL,'Caregiver','Karen','Thomas','1960-04-02',0,'3 River Rd, Springfield','0901000011','karen.thomas@example.com'),
-	('patient12','Pass@12',NULL,'Teen patient','Leo','Taylor','2008-10-12',1,'7 Hill St, Springfield','0901000012','leo.taylor@example.com'),
-	('patient13','Pass@13',NULL,'Frequent traveler','Mia','Moore','1987-09-01',0,'22 Lakeview, Springfield','0901000013','mia.moore@example.com'),
-	('patient14','Pass@14',NULL,'Insulin user','Noah','Jackson','1970-03-03',1,'17 Forest Ln, Springfield','0901000014','noah.jackson@example.com'),
-	('patient15','Pass@15',NULL,'Vegetarian','Olivia','Martin','1993-12-12',0,'88 Meadow Rd, Springfield','0901000015','olivia.martin@example.com'),
-	('patient16','Pass@16',NULL,'Recovering fracture','Peter','Clark','1989-11-11',1,'77 Ridge St, Springfield','0901000016','peter.clark@example.com'),
-	('patient17','Pass@17',NULL,'Chronic migraines','Quinn','Rodriguez','1986-02-20',0,'65 Valley Rd, Springfield','0901000017','quinn.rodriguez@example.com'),
-	('patient18','Pass@18',NULL,'Glaucoma history','Rachel','Lewis','1976-07-07',0,'44 Park Ave, Springfield','0901000018','rachel.lewis@example.com'),
-	('patient19','Pass@19',NULL,'Hearing loss','Steve','Walker','1958-05-05',1,'5 Ocean Dr, Springfield','0901000019','steve.walker@example.com'),
-	('patient20','Pass@20',NULL,'Skin rash','Tina','Hall','1999-09-09',0,'200 Hilltop, Springfield','0901000020','tina.hall@example.com'),
-	('patient21','Pass@21',NULL,'Back pain','Uma','Allen','1983-01-01',0,'33 Beacon St, Springfield','0901000021','uma.allen@example.com'),
-	('patient22','Pass@22',NULL,'Anxiety','Victor','Young','1991-04-04',1,'66 Central Ave, Springfield','0901000022','victor.young@example.com'),
-	('patient23','Pass@23',NULL,'High BMI','Wendy','Hernandez','1984-06-06',0,'11 Garden Rd, Springfield','0901000023','wendy.hernandez@example.com'),
-	('patient24','Pass@24',NULL,'Post-op care','Xavier','King','1977-02-02',1,'19 Harbor St, Springfield','0901000024','xavier.king@example.com'),
-	('patient25','Pass@25',NULL,'Allergic to nuts','Yara','Wright','1996-10-10',0,'55 Summit Ave, Springfield','0901000025','yara.wright@example.com'),
-	('patient26','Pass@26',NULL,'Thyroid issues','Zack','Loft','1981-08-18',1,'6 Sunset Blvd, Springfield','0901000026','zack.loft@example.com'),
-	('patient27','Pass@27',NULL,'HIV negative','Amy','Reed','1994-04-09',0,'42 Beacon Rd, Springfield','0901000027','amy.reed@example.com'),
-	('patient28','Pass@28',NULL,'Frequent colds','Ben','Cook','1998-12-03',1,'73 Pinecrest, Springfield','0901000028','ben.cook@example.com'),
-	('patient29','Pass@29',NULL,'Smoker recovery','Clara','Morgan','1980-03-30',0,'8 Glen St, Springfield','0901000029','clara.morgan@example.com'),
-	('patient30','Pass@30',NULL,'Hepatitis B vaccinated','Derek','Bell','1972-11-02',1,'90 Cliff Rd, Springfield','0901000030','derek.bell@example.com');
+	-- Password Pass@###(1-30)
+	('patient01','175c90696276edd5ac31139f32461822b71478a82ebbcc105738d8c123bc64b7',NULL,'No allergies','Alice','Brown','1985-03-12',0,'123 Elm St, Springfield','0901000001','alice.brown@example.com'),
+	('patient02','6209f5021f0d6aae53c3bda9229e9b9ac04022505f31ec70d8c19cb0dcf681fc',NULL,'Diabetic','Bob','Smith','1978-07-04',1,'45 Oak Ave, Springfield','0901000002','bob.smith@example.com'),
+	('patient03','2685d33a3ce43e0c1eaa0ca0ad4b0e2cd50c3ad2b5662f54759c0ca4fcc72f7d',NULL,'Asthma','Cathy','Johnson','1992-11-21',0,'78 Pine Rd, Springfield','0901000003','cathy.johnson@example.com'),
+	('patient04','76d3c7ae6f8b54043ca901526930af98187a92d1b0d12a2e20ba09c4a43a3946',NULL,'Hypertension','David','Lee','1969-01-30',1,'9 Maple St, Springfield','0901000004','david.lee@example.com'),
+	('patient05','21cc5e3e129b17e65bc35a6b9c78f6d80fa37e161efc81f9cc28bf1b12d6aa3a',NULL,'Pregnant','Emma','Garcia','1990-05-14',0,'12 Birch Ln, Springfield','0901000005','emma.garcia@example.com'),
+	('patient06','541d9901e2435e4b02b0fe432f4ad281b744176ae193e7bd84eec5d2f19fd6e0',NULL,'High cholesterol','Frank','Martinez','1982-12-08',1,'34 Cedar Blvd, Springfield','0901000006','frank.martinez@example.com'),
+	('patient07','023e22655353437ceac349a987446420cc68a94b126b9d937d2ae29700113d78',NULL,'Smoker','Grace','Lopez','1975-09-19',0,'56 Willow Way, Springfield','0901000007','grace.lopez@example.com'),
+	('patient08','0114cf13c015ad19b1fcccaa087bda2815dd86542d47cd0d006cb31f39fd2d55',NULL,'None','Henry','Gonzalez','2000-02-02',1,'99 Aspen Dr, Springfield','0901000008','henry.gonzalez@example.com'),
+	('patient09','5821707624fde98bd3d99dffecc1819104eee5002a6bf2b70108c0fbc5689196',NULL,'Allergic to penicillin','Ivy','Wilson','1988-08-08',0,'101 Poplar Cir, Springfield','0901000009','ivy.wilson@example.com'),
+	('patient10','16aef6f30e774379ec3736ef07dd8e15b87c892abb0ad838eafae657b1365704',NULL,'Seasonal allergies','Jack','Anderson','1995-06-15',1,'121 Spruce St, Springfield','0901000010','jack.anderson@example.com'),
+	('patient11','0d0794b61a7c807a76b547f980bec1188ac6ef30da13c7f2c595adc927109985',NULL,'Caregiver','Karen','Thomas','1960-04-02',0,'3 River Rd, Springfield','0901000011','karen.thomas@example.com'),
+	('patient12','027dad64f49f94e0e61a1194dab674d96dc8750b5634e86731b090dd9cbdf072',NULL,'Teen patient','Leo','Taylor','2008-10-12',1,'7 Hill St, Springfield','0901000012','leo.taylor@example.com'),
+	('patient13','1eb81baf8a46ed8963eb5789248777fa53974f6951102fe14eebf37082bda028',NULL,'Frequent traveler','Mia','Moore','1987-09-01',0,'22 Lakeview, Springfield','0901000013','mia.moore@example.com'),
+	('patient14','390d0e3f376a441e0ad1f8ee314d1f8808c3e06793dbbd761571a82a4b08424e',NULL,'Insulin user','Noah','Jackson','1970-03-03',1,'17 Forest Ln, Springfield','0901000014','noah.jackson@example.com'),
+	('patient15','a1c5ef0140e03939c3231697e2405ddf0abc78980e7307985bde32b18d90f4e7',NULL,'Vegetarian','Olivia','Martin','1993-12-12',0,'88 Meadow Rd, Springfield','0901000015','olivia.martin@example.com'),
+	('patient16','e718259abdf6d1e3477c29f9ad915e2aef7be577ad0aa8a64b658607bdc01b52',NULL,'Recovering fracture','Peter','Clark','1989-11-11',1,'77 Ridge St, Springfield','0901000016','peter.clark@example.com'),
+	('patient17','37fc78e602d202efdc11d58e48d4a54551e241d639ba4477cccc9447d11edb2c',NULL,'Chronic migraines','Quinn','Rodriguez','1986-02-20',0,'65 Valley Rd, Springfield','0901000017','quinn.rodriguez@example.com'),
+	('patient18','f3e2d37b4bf5a8856da3067d6e112c48d09356a489073932d8720e5b2ce00e17',NULL,'Glaucoma history','Rachel','Lewis','1976-07-07',0,'44 Park Ave, Springfield','0901000018','rachel.lewis@example.com'),
+	('patient19','a3bcaf9fa8386095ae4e4ea6e7fc117fd5b4c9e373975abb5e857f6cb8b24496',NULL,'Hearing loss','Steve','Walker','1958-05-05',1,'5 Ocean Dr, Springfield','0901000019','steve.walker@example.com'),
+	('patient20','8964af012a3e0d12142ae4702ca3fe69a0cabd0165b695e242c41cc95da1c512',NULL,'Skin rash','Tina','Hall','1999-09-09',0,'200 Hilltop, Springfield','0901000020','tina.hall@example.com'),
+	('patient21','a48712690194172072f6e26b69eb1dfb7a6144af36f7e4c899e93c76660b7ebf',NULL,'Back pain','Uma','Allen','1983-01-01',0,'33 Beacon St, Springfield','0901000021','uma.allen@example.com'),
+	('patient22','97b7528f884d51d21ce95b6fea4a482f8068cb3275199930fb8afae7864bc69c',NULL,'Anxiety','Victor','Young','1991-04-04',1,'66 Central Ave, Springfield','0901000022','victor.young@example.com'),
+	('patient23','6b7b656241d1a7db3c8b9491c0633363aa50248b1980d43cea6e894ea6c1ecd9',NULL,'High BMI','Wendy','Hernandez','1984-06-06',0,'11 Garden Rd, Springfield','0901000023','wendy.hernandez@example.com'),
+	('patient24','6d85a2c74d8f63169993f572e6e314f31da95585011a537a01a6e746528fdaad',NULL,'Post-op care','Xavier','King','1977-02-02',1,'19 Harbor St, Springfield','0901000024','xavier.king@example.com'),
+	('patient25','19f3f02162223cf1d8fda22bff2e523e2e9c5047d0daaf831df1faa6cb0b4e1b',NULL,'Allergic to nuts','Yara','Wright','1996-10-10',0,'55 Summit Ave, Springfield','0901000025','yara.wright@example.com'),
+	('patient26','ff8e167ee88188e02ca64831e5bfcf074df2aaf4d6569cc1bce2db73f1d41c46',NULL,'Thyroid issues','Zack','Loft','1981-08-18',1,'6 Sunset Blvd, Springfield','0901000026','zack.loft@example.com'),
+	('patient27','08ed05755efb9ffae55d70843b17dfa6fde8e832966d07094b25ed66e3c2a32a',NULL,'HIV negative','Amy','Reed','1994-04-09',0,'42 Beacon Rd, Springfield','0901000027','amy.reed@example.com'),
+	('patient28','044604aa4155af8fcd372331a9ad1c24d356ac57442cb288fb7d38e208149bb5',NULL,'Frequent colds','Ben','Cook','1998-12-03',1,'73 Pinecrest, Springfield','0901000028','ben.cook@example.com'),
+	('patient29','29b2efc4400948bca46a4757d496d1587001e7898640219e738d8165f69528bf',NULL,'Smoker recovery','Clara','Morgan','1980-03-30',0,'8 Glen St, Springfield','0901000029','clara.morgan@example.com'),
+	('patient30','012a5a700714382b5e69544df5b47ab140bdd8267e530d59316858ef22101580',NULL,'Hepatitis B vaccinated','Derek','Bell','1972-11-02',1,'90 Cliff Rd, Springfield','0901000030','derek.bell@example.com');
 
 	-- 3. STAFF (30) - Không phụ thuộc
 	-- Doctor Staff IDs: 1-10, 26, 27
 	INSERT INTO Staff (JobStatus, [Role], AccountName, AccountPassword, Avatar, Bio, FirstName, LastName, DOB, Gender, UserAddress, PhoneNumber, Email)
 	VALUES
-	('Available','Doctor','staff_doc01','Doc@01',NULL,'Cardiologist','Aaron','Mills','1975-02-02',1,'10 Staff Lane','0911000001','aaron.mills@clinic.com'), -- ID 1
-	('Available','Doctor','staff_doc02','Doc@02',NULL,'Dermatologist','Bella','Reed','1980-03-03',0,'11 Staff Lane','0911000002','bella.reed@clinic.com'), -- ID 2
-	('Available','Doctor','staff_doc03','Doc@03',NULL,'Pediatrician','Carl','Perry','1978-04-04',1,'12 Staff Lane','0911000003','carl.perry@clinic.com'), -- ID 3
-	('Available','Doctor','staff_doc04','Doc@04',NULL,'Orthopedist','Dana','Kim','1972-05-05',0,'13 Staff Lane','0911000004','dana.kim@clinic.com'), -- ID 4
-	('Available','Doctor','staff_doc05','Doc@05',NULL,'Neurologist','Evan','Stone','1968-06-06',1,'14 Staff Lane','0911000005','evan.stone@clinic.com'), -- ID 5
-	('Available','Doctor','staff_doc06','Doc@06',NULL,'Endocrinologist','Fiona','Grant','1982-07-07',0,'15 Staff Lane','0911000006','fiona.grant@clinic.com'), -- ID 6
-	('Available','Doctor','staff_doc07','Doc@07',NULL,'Ophthalmologist','George','Nash','1976-08-08',1,'16 Staff Lane','0911000007','george.nash@clinic.com'), -- ID 7
-	('Available','Doctor','staff_doc08','Doc@08',NULL,'ENT Specialist','Hannah','Cole','1983-09-09',0,'17 Staff Lane','0911000008','hannah.cole@clinic.com'), -- ID 8
-	('Available','Doctor','staff_doc09','Doc@09',NULL,'Psychiatrist','Ian','Frost','1974-10-10',1,'18 Staff Lane','0911000009','ian.frost@clinic.com'), -- ID 9
-	('Available','Doctor','staff_doc10','Doc@10',NULL,'General Practitioner','Jane','Wells','1985-11-11',0,'19 Staff Lane','0911000010','jane.wells@clinic.com'), -- ID 10
+	-- Password Doc@####(1-10)
+	('Available','Doctor','staff_doc01','bc46ea7276e1093e27d477e25563fcd9bd8f77ddd4231c33394c4ab155becfe7',NULL,'Cardiologist','Aaron','Mills','1975-02-02',1,'10 Staff Lane','0911000001','aaron.mills@clinic.com'), -- ID 1
+	('Available','Doctor','staff_doc02','b48252d8341ff489ef057280722a8f57cb33767d2aee5a10e8ecf81751fe8496',NULL,'Dermatologist','Bella','Reed','1980-03-03',0,'11 Staff Lane','0911000002','bella.reed@clinic.com'), -- ID 2
+	('Available','Doctor','staff_doc03','b61d9e5e1fff59292e9bf04aff6970013ed1502cf3949abe4a65a65cce143987',NULL,'Pediatrician','Carl','Perry','1978-04-04',1,'12 Staff Lane','0911000003','carl.perry@clinic.com'), -- ID 3
+	('Available','Doctor','staff_doc04','fa181b99e0d29bd5dda9b8b110c7c32489328fdf78778168435e7e04dcd68a24',NULL,'Orthopedist','Dana','Kim','1972-05-05',0,'13 Staff Lane','0911000004','dana.kim@clinic.com'), -- ID 4
+	('Available','Doctor','staff_doc05','44cf3c4a3c6ef714b34c40ab1babb614492956a85a6a75a74f7db04bfe350ebd',NULL,'Neurologist','Evan','Stone','1968-06-06',1,'14 Staff Lane','0911000005','evan.stone@clinic.com'), -- ID 5
+	('Available','Doctor','staff_doc06','e3cd52f9a75e6985c9416f64e550231fa56754cf1a93712e109edbf746e96f3a',NULL,'Endocrinologist','Fiona','Grant','1982-07-07',0,'15 Staff Lane','0911000006','fiona.grant@clinic.com'), -- ID 6
+	('Available','Doctor','staff_doc07','9b4085484e2ec25344e0183e1b0e0f7e3c5f188dd4bf8b3c72c1db727630e0ba',NULL,'Ophthalmologist','George','Nash','1976-08-08',1,'16 Staff Lane','0911000007','george.nash@clinic.com'), -- ID 7
+	('Available','Doctor','staff_doc08','2e5f3cd964b7b4473e234a6ba141076f03ddec2d39e371d5d36bc526022b6467',NULL,'ENT Specialist','Hannah','Cole','1983-09-09',0,'17 Staff Lane','0911000008','hannah.cole@clinic.com'), -- ID 8
+	('Available','Doctor','staff_doc09','1331c38f38202748f5b6237d2e7aecdc6a4414ab7cf54ef8c0b221d8ed94590c',NULL,'Psychiatrist','Ian','Frost','1974-10-10',1,'18 Staff Lane','0911000009','ian.frost@clinic.com'), -- ID 9
+	('Available','Doctor','staff_doc10','d24ea0cb5802c09e859f35d03f1a0a9b4ad727e6171fa516452a3c1d4161df5f',NULL,'General Practitioner','Jane','Wells','1985-11-11',0,'19 Staff Lane','0911000010','jane.wells@clinic.com'), -- ID 10
 
-	('Available','Pharmacist','staff_ph01','Pharm@01',NULL,'Senior pharmacist','Karl','Fox','1984-01-01',1,'20 Staff Lane','0911000011','karl.fox@clinic.com'), -- ID 11
-	('Available','Pharmacist','staff_ph02','Pharm@02',NULL,'Pharmacist','Lena','Bell','1990-02-02',0,'21 Staff Lane','0911000012','lena.bell@clinic.com'), -- ID 12
-	('Available','Pharmacist','staff_ph03','Pharm@03',NULL,'Pharmacist','Mark','Stone','1986-03-03',1,'22 Staff Lane','0911000013','mark.stone@clinic.com'), -- ID 13
-	('Available','Pharmacist','staff_ph04','Pharm@04',NULL,'Pharmacy assistant','Nina','Hayes','1992-04-04',0,'23 Staff Lane','0911000014','nina.hayes@clinic.com'), -- ID 14
-	('Available','Pharmacist','staff_ph05','Pharm@05',NULL,'Pharmacist','Oscar','Rey','1988-05-05',1,'24 Staff Lane','0911000015','oscar.rey@clinic.com'), -- ID 15
+	-- Password Pharm@##(1-5)
+	('Available','Pharmacist','staff_ph01','6395ce58989fc6b35cac6bb2218d6021ff09f09a989ace25f0c5dbff71c8dd86',NULL,'Senior pharmacist','Karl','Fox','1984-01-01',1,'20 Staff Lane','0911000011','karl.fox@clinic.com'), -- ID 11
+	('Available','Pharmacist','staff_ph02','69325524de91b4e3cb285d4a363cc3869f26330b50efe09207b7a8366d94dc74',NULL,'Pharmacist','Lena','Bell','1990-02-02',0,'21 Staff Lane','0911000012','lena.bell@clinic.com'), -- ID 12
+	('Available','Pharmacist','staff_ph03','da99bc9461dabdddb4e7859e9c8b44932bb2f4b960590e1bb260310fabb0da0e',NULL,'Pharmacist','Mark','Stone','1986-03-03',1,'22 Staff Lane','0911000013','mark.stone@clinic.com'), -- ID 13
+	('Available','Pharmacist','staff_ph04','afbf3a3f4f8d6d801f2ad5a7be0369925d652395edab3f09598cc09fd88c91c4',NULL,'Pharmacy assistant','Nina','Hayes','1992-04-04',0,'23 Staff Lane','0911000014','nina.hayes@clinic.com'), -- ID 14
+	('Available','Pharmacist','staff_ph05','f113871bbc50a321080323f539322cd873866a6d89cc1da37a142f7458282151',NULL,'Pharmacist','Oscar','Rey','1988-05-05',1,'24 Staff Lane','0911000015','oscar.rey@clinic.com'), -- ID 15
 
-	('Available','Receptionist','staff_rec01','Rec@01',NULL,'Front desk','Paula','Grant','1991-06-06',0,'25 Staff Lane','0911000016','paula.grant@clinic.com'), -- ID 16
-	('Available','Receptionist','staff_rec02','Rec@02',NULL,'Front desk','Quinn','Baker','1993-07-07',1,'26 Staff Lane','0911000017','quinn.baker@clinic.com'), -- ID 17
-	('Available','Receptionist','staff_rec03','Rec@03',NULL,'Front desk','Rita','Young','1994-08-08',0,'27 Staff Lane','0911000018','rita.young@clinic.com'), -- ID 18
-	('Available','Receptionist','staff_rec04','Rec@04',NULL,'Front desk','Sam','Lopez','1995-09-09',1,'28 Staff Lane','0911000019','sam.lopez@clinic.com'), -- ID 19
-	('Available','Receptionist','staff_rec05','Rec@05',NULL,'Front desk','Tara','Fox','1989-10-10',0,'29 Staff Lane','0911000020','tara.fox@clinic.com'), -- ID 20
+	-- Password Rec@####(1-5)
+	('Available','Receptionist','staff_rec01','35b7f137ef6498fa40d6f59073c7627209bf890e47601d2af7a54c0c23f06645',NULL,'Front desk','Paula','Grant','1991-06-06',0,'25 Staff Lane','0911000016','paula.grant@clinic.com'), -- ID 16
+	('Available','Receptionist','staff_rec02','ec768ae499edcb10bb3f5073663ee80608146acc01ac6250e8809e13c8fba0e1',NULL,'Front desk','Quinn','Baker','1993-07-07',1,'26 Staff Lane','0911000017','quinn.baker@clinic.com'), -- ID 17
+	('Available','Receptionist','staff_rec03','d154deffbc3c6cb400f142715d90de5358d0c581cb7280e6315b617254ce67b0',NULL,'Front desk','Rita','Young','1994-08-08',0,'27 Staff Lane','0911000018','rita.young@clinic.com'), -- ID 18
+	('Available','Receptionist','staff_rec04','f54f53a5e3362a4548e25122982280a239e9118fcf1396c3f768adc689809b0a',NULL,'Front desk','Sam','Lopez','1995-09-09',1,'28 Staff Lane','0911000019','sam.lopez@clinic.com'), -- ID 19
+	('Available','Receptionist','staff_rec05','b5d4fe8f26798b8677d606469856ed26913856818c58a0d6c4d3cf7bfc1a68ed',NULL,'Front desk','Tara','Fox','1989-10-10',0,'29 Staff Lane','0911000020','tara.fox@clinic.com'), -- ID 20
 
-	('Available','Admin','staff_admin01','Adm@01',NULL,'Administrator','Uma','Grant','1980-11-11',0,'30 Staff Lane','0911000021','uma.grant@clinic.com'), -- ID 21
-	('Available','Admin','staff_admin02','Adm@02',NULL,'IT Admin','Victor','Kim','1983-12-12',1,'31 Staff Lane','0911000022','victor.kim@clinic.com'), -- ID 22
-	('Available','Admin','staff_admin03','Adm@03',NULL,'Billing Admin','Wendy','Lopez','1979-01-13',0,'32 Staff Lane','0911000023','wendy.lopez@clinic.com'), -- ID 23
-	('Available','Admin','staff_admin04','Adm@04',NULL,'HR Admin','Xavier','Stone','1972-02-14',1,'33 Staff Lane','0911000024','xavier.stone@clinic.com'), -- ID 24
-	('Available','Admin','staff_admin05','Adm@05',NULL,'Records Admin','Yara','Hill','1987-03-15',0,'34 Staff Lane','0911000025','yara.hill@clinic.com'), -- ID 25
+	-- Password Adm@####(1-5)
+	('Available','Admin','staff_admin01','d9c85b4489706daef76fccba67c9db0855db2b3fa69addbbf540c3b667a6dff7',NULL,'Administrator','Uma','Grant','1980-11-11',0,'30 Staff Lane','0911000021','uma.grant@clinic.com'), -- ID 21
+	('Available','Admin','staff_admin02','c15a7fa02b0b895e1ee6ee86a62bfa23f4b89d354d17c9fc984f29f217f0a4c7',NULL,'IT Admin','Victor','Kim','1983-12-12',1,'31 Staff Lane','0911000022','victor.kim@clinic.com'), -- ID 22
+	('Available','Admin','staff_admin03','f9f16ce53f805d28f3290176cb4aa3ada21d2a7b1603eeb58df1deab2e636072',NULL,'Billing Admin','Wendy','Lopez','1979-01-13',0,'32 Staff Lane','0911000023','wendy.lopez@clinic.com'), -- ID 23
+	('Available','Admin','staff_admin04','0ab6fc68d9e2d65de71e1daaef800abe103b44413e38d3b29c120bbe54b8ca0e',NULL,'HR Admin','Xavier','Stone','1972-02-14',1,'33 Staff Lane','0911000024','xavier.stone@clinic.com'), -- ID 24
+	('Available','Admin','staff_admin05','e179134b237bf0832ee7e25c8ad89f884502f12e935191d1168dd00dc6c06492',NULL,'Records Admin','Yara','Hill','1987-03-15',0,'34 Staff Lane','0911000025','yara.hill@clinic.com'), -- ID 25
 
-	('Available','Doctor','staff_doc11','Doc@11',NULL,'Visiting specialist','Zack','Morse','1971-04-16',1,'35 Staff Lane','0911000026','zack.morse@clinic.com'), -- ID 26
-	('Available','Doctor','staff_doc12','Doc@12',NULL,'Visiting specialist','Ava','Noel','1986-05-17',0,'36 Staff Lane','0911000027','ava.noel@clinic.com'), -- ID 27
-	('Available','Pharmacist','staff_ph06','Pharm@06',NULL,'Pharmacist','Ben','Carter','1991-06-18',1,'37 Staff Lane','0911000028','ben.carter@clinic.com'), -- ID 28
-	('Available','Receptionist','staff_rec06','Rec@06',NULL,'Reception','Cara','Miles','1992-07-19',0,'38 Staff Lane','0911000029','cara.miles@clinic.com'), -- ID 29
-	('Available','Admin','staff_admin06','Adm@06',NULL,'Finance','Drew','Yates','1985-08-20',1,'39 Staff Lane','0911000030','drew.yates@clinic.com'); -- ID 30
+	-- Password Doc@####(11-12)
+	-- Password Pharm@##(6)
+	-- Password Rec@####(6)
+	-- Password Adm@####(6)
+	('Available','Doctor','staff_doc11','6a8866235ce2349a8364a6bb283c309a4c6e962321de31c99b360135253b5523',NULL,'Visiting specialist','Zack','Morse','1971-04-16',1,'35 Staff Lane','0911000026','zack.morse@clinic.com'), -- ID 26
+	('Available','Doctor','staff_doc12','8ff46c624ba22a72f7048716659a9b9c46aff19155fe1815675206ddbb89a1ba',NULL,'Visiting specialist','Ava','Noel','1986-05-17',0,'36 Staff Lane','0911000027','ava.noel@clinic.com'), -- ID 27
+	('Available','Pharmacist','staff_ph06','f15bdb1c2cdeb757c9ff10a0078d71092e4ecf6ff94d406358366542849e4443',NULL,'Pharmacist','Ben','Carter','1991-06-18',1,'37 Staff Lane','0911000028','ben.carter@clinic.com'), -- ID 28
+	('Available','Receptionist','staff_rec06','769fb92612426a23c1cc3f8aeeb494f49016d003079b099e1b887b1b2632cd5b',NULL,'Reception','Cara','Miles','1992-07-19',0,'38 Staff Lane','0911000029','cara.miles@clinic.com'), -- ID 29
+	('Available','Admin','staff_admin06','bb8e2b9d0a554432502b84a4c2c2ab7b985a046ba3dad40311342f6b99556e0b',NULL,'Finance','Drew','Yates','1985-08-20',1,'39 Staff Lane','0911000030','drew.yates@clinic.com'); -- ID 30
 
 	-- 4. DOCTORS (12 Doctors) - Phụ thuộc vào Staff (StaffID) và Specialty (SpecialtyID)
 	-- Specialty IDs: 1:General Practice, 2:Cardiology, 3:Dermatology, 4:Pediatrics, 5:Orthopedics, 6:Neurology, 7:Endocrinology, 8:Ophthalmology, 9:ENT, 10:Psychiatry
