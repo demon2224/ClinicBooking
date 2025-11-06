@@ -73,18 +73,30 @@
                                             <p>${medicalRecord.diagnosis != null ? medicalRecord.diagnosis : 'No diagnosis provided'}</p>
                                         </div>
                                     </div>
-                                    <div class="info-item">
-                                        <div class="info-icon">
-                                            <i class="fas fa-notes-medical"></i>
-                                        </div>
-                                        <div class="info-content">
-                                            <h4>Notes</h4>
-                                            <p>${medicalRecord.note != null ? medicalRecord.note : 'No notes provided'}</p>
-                                        </div>
-                                    </div>
                                 </div>
                             </div>
-
+                            <!-- Medical Record Notes -->
+                            <c:choose>
+                                <c:when test="${not empty medicalRecord.note}">
+                                    <div class="info-section">
+                                        <h3 class="section-title">
+                                            <i class="fas fa-sticky-note"></i>
+                                            Medical Record Notes
+                                        </h3>
+                                        <div class="info-grid">
+                                            <div class="info-item">
+                                                <div class="info-icon">
+                                                    <i class="fas fa-comment-alt"></i>
+                                                </div>
+                                                <div class="info-content">
+                                                    <h4>Notes</h4>
+                                                    <p>${medicalRecord.note}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </c:when>
+                            </c:choose>
                             <!-- Doctor Information -->
                             <div class="info-section">
                                 <h3 class="section-title">
@@ -136,12 +148,43 @@
                                             <h4>Rating</h4>
                                             <p>
                                             <div class="doctor-rating">
-                                                <span class="stars">
-                                                    <c:forEach begin="1" end="5" var="star">
-                                                        <i class="fas fa-star star-filled"></i>
-                                                    </c:forEach>
-                                                </span>
-                                                <span class="rating-score">4.7/5</span>
+                                                <c:choose>
+                                                    <c:when test="${averageRating > 0}">
+                                                        <span class="stars">
+                                                            <c:forEach begin="1" end="5" var="star">
+                                                                <c:choose>
+                                                                    <c:when test="${star <= averageRating}">
+                                                                        <i class="fas fa-star star-filled"></i>
+                                                                    </c:when>
+                                                                    <c:when test="${star - averageRating < 1}">
+                                                                        <i class="fas fa-star-half-alt star-filled"></i>
+                                                                    </c:when>
+                                                                    <c:otherwise>
+                                                                        <i class="far fa-star star-empty"></i>
+                                                                    </c:otherwise>
+                                                                </c:choose>
+                                                            </c:forEach>
+                                                        </span>
+                                                        <span class="rating-score">
+                                                            <c:choose>
+                                                                <c:when test="${averageRating % 1 == 0}">
+                                                                    ${averageRating.intValue()}/5
+                                                                </c:when>
+                                                                <c:otherwise>
+                                                                    <fmt:formatNumber value="${averageRating}" pattern="#.#"/>/5
+                                                                </c:otherwise>
+                                                            </c:choose>
+                                                        </span>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <span class="stars">
+                                                            <c:forEach begin="1" end="5" var="star">
+                                                                <i class="far fa-star star-empty"></i>
+                                                            </c:forEach>
+                                                        </span>
+                                                        <span class="rating-score">No ratings</span>
+                                                    </c:otherwise>
+                                                </c:choose>
                                             </div>
                                             </p>
                                         </div>
@@ -164,33 +207,55 @@
                                     <div class="info-section">
                                         <h3 class="section-title">
                                             <i class="fas fa-pills"></i>
-                                            Prescription
+                                            Prescription Information
                                         </h3>
-                                        <div class="medicine-list">
+
+                                        <div class="medicines-table">
+                                            <div class="table-header">
+                                                <div class="header-cell">Medicine Name</div>
+                                                <div class="header-cell">Type</div>
+                                                <div class="header-cell">Price</div>
+                                                <div class="header-cell">Dosage</div>
+                                                <div class="header-cell">Instructions</div>
+                                                <div class="header-cell">Subtotal</div>
+                                            </div>
+                                            
+                                            <c:set var="totalPrice" value="0" />
                                             <c:forEach var="item" items="${medicalRecord.prescriptionDTO.prescriptionItemList}">
-                                                <div class="medicine-item">
-                                                    <div class="medicine-info">
-                                                        <h4 class="medicine-name">
-                                                            <i class="fas fa-pill"></i>
-                                                            ${item.medicineID.medicineName}
-                                                        </h4>
-                                                        <div class="medicine-details">
-                                                            <span class="medicine-type">
-                                                                <i class="fas fa-capsules"></i>
-                                                                Medicine type: ${item.medicineID.medicineType != null ? item.medicineID.medicineType : 'Không xác định'}
-                                                            </span>
-                                                            <span class="medicine-dosage">
-                                                                <i class="fas fa-weight"></i>
-                                                                Dosage: ${item.dosage}
-                                                            </span>
-                                                            <span class="medicine-instruction">
-                                                                <i class="fas fa-info-circle"></i>
-                                                                Instructions: ${item.instruction != null ? item.instruction : 'No instructions'}
-                                                            </span>
-                                                        </div>
+                                                <c:set var="itemPrice" value="${item.medicineID.price != null ? item.medicineID.price : 0}" />
+                                                <c:set var="dosageNum" value="${item.dosage != null ? item.dosage : 1}" />
+                                                <c:set var="subtotal" value="${itemPrice * dosageNum}" />
+                                                <c:set var="totalPrice" value="${totalPrice + subtotal}" />
+                                                
+                                                <div class="table-row">
+                                                    <div class="table-cell medicine-name-cell">
+                                                        <i class="fas fa-capsules"></i>
+                                                        ${item.medicineID.medicineName}
+                                                    </div>
+                                                    <div class="table-cell">
+                                                        ${item.medicineID.medicineType != null ? item.medicineID.medicineType : 'N/A'}
+                                                    </div>
+                                                    <div class="table-cell price-cell">
+                                                        $<fmt:formatNumber value="${itemPrice}" pattern="#,##0.00"/>
+                                                    </div>
+                                                    <div class="table-cell">
+                                                        ${item.dosage != null ? item.dosage : 'N/A'}
+                                                    </div>
+                                                    <div class="table-cell instructions-cell">
+                                                        ${item.instruction != null ? item.instruction : 'No specific instructions'}
+                                                    </div>
+                                                    <div class="table-cell price-cell">
+                                                        $<fmt:formatNumber value="${subtotal}" pattern="#,##0.00"/>
                                                     </div>
                                                 </div>
                                             </c:forEach>
+                                            
+                                            <div class="table-footer">
+                                                <div class="total-row">
+                                                    <div class="total-label">Total:</div>
+                                                    <div class="total-amount">$<fmt:formatNumber value="${totalPrice}" pattern="#,##0.00"/></div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </c:when>
@@ -198,7 +263,7 @@
                                     <div class="info-section">
                                         <h3 class="section-title">
                                             <i class="fas fa-pills"></i>
-                                            Prescription
+                                            Prescription Information
                                         </h3>
                                         <div class="appointment-empty-state">
                                             <i class="fas fa-pill"></i>
@@ -211,7 +276,7 @@
                                     <div class="info-section">
                                         <h3 class="section-title">
                                             <i class="fas fa-pills"></i>
-                                            Prescription
+                                            Prescription Information
                                         </h3>
                                         <div class="appointment-empty-state">
                                             <i class="fas fa-pills"></i>
@@ -221,6 +286,8 @@
                                     </div>
                                 </c:otherwise>
                             </c:choose>
+
+
                         </c:when>
                         <c:otherwise>
                             <!-- Error Message -->
