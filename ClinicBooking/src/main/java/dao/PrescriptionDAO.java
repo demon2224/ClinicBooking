@@ -262,19 +262,20 @@ public class PrescriptionDAO extends DBContext {
 
     public PrescriptionDTO getPrescriptionById(int prescriptionID) {
 
-        String query = "SELECT p.PrescriptionID, p.PrescriptionStatus, p.DateCreate, st.FirstName as DoctorFirstName, st.LastName as DoctorLastName, pt.FirstName as PatientFirstName, pt.LastName as PatientLastName, p.Note AS PrescriptionNote\n"
-                + "FROM [dbo].[Prescription] p\n"
-                + "JOIN [dbo].[Appointment] a\n"
-                + "ON a.AppointmentID = p.AppointmentID\n"
-                + "JOIN [dbo].[Doctor] dt\n"
-                + "ON dt.DoctorID = a.DoctorID\n"
-                + "JOIN [dbo].[Staff] st\n"
-                + "ON st.StaffID = dt.StaffID\n"
-                + "JOIN [dbo].[Patient] pt\n"
-                + "ON pt.PatientID = a.PatientID\n"
-                + "WHERE p.Hidden = 0\n"
-                + "AND p.PrescriptionID = ?\n"
-                + "ORDER BY DateCreate DESC;";
+        String query = "SELECT p.PrescriptionID, p.PrescriptionStatus, p.DateCreate, p.Note AS PrescriptionNote, "
+                + "a.AppointmentID, a.DateBegin, a.DateEnd, a.Note as AppointmentNote, a.AppointmentStatus, "
+                + "st.FirstName as DoctorFirstName, st.LastName as DoctorLastName, st.PhoneNumber as DoctorPhone, st.Email as DoctorEmail, "
+                + "pt.FirstName as PatientFirstName, pt.LastName as PatientLastName, "
+                + "d.DoctorID, d.YearExperience, "
+                + "sp.SpecialtyName "
+                + "FROM [dbo].[Prescription] p "
+                + "JOIN [dbo].[Appointment] a ON a.AppointmentID = p.AppointmentID "
+                + "JOIN [dbo].[Doctor] d ON d.DoctorID = a.DoctorID "
+                + "JOIN [dbo].[Staff] st ON st.StaffID = d.StaffID "
+                + "JOIN [dbo].[Specialty] sp ON sp.SpecialtyID = d.SpecialtyID "
+                + "JOIN [dbo].[Patient] pt ON pt.PatientID = a.PatientID "
+                + "WHERE p.Hidden = 0 AND p.PrescriptionID = ? "
+                + "ORDER BY p.DateCreate DESC";
         Object[] params = {prescriptionID};
         PrescriptionDTO prescription = null;
         ResultSet rs = null;
@@ -286,16 +287,30 @@ public class PrescriptionDAO extends DBContext {
 
                 StaffDTO staff = new StaffDTO();
                 staff.setFirstName(rs.getString("DoctorFirstName"));
-                staff.setLastName(rs.getString("DoctorFirstName"));
+                staff.setLastName(rs.getString("DoctorLastName"));
+                staff.setPhoneNumber(rs.getString("DoctorPhone"));
+                staff.setEmail(rs.getString("DoctorEmail"));
 
                 PatientDTO patient = new PatientDTO();
                 patient.setFirstName(rs.getString("PatientFirstName"));
                 patient.setLastName(rs.getString("PatientLastName"));
 
+                // Create specialty
+                model.SpecialtyDTO specialty = new model.SpecialtyDTO();
+                specialty.setSpecialtyName(rs.getString("SpecialtyName"));
+
                 DoctorDTO doctor = new DoctorDTO();
+                doctor.setDoctorID(rs.getInt("DoctorID"));
+                doctor.setYearExperience(rs.getInt("YearExperience"));
                 doctor.setStaffID(staff);
+                doctor.setSpecialtyID(specialty);
 
                 AppointmentDTO appointment = new AppointmentDTO();
+                appointment.setAppointmentID(rs.getInt("AppointmentID"));
+                appointment.setDateBegin(rs.getTimestamp("DateBegin"));
+                appointment.setDateEnd(rs.getTimestamp("DateEnd"));
+                appointment.setNote(rs.getString("AppointmentNote"));
+                appointment.setAppointmentStatus(rs.getString("AppointmentStatus"));
                 appointment.setDoctorID(doctor);
                 appointment.setPatientID(patient);
 
@@ -644,4 +659,161 @@ public class PrescriptionDAO extends DBContext {
         }
         return prescription;
     }
+    /**
+     * Get all prescriptions for a specific patient
+     * @param patientId The patient ID
+     * @return List of prescriptions for the patient
+     */
+    public List<PrescriptionDTO> getPrescriptionsByPatientId(int patientId) {
+        String sql = "SELECT p.PrescriptionID, p.PrescriptionStatus, p.DateCreate as PrescriptionDateCreate, "
+                + "a.AppointmentID, a.PatientID, a.DoctorID, a.DateBegin, a.DateEnd, a.Note, a.AppointmentStatus, "
+                + "pt.FirstName as PatientFirstName, pt.LastName as PatientLastName, "
+                + "s.FirstName as DoctorFirstName, s.LastName as DoctorLastName, "
+                + "d.DoctorID as DocID, sp.SpecialtyName, "
+                + "mr.Symptoms, mr.Diagnosis "
+                + "FROM Prescription p "
+                + "JOIN Appointment a ON p.AppointmentID = a.AppointmentID "
+                + "LEFT JOIN MedicalRecord mr ON mr.PrescriptionID = p.PrescriptionID "
+                + "JOIN Patient pt ON a.PatientID = pt.PatientID "
+                + "JOIN Doctor d ON a.DoctorID = d.DoctorID "
+                + "JOIN Staff s ON d.StaffID = s.StaffID "
+                + "JOIN Specialty sp ON d.SpecialtyID = sp.SpecialtyID "
+                + "WHERE a.PatientID = ? AND p.PrescriptionStatus = 'Delivered' "
+                + "ORDER BY p.DateCreate DESC";
+        
+        Object[] params = {patientId};
+        ResultSet rs = executeSelectQuery(sql, params);
+        List<PrescriptionDTO> prescriptions = new ArrayList<>();
+        
+        try {
+            while (rs.next()) {
+                PrescriptionDTO prescription = new PrescriptionDTO();
+                prescription.setPrescriptionID(rs.getInt("PrescriptionID"));
+                prescription.setPrescriptionStatus(rs.getString("PrescriptionStatus"));
+                prescription.setDateCreate(rs.getTimestamp("PrescriptionDateCreate"));
+                
+                // Create appointment
+                AppointmentDTO appointment = new AppointmentDTO();
+                appointment.setAppointmentID(rs.getInt("AppointmentID"));
+                appointment.setDateBegin(rs.getTimestamp("DateBegin"));
+                appointment.setDateEnd(rs.getTimestamp("DateEnd"));
+                appointment.setNote(rs.getString("Note"));
+                appointment.setAppointmentStatus(rs.getString("AppointmentStatus"));
+                
+                // Create patient
+                PatientDTO patient = new PatientDTO();
+                patient.setPatientID(rs.getInt("PatientID"));
+                patient.setFirstName(rs.getString("PatientFirstName"));
+                patient.setLastName(rs.getString("PatientLastName"));
+                
+                // Create doctor and staff
+                DoctorDTO doctor = new DoctorDTO();
+                doctor.setDoctorID(rs.getInt("DocID"));
+                
+                StaffDTO staff = new StaffDTO();
+                staff.setFirstName(rs.getString("DoctorFirstName"));
+                staff.setLastName(rs.getString("DoctorLastName"));
+                doctor.setStaffID(staff);
+                
+                // Create specialty
+                model.SpecialtyDTO specialty = new model.SpecialtyDTO();
+                specialty.setSpecialtyName(rs.getString("SpecialtyName"));
+                doctor.setSpecialtyID(specialty);
+                
+                appointment.setPatientID(patient);
+                appointment.setDoctorID(doctor);
+                prescription.setAppointmentID(appointment);
+                
+                prescriptions.add(prescription);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            closeResources(rs);
+        }
+        
+        return prescriptions;
+    }
+
+    /**
+     * Search prescriptions for a specific patient by doctor name or medicine name
+     * @param patientId The patient ID
+     * @param searchQuery The search query
+     * @return List of matching prescriptions
+     */
+    public List<PrescriptionDTO> searchPrescriptionsByPatientId(int patientId, String searchQuery) {
+        String sql = "SELECT DISTINCT p.PrescriptionID, p.DateCreate as PrescriptionDateCreate, p.PrescriptionStatus, "
+                + "a.AppointmentID, a.PatientID, a.DoctorID, a.DateBegin, a.DateEnd, a.Note, a.AppointmentStatus, "
+                + "pt.FirstName as PatientFirstName, pt.LastName as PatientLastName, "
+                + "s.FirstName as DoctorFirstName, s.LastName as DoctorLastName, "
+                + "d.DoctorID as DocID, sp.SpecialtyName, "
+                + "mr.Symptoms, mr.Diagnosis "
+                + "FROM Prescription p "
+                + "JOIN Appointment a ON p.AppointmentID = a.AppointmentID "
+                + "LEFT JOIN MedicalRecord mr ON mr.PrescriptionID = p.PrescriptionID "
+                + "JOIN Patient pt ON a.PatientID = pt.PatientID "
+                + "JOIN Doctor d ON a.DoctorID = d.DoctorID "
+                + "JOIN Staff s ON d.StaffID = s.StaffID "
+                + "JOIN Specialty sp ON d.SpecialtyID = sp.SpecialtyID "
+                + "LEFT JOIN PrescriptionItem pi ON p.PrescriptionID = pi.PrescriptionID "
+                + "LEFT JOIN Medicine m ON pi.MedicineID = m.MedicineID "
+                + "WHERE a.PatientID = ? AND p.PrescriptionStatus = 'Delivered' "
+                + "AND (s.FirstName LIKE ? OR s.LastName LIKE ? OR sp.SpecialtyName LIKE ?) "
+                + "ORDER BY p.DateCreate DESC";
+        
+        String searchPattern = "%" + searchQuery + "%";
+        Object[] params = {patientId, searchPattern, searchPattern, searchPattern};
+        ResultSet rs = executeSelectQuery(sql, params);
+        List<PrescriptionDTO> prescriptions = new ArrayList<>();
+        
+        try {
+            while (rs.next()) {
+                PrescriptionDTO prescription = new PrescriptionDTO();
+                prescription.setPrescriptionID(rs.getInt("PrescriptionID"));
+                prescription.setPrescriptionStatus(rs.getString("PrescriptionStatus"));
+                prescription.setDateCreate(rs.getTimestamp("PrescriptionDateCreate"));
+                
+                // Create appointment
+                AppointmentDTO appointment = new AppointmentDTO();
+                appointment.setAppointmentID(rs.getInt("AppointmentID"));
+                appointment.setDateBegin(rs.getTimestamp("DateBegin"));
+                appointment.setDateEnd(rs.getTimestamp("DateEnd"));
+                appointment.setNote(rs.getString("Note"));
+                appointment.setAppointmentStatus(rs.getString("AppointmentStatus"));
+                
+                // Create patient
+                PatientDTO patient = new PatientDTO();
+                patient.setPatientID(rs.getInt("PatientID"));
+                patient.setFirstName(rs.getString("PatientFirstName"));
+                patient.setLastName(rs.getString("PatientLastName"));
+                
+                // Create doctor and staff
+                DoctorDTO doctor = new DoctorDTO();
+                doctor.setDoctorID(rs.getInt("DocID"));
+                
+                StaffDTO staff = new StaffDTO();
+                staff.setFirstName(rs.getString("DoctorFirstName"));
+                staff.setLastName(rs.getString("DoctorLastName"));
+                doctor.setStaffID(staff);
+                
+                // Create specialty
+                model.SpecialtyDTO specialty = new model.SpecialtyDTO();
+                specialty.setSpecialtyName(rs.getString("SpecialtyName"));
+                doctor.setSpecialtyID(specialty);
+                
+                appointment.setPatientID(patient);
+                appointment.setDoctorID(doctor);
+                prescription.setAppointmentID(appointment);
+                
+                prescriptions.add(prescription);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            closeResources(rs);
+        }
+        
+        return prescriptions;
+    }
+
 }
