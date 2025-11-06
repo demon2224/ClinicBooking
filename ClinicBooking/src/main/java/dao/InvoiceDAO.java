@@ -208,12 +208,118 @@ public class InvoiceDAO extends DBContext {
         return list;
     }
 
-    // UPDATE
-    public boolean updateInvoice(int invoiceId) {
-        String sql = "UPDATE Invoice SET InvoiceStatus = 'Paid', DatePay = GETDATE() WHERE InvoiceID = ?";
-        Object[] params = {invoiceId};
-        int rowsAffected = executeQuery(sql, params);
-        return rowsAffected > 0;
+    public List<InvoiceDTO> searchInvoices(String searchQuery) {
+        List<InvoiceDTO> invoices = new ArrayList<>();
+
+        String sql = "SELECT "
+                + " i.InvoiceID, "
+                + " p.FirstName AS PatientFirstName, p.LastName AS PatientLastName, "
+                + " ds.FirstName AS DoctorFirstName, ds.LastName AS DoctorLastName, "
+                + " s.SpecialtyID, s.SpecialtyName, ISNULL(s.Price, 0) AS ConsultationFee, "
+                + " i.PaymentType, i.InvoiceStatus, i.DateCreate, i.DatePay, "
+                + " ISNULL(s.Price, 0) + ISNULL(SUM(pi.Dosage * m.Price), 0) AS TotalAmount "
+                + "FROM Invoice i "
+                + "JOIN MedicalRecord mr ON i.MedicalRecordID = mr.MedicalRecordID "
+                + "JOIN Appointment a ON mr.AppointmentID = a.AppointmentID "
+                + "JOIN Patient p ON a.PatientID = p.PatientID "
+                + "JOIN Doctor d ON a.DoctorID = d.DoctorID "
+                + "JOIN Staff ds ON d.StaffID = ds.StaffID "
+                + "LEFT JOIN Specialty s ON d.SpecialtyID = s.SpecialtyID "
+                + "LEFT JOIN Prescription pre ON i.PrescriptionID = pre.PrescriptionID "
+                + "LEFT JOIN PrescriptionItem pi ON pre.PrescriptionID = pi.PrescriptionID "
+                + "LEFT JOIN Medicine m ON pi.MedicineID = m.MedicineID "
+                + "WHERE CONCAT(ds.FirstName, ' ', ds.LastName) LIKE ? "
+                + "   OR CONCAT(p.FirstName, ' ', p.LastName) LIKE ? "
+                + "   OR s.SpecialtyName LIKE ? "
+                + "GROUP BY "
+                + " i.InvoiceID, "
+                + " p.FirstName, p.LastName, "
+                + " ds.FirstName, ds.LastName, "
+                + " s.SpecialtyID, s.SpecialtyName, s.Price, "
+                + " i.PaymentType, i.InvoiceStatus, i.DateCreate, i.DatePay "
+                + "ORDER BY i.InvoiceID DESC";
+
+        String pattern = "%" + searchQuery.trim() + "%";
+
+        try ( Connection conn = getConnection();  PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, pattern);
+            ps.setString(2, pattern);
+            ps.setString(3, pattern);
+
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                // --- Patient ---
+                PatientDTO patient = new PatientDTO();
+                patient.setFirstName(rs.getString("PatientFirstName"));
+                patient.setLastName(rs.getString("PatientLastName"));
+
+                // --- Staff (Doctor) ---
+                StaffDTO staff = new StaffDTO();
+                staff.setFirstName(rs.getString("DoctorFirstName"));
+                staff.setLastName(rs.getString("DoctorLastName"));
+
+                // --- Doctor ---
+                DoctorDTO doctor = new DoctorDTO();
+                doctor.setStaffID(staff);
+
+                // --- Appointment ---
+                AppointmentDTO appointment = new AppointmentDTO();
+                appointment.setPatientID(patient);
+                appointment.setDoctorID(doctor);
+
+                // --- Medical Record ---
+                MedicalRecordDTO medicalRecord = new MedicalRecordDTO();
+                medicalRecord.setAppointmentID(appointment);
+
+                // --- Specialty ---
+                SpecialtyDTO specialty = new SpecialtyDTO();
+                specialty.setSpecialtyID(rs.getInt("SpecialtyID"));
+                specialty.setSpecialtyName(rs.getString("SpecialtyName"));
+                specialty.setPrice(rs.getDouble("ConsultationFee"));
+
+                // --- Invoice ---
+                InvoiceDTO invoice = new InvoiceDTO();
+                invoice.setInvoiceID(rs.getInt("InvoiceID"));
+                invoice.setMedicalRecordID(medicalRecord);
+                invoice.setSpecialtyID(specialty);
+                invoice.setPaymentType(rs.getString("PaymentType"));
+                invoice.setInvoiceStatus(rs.getString("InvoiceStatus"));
+                invoice.setDateCreate(rs.getTimestamp("DateCreate"));
+                invoice.setDatePay(rs.getTimestamp("DatePay"));
+                invoice.setTotalFee(rs.getDouble("TotalAmount"));
+
+                invoices.add(invoice);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return invoices;
+    }
+
+    // UPDATE 
+    public boolean updateInvoice(int invoiceId, String newStatus, String newPaymentType) {
+        String sql = "UPDATE Invoice "
+                + "SET InvoiceStatus = ?, "
+                + "    PaymentType = ?, "
+                + "    DatePay = CASE WHEN ? = 'Paid' THEN GETDATE() ELSE DatePay END "
+                + "WHERE InvoiceID = ?";
+
+        try ( Connection conn = getConnection();  PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, newStatus);
+            ps.setString(2, newPaymentType);
+            ps.setString(3, newStatus);
+            ps.setInt(4, invoiceId);
+
+            int rowsAffected = ps.executeUpdate();
+            return rowsAffected > 0;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     // CANCEL

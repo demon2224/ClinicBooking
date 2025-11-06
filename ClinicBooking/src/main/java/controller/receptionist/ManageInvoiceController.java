@@ -4,7 +4,11 @@
  */
 package controller.receptionist;
 
+import dao.AppointmentDAO;
+import dao.DoctorDAO;
 import dao.InvoiceDAO;
+import dao.PatientDAO;
+import dao.UserDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -20,30 +24,11 @@ import model.InvoiceDTO;
  */
 public class ManageInvoiceController extends HttpServlet {
 
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        try ( PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet ManageInvoiceController</title>");
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet ManageInvoiceController at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
-        }
+    private InvoiceDAO invoiceDAO;
+
+    @Override
+    public void init() throws ServletException {
+        invoiceDAO = new InvoiceDAO();
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
@@ -59,24 +44,15 @@ public class ManageInvoiceController extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        InvoiceDAO dao = new InvoiceDAO();
         String action = request.getParameter("action");
 
-        if (action != null && action.equals("viewDetail")) {
-            int invoiceId = Integer.parseInt(request.getParameter("id"));
-
-            InvoiceDTO invoiceDetail = dao.getInvoiceDetail(invoiceId);
-
-            request.setAttribute("invoiceDetail", invoiceDetail);
-            request.getRequestDispatcher("/WEB-INF/receptionist/InvoiceDetail.jsp")
-                    .forward(request, response);
-            return;
+        if ("viewDetail".equals(action)) {
+            viewInvoiceDetail(request, response);
+        } else if ("update".equals(action)) {
+            showUpdateForm(request, response);
+        } else {
+            showInvoiceList(request, response);
         }
-
-        List<InvoiceDTO> invoices = dao.getAllInvoices();
-        request.setAttribute("invoices", invoices);
-        request.getRequestDispatcher("/WEB-INF/receptionist/ReceptionistInvoice.jsp")
-                .forward(request, response);
     }
 
     /**
@@ -92,37 +68,108 @@ public class ManageInvoiceController extends HttpServlet {
             throws ServletException, IOException {
 
         String action = request.getParameter("action");
-        int invoiceId = Integer.parseInt(request.getParameter("invoiceId"));
 
-        InvoiceDAO dao = new InvoiceDAO();
-        boolean result = false;
-
-        if ("pay".equals(action)) {
-            result = dao.updateInvoice(invoiceId);
+        if ("update-confirm".equals(action)) {
+            updateInvoice(request, response);
         } else if ("cancel".equals(action)) {
-        result = dao.cancelInvoice(invoiceId);
+            cancelInvoice(request, response);
+        } else {
+            showInvoiceList(request, response);
+        }
     }
 
-        if (result) {
-            request.setAttribute("message", "Invoice updated successfully!");
+    /**
+     *
+     */
+    private void showInvoiceList(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        String searchQuery = request.getParameter("searchQuery");
+        List<InvoiceDTO> invoices;
+
+        if (searchQuery != null && !searchQuery.trim().isEmpty()) {
+            invoices = invoiceDAO.searchInvoices(searchQuery.trim());
         } else {
-            request.setAttribute("message", "Failed to update invoice!");
+            invoices = invoiceDAO.getAllInvoices();
         }
 
-        List<InvoiceDTO> invoices = dao.getAllInvoices();
         request.setAttribute("invoices", invoices);
+        request.setAttribute("searchQuery", searchQuery);
         request.getRequestDispatcher("/WEB-INF/receptionist/ReceptionistInvoice.jsp")
                 .forward(request, response);
     }
 
     /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
+     * show invoice detail
      */
+    private void viewInvoiceDetail(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        int invoiceId = Integer.parseInt(request.getParameter("id"));
+        InvoiceDTO invoiceDetail = invoiceDAO.getInvoiceDetail(invoiceId);
+
+        request.setAttribute("invoiceDetail", invoiceDetail);
+        request.getRequestDispatcher("/WEB-INF/receptionist/InvoiceDetail.jsp")
+                .forward(request, response);
+    }
+
+    /**
+     * show form update invoice
+     */
+    private void showUpdateForm(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        int invoiceId = Integer.parseInt(request.getParameter("id"));
+        InvoiceDTO invoiceDetail = invoiceDAO.getInvoiceDetail(invoiceId);
+
+        request.setAttribute("invoiceDetail", invoiceDetail);
+        request.getRequestDispatcher("/WEB-INF/receptionist/UpdateInvoice.jsp")
+                .forward(request, response);
+    }
+
+    /**
+     * update invoice
+     */
+    private void updateInvoice(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        int invoiceId = Integer.parseInt(request.getParameter("invoiceId"));
+        String newStatus = request.getParameter("invoiceStatus");
+        String paymentType = request.getParameter("paymentType");
+
+        boolean updated = invoiceDAO.updateInvoice(invoiceId, newStatus, paymentType);
+
+        if (updated) {
+            request.setAttribute("message", "✅ Invoice updated successfully!");
+        } else {
+            request.setAttribute("message", "❌ Failed to update invoice!");
+        }
+
+        showInvoiceList(request, response);
+    }
+
+    /**
+     * change invoice status to cancel
+     */
+    private void cancelInvoice(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        int invoiceId = Integer.parseInt(request.getParameter("invoiceId"));
+        boolean result = invoiceDAO.cancelInvoice(invoiceId);
+
+        if (result) {
+            request.setAttribute("message", "✅ Invoice canceled successfully!");
+        } else {
+            request.setAttribute("message", "❌ Failed to cancel invoice!");
+        }
+
+        showInvoiceList(request, response);
+    }
+
+
+
     @Override
     public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
-
+        return "ManageInvoiceController - Receptionist Invoice Management";
+    }
 }

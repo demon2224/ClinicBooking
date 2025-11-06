@@ -90,12 +90,10 @@
                         <div class="mb-3 row">
                             <label class="col-sm-3 col-form-label required">Specialty</label>
                             <div class="col-sm-9">
-                                <select class="form-select" id="specialtySelect" name="specialtyId" required>
+                                <select class="form-select" id="specialtySelect" name="specialtyID" required>
                                     <option value="">-- Select Specialty --</option>
                                     <c:forEach var="s" items="${specialties}">
-                                        <option value="${s.specialtyID}">
-                                            ${s.specialtyName} - $${s.price}
-                                        </option>
+                                        <option value="${s[0]}">${s[1]}</option>
                                     </c:forEach>
                                 </select>
                             </div>
@@ -114,7 +112,8 @@
                             <label class="col-sm-3 col-form-label required">Date Begin</label>
                             <div class="col-sm-9">
                                 <input type="datetime-local" class="form-control" name="dateBegin"
-                                       value="<%=defaultDateBegin%>" min="<%=defaultDateBegin%>" required>
+                                       value="<c:out value='${param.dateBegin != null ? param.dateBegin : defaultDateBegin}'/>"
+                                       min="<%=defaultDateBegin%>" required>
                             </div>
                         </div>
 
@@ -190,12 +189,12 @@
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script>
             $('#specialtySelect').change(function () {
-                var specialtyId = $(this).val(); 
+                var specialtyId = $(this).val();
                 if (specialtyId) {
                     $.ajax({
                         url: '${pageContext.request.contextPath}/receptionist-manage-appointment',
                         type: 'get',
-                        data: {action: 'getDoctorsBySpecialty', specialtyId: specialtyId},
+                        data: {action: 'getDoctorsBySpecialty', specialtyID: specialtyId},
                         success: function (data) {
                             var doctorSelect = $('#doctorSelect');
                             doctorSelect.empty();
@@ -234,11 +233,15 @@
 
             const dateInput = document.querySelector('input[name="dateBegin"]');
 
-            function setMinDateTime() {
+            dateInput.addEventListener("change", function () {
+                const selected = new Date(this.value);
                 const now = new Date();
-                now.setMinutes(now.getMinutes() - now.getTimezoneOffset()); // adjust timezone
-                dateInput.min = now.toISOString().slice(0, 16);
-            }
+                if (selected < now) {
+                    alert("You cannot select a past date or time!");
+                    this.value = ""; 
+                }
+            });
+
 
             // Prevent selecting a past date or time
             dateInput.addEventListener("change", function () {

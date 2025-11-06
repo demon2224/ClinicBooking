@@ -147,7 +147,8 @@ public class DoctorDAO extends DBContext {
      * Search doctors by name and specialty only.
      *
      * @param searchName The doctor's name to search for (can be partial match).
-     * @param specialtyName The specialty name to filter (null or empty for all).
+     * @param specialtyName The specialty name to filter (null or empty for
+     * all).
      * @return A list of DoctorDTO objects matching the search criteria.
      */
     public List<DoctorDTO> searchDoctors(String searchName, String specialtyName) {
@@ -227,10 +228,12 @@ public class DoctorDAO extends DBContext {
     }
 
     /**
-     * Builds and returns a DoctorDTO object from the current row of a ResultSet.
+     * Builds and returns a DoctorDTO object from the current row of a
+     * ResultSet.
      *
      * @param rs the ResultSet positioned at the current doctor record
-     * @return a fully populated DoctorDTO object created from the ResultSet data
+     * @return a fully populated DoctorDTO object created from the ResultSet
+     * data
      * @throws SQLException if any SQL access or column retrieval error occurs
      */
     private DoctorDTO createDoctorFromResultSet(ResultSet rs) throws SQLException {
@@ -266,8 +269,8 @@ public class DoctorDAO extends DBContext {
      * Retrieves all academic degrees earned by a specific doctor.
      *
      * @param doctorId the ID of the doctor whose degrees are being retrieved
-     * @return a list of DegreeDTO objects representing the doctor's degrees, or an empty
-     * list if none are found or an error occurs
+     * @return a list of DegreeDTO objects representing the doctor's degrees, or
+     * an empty list if none are found or an error occurs
      */
     public List<DegreeDTO> getDoctorDegrees(int doctorId) {
 
@@ -566,7 +569,8 @@ public class DoctorDAO extends DBContext {
      *
      * @param patientId The ID of the patient.
      * @param doctorId The ID of the doctor.
-     * @return true if the patient has already reviewed this doctor, false otherwise.
+     * @return true if the patient has already reviewed this doctor, false
+     * otherwise.
      */
     public boolean hasPatientReviewedDoctor(int patientId, int doctorId) {
         String sql = "SELECT COUNT(*) as ReviewCount FROM DoctorReview WHERE PatientID = ? AND DoctorID = ?";
@@ -585,5 +589,7 @@ public class DoctorDAO extends DBContext {
         }
         return false;
     }
+
+
 
 }

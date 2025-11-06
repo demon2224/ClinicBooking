@@ -13,6 +13,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.time.LocalDateTime;
 import java.util.List;
 import model.AppointmentDTO;
 import model.DoctorDTO;
@@ -207,27 +208,60 @@ public class ReceptionistManageAppointmentController extends HttpServlet {
 
     private void handleAddAppointment(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+
         String existingPatientId = request.getParameter("existingPatientId");
         String fullName = request.getParameter("patientName");
         String phone = request.getParameter("phone");
         String genderStr = request.getParameter("gender");
         boolean gender = genderStr != null ? Boolean.parseBoolean(genderStr) : true;
-        int doctorId = Integer.parseInt(request.getParameter("doctorId"));
+        String doctorIdStr = request.getParameter("doctorId");
+        String dateBeginStr = request.getParameter("dateBegin");
         String note = request.getParameter("note");
 
-        if ((existingPatientId == null || existingPatientId.isEmpty())
-                && (fullName == null || fullName.trim().isEmpty() || phone == null || phone.trim().isEmpty())) {
-            request.setAttribute("error", "Please select existing patient or enter full name and phone for new patient.");
+        // Kiểm tra doctorId
+        if (doctorIdStr == null || doctorIdStr.isEmpty()) {
+            request.setAttribute("error", "Please select a doctor!");
+            request.getRequestDispatcher("/WEB-INF/receptionist/AddAppointment.jsp").forward(request, response);
+            return;
+        }
+        int doctorId = Integer.parseInt(doctorIdStr);
+
+        // Kiểm tra dateBegin
+        if (dateBeginStr == null || dateBeginStr.isEmpty()) {
+            request.setAttribute("error", "Please select a date and time for the appointment!");
             request.getRequestDispatcher("/WEB-INF/receptionist/AddAppointment.jsp").forward(request, response);
             return;
         }
 
-        boolean success = appointmentDAO.addAppointment(existingPatientId, fullName, phone, gender, doctorId, note);
-        if (success) {
-            request.getSession().setAttribute("successMessage", "Appointment added successfully!");
-        } else {
-            request.getSession().setAttribute("errorMessage", "Failed to add appointment!");
+        LocalDateTime dateBegin;
+        try {
+            dateBegin = LocalDateTime.parse(dateBeginStr);
+        } catch (Exception e) {
+            request.setAttribute("error", "Invalid date/time format!");
+            request.getRequestDispatcher("/WEB-INF/receptionist/AddAppointment.jsp").forward(request, response);
+            return;
         }
+
+        // Kiểm tra patient info
+        if ((existingPatientId == null || existingPatientId.isEmpty())
+                && (fullName == null || fullName.trim().isEmpty() || phone == null || phone.trim().isEmpty())) {
+            request.setAttribute("error", "Please select an existing patient or enter full name and phone for new patient.");
+            request.getRequestDispatcher("/WEB-INF/receptionist/AddAppointment.jsp").forward(request, response);
+            return;
+        }
+
+        try {
+            boolean success = appointmentDAO.addAppointment(existingPatientId, fullName, phone, gender, doctorId, dateBegin, note);
+            if (success) {
+                request.getSession().setAttribute("successMessage", "Appointment added successfully!");
+            } else {
+                request.getSession().setAttribute("errorMessage", "Failed to add appointment!");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            request.getSession().setAttribute("errorMessage", "Error adding appointment: " + e.getMessage());
+        }
+
         response.sendRedirect(request.getContextPath() + "/receptionist-manage-appointment");
     }
 

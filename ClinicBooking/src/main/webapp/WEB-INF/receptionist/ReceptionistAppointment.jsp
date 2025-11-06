@@ -146,7 +146,7 @@
                                         <td>${a.specialtyName}</td>
                                         <td>${a.patientName}</td>
                                         <td>
-                                            <fmt:formatDate value="${a.dateBegin}" pattern="yyyy-MM-dd"/><br/>
+                                            <fmt:formatDate value="${a.dateBegin}" pattern="dd-MM-yy"/><br/>
                                             <fmt:formatDate value="${a.dateBegin}" pattern="HH:mm:ss"/>
                                         </td>
                                         <td>${a.note}</td>

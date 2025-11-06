@@ -78,9 +78,10 @@
         <div class="main-content">
             <nav class="navbar navbar-light">
                 <div class="container-fluid">
-                    <form class="d-flex w-50" method="get" action="#">
-                        <input class="form-control me-2" type="search" name="searchQuery" placeholder="Search here" value="${param.searchQuery}">
-                        <button class="btn btn-outline-primary" type="submit">
+                    <form class="d-flex w-50" method="get" action="manage-invoice">
+                        <input class="form-control me-2" type="search" name="searchQuery" placeholder="Search here"
+                               value="${param.searchQuery}">
+                        <button type="submit" class="btn btn-outline-primary" id="searchBtn">
                             <i class="fa-solid fa-magnifying-glass"></i>
                         </button>
                     </form>
@@ -170,14 +171,12 @@
                                                     <i class="fa-solid fa-eye"></i> View Detail
                                                 </a>
 
-                                                <form action="manage-invoice" method="post" style="display:inline;">
-                                                    <input type="hidden" name="invoiceId" value="${inv.invoiceID}">
-                                                    <input type="hidden" name="action" value="pay">
-                                                    <button type="submit" class="btn btn-success btn-sm"
-                                                            style="visibility:${inv.invoiceStatus eq 'Pending' ? 'visible' : 'hidden'};">
-                                                        <i class="fa-solid fa-check"></i> Update
-                                                    </button>
-                                                </form>
+                                                <a href="manage-invoice?action=update&id=${inv.invoiceID}" 
+                                                   class="btn btn-success btn-sm"
+                                                   style="visibility:${inv.invoiceStatus eq 'Pending' ? 'visible' : 'hidden'};">
+                                                    <i class="fa-solid fa-check"></i> Update
+                                                </a>
+
 
                                                 <form action="manage-invoice" method="post" style="display:inline;">
                                                     <input type="hidden" name="invoiceId" value="${inv.invoiceID}">
@@ -197,8 +196,7 @@
                 </div>          
             </div>
         </div>
-
-
     </body>
 </html>
+
 

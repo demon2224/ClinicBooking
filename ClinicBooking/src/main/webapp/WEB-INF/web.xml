@@ -58,6 +58,14 @@
     <servlet>
         <servlet-name>ManageMyPrescriptionsController</servlet-name>
         <servlet-class>controller.patient.ManageMyPrescriptionsController</servlet-class>
+    
+    <servlet>
+        <servlet-name>AdminDashboardController</servlet-name>
+        <servlet-class>controller.admin.AdminDashboardController</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>AdminManageAccountController</servlet-name>
+        <servlet-class>controller.admin.AdminManageAccountController</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>PharmacistDashboardController</servlet-name>
@@ -122,6 +130,15 @@
     <servlet-mapping>
         <servlet-name>ManageMyPrescriptionsController</servlet-name>
         <url-pattern>/manage-my-prescriptions</url-pattern>
+    <!-- AdminDashboardController -->
+    <servlet-mapping>
+        <servlet-name>AdminDashboardController</servlet-name>
+        <url-pattern>/admin-dashboard</url-pattern>
+    </servlet-mapping>
+    <!-- AdminManageAccountController -->
+    <servlet-mapping>
+        <servlet-name>AdminManageAccountController</servlet-name>
+        <url-pattern>/admin-manage-account</url-pattern>
     </servlet-mapping>
     <welcome-file-list>
         <welcome-file>index.jsp</welcome-file>
