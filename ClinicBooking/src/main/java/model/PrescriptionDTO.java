@@ -94,20 +94,20 @@ public class PrescriptionDTO {
         }
         return new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(this.dateCreate);
     }
-    
-    public double getTotalValue() {
+
+    public String getTotalValue() {
         if (this.prescriptionItemList == null) {
-            return 0.0;
+            return "0.0";
         }
         return calculateTotalValue();
     }
-    
-    private double calculateTotalValue() {
+
+    private String calculateTotalValue() {
         double totalValue = 0.0;
         for (PrescriptionItemDTO prescriptionItemDTO : prescriptionItemList) {
-            totalValue += prescriptionItemDTO.getSubTotal();
+            totalValue += prescriptionItemDTO.getMedicineID().getPrice() * prescriptionItemDTO.getDosage();
         }
-        return totalValue;
+        return String.format("%.2f", totalValue);
     }
 
     @Override

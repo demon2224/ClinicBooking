@@ -412,7 +412,7 @@ public class PrescriptionDAO extends DBContext {
         }
         return 0;
     }
-    
+
     private boolean retrievePrescriptionItem(int prescriptionID) {
         String query = "UPDATE m\n"
                 + "	SET m.Quantity = m.Quantity + pit.Dosage\n"
@@ -430,4 +430,218 @@ public class PrescriptionDAO extends DBContext {
         return rs != 0;
     }
 
+    public List<PrescriptionDTO> getPrescriptionListByDoctorID(int doctorID) {
+        List<PrescriptionDTO> list = new ArrayList<>();
+        String sql = "SELECT p.PrescriptionID, p.Note AS PrescriptionNote, p.DateCreate AS PrescriptionDateCreate, "
+                + "p.PrescriptionStatus, "
+                + "a.AppointmentID, a.Note AS AppointmentNote, a.DateBegin, a.DateEnd, a.AppointmentStatus, "
+                + "pa.PatientID, pa.FirstName, pa.LastName, pa.Email, pa.DOB, pa.Gender, pa.UserAddress, pa.PhoneNumber "
+                + "FROM Prescription p "
+                + "JOIN Appointment a ON p.AppointmentID = a.AppointmentID "
+                + "JOIN Patient pa ON pa.PatientID = a.PatientID "
+                + "WHERE a.DoctorID = ? "
+                + "ORDER BY p.DateCreate DESC";
+        Object[] params = {doctorID};
+        ResultSet rs = executeSelectQuery(sql, params);
+
+        try {
+
+            while (rs != null && rs.next()) {
+                // 🧩 Patient
+                PatientDTO patient = new PatientDTO(
+                        rs.getString("FirstName"),
+                        rs.getString("LastName"),
+                        rs.getTimestamp("DOB"),
+                        rs.getBoolean("Gender"),
+                        rs.getString("UserAddress"),
+                        rs.getString("PhoneNumber"),
+                        rs.getString("Email")
+                );
+                patient.setPatientID(rs.getInt("PatientID"));
+
+                // 🧩 Appointment
+                AppointmentDTO appointment = new AppointmentDTO();
+                appointment.setAppointmentID(rs.getInt("AppointmentID"));
+                appointment.setPatientID(patient);
+                appointment.setAppointmentStatus(rs.getString("AppointmentStatus"));
+                appointment.setDateBegin(rs.getTimestamp("DateBegin"));
+                appointment.setDateEnd(rs.getTimestamp("DateEnd"));
+                appointment.setNote(rs.getString("AppointmentNote"));
+
+                // 🧩 Prescription
+                PrescriptionDTO prescription = new PrescriptionDTO();
+                prescription.setPrescriptionID(rs.getInt("PrescriptionID"));
+                prescription.setAppointmentID(appointment);
+                prescription.setNote(rs.getString("PrescriptionNote"));
+                prescription.setDateCreate(rs.getTimestamp("PrescriptionDateCreate"));
+                prescription.setPrescriptionStatus(rs.getString("PrescriptionStatus"));
+
+                list.add(prescription);
+            }
+
+        } catch (SQLException e) {
+            Logger.getLogger(PrescriptionDAO.class.getName()).log(Level.SEVERE, null, e);
+        } finally {
+            closeResources(rs);
+        }
+        return list;
+    }
+
+    public List<PrescriptionDTO> searchPrescriptionListByPatientName(int doctorID, String keyword) {
+        List<PrescriptionDTO> list = new ArrayList<>();
+        String sql = "SELECT p.PrescriptionID, p.Note AS PrescriptionNote, p.DateCreate AS PrescriptionDateCreate, "
+                + "p.PrescriptionStatus, "
+                + "a.AppointmentID, a.Note AS AppointmentNote, a.DateBegin, a.DateEnd, a.AppointmentStatus, "
+                + "pa.PatientID, pa.FirstName, pa.LastName, pa.Email, pa.DOB, pa.Gender, pa.UserAddress, pa.PhoneNumber "
+                + "FROM Prescription p "
+                + "JOIN Appointment a ON p.AppointmentID = a.AppointmentID "
+                + "JOIN Patient pa ON pa.PatientID = a.PatientID "
+                + "WHERE a.DoctorID = ? AND (pa.FirstName LIKE ? OR pa.LastName LIKE ?) "
+                + "ORDER BY p.DateCreate DESC";
+
+        ResultSet rs = null;
+        try {
+            Object[] params = {doctorID, "%" + keyword + "%", "%" + keyword + "%"};
+            rs = executeSelectQuery(sql, params);
+
+            while (rs != null && rs.next()) {
+                PatientDTO patient = new PatientDTO(
+                        rs.getString("FirstName"),
+                        rs.getString("LastName"),
+                        rs.getTimestamp("DOB"),
+                        rs.getBoolean("Gender"),
+                        rs.getString("UserAddress"),
+                        rs.getString("PhoneNumber"),
+                        rs.getString("Email")
+                );
+                patient.setPatientID(rs.getInt("PatientID"));
+
+                AppointmentDTO appointment = new AppointmentDTO();
+                appointment.setAppointmentID(rs.getInt("AppointmentID"));
+                appointment.setPatientID(patient);
+                appointment.setAppointmentStatus(rs.getString("AppointmentStatus"));
+                appointment.setDateBegin(rs.getTimestamp("DateBegin"));
+                appointment.setDateEnd(rs.getTimestamp("DateEnd"));
+                appointment.setNote(rs.getString("AppointmentNote"));
+
+                PrescriptionDTO prescription = new PrescriptionDTO();
+                prescription.setPrescriptionID(rs.getInt("PrescriptionID"));
+                prescription.setAppointmentID(appointment);
+                prescription.setNote(rs.getString("PrescriptionNote"));
+                prescription.setDateCreate(rs.getTimestamp("PrescriptionDateCreate"));
+                prescription.setPrescriptionStatus(rs.getString("PrescriptionStatus"));
+
+                list.add(prescription);
+            }
+
+        } catch (SQLException e) {
+            Logger.getLogger(PrescriptionDAO.class.getName()).log(Level.SEVERE, null, e);
+        } finally {
+            closeResources(rs);
+        }
+        return list;
+    }
+
+    public List<PrescriptionItemDTO> getPrescriptionItemListByPrescriptionID(int prescriptionID) {
+        List<PrescriptionItemDTO> itemList = new ArrayList<>();
+        String sql = "SELECT pi.Dosage, pi.Instruction, "
+                + "m.MedicineID, m.MedicineName, m.MedicineType, m.Price "
+                + "FROM PrescriptionItem pi "
+                + "JOIN Medicine m ON m.MedicineID = pi.MedicineID "
+                + "WHERE pi.PrescriptionID = ?";
+
+        ResultSet rs = null;
+        try {
+            Object[] params = {prescriptionID};
+            rs = executeSelectQuery(sql, params);
+
+            while (rs != null && rs.next()) {
+                // Medicine
+                MedicineDTO medicine = new MedicineDTO();
+                medicine.setMedicineID(rs.getInt("MedicineID"));
+                medicine.setMedicineName(rs.getString("MedicineName"));
+                medicine.setMedicineType(rs.getString("MedicineType"));
+                medicine.setPrice(rs.getDouble("Price"));
+
+                // Prescription
+                PrescriptionDTO prescription = new PrescriptionDTO();
+                prescription.setPrescriptionID(prescriptionID);
+
+                // Prescription Item
+                PrescriptionItemDTO item = new PrescriptionItemDTO();
+                item.setPrescriptionID(prescription);
+                item.setMedicineID(medicine);
+                item.setDosage(rs.getInt("Dosage"));
+                item.setInstruction(rs.getString("Instruction"));
+
+                itemList.add(item);
+            }
+
+        } catch (SQLException e) {
+            Logger.getLogger(PrescriptionDAO.class.getName()).log(Level.SEVERE, null, e);
+        } finally {
+            closeResources(rs);
+        }
+        return itemList;
+    }
+
+    public PrescriptionDTO getPrescriptionDetailByDoctorIDAndPrescriptionID(int doctorID, int prescriptionID) {
+        String sql = "SELECT p.PrescriptionID, p.PrescriptionStatus, p.DateCreate, p.Note AS PrescriptionNote, "
+                + "st.FirstName AS DoctorFirstName, st.LastName AS DoctorLastName, "
+                + "pt.FirstName AS PatientFirstName, pt.LastName AS PatientLastName, "
+                + "pt.Email, pt.PhoneNumber, pt.Gender, pt.DOB, pt.UserAddress "
+                + "FROM Prescription p "
+                + "JOIN Appointment a ON p.AppointmentID = a.AppointmentID "
+                + "JOIN Doctor d ON d.DoctorID = a.DoctorID "
+                + "JOIN Staff st ON st.StaffID = d.StaffID "
+                + "JOIN Patient pt ON pt.PatientID = a.PatientID "
+                + "WHERE a.DoctorID = ? AND p.PrescriptionID = ?";
+
+        Object[] params = {doctorID, prescriptionID};
+        PrescriptionDTO prescription = null;
+        ResultSet rs = null;
+
+        try {
+            rs = executeSelectQuery(sql, params);
+            if (rs.next()) {
+                // Doctor info
+                StaffDTO staff = new StaffDTO();
+                staff.setFirstName(rs.getString("DoctorFirstName"));
+                staff.setLastName(rs.getString("DoctorLastName"));
+                DoctorDTO doctor = new DoctorDTO();
+                doctor.setStaffID(staff);
+
+                // Patient info
+                PatientDTO patient = new PatientDTO();
+                patient.setFirstName(rs.getString("PatientFirstName"));
+                patient.setLastName(rs.getString("PatientLastName"));
+                patient.setEmail(rs.getString("Email"));
+                patient.setPhoneNumber(rs.getString("PhoneNumber"));
+                patient.setGender(rs.getBoolean("Gender"));
+                patient.setDob(rs.getTimestamp("DOB"));
+                patient.setUserAddress(rs.getString("UserAddress"));
+
+                // Appointment
+                AppointmentDTO appointment = new AppointmentDTO();
+                appointment.setDoctorID(doctor);
+                appointment.setPatientID(patient);
+
+                // Prescription
+                prescription = new PrescriptionDTO();
+                prescription.setPrescriptionID(rs.getInt("PrescriptionID"));
+                prescription.setPrescriptionStatus(rs.getString("PrescriptionStatus"));
+                prescription.setDateCreate(rs.getTimestamp("DateCreate"));
+                prescription.setAppointmentID(appointment);
+                prescription.setNote(rs.getString("PrescriptionNote"));
+
+                // Load items
+                prescription.setPrescriptionItemList(getPrescriptionItemListByPrescriptionID(prescriptionID));
+            }
+        } catch (SQLException e) {
+            Logger.getLogger(PrescriptionDAO.class.getName()).log(Level.SEVERE, null, e);
+        } finally {
+            closeResources(rs);
+        }
+        return prescription;
+    }
 }

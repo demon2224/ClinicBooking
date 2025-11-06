@@ -149,16 +149,16 @@
                                                     <c:out value="${no.count}"/>
                                                 </td>
                                                 <td>
-                                                    <c:out value="${item.medicineIID.medicineName}"/>
+                                                    <c:out value="${item.medicineID.medicineName}"/>
                                                 </td>
                                                 <td class="text-center">
-                                                    <c:out value="${item.medicineIID.medicineCode}"/>
+                                                    <c:out value="${item.medicineID.medicineCode}"/>
                                                 </td>
                                                 <td class="text-center">
-                                                    <c:out value="${item.medicineIID.medicineType}"/>
+                                                    <c:out value="${item.medicineID.medicineType}"/>
                                                 </td>
                                                 <td class="text-end">
-                                                    <c:out value="${item.medicineIID.price}"/>
+                                                    <c:out value="${item.medicineID.price}"/>
                                                 </td>
                                                 <td class="text-center">
                                                     <c:out value="${item.dosage}"/>

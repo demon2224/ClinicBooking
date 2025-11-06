@@ -56,9 +56,9 @@ public class PrescriptionItemDTO {
     public void setInstruction(String instruction) {
         this.instruction = instruction;
     }
-    
-    public double getSubTotal() {
-        return this.medicineID.getPrice() * this.dosage;
+
+    public String getSubTotal() {
+        return String.format("%.2f", this.medicineID.getPrice() * this.dosage);
     }
 
 }
