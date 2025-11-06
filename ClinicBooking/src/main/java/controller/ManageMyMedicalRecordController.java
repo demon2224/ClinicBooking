@@ -108,10 +108,15 @@ public class ManageMyMedicalRecordController extends HttpServlet {
             PatientDTO patient = patientDAO.getPatientById(medicalRecord.getAppointmentID().getPatientID().getPatientID());
             DoctorDTO doctor = doctorDAO.getDoctorById(medicalRecord.getAppointmentID().getDoctorID().getDoctorID());
 
+            // Get doctor rating
+            int doctorId = medicalRecord.getAppointmentID().getDoctorID().getDoctorID();
+            double averageRating = doctorDAO.getAverageRatingByDoctorId(doctorId);
+
             // Set attributes for JSP
             request.setAttribute("medicalRecord", medicalRecord);
             request.setAttribute("patient", patient);
             request.setAttribute("doctor", doctor);
+            request.setAttribute("averageRating", averageRating);
 
             // Forward to detail page
             request.getRequestDispatcher(ManageMyMedicalRecordConstants.DETAIL_PAGE_JSP).forward(request, response);
