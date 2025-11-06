@@ -11,6 +11,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import model.PatientDTO;
 import validate.LoginValidate;
 
@@ -123,6 +124,8 @@ public class PatientLoginController extends HttpServlet {
             boolean isExistAccount = patient != null;
 
             if (isExistAccount) {
+                HttpSession session = request.getSession();
+                session.setAttribute("patient", patient);
                 request.getSession().setAttribute("loginSuccessMsg", "Login successfully!");
                 response.sendRedirect(request.getContextPath() + "/home");
             } else {
