@@ -135,14 +135,14 @@
                                         <div class="info-content">
                                             <h4>Rating</h4>
                                             <p>
-                                                <div class="doctor-rating">
-                                                    <span class="stars">
-                                                        <c:forEach begin="1" end="5" var="star">
-                                                            <i class="fas fa-star star-filled"></i>
-                                                        </c:forEach>
-                                                    </span>
-                                                    <span class="rating-score">4.7/5</span>
-                                                </div>
+                                            <div class="doctor-rating">
+                                                <span class="stars">
+                                                    <c:forEach begin="1" end="5" var="star">
+                                                        <i class="fas fa-star star-filled"></i>
+                                                    </c:forEach>
+                                                </span>
+                                                <span class="rating-score">4.7/5</span>
+                                            </div>
                                             </p>
                                         </div>
                                     </div>
@@ -172,12 +172,12 @@
                                                     <div class="medicine-info">
                                                         <h4 class="medicine-name">
                                                             <i class="fas fa-pill"></i>
-                                                            ${item.medicineIID.medicineName}
+                                                            ${item.medicineID.medicineName}
                                                         </h4>
                                                         <div class="medicine-details">
                                                             <span class="medicine-type">
                                                                 <i class="fas fa-capsules"></i>
-                                                                Medicine type: ${item.medicineIID.medicineType != null ? item.medicineIID.medicineType : 'Không xác định'}
+                                                                Medicine type: ${item.medicineID.medicineType != null ? item.medicineID.medicineType : 'Không xác định'}
                                                             </span>
                                                             <span class="medicine-dosage">
                                                                 <i class="fas fa-weight"></i>
@@ -220,7 +220,7 @@
                                         </div>
                                     </div>
                                 </c:otherwise>
-                            </c:choose>                          
+                            </c:choose>
                         </c:when>
                         <c:otherwise>
                             <!-- Error Message -->
