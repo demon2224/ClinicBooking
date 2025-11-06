@@ -155,10 +155,34 @@
                     </button>
                 </div>
 
-                <c:if test="${not empty error}">
-                    <p class="text-danger text-center mt-3">${error}</p>
-                </c:if>
-            </form>
+                <!-- Bootstrap Error Modal -->
+                <div class="modal fade" id="errorModal" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header bg-danger text-white">
+                                <h5 class="modal-title"><i class="fa-solid fa-circle-exclamation me-2"></i>Error</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                ${error}
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
         </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+        <c:if test="${not empty error}">
+            <script>
+                window.onload = function () {
+                    var myModal = new bootstrap.Modal(document.getElementById('errorModal'));
+                    myModal.show();
+                };
+            </script>
+        </c:if>
     </body>
 </html>

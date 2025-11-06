@@ -154,6 +154,15 @@ public class ManageMyPatientMedicalRecordController extends HttpServlet {
         }
     }
 
+    /**
+     * doctor create new medical record
+     *
+     * @param request
+     * @param response
+     * @param doctorID
+     * @throws ServletException
+     * @throws IOException
+     */
     private void createNewMedicalRecord(HttpServletRequest request, HttpServletResponse response, int doctorID)
             throws ServletException, IOException {
         try {
@@ -161,6 +170,14 @@ public class ManageMyPatientMedicalRecordController extends HttpServlet {
             AppointmentDTO appointment = appointmentDAO.getPatientAppointmentDetailOfDoctorByID(appointmentID, doctorID);
 
             if (appointment == null || appointment.getAppointmentID() != appointmentID) {
+                response.sendRedirect(request.getContextPath() + "/manage-my-patient-appointment");
+                return;
+            }
+
+            boolean isExist = medicalRecordDAO.isExistMedicalRecord(appointmentID);
+
+            if (isExist) {
+                // Nếu đã tồn tại medical record, quay lại trang danh sách appointment
                 response.sendRedirect(request.getContextPath() + "/manage-my-patient-appointment");
                 return;
             }
@@ -198,7 +215,6 @@ public class ManageMyPatientMedicalRecordController extends HttpServlet {
                 String diagnosis = request.getParameter("diagnosis");
                 String note = request.getParameter("note");
 
-                // 🔍 Validate required fields (backend check)
                 if (symptoms == null || symptoms.trim().isEmpty()
                         || diagnosis == null || diagnosis.trim().isEmpty()
                         || note == null || note.trim().isEmpty()) {

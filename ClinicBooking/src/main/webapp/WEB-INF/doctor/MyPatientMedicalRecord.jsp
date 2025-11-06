@@ -7,7 +7,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!DOCTYPE html>
 <html>
     <head>
@@ -72,6 +72,7 @@
                 background-color: red;
                 color: white;
             }
+
         </style>
     </head>
 
@@ -120,9 +121,34 @@
                                 <tr>
                                     <td>${i.count}</td>
                                     <td>${record.appointmentID.patientID.firstName} ${record.appointmentID.patientID.lastName}</td>
-                                    <td>${record.symptoms}</td>
-                                    <td>${record.diagnosis}</td>
-                                    <td>${record.note}</td>
+                                    <td>
+                                        <c:choose>
+                                            <c:when test="${fn:length(record.symptoms) > 20}">
+                                                ${fn:substring(record.symptoms, 0, 20)}...
+                                            </c:when>
+                                            <c:otherwise>
+                                                ${record.symptoms}
+                                            </c:otherwise>
+                                        </c:choose></td>
+                                    <td>
+                                        <c:choose>
+                                            <c:when test="${fn:length(record.diagnosis) > 20}">
+                                                ${fn:substring(record.diagnosis, 0, 20)}...
+                                            </c:when>
+                                            <c:otherwise>
+                                                ${record.diagnosis}
+                                            </c:otherwise>
+                                        </c:choose></td>
+                                    <td>
+                                        <c:choose>
+                                            <c:when test="${fn:length(record.note) > 20}">
+                                                ${fn:substring(record.note, 0, 20)}...
+                                            </c:when>
+                                            <c:otherwise>
+                                                ${record.note}
+                                            </c:otherwise>
+                                        </c:choose>
+                                    </td>
                                     <td><fmt:formatDate value="${record.dateCreate}" pattern="yyyy/MM/dd HH:mm"/></td>
                                     <td>
                                         <a href="${pageContext.request.contextPath}/manage-my-patient-medical-record?action=detail&medicalRecordID=${record.medicalRecordID}"

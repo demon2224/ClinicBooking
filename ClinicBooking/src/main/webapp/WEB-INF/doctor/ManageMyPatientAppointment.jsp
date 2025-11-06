@@ -6,7 +6,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!DOCTYPE html>
 <html>
     <head>
@@ -122,7 +122,16 @@
                                     <td>${list.patientID.email}</td>
                                     <td>${list.patientID.phoneNumber}</td>
                                     <td><fmt:formatDate value="${list.dateBegin}" pattern="yyyy/MM/dd HH:mm"/></td>
-                                    <td>${list.note}</td>
+                                    <td>
+                                        <c:choose>
+                                            <c:when test="${fn:length(list.note) > 20}">
+                                                ${fn:substring(list.note, 0, 20)}...
+                                            </c:when>
+                                            <c:otherwise>
+                                                ${list.note}
+                                            </c:otherwise>
+                                        </c:choose>
+                                    </td>
                                     <td>
                                         <a href="${pageContext.request.contextPath}/manage-my-patient-appointment?action=detail&appointmentID=${list.appointmentID}"
                                            class="btn btn-sm btn-info text-white">

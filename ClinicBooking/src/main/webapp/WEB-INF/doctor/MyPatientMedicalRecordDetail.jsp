@@ -70,6 +70,13 @@
                 color: #fff;
                 transform: translateY(-2px);
             }
+            .wrap-text {
+                width: 300px;
+                word-wrap: break-word;
+                overflow-wrap: break-word;
+                white-space: normal !important;
+                line-break: anywhere;
+            }
         </style>
     </head>
 
@@ -158,9 +165,9 @@
                 <div class="card-body p-4">
                     <table class="table table-bordered mb-0">
                         <tr><th>Date Create</th><td><fmt:formatDate value="${detail.dateCreate}" pattern="yyyy/MM/dd" /></td></tr>
-                        <tr><th>Symptoms</th><td>${detail.symptoms}</td></tr>
-                        <tr><th>Diagnosis</th><td>${detail.diagnosis}</td></tr>
-                        <tr><th>Medical Record Note</th><td>${detail.note}</td></tr>                    
+                        <tr><th>Symptoms</th><td class="wrap-text">${detail.symptoms}</td></tr>
+                        <tr><th>Diagnosis</th><td class="wrap-text">${detail.diagnosis}</td></tr>
+                        <tr><th>Medical Record Note</th><td class="wrap-text">${detail.note}</td></tr>                    
                     </table>
                 </div>
             </div>
