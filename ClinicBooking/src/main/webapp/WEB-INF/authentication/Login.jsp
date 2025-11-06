@@ -22,7 +22,7 @@
             }
             .image-side {
                 /* Tùy chỉnh ảnh nền cho cột bên trái (chỉ dùng background image) */
-                background: url('https://via.placeholder.com/800x1000?text=Clinic+Booking+System') no-repeat center center;
+                background: url('assets/img/CBS_Back') no-repeat center center;
                 background-size: cover;
             }
         </style>
@@ -50,7 +50,8 @@
 
                             <div class="tab-content" id="loginTabContent">
                                 <div class="tab-pane fade show active" id="staff-login" role="tabpanel" aria-labelledby="staff-tab">
-                                    <form action="staff-login-url" method="POST">
+                                    <form action="${pageContext.request.contextPath}/login" method="POST">
+                                        <input type="hidden" name="user" value="staff">
                                         <div class="mb-3">
                                             <label for="staff-username" class="form-label">Tài khoản (Username)</label>
                                             <input type="text" class="form-control" id="staff-username" name="username" required>
@@ -68,7 +69,8 @@
                                 </div>
 
                                 <div class="tab-pane fade" id="patient-login" role="tabpanel" aria-labelledby="patient-tab">
-                                    <form action="patient-login-url" method="POST">
+                                    <form action="${pageContext.request.contextPath}/login" method="POST">
+                                        <input type="hidden" name="user" value="patient">
                                         <div class="mb-3">
                                             <label for="patient-username" class="form-label">Tài khoản (Username)</label>
                                             <input type="text" class="form-control" id="patient-username" name="username" required>
