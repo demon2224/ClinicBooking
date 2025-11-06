@@ -195,6 +195,7 @@
                 background: #f8fafc;
                 border-radius: 0.375rem;
                 border-left: 4px solid #175CDD;
+                word-wrap: break-word
             }
 
             .feedback-actions {
@@ -551,7 +552,7 @@
                 <div class="section-header">
                     <button type="button" class="btn-action btn-create" data-bs-toggle="modal" data-bs-target="#createFeedbackModal">
                         <i class="fas fa-plus"></i>
-                        New Review
+                        New Feedback
                     </button>
                 </div>
                 <div class="feedback-content">
@@ -560,7 +561,7 @@
                             <!-- Empty State -->
                             <div class="empty-state">
                                 <i class="fas fa-comments"></i>
-                                <h3>No Reviews Found</h3>
+                                <h3>No Feedbacks Found</h3>
                             </div>
                         </c:when>
                         <c:otherwise>
@@ -605,16 +606,25 @@
                                            class="btn-action btn-view">
                                             <i class="fas fa-eye"></i> View Detail
                                         </a>
-                                        <button type="button" class="btn-action btn-edit"
-                                                data-bs-toggle="modal"
-                                                data-bs-target="#editFeedbackModal"
-                                                data-review-id="${review.doctorReviewID}"
-                                                data-doctor-name="Dr. ${review.doctorID.staffID.firstName} ${review.doctorID.staffID.lastName}"
-                                                data-specialty="${review.doctorID.specialtyID.specialtyName}"
-                                                data-rating="${review.rateScore}"
-                                                data-content="${review.content}">
-                                            <i class="fas fa-edit"></i> Edit
-                                        </button>
+                                        <c:if test="${canEditMap[review.doctorReviewID]}">
+                                            <button type="button" class="btn-action btn-edit"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#editFeedbackModal"
+                                                    data-review-id="${review.doctorReviewID}"
+                                                    data-doctor-name="Dr. ${review.doctorID.staffID.firstName} ${review.doctorID.staffID.lastName}"
+                                                    data-specialty="${review.doctorID.specialtyID.specialtyName}"
+                                                    data-rating="${review.rateScore}"
+                                                    data-content="${review.content}">
+                                                <i class="fas fa-edit"></i> Edit
+                                            </button>
+                                        </c:if>
+                                        <c:if test="${!canEditMap[review.doctorReviewID]}">
+                                            <button type="button" class="btn-action btn-edit" disabled
+                                                    style="opacity: 0.5; cursor: not-allowed;"
+                                                    title="You can only edit within 24 hours of creating the review">
+                                                <i class="fas fa-edit"></i> Edit
+                                            </button>
+                                        </c:if>
                                         <button class="btn-action btn-delete"
                                                 data-review-id="${review.doctorReviewID}">
                                             <i class="fas fa-trash"></i> Delete
@@ -634,7 +644,7 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="createFeedbackModalLabel">
-                            <i class="fas fa-plus-circle"></i> Write New Review
+                            <i class="fas fa-plus-circle"></i> Write New Feedback
                         </h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
@@ -647,14 +657,30 @@
                                 <label for="doctorSelect" class="form-label fw-bold">
                                     <i class="fas fa-user-md"></i> Select Doctor <span class="text-danger">*</span>
                                 </label>
-                                <select class="form-select" id="doctorSelect" name="doctorId">
-                                    <option value="">Choose a doctor to review...</option>
-                                    <c:forEach var="doctor" items="${availableDoctors}">
-                                        <option value="${doctor.doctorID}">
-                                            Dr. ${doctor.staffID.firstName} ${doctor.staffID.lastName} - ${doctor.specialtyID.specialtyName}
-                                        </option>
-                                    </c:forEach>
-                                </select>
+                                <c:choose>
+                                    <c:when test="${empty availableDoctors}">
+                                        <div class="alert alert-warning">
+                                            <i class="fas fa-info-circle"></i>
+                                            You can only feedback doctors from completed appointments within 24 hours.
+                                        </div>
+                                        <select class="form-select" id="doctorSelect" name="doctorId" disabled>
+                                            <option value="">No doctors available for review</option>
+                                        </select>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <select class="form-select" id="doctorSelect" name="doctorId">
+                                            <option value="">Choose a doctor from your completed appointments...</option>
+                                            <c:forEach var="doctor" items="${availableDoctors}">
+                                                <option value="${doctor.doctorID}">
+                                                    Dr. ${doctor.staffID.firstName} ${doctor.staffID.lastName} - ${doctor.specialtyID.specialtyName}
+                                                </option>
+                                            </c:forEach>
+                                        </select>
+                                        <div class="form-text">
+                                            <i class="fas fa-clock"></i> You can feedback doctors from appointments completed within the last 24 hours.
+                                        </div>
+                                    </c:otherwise>
+                                </c:choose>
                                 <div class="invalid-feedback" id="doctorError" style="display: none;">
                                     Please select a doctor.
                                 </div>
@@ -688,12 +714,12 @@
                             <!-- Review Content -->
                             <div class="mb-3">
                                 <label for="reviewContent" class="form-label fw-bold">
-                                    <i class="fas fa-comment"></i> Your Review <span class="text-danger">*</span>
+                                    <i class="fas fa-comment"></i> Your Feedback <span class="text-danger">*</span>
                                 </label>
                                 <textarea class="form-control" id="reviewContent" name="content" rows="5"
                                           maxlength="500" placeholder="Share your experience with this doctor..."></textarea>
                                 <div class="invalid-feedback" id="contentError" style="display: none;">
-                                    Please write your review (1-500 characters).
+                                    Please write your feedback (1-500 characters).
                                 </div>
                                 <div class="form-text">
                                     <span id="charCount">0</span>/500 characters
@@ -704,7 +730,7 @@
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                                 <i class="fas fa-times"></i> Cancel
                             </button>
-                            <button type="submit" class="btn btn-primary">
+                            <button type="submit" class="btn btn-primary" ${empty availableDoctors ? 'disabled' : ''}>
                                 <i class="fas fa-paper-plane"></i> Submit
                             </button>
                         </div>
@@ -719,7 +745,7 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="editFeedbackModalLabel">
-                            <i class="fas fa-edit"></i> Edit Your Review
+                            <i class="fas fa-edit"></i> Edit Your Feedback
                         </h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
@@ -766,12 +792,12 @@
                             <!-- Review Content -->
                             <div class="mb-3">
                                 <label for="editReviewContent" class="form-label fw-bold">
-                                    <i class="fas fa-comment"></i> Your Review <span class="text-danger">*</span>
+                                    <i class="fas fa-comment"></i> Your Feedback <span class="text-danger">*</span>
                                 </label>
                                 <textarea class="form-control" id="editReviewContent" name="content" rows="5"
                                           maxlength="500" placeholder="Share your experience with this doctor..."></textarea>
                                 <div class="invalid-feedback" id="editContentError" style="display: none;">
-                                    Please write your review (1-500 characters).
+                                    Please write your feedback (1-500 characters).
                                 </div>
                                 <div class="form-text">
                                     <span id="editCharCount">0</span>/500 characters
@@ -828,7 +854,7 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
                     <div class="modal-body">
-                        <p>Are you sure you want to delete this review? This action cannot be undone.</p>
+                        <p>Are you sure you want to delete this feedback? This action cannot be undone.</p>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>

@@ -6,10 +6,13 @@ package controller;
 
 import constants.ManageMyFeedbackConstants;
 import dao.DoctorDAO;
+import dao.AppointmentDAO;
 import validate.FeedbackValidate;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -25,6 +28,7 @@ import model.PatientDTO;
 public class ManageMyFeedbackController extends HttpServlet {
 
     private DoctorDAO doctorReviewDAO;
+    private AppointmentDAO appointmentDAO;
 
     /**
      * Initialize all the necessary DAO using in this controller.
@@ -34,21 +38,21 @@ public class ManageMyFeedbackController extends HttpServlet {
     @Override
     public void init() throws ServletException {
         doctorReviewDAO = new DoctorDAO();
+        appointmentDAO = new AppointmentDAO();
     }
 
     /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
+     * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
      *
-     * @param request  servlet request
+     * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException      if an I/O error occurs
+     * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
+        try ( PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
             out.println("<!DOCTYPE html>");
             out.println("<html>");
@@ -67,10 +71,10 @@ public class ManageMyFeedbackController extends HttpServlet {
     /**
      * Handles the HTTP <code>GET</code> method.
      *
-     * @param request  servlet request
+     * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException      if an I/O error occurs
+     * @throws IOException if an I/O error occurs
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -106,7 +110,16 @@ public class ManageMyFeedbackController extends HttpServlet {
             throws ServletException, IOException {
 
         List<DoctorReviewDTO> myReviews = doctorReviewDAO.getReviewsByUserId(userID);
-        List<DoctorDTO> availableDoctors = doctorReviewDAO.getAvailableDoctors();
+
+        // Get only doctors from completed appointments within 24 hours that haven't been reviewed yet
+        List<DoctorDTO> availableDoctors = appointmentDAO.getDoctorsEligibleForReview(userID);
+
+        // Create a map to track which reviews can be edited (within 24h of creation)
+        Map<Integer, Boolean> canEditMap = new HashMap<>();
+        for (DoctorReviewDTO review : myReviews) {
+            boolean canEdit = appointmentDAO.canEditReview(review.getDoctorReviewID(), userID);
+            canEditMap.put(review.getDoctorReviewID(), canEdit);
+        }
 
         // Check for session messages and move to request attributes
         String successMessage = (String) request.getSession().getAttribute("successMessage");
@@ -125,6 +138,7 @@ public class ManageMyFeedbackController extends HttpServlet {
         request.setAttribute("myReviews", myReviews);
         request.setAttribute("totalReviews", myReviews.size());
         request.setAttribute("availableDoctors", availableDoctors);
+        request.setAttribute("canEditMap", canEditMap);
         request.setAttribute("viewMode", ManageMyFeedbackConstants.VIEW_MODE_LIST);
         request.getRequestDispatcher(ManageMyFeedbackConstants.MANAGE_FEEDBACK_JSP)
                 .forward(request, response);
@@ -176,10 +190,10 @@ public class ManageMyFeedbackController extends HttpServlet {
     /**
      * Handles the HTTP <code>POST</code> method.
      *
-     * @param request  servlet request
+     * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException      if an I/O error occurs
+     * @throws IOException if an I/O error occurs
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -239,6 +253,13 @@ public class ManageMyFeedbackController extends HttpServlet {
         try {
             int reviewId = Integer.parseInt(reviewIdParam.trim());
             int rating = Integer.parseInt(ratingParam.trim());
+
+            // Check if review can still be edited (within 24 hours)
+            if (!appointmentDAO.canEditReview(reviewId, userID)) {
+                request.getSession().setAttribute("errorMessage", ManageMyFeedbackConstants.ERROR_CANNOT_EDIT_REVIEW);
+                response.sendRedirect(request.getContextPath() + ManageMyFeedbackConstants.MANAGE_FEEDBACK_URL);
+                return;
+            }
 
             // Update the review
             boolean success = doctorReviewDAO.updateDoctorReview(reviewId, userID, content.trim(), rating);
@@ -316,9 +337,9 @@ public class ManageMyFeedbackController extends HttpServlet {
             int doctorId = Integer.parseInt(doctorIdParam.trim());
             int rating = Integer.parseInt(ratingParam.trim());
 
-            // Check if patient has already reviewed this doctor
-            if (doctorReviewDAO.hasPatientReviewedDoctor(userID, doctorId)) {
-                request.getSession().setAttribute("errorMessage", ManageMyFeedbackConstants.ERROR_EXISTS_DOCTOR_REVIEW);
+            // Check if patient can review this doctor (must have completed appointment within 24h)
+            if (!appointmentDAO.canPatientReviewDoctor(userID, doctorId)) {
+                request.getSession().setAttribute("errorMessage", ManageMyFeedbackConstants.ERROR_CANNOT_REVIEW_DOCTOR);
                 response.sendRedirect(request.getContextPath() + ManageMyFeedbackConstants.MANAGE_FEEDBACK_URL);
                 return;
             }
@@ -327,7 +348,6 @@ public class ManageMyFeedbackController extends HttpServlet {
             boolean success = doctorReviewDAO.createDoctorReview(userID, doctorId, content.trim(), rating);
 
             if (success) {
-                // Set success message in session to survive redirect
                 request.getSession().setAttribute("successMessage", ManageMyFeedbackConstants.SUCCESS_FEEDBACK_SUBMIT);
                 response.sendRedirect(request.getContextPath() + ManageMyFeedbackConstants.MANAGE_FEEDBACK_URL);
             } else {

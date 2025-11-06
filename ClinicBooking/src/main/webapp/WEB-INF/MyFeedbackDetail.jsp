@@ -323,6 +323,7 @@
                 border: 1px solid #e2e8f0 !important;
                 border-radius: 0.375rem !important;
                 border-left: 4px solid #175CDD !important;
+                word-wrap: break-word
             }
 
             .review-text {
@@ -468,7 +469,7 @@
                             <i class="fas fa-calendar-check"></i>
                         </div>
                         <div class="info-content">
-                            <h4>Review Date</h4>
+                            <h4>Feedback Date</h4>
                             <p>
                                 <c:choose>
                                     <c:when test="${reviewDetail.dateCreate != null}">
@@ -486,7 +487,7 @@
                             <i class="fas fa-clock"></i>
                         </div>
                         <div class="info-content">
-                            <h4>Review Time</h4>
+                            <h4>Feedback Time</h4>
                             <p>
                                 <c:choose>
                                     <c:when test="${reviewDetail.dateCreate != null}">
@@ -506,7 +507,7 @@
             <div class="info-section">
                 <h3 class="section-title">
                     <i class="fas fa-comment"></i>
-                    Your Review
+                    Your Feedback
                 </h3>
                 <div class="review-content-section">
                     <p class="review-text">${reviewDetail.content}</p>
