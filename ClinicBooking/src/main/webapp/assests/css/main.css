@@ -8707,3 +8707,153 @@ body.appointment-page {
         font-size: 0.85rem;
     }
 }
+
+/* Medicines Information Table Styles */
+.medicines-table {
+    width: 100%;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    margin-top: 1rem;
+}
+
+.table-header {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr 2fr 1fr;
+    background: linear-gradient(135deg, #175CDD 0%, #1450C4 100%);
+    color: white;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.header-cell {
+    padding: 1rem 0.8rem;
+    text-align: center;
+    border-right: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.header-cell:last-child {
+    border-right: none;
+}
+
+.table-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr 2fr 1fr;
+    border-bottom: 1px solid #f0f0f0;
+    transition: background-color 0.3s ease;
+}
+
+.table-row:hover {
+    background-color: #f8f9fc;
+}
+
+.table-row:last-child {
+    border-bottom: none;
+}
+
+.table-cell {
+    padding: 1rem 0.8rem;
+    text-align: center;
+    vertical-align: middle;
+    border-right: 1px solid #f0f0f0;
+    font-size: 0.9rem;
+}
+
+.table-cell:last-child {
+    border-right: none;
+}
+
+.medicine-name-cell {
+    text-align: left;
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.medicine-name-cell i {
+    margin-right: 0.5rem;
+    color: #175CDD;
+}
+
+.price-cell {
+    font-weight: 600;
+    color: #27ae60;
+}
+
+.instructions-cell {
+    text-align: left;
+    font-size: 0.85rem;
+    color: #666;
+    max-width: 200px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.table-footer {
+    background: #f8f9fc;
+    border-top: 2px solid #175CDD;
+}
+
+.total-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.2rem 1rem;
+    font-size: 1.1rem;
+    font-weight: 700;
+}
+
+.total-label {
+    color: #2c3e50;
+}
+
+.total-amount {
+    color: #175CDD;
+    font-size: 1.3rem;
+}
+
+.no-medicines {
+    text-align: center;
+    padding: 3rem 2rem;
+    color: #7f8c8d;
+}
+
+.no-medicines i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    color: #bdc3c7;
+}
+
+/* Responsive design for medicines table */
+@media (max-width: 768px) {
+    .table-header,
+    .table-row {
+        grid-template-columns: 1fr;
+        gap: 0;
+    }
+    
+    .header-cell,
+    .table-cell {
+        border-right: none;
+        border-bottom: 1px solid #f0f0f0;
+        text-align: left;
+        padding: 0.8rem 1rem;
+    }
+    
+    .header-cell:before,
+    .table-cell:before {
+        content: attr(data-label);
+        font-weight: 600;
+        color: #175CDD;
+        display: block;
+        margin-bottom: 0.3rem;
+    }
+    
+    .instructions-cell {
+        white-space: normal;
+        max-width: none;
+        text-overflow: initial;
+        overflow: visible;
+    }
+}
