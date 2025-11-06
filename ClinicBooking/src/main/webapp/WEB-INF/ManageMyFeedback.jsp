@@ -605,8 +605,8 @@
                                            class="btn-action btn-view">
                                             <i class="fas fa-eye"></i> View Detail
                                         </a>
-                                        <button type="button" class="btn-action btn-edit" 
-                                                data-bs-toggle="modal" 
+                                        <button type="button" class="btn-action btn-edit"
+                                                data-bs-toggle="modal"
                                                 data-bs-target="#editFeedbackModal"
                                                 data-review-id="${review.doctorReviewID}"
                                                 data-doctor-name="Dr. ${review.doctorID.staffID.firstName} ${review.doctorID.staffID.lastName}"
@@ -783,7 +783,7 @@
                                 <i class="fas fa-times"></i> Cancel
                             </button>
                             <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-save"></i> Update Review
+                                <i class="fas fa-save"></i> Update
                             </button>
                         </div>
                     </form>
@@ -811,7 +811,7 @@
                 <div class="modal-content text-center border-0 shadow-lg">
                     <div class="modal-body p-5">
                         <i class="fa-solid fa-circle-xmark text-danger fa-4x mb-3"></i>
-                        <h4 class="mb-3 text-danger fw-bold">Error</h4>
+                        <h4 class="mb-3 text-danger fw-bold">Error!</h4>
                         <p class="text-secondary mb-4" id="errorMessage">${errorMessage}</p>
                         <button type="button" class="btn btn-danger px-4" data-bs-dismiss="modal">OK</button>
                     </div>
@@ -956,7 +956,7 @@
                         document.getElementById('editDoctorInfo').textContent = doctorName + ' - ' + specialty;
                         document.getElementById('editReviewContent').value = content;
                         document.getElementById('editRatingValue').value = rating;
-                        
+
                         // Update character count
                         const editCharCount = document.getElementById('editCharCount');
                         if (editCharCount) {
