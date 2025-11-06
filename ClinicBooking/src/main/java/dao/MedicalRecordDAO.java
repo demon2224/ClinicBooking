@@ -578,4 +578,30 @@ public class MedicalRecordDAO extends DBContext {
         return 0;
     }
 
+    /**
+     * Get AppointmentID by MedicalRecordID (Used when creating a Prescription
+     * for a given medical record)
+     *
+     * @param medicalRecordID The ID of the medical record
+     * @return appointmentID or -1 if not found
+     */
+    public int getAppointmentIdByMedicalRecordId(int medicalRecordID) {
+        String sql = "SELECT AppointmentID FROM MedicalRecord WHERE MedicalRecordID = ?";
+        Object[] params = {medicalRecordID};
+        ResultSet rs = executeSelectQuery(sql, params);
+        int appointmentID = -1;
+
+        try {
+            if (rs != null && rs.next()) {
+                appointmentID = rs.getInt("AppointmentID");
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(MedicalRecordDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            closeResources(rs);
+        }
+
+        return appointmentID;
+    }
+
 }

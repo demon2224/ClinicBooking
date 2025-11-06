@@ -205,4 +205,47 @@ public class MedicineDAO extends DBContext {
         return rs != 0;
     }
 
+    public boolean isExistMedicineID(int medicineID) {
+
+        String query = "SELECT m.MedicineID\n"
+                + "FROM [dbo].[Medicine] m\n"
+                + "WHERE m.MedicineID = ?\n"
+                + "AND m.Hidden = 0;";
+        Object[] params = {medicineID};
+        ResultSet rs;
+        int medicine = 0;
+
+        try {
+            rs = executeSelectQuery(query, params);
+            if (rs.next()) {
+                medicine = rs.getInt("MedicineID");
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(PrescriptionDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return medicine != 0;
+    }
+
+    public int getQuantityMedicineByMedicineID(int medicineID) {
+        String query = "SELECT m.Quantity\n"
+                + "FROM [dbo].[Medicine] m\n"
+                + "WHERE m.MedicineID = ?\n"
+                + "AND m.Hidden = 0;";
+        Object[] params = {medicineID};
+        ResultSet rs;
+        int quantity = 0;
+
+        try {
+            rs = executeSelectQuery(query, params);
+            if (rs.next()) {
+                quantity = rs.getInt("Quantity");
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(PrescriptionDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return quantity;
+    }
+
 }

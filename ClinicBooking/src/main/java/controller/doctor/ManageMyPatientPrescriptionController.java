@@ -6,6 +6,7 @@ package controller.doctor;
 
 import dao.AppointmentDAO;
 import dao.MedicalRecordDAO;
+import dao.MedicineDAO;
 import dao.PrescriptionDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -15,8 +16,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
 import model.DoctorDTO;
+import model.MedicineDTO;
 import model.PrescriptionDTO;
 import model.PrescriptionItemDTO;
+import validate.CreatePrescriptionValidate;
 
 /**
  *
@@ -27,6 +30,7 @@ public class ManageMyPatientPrescriptionController extends HttpServlet {
     private MedicalRecordDAO medicalRecordDAO;
     private PrescriptionDAO prescriptionDAO;
     private AppointmentDAO appointmentDAO;
+    private MedicineDAO medicineDAO;
 
     /**
      * Initialize all the necessary DAO using in this controller.
@@ -38,6 +42,7 @@ public class ManageMyPatientPrescriptionController extends HttpServlet {
         medicalRecordDAO = new MedicalRecordDAO();
         prescriptionDAO = new PrescriptionDAO();
         appointmentDAO = new AppointmentDAO();
+        medicineDAO = new MedicineDAO();
     }
 
     /**
@@ -87,6 +92,9 @@ public class ManageMyPatientPrescriptionController extends HttpServlet {
                 case "detail":
                     showPrescriptionDetail(request, response, doctorID);
                     break;
+                case "create":
+                    showCreateForm(request, response, doctorID);
+                    break;
                 default:
                     showPrescriptionList(request, response, doctorID);
                     break;
@@ -131,6 +139,131 @@ public class ManageMyPatientPrescriptionController extends HttpServlet {
         }
     }
 
+    private void showCreateForm(HttpServletRequest request, HttpServletResponse response, int doctorID)
+            throws ServletException, IOException {
+
+        int medicalRecordID = Integer.parseInt(request.getParameter("medicalRecordID"));
+
+        // kiểm tra record có tồn tại chưa
+        boolean hasPrescription = prescriptionDAO.isExistPrescription(medicalRecordID);
+        if (hasPrescription) {
+            request.setAttribute("error", "Đơn thuốc cho hồ sơ này đã tồn tại!");
+            response.sendRedirect(request.getContextPath() + "/manage-my-patient-prescription");
+            return;
+        }
+        // Lấy danh sách thuốc
+        List<MedicineDTO> medicineList = new MedicineDAO().getAllMedicines();
+        request.setAttribute("medicineList", medicineList);
+        request.setAttribute("medicalRecordID", medicalRecordID);
+        request.getRequestDispatcher("/WEB-INF/doctor/CreateMyPatientPrescription.jsp").forward(request, response);
+    }
+
+    private void createPrescription(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        try {
+            int medicalRecordID = Integer.parseInt(request.getParameter("medicalRecordID"));
+            String note = request.getParameter("note");
+
+            // Lấy appointmentID từ MedicalRecord
+            MedicalRecordDAO medicalDAO = new MedicalRecordDAO();
+            int appointmentID = medicalDAO.getAppointmentIdByMedicalRecordId(medicalRecordID);
+
+            // Tạo đơn thuốc
+            boolean createPrescriptionResult = prescriptionDAO.createPrescription(appointmentID, note);
+            log("11111111111111111");
+            if (createPrescriptionResult) {
+                log("222222222222222222");
+                Integer prescriptionID = prescriptionDAO.getPrescriptionIDByAppointmentID(appointmentID);
+
+                if (prescriptionID == null) {
+                    log("33333333333333");
+                    throw new Exception();
+                }
+
+                // Tạo các item
+                String[] medicineIDs = request.getParameterValues("medicineID");
+                String[] dosages = request.getParameterValues("dosage");
+                String[] instructions = request.getParameterValues("instruction");
+
+                boolean currentState = true;
+
+                for (int i = 0; i < medicineIDs.length; i++) {
+                    currentState = addPrescriptionInput(request, medicineIDs[i], dosages[i], instructions[i]);
+                }
+
+                if (currentState) {
+                    log("444444444444444444444");
+                    for (int i = 0; i < medicineIDs.length; i++) {
+                        int medicineID = Integer.parseInt(medicineIDs[i]);
+                        int dosage = Integer.parseInt(medicineIDs[i]);
+                        prescriptionDAO.addItemToPrescription(prescriptionID, medicineID, dosage, instructions[i]);
+                    }
+                    // Sau khi tạo xong chuyển đến trang chi tiết
+                    response.sendRedirect(request.getContextPath()
+                            + "/manage-my-patient-prescription?action=detail&prescriptionID=" + prescriptionID);
+                } else {
+                    log("okkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk");
+                    prescriptionDAO.deletePrescription(prescriptionID);
+                    response.sendRedirect(request.getContextPath()
+                            + "/manage-my-patient-prescription?action=create&medicalRecordID=" + medicalRecordID);
+                }
+                log("555555555555555555");
+            } else {
+                //Set thong6 bao1 loi46
+                response.sendRedirect(request.getContextPath()
+                        + "/manage-my-patient-prescription?action=create&medicalRecordID=" + medicalRecordID);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            request.setAttribute("error", "❌ Lỗi khi tạo đơn thuốc!");
+            int medicalRecordID = Integer.parseInt(request.getParameter("medicalRecordID"));
+            response.sendRedirect(request.getContextPath()
+                    + "/manage-my-patient-prescription?action=create&medicalRecordID=" + medicalRecordID);
+        }
+    }
+
+    private boolean addPrescriptionInput(HttpServletRequest request, String medicineID, String dosage, String instruction) {
+        boolean isValidMedicineID = isValidMedicineID(request, medicineID);
+        boolean isValidDosage = isValidDosage(request, dosage, medicineID);
+        boolean isValidInstruction = isValidInstruction(request, instruction);
+        log(isValidMedicineID + " " + isValidInstruction + " " + isValidDosage);
+        return isValidMedicineID && isValidDosage && isValidInstruction;
+    }
+
+    private boolean isValidInstruction(HttpServletRequest request, String instruction) {
+        if (CreatePrescriptionValidate.isEmpty(instruction)) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    private boolean isValidDosage(HttpServletRequest request, String dosage, String medicineID) {
+        if (CreatePrescriptionValidate.isEmpty(dosage)) {
+            return false;
+        } else if (!CreatePrescriptionValidate.isValidDosage(dosage)) {
+            return false;
+        } else if (!CreatePrescriptionValidate.isValidDosageNumber(Integer.parseInt(dosage),
+                medicineDAO.getQuantityMedicineByMedicineID(Integer.parseInt(medicineID)))) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    private boolean isValidMedicineID(HttpServletRequest request, String medicineID) {
+        if (CreatePrescriptionValidate.isEmpty(medicineID)) {
+            return false;
+        } else if (!CreatePrescriptionValidate.isValidMedicineID(medicineID)) {
+            return false;
+        } else if (!medicineDAO.isExistMedicineID(Integer.parseInt(medicineID))) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
     /**
      * Handles the HTTP <code>POST</code> method.
      *
@@ -143,6 +276,12 @@ public class ManageMyPatientPrescriptionController extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 //        processRequest(request, response);
+        String action = request.getParameter("action");
+        if ("insert".equals(action)) {
+            createPrescription(request, response);
+        } else {
+            response.sendRedirect(request.getContextPath() + "/manage-my-patient-prescription");
+        }
     }
 
     /**

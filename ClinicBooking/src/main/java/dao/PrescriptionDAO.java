@@ -815,5 +815,55 @@ public class PrescriptionDAO extends DBContext {
         
         return prescriptions;
     }
+    
+    public boolean createPrescription(int appointmentID, String note) {
+        String sql = "INSERT INTO Prescription (AppointmentID, Note, DateCreate, PrescriptionStatus, Hidden)\n"
+                + "VALUES (?, ?, GETDATE(), 'Pending', 0)";
+        Object[] params = {appointmentID, note};
+
+        int effectedRow = executeQuery(sql, params);
+
+        return effectedRow != 0;
+    }
+
+    public boolean addItemToPrescription(int prescriptionID, int medicineID, int dosage, String instruction) {
+        String sql = " INSERT INTO PrescriptionItem (PrescriptionID, MedicineID, Dosage, Instruction)\n"
+                + "        VALUES (?, ?, ?, ?)";
+        Object[] params = {prescriptionID, medicineID, dosage, instruction};
+        return executeQuery(sql, params) > 0;
+    }
+
+    public Integer getPrescriptionIDByAppointmentID(int appointmentID) {
+
+        String query = "SELECT p.PrescriptionID\n"
+                + "FROM [dbo].[Prescription] p\n"
+                + "JOIN [dbo].[Appointment] ap\n"
+                + "ON ap.AppointmentID = p.AppointmentID\n"
+                + "WHERE ap.AppointmentID = ?;";
+        Object[] params = {appointmentID};
+        ResultSet rs;
+
+        try {
+            rs = executeSelectQuery(query, params);
+            if (rs.next()) {
+                return rs.getInt("PrescriptionID");
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(PrescriptionDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return null;
+    }
+
+    public boolean deletePrescription(int prescriptionID) {
+
+        String query = "DELETE FROM [dbo].[Prescription]\n"
+                + "WHERE PrescriptionID = ?;";
+        Object[] params = {prescriptionID};
+
+        int effectedRow = executeQuery(query, params);
+
+        return effectedRow != 0;
+    }
 
 }

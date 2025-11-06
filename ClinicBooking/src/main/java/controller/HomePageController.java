@@ -4,6 +4,7 @@
  */
 package controller;
 
+import dao.DoctorDAO;
 import dao.PatientDAO;
 import java.io.IOException;
 import jakarta.servlet.ServletException;
@@ -11,6 +12,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import model.DoctorDTO;
 import model.PatientDTO;
 
 /**
@@ -32,15 +34,19 @@ public class HomePageController extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         HttpSession session = request.getSession();
-        PatientDTO patient = ((new PatientDAO()).getPatientById(1)); // Get first patient for demo
-        if ((session != null) && (patient != null)) {
-            session.setAttribute("patient", patient); // Changed from "user" to "patient"
+//        PatientDTO patient = ((new PatientDAO()).getPatientById(1)); // Get first patient for demo
+        DoctorDTO doctor = ((new DoctorDAO()).getDoctorById(1));
+        if ((session != null) && (doctor != null)) {
+//        if ((session != null) && (patient != null)) {
+//            session.setAttribute("patient", patient); // Changed from "user" to "patient"
+            session.setAttribute("doctor", doctor);
         }
 
         // Since Patient table doesn't have RoleID, redirect to patient homepage
         // Remove role-based redirects as patients don't have roles
         // Forward to Homepage.jsp
-        request.getRequestDispatcher("/WEB-INF/HomePage.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/doctor/DoctorDashboard.jsp").forward(request, response);
+//        request.getRequestDispatcher("/WEB-INF/HomePage.jsp").forward(request, response);
     }
 
     /**

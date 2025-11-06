@@ -24,7 +24,7 @@ public class DBContext {
 
     private Connection conn;
     private PreparedStatement statement;
-    
+
     public DBContext() {
         try {
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
@@ -35,6 +35,7 @@ public class DBContext {
 
     /**
      * Get database connection
+     *
      * @return Connection object
      * @throws SQLException if connection fails
      */
@@ -44,6 +45,7 @@ public class DBContext {
 
     /**
      * Execute Select Query with parameters
+     *
      * @param query SQL query string
      * @param params Parameters for the query
      * @return ResultSet
@@ -64,9 +66,10 @@ public class DBContext {
             return null;
         }
     }
-    
+
     /**
      * Execute Select Query with no parameters
+     *
      * @param query SQL query string
      * @return ResultSet
      */
@@ -76,6 +79,7 @@ public class DBContext {
 
     /**
      * Execute INSERT/UPDATE/DELETE queries
+     *
      * @param query SQL query string
      * @param params Parameters for the query
      * @return Number of affected rows
@@ -84,7 +88,7 @@ public class DBContext {
         try {
             conn = getConnection();
             statement = conn.prepareStatement(query);
-            
+
             if (params != null) {
                 for (int i = 0; i < params.length; i++) {
                     statement.setObject(i + 1, params[i]);
@@ -96,18 +100,26 @@ public class DBContext {
             return 0;
         }
     }
-    
+
     /**
      * Close ResultSet, PreparedStatement, and Connection safely
+     *
      * @param rs the ResultSet need to close
      */
     public void closeResources(ResultSet rs) {
         try {
-            if (this.conn != null) conn.close();
-            if (this.statement != null) statement.close();
-            if (rs != null) rs.close();
+            if (this.conn != null) {
+                conn.close();
+            }
+            if (this.statement != null) {
+                statement.close();
+            }
+            if (rs != null) {
+                rs.close();
+            }
         } catch (SQLException ex) {
             Logger.getLogger(DBContext.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+
 }
