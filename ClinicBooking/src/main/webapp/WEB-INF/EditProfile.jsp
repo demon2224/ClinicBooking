@@ -212,6 +212,37 @@
                 background: #1e40af;
             }
 
+            .alert {
+                padding: 1rem;
+                margin-bottom: 1.5rem;
+                border-radius: 0.375rem;
+                border: 1px solid transparent;
+            }
+
+            .alert-danger {
+                background-color: #fef2f2;
+                border-color: #fecaca;
+                color: #dc2626;
+            }
+
+            .alert-success {
+                background-color: #f0fdf4;
+                border-color: #bbf7d0;
+                color: #16a34a;
+            }
+
+            .alert ul {
+                margin-left: 1.5rem;
+                margin-bottom: 0;
+            }
+
+            .text-muted {
+                font-size: 0.75rem;
+                color: #64748b;
+                margin-top: 0.25rem;
+                display: block;
+            }
+
             @media (max-width: 992px) {
                 .edit-profile-layout {
                     grid-template-columns: 1fr;
@@ -258,75 +289,114 @@
 
             <!-- Edit Profile Container -->
             <div class="edit-profile-container">
-                <form method="post" action="${pageContext.request.contextPath}/edit-profile" enctype="multipart/form-data">
+                <!-- Error Messages -->
+                <c:if test="${not empty errors}">
+                    <div class="alert alert-danger" role="alert">
+                        <strong>Errors:</strong>
+                        <ul style="margin-bottom: 0;">
+                            <c:forEach var="error" items="${errors}">
+                                <li>${error}</li>
+                            </c:forEach>
+                        </ul>
+                    </div>
+                </c:if>
+
+                <!-- Success Message -->
+                <c:if test="${not empty successMessage}">
+                    <div class="alert alert-success" role="alert">
+                        <i class="fas fa-check-circle"></i> ${successMessage}
+                    </div>
+                </c:if>
+
+                <form method="post" action="${pageContext.request.contextPath}/profile" enctype="multipart/form-data">
+                    <input type="hidden" name="action" value="update">
+                    
                     <div class="edit-profile-layout">
                         <!-- Left Section - Avatar -->
                         <div class="edit-profile-left">
                             <div class="edit-profile-avatar-section">
-                                <img src="${pageContext.request.contextPath}/assests/img/default-avatar.png" 
-                                     alt="Profile Avatar" 
-                                     class="edit-profile-avatar"
-                                     id="editProfileAvatar">
-                                
-                                <div class="edit-profile-name">Minh Khang</div>
-                                
+                                <c:choose>
+                                    <c:when test="${not empty patient.avatar}">
+                                        <img src="${pageContext.request.contextPath}/${patient.avatar}"
+                                             alt="Profile Avatar"
+                                             class="edit-profile-avatar"
+                                             id="editProfileAvatar"
+                                             onerror="this.src='${pageContext.request.contextPath}/assests/img/0.png'">
+                                    </c:when>
+                                    <c:otherwise>
+                                        <img src="${pageContext.request.contextPath}/assests/img/0.png"
+                                             alt="Profile Avatar"
+                                             class="edit-profile-avatar"
+                                             id="editProfileAvatar">
+                                    </c:otherwise>
+                                </c:choose>
+
+                                <div class="edit-profile-name">${patient.firstName} ${patient.lastName}</div>
+
                                 <label for="editAvatarUpload" class="upload-photo-btn">
-                                    <i class="fas fa-camera"></i> Upload Photo
+                                    <i class="fas fa-camera"></i> Change Photo
                                 </label>
-                                <input type="file" id="editAvatarUpload" name="avatar" style="display: none;" accept="image/*">
+                                <input type="file" id="editAvatarUpload" name="avatar" style="display: none;" accept="image/jpeg,image/png,image/gif">
+                                <div style="font-size: 0.75rem; color: #64748b; margin-top: 0.5rem;">
+                                    Max 10MB (.jpg, .png, .gif)
+                                </div>
                             </div>
                         </div>
 
                         <!-- Right Section - Edit Form -->
                         <div class="edit-profile-right">
                             <h2 class="edit-profile-section-title">Profile Information:</h2>
-                            
+
                             <div class="edit-profile-form-grid">
                                 <div class="form-group">
                                     <label for="username" class="form-label">Username:</label>
-                                    <input type="text" class="form-control" id="username" name="username" value="patient01" readonly disabled>
+                                    <input type="text" class="form-control" id="username" value="${patient.accountName}" readonly disabled>
+                                    <small class="text-muted">Username cannot be changed</small>
                                 </div>
 
                                 <div class="form-group">
                                     <label for="role" class="form-label">Role:</label>
-                                    <input type="text" class="form-control" id="role" name="role" value="Patient" readonly disabled>
+                                    <input type="text" class="form-control" id="role" value="Patient" readonly disabled>
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="firstName" class="form-label">First name:</label>
-                                    <input type="text" class="form-control" id="firstName" name="firstName" value="Minh" required>
+                                    <label for="firstName" class="form-label">First name: <span style="color: red;">*</span></label>
+                                    <input type="text" class="form-control" id="firstName" name="firstName" value="${patient.firstName}" required>
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="lastName" class="form-label">Last name:</label>
-                                    <input type="text" class="form-control" id="lastName" name="lastName" value="Khang" required>
+                                    <label for="lastName" class="form-label">Last name: <span style="color: red;">*</span></label>
+                                    <input type="text" class="form-control" id="lastName" name="lastName" value="${patient.lastName}" required>
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="phoneNumber" class="form-label">Phone number:</label>
-                                    <input type="tel" class="form-control" id="phoneNumber" name="phoneNumber" value="0901234567" required>
+                                    <label for="phoneNumber" class="form-label">Phone number: <span style="color: red;">*</span></label>
+                                    <input type="tel" class="form-control" id="phoneNumber" name="phoneNumber" value="${patient.phoneNumber}" required>
+                                    <small class="text-muted">Format: 0xxxxxxxxx (10 digits)</small>
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="email" class="form-label">Email:</label>
-                                    <input type="email" class="form-control" id="email" name="email" value="minhkhang@example.com" required>
+                                    <label for="email" class="form-label">Email: <span style="color: red;">*</span></label>
+                                    <input type="email" class="form-control" id="email" name="email" value="${patient.email}" required>
+                                    <small class="text-muted">Must be unique</small>
                                 </div>
 
                                 <div class="form-group full-width">
                                     <label for="address" class="form-label">Address:</label>
-                                    <input type="text" class="form-control" id="address" name="address" value="123 Main Street, District 1, Ho Chi Minh City">
+                                    <input type="text" class="form-control" id="address" name="address" value="${patient.userAddress}">
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="dob" class="form-label">DOB:</label>
-                                    <input type="date" class="form-control" id="dob" name="dob" value="1999-01-15">
+                                    <label for="dob" class="form-label">Date of Birth: <span style="color: red;">*</span></label>
+                                    <input type="date" class="form-control" id="dob" name="dob" value="<fmt:formatDate value='${patient.dob}' pattern='yyyy-MM-dd'/>" required>
+                                    <small class="text-muted">Must be 18+ years old</small>
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="sex" class="form-label">Sex:</label>
-                                    <select class="form-select" id="sex" name="sex">
-                                        <option value="Male" selected>Male</option>
-                                        <option value="Female">Female</option>
+                                    <label for="gender" class="form-label">Gender: <span style="color: red;">*</span></label>
+                                    <select class="form-select" id="gender" name="gender" required>
+                                        <option value="Male" ${patient.gender ? 'selected' : ''}>Male</option>
+                                        <option value="Female" ${!patient.gender ? 'selected' : ''}>Female</option>
                                     </select>
                                 </div>
                             </div>
@@ -337,7 +407,7 @@
                                     <i class="fas fa-times"></i> Cancel
                                 </a>
                                 <button type="submit" class="btn-save">
-                                    <i class="fas fa-save"></i> Save
+                                    <i class="fas fa-save"></i> Save Changes
                                 </button>
                             </div>
                         </div>
@@ -351,11 +421,27 @@
 
         <script>
             // Avatar upload preview
-            document.getElementById('editAvatarUpload').addEventListener('change', function(e) {
+            document.getElementById('editAvatarUpload').addEventListener('change', function (e) {
                 const file = e.target.files[0];
                 if (file) {
+                    // Validate file size (10MB max)
+                    if (file.size > 10 * 1024 * 1024) {
+                        alert('File size must not exceed 10MB');
+                        this.value = '';
+                        return;
+                    }
+
+                    // Validate file type
+                    const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
+                    if (!validTypes.includes(file.type)) {
+                        alert('Only JPG, PNG, and GIF files are allowed');
+                        this.value = '';
+                        return;
+                    }
+
+                    // Preview image
                     const reader = new FileReader();
-                    reader.onload = function(e) {
+                    reader.onload = function (e) {
                         document.getElementById('editProfileAvatar').src = e.target.result;
                     };
                     reader.readAsDataURL(file);
@@ -363,23 +449,38 @@
             });
 
             // Form validation
-            document.querySelector('form').addEventListener('submit', function(e) {
+            document.querySelector('form').addEventListener('submit', function (e) {
                 const firstName = document.getElementById('firstName').value.trim();
                 const lastName = document.getElementById('lastName').value.trim();
                 const phoneNumber = document.getElementById('phoneNumber').value.trim();
                 const email = document.getElementById('email').value.trim();
+                const dob = document.getElementById('dob').value;
 
-                if (!firstName || !lastName || !phoneNumber || !email) {
+                // Required fields
+                if (!firstName || !lastName || !phoneNumber || !email || !dob) {
                     e.preventDefault();
-                    alert('Please fill in all required fields');
+                    alert('Please fill in all required fields (marked with *)');
                     return false;
                 }
 
-                // Phone validation
-                const phonePattern = /^[0-9]{10}$/;
+                // Name validation (2-50 characters, letters only)
+                const namePattern = /^[a-zA-Z\s]{2,50}$/;
+                if (!namePattern.test(firstName)) {
+                    e.preventDefault();
+                    alert('First name must be 2-50 characters and contain only letters');
+                    return false;
+                }
+                if (!namePattern.test(lastName)) {
+                    e.preventDefault();
+                    alert('Last name must be 2-50 characters and contain only letters');
+                    return false;
+                }
+
+                // Phone validation (10 digits starting with 0)
+                const phonePattern = /^0[0-9]{9}$/;
                 if (!phonePattern.test(phoneNumber)) {
                     e.preventDefault();
-                    alert('Please enter a valid 10-digit phone number');
+                    alert('Phone number must be 10 digits and start with 0');
                     return false;
                 }
 
@@ -390,6 +491,21 @@
                     alert('Please enter a valid email address');
                     return false;
                 }
+
+                // Age validation (must be 18+)
+                const dobDate = new Date(dob);
+                const today = new Date();
+                const age = today.getFullYear() - dobDate.getFullYear();
+                const monthDiff = today.getMonth() - dobDate.getMonth();
+                
+                if (age < 18 || (age === 18 && monthDiff < 0) || 
+                    (age === 18 && monthDiff === 0 && today.getDate() < dobDate.getDate())) {
+                    e.preventDefault();
+                    alert('You must be at least 18 years old');
+                    return false;
+                }
+
+                return true;
             });
         </script>
     </body>

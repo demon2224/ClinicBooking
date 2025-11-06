@@ -202,6 +202,242 @@
                 color: white;
             }
 
+            /* Change Password Modal Styles */
+            .modal-overlay {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.5);
+                z-index: 9999;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .modal-overlay.active {
+                display: flex;
+            }
+
+            .modal-content {
+                background: white;
+                border-radius: 0.5rem;
+                width: 90%;
+                max-width: 500px;
+                padding: 2rem;
+                box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+                animation: modalSlideIn 0.3s ease-out;
+            }
+
+            @keyframes modalSlideIn {
+                from {
+                    transform: translateY(-50px);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateY(0);
+                    opacity: 1;
+                }
+            }
+
+            .modal-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 1.5rem;
+                padding-bottom: 1rem;
+                border-bottom: 2px solid #e2e8f0;
+            }
+
+            .modal-title {
+                font-size: 1.25rem;
+                font-weight: 600;
+                color: #1e293b;
+            }
+
+            .modal-close {
+                background: none;
+                border: none;
+                font-size: 1.5rem;
+                color: #64748b;
+                cursor: pointer;
+                padding: 0;
+                width: 30px;
+                height: 30px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 0.25rem;
+                transition: all 0.2s;
+            }
+
+            .modal-close:hover {
+                background: #f1f5f9;
+                color: #1e293b;
+            }
+
+            .modal-body {
+                margin-bottom: 1.5rem;
+            }
+
+            .form-group {
+                margin-bottom: 1.25rem;
+            }
+
+            .form-label {
+                display: block;
+                font-weight: 500;
+                color: #374151;
+                margin-bottom: 0.5rem;
+                font-size: 0.875rem;
+            }
+
+            .form-label.required::after {
+                content: " *";
+                color: #ef4444;
+            }
+
+            .form-input {
+                width: 100%;
+                padding: 0.75rem;
+                border: 1px solid #d1d5db;
+                border-radius: 0.375rem;
+                font-size: 0.95rem;
+                transition: all 0.2s;
+            }
+
+            .form-input:focus {
+                outline: none;
+                border-color: #175CDD;
+                box-shadow: 0 0 0 3px rgba(23, 92, 221, 0.1);
+            }
+
+            .form-input.error {
+                border-color: #ef4444;
+            }
+
+            .password-strength {
+                margin-top: 0.5rem;
+                font-size: 0.75rem;
+            }
+
+            .strength-bar {
+                height: 4px;
+                background: #e2e8f0;
+                border-radius: 2px;
+                margin-top: 0.25rem;
+                overflow: hidden;
+            }
+
+            .strength-bar-fill {
+                height: 100%;
+                width: 0%;
+                transition: all 0.3s;
+                border-radius: 2px;
+            }
+
+            .strength-bar-fill.weak {
+                width: 33%;
+                background: #ef4444;
+            }
+
+            .strength-bar-fill.medium {
+                width: 66%;
+                background: #f59e0b;
+            }
+
+            .strength-bar-fill.strong {
+                width: 100%;
+                background: #10b981;
+            }
+
+            .strength-text {
+                margin-top: 0.25rem;
+                font-size: 0.75rem;
+            }
+
+            .strength-text.weak {
+                color: #ef4444;
+            }
+
+            .strength-text.medium {
+                color: #f59e0b;
+            }
+
+            .strength-text.strong {
+                color: #10b981;
+            }
+
+            .error-messages {
+                background: #fef2f2;
+                border: 1px solid #fecaca;
+                border-radius: 0.375rem;
+                padding: 0.75rem;
+                margin-bottom: 1rem;
+            }
+
+            .error-message {
+                color: #dc2626;
+                font-size: 0.875rem;
+                margin: 0.25rem 0;
+            }
+
+            .error-message i {
+                margin-right: 0.25rem;
+            }
+
+            .success-message {
+                background: #f0fdf4;
+                border: 1px solid #bbf7d0;
+                color: #16a34a;
+                border-radius: 0.375rem;
+                padding: 0.75rem;
+                margin-bottom: 1rem;
+                font-size: 0.875rem;
+            }
+
+            .modal-footer {
+                display: flex;
+                gap: 1rem;
+                justify-content: flex-end;
+                padding-top: 1rem;
+                border-top: 1px solid #e2e8f0;
+            }
+
+            .btn-modal {
+                padding: 0.625rem 1.5rem;
+                border-radius: 0.375rem;
+                font-weight: 500;
+                cursor: pointer;
+                transition: all 0.2s;
+                border: none;
+                font-size: 0.95rem;
+            }
+
+            .btn-cancel {
+                background: #f1f5f9;
+                color: #475569;
+            }
+
+            .btn-cancel:hover {
+                background: #e2e8f0;
+            }
+
+            .btn-submit {
+                background: #175CDD;
+                color: white;
+            }
+
+            .btn-submit:hover {
+                background: #1e40af;
+            }
+
+            .btn-submit:disabled {
+                background: #94a3b8;
+                cursor: not-allowed;
+            }
+
             @media (max-width: 992px) {
                 .profile-layout {
                     grid-template-columns: 1fr;
@@ -244,19 +480,24 @@
                     <!-- Left Section - Avatar & Actions -->
                     <div class="profile-left">
                         <div class="profile-avatar-section">
-                            <img src="${pageContext.request.contextPath}/assests/img/default-avatar.png" 
-                                 alt="Profile Avatar" 
-                                 class="profile-avatar"
-                                 id="profileAvatar">
-                            
-                            <div class="profile-name">Minh Khang</div>
-                            
-                            <label for="avatarUpload" class="upload-photo-btn">
-                                <i class="fas fa-camera"></i> Upload Photo
-                            </label>
-                            <input type="file" id="avatarUpload" style="display: none;" accept="image/*">
-                            
-                            <button type="button" class="change-password-btn">
+                            <c:choose>
+                                <c:when test="${not empty patient.avatar}">
+                                    <img src="${pageContext.request.contextPath}/${patient.avatar}"
+                                         alt="Profile Avatar"
+                                         class="profile-avatar"
+                                         id="profileAvatar"
+                                         onerror="this.src='${pageContext.request.contextPath}/assests/img/0.png'">
+                                </c:when>
+                                <c:otherwise>
+                                    <img src="${pageContext.request.contextPath}/assests/img/0.png"
+                                         alt="Profile Avatar"
+                                         class="profile-avatar"
+                                         id="profileAvatar">
+                                </c:otherwise>
+                            </c:choose>
+
+                            <div class="profile-name">${patient.firstName} ${patient.lastName}</div>
+                            <button type="button" class="change-password-btn" id="changePasswordBtn">
                                 <i class="fas fa-key"></i> Change Password
                             </button>
                         </div>
@@ -265,11 +506,11 @@
                     <!-- Right Section - Profile Information -->
                     <div class="profile-right">
                         <h2 class="profile-section-title">Profile Information:</h2>
-                        
+
                         <div class="profile-info-grid">
                             <div class="profile-field">
                                 <label class="profile-label">Username:</label>
-                                <span class="profile-value">patient01</span>
+                                <span class="profile-value">${patient.accountName}</span>
                             </div>
 
                             <div class="profile-field">
@@ -279,43 +520,43 @@
 
                             <div class="profile-field">
                                 <label class="profile-label">First name:</label>
-                                <span class="profile-value">Minh</span>
+                                <span class="profile-value">${patient.firstName}</span>
                             </div>
 
                             <div class="profile-field">
                                 <label class="profile-label">Last name:</label>
-                                <span class="profile-value">Khang</span>
+                                <span class="profile-value">${patient.lastName}</span>
                             </div>
 
                             <div class="profile-field">
                                 <label class="profile-label">Phone number:</label>
-                                <span class="profile-value">0901234567</span>
+                                <span class="profile-value">${patient.phoneNumber}</span>
                             </div>
 
                             <div class="profile-field">
                                 <label class="profile-label">Email:</label>
-                                <span class="profile-value">minhkhang@example.com</span>
+                                <span class="profile-value">${patient.email}</span>
                             </div>
 
                             <div class="profile-field full-width">
                                 <label class="profile-label">Address:</label>
-                                <span class="profile-value">123 Main Street, District 1, Ho Chi Minh City</span>
+                                <span class="profile-value">${patient.userAddress}</span>
                             </div>
 
                             <div class="profile-field">
                                 <label class="profile-label">DOB:</label>
-                                <span class="profile-value">1999-01-15</span>
+                                <span class="profile-value"><fmt:formatDate value="${patient.dob}" pattern="yyyy-MM-dd"/></span>
                             </div>
 
                             <div class="profile-field">
                                 <label class="profile-label">Sex:</label>
-                                <span class="profile-value">Male</span>
+                                <span class="profile-value">${patient.gender ? 'Male' : 'Female'}</span>
                             </div>
                         </div>
 
                         <!-- Actions -->
                         <div class="profile-actions">
-                            <a href="${pageContext.request.contextPath}/edit-profile" class="btn-edit-profile">
+                            <a href="${pageContext.request.contextPath}/profile?action=edit" class="btn-edit-profile">
                                 <i class="fas fa-edit"></i> Edit
                             </a>
                         </div>
@@ -324,21 +565,283 @@
             </div>
         </main>
 
+        <!-- Change Password Modal -->
+        <div id="changePasswordModal" class="modal-overlay">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title">
+                        <i class="fas fa-key"></i> Change Password
+                    </h3>
+                    <button type="button" class="modal-close" id="closeModalBtn">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+
+                <form id="changePasswordForm" action="${pageContext.request.contextPath}/profile" method="POST">
+                    <input type="hidden" name="action" value="changePassword">
+
+                    <div class="modal-body">
+                        <!-- Error Messages -->
+                        <div id="errorContainer" class="error-messages" style="display: none;"></div>
+
+                        <!-- Success Message -->
+                        <c:if test="${not empty successMessage}">
+                            <div class="success-message">
+                                <i class="fas fa-check-circle"></i> ${successMessage}
+                            </div>
+                        </c:if>
+
+                        <!-- Current Password -->
+                        <div class="form-group">
+                            <label for="currentPassword" class="form-label required">Current Password</label>
+                            <input type="password"
+                                   id="currentPassword"
+                                   name="currentPassword"
+                                   class="form-input"
+                                   required
+                                   autocomplete="current-password">
+                        </div>
+
+                        <!-- New Password -->
+                        <div class="form-group">
+                            <label for="newPassword" class="form-label required">New Password</label>
+                            <input type="password"
+                                   id="newPassword"
+                                   name="newPassword"
+                                   class="form-input"
+                                   required
+                                   autocomplete="new-password">
+
+                            <!-- Password Strength Indicator -->
+                            <div class="password-strength">
+                                <div class="strength-bar">
+                                    <div id="strengthBarFill" class="strength-bar-fill"></div>
+                                </div>
+                                <div id="strengthText" class="strength-text"></div>
+                            </div>
+
+                            <!-- Password Requirements -->
+                            <div style="margin-top: 0.75rem; font-size: 0.75rem; color: #64748b;">
+                                <div>Password must contain:</div>
+                                <ul style="margin: 0.25rem 0 0 1.25rem; padding: 0;">
+                                    <li id="req-length">At least 6 characters</li>
+                                    <li id="req-upper">At least 1 uppercase letter</li>
+                                    <li id="req-lower">At least 1 lowercase letter</li>
+                                    <li id="req-special">At least 1 special character (@#$%^&+=!)</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Confirm Password -->
+                        <div class="form-group">
+                            <label for="confirmPassword" class="form-label required">Confirm New Password</label>
+                            <input type="password"
+                                   id="confirmPassword"
+                                   name="confirmPassword"
+                                   class="form-input"
+                                   required
+                                   autocomplete="new-password">
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn-modal btn-cancel" id="cancelBtn">Cancel</button>
+                        <button type="submit" class="btn-modal btn-submit" id="submitBtn">Change Password</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
         <!-- Bootstrap JS -->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
         <script>
+            // Modal Controls
+            const modal = document.getElementById('changePasswordModal');
+            const openModalBtn = document.getElementById('changePasswordBtn');
+            const closeModalBtn = document.getElementById('closeModalBtn');
+            const cancelBtn = document.getElementById('cancelBtn');
+
+            openModalBtn.addEventListener('click', () => {
+                modal.classList.add('active');
+            });
+
+            closeModalBtn.addEventListener('click', () => {
+                modal.classList.remove('active');
+                resetForm();
+            });
+
+            cancelBtn.addEventListener('click', () => {
+                modal.classList.remove('active');
+                resetForm();
+            });
+
+            // Close modal when clicking outside
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.classList.remove('active');
+                    resetForm();
+                }
+            });
+
+            // Password Strength Checker
+            const newPasswordInput = document.getElementById('newPassword');
+            const strengthBarFill = document.getElementById('strengthBarFill');
+            const strengthText = document.getElementById('strengthText');
+            const reqLength = document.getElementById('req-length');
+            const reqUpper = document.getElementById('req-upper');
+            const reqLower = document.getElementById('req-lower');
+            const reqSpecial = document.getElementById('req-special');
+
+            newPasswordInput.addEventListener('input', function () {
+                const password = this.value;
+                let strength = 0;
+
+                // Check requirements
+                const hasLength = password.length >= 6;
+                const hasUpper = /[A-Z]/.test(password);
+                const hasLower = /[a-z]/.test(password);
+                const hasSpecial = /[@#$%^&+=!]/.test(password);
+
+                // Update requirement indicators
+                updateRequirement(reqLength, hasLength);
+                updateRequirement(reqUpper, hasUpper);
+                updateRequirement(reqLower, hasLower);
+                updateRequirement(reqSpecial, hasSpecial);
+
+                // Calculate strength
+                if (hasLength)
+                    strength++;
+                if (hasUpper)
+                    strength++;
+                if (hasLower)
+                    strength++;
+                if (hasSpecial)
+                    strength++;
+
+                // Update strength bar
+                strengthBarFill.className = 'strength-bar-fill';
+                strengthText.className = 'strength-text';
+
+                if (password.length === 0) {
+                    strengthBarFill.style.width = '0%';
+                    strengthText.textContent = '';
+                } else if (strength <= 2) {
+                    strengthBarFill.classList.add('weak');
+                    strengthText.classList.add('weak');
+                    strengthText.textContent = 'Weak password';
+                } else if (strength === 3) {
+                    strengthBarFill.classList.add('medium');
+                    strengthText.classList.add('medium');
+                    strengthText.textContent = 'Medium password';
+                } else {
+                    strengthBarFill.classList.add('strong');
+                    strengthText.classList.add('strong');
+                    strengthText.textContent = 'Strong password';
+                }
+            });
+
+            function updateRequirement(element, isMet) {
+                if (isMet) {
+                    element.style.color = '#10b981';
+                    element.innerHTML = '<i class="fas fa-check"></i> ' + element.textContent.replace('✓ ', '').replace('✗ ', '');
+                } else {
+                    element.style.color = '#ef4444';
+                    element.innerHTML = '<i class="fas fa-times"></i> ' + element.textContent.replace('✓ ', '').replace('✗ ', '');
+                }
+            }
+
+            // Form Validation
+            const form = document.getElementById('changePasswordForm');
+            const errorContainer = document.getElementById('errorContainer');
+            const confirmPasswordInput = document.getElementById('confirmPassword');
+            const submitBtn = document.getElementById('submitBtn');
+
+            form.addEventListener('submit', function (e) {
+                const errors = [];
+                const currentPassword = document.getElementById('currentPassword').value;
+                const newPassword = newPasswordInput.value;
+                const confirmPassword = confirmPasswordInput.value;
+
+                // Validate current password
+                if (!currentPassword) {
+                    errors.push('Current password is required');
+                }
+
+                // Validate new password strength
+                if (newPassword.length < 6) {
+                    errors.push('Password must be at least 6 characters');
+                }
+                if (!/[A-Z]/.test(newPassword)) {
+                    errors.push('Password must contain at least 1 uppercase letter');
+                }
+                if (!/[a-z]/.test(newPassword)) {
+                    errors.push('Password must contain at least 1 lowercase letter');
+                }
+                if (!/[@#$%^&+=!]/.test(newPassword)) {
+                    errors.push('Password must contain at least 1 special character (@#$%^&+=!)');
+                }
+                if (/\s/.test(newPassword)) {
+                    errors.push('Password must not contain spaces');
+                }
+
+                // Validate password match
+                if (newPassword !== confirmPassword) {
+                    errors.push('New password and confirmation do not match');
+                }
+
+                // Validate new password different from current
+                if (currentPassword === newPassword) {
+                    errors.push('New password must be different from current password');
+                }
+
+                if (errors.length > 0) {
+                    e.preventDefault();
+                    displayErrors(errors);
+                } else {
+                    errorContainer.style.display = 'none';
+                }
+            });
+
+            function displayErrors(errors) {
+                errorContainer.innerHTML = errors.map(error =>
+                        `<div class="error-message"><i class="fas fa-exclamation-circle"></i> ${error}</div>`
+                ).join('');
+                errorContainer.style.display = 'block';
+            }
+
+            function resetForm() {
+                form.reset();
+                errorContainer.style.display = 'none';
+                strengthBarFill.style.width = '0%';
+                strengthText.textContent = '';
+
+                // Reset requirement colors
+                [reqLength, reqUpper, reqLower, reqSpecial].forEach(el => {
+                    el.style.color = '#64748b';
+                    el.innerHTML = el.textContent.replace('✓ ', '').replace('✗ ', '');
+                });
+            }
+
             // Avatar upload preview
-            document.getElementById('avatarUpload').addEventListener('change', function(e) {
+            document.getElementById('avatarUpload').addEventListener('change', function (e) {
                 const file = e.target.files[0];
                 if (file) {
                     const reader = new FileReader();
-                    reader.onload = function(e) {
+                    reader.onload = function (e) {
                         document.getElementById('profileAvatar').src = e.target.result;
                     };
                     reader.readAsDataURL(file);
                 }
             });
+
+            // Auto-open modal if there's a password change error
+            <c:if test="${not empty passwordError}">
+            window.addEventListener('DOMContentLoaded', function () {
+                modal.classList.add('active');
+                displayErrors(['${passwordError}']);
+            });
+            </c:if>
         </script>
     </body>
 </html>

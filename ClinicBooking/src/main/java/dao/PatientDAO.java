@@ -183,7 +183,8 @@ public class PatientDAO extends DBContext {
                 patient.setGender(rs.getBoolean("Gender"));
                 patient.setUserAddress(rs.getString("UserAddress"));
                 patient.setPhoneNumber(rs.getString("PhoneNumber"));
-                patient.setEmail(rs.getString("Email"));;
+                patient.setEmail(rs.getString("Email"));
+                ;
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -192,5 +193,93 @@ public class PatientDAO extends DBContext {
         }
 
         return patient;
+    }
+
+    /**
+     * Check if email already exists for another patient
+     *
+     * @param email Email to check
+     * @param excludePatientId Patient ID to exclude from check (for update)
+     * @return true if email exists for another patient
+     */
+    public boolean isEmailExistForOtherPatient(String email, int excludePatientId) {
+        String sql = "SELECT COUNT(*) as count FROM Patient "
+                + "WHERE Email = ? AND PatientID != ? AND Hidden = 0";
+        ResultSet rs = null;
+        try {
+            Object[] params = {email, excludePatientId};
+            rs = executeSelectQuery(sql, params);
+
+            if (rs.next()) {
+                return rs.getInt("count") > 0;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            closeResources(rs);
+        }
+
+        return false;
+    }
+
+    /**
+     * Update patient profile information
+     *
+     * @param patient Patient object with updated data
+     * @return true if successful
+     */
+    public boolean updatePatientProfile(PatientDTO patient) {
+        String sql = "UPDATE Patient SET FirstName = ?, LastName = ?, PhoneNumber = ?, "
+                + "Email = ?, DOB = ?, Gender = ?, UserAddress = ?, Avatar = ? "
+                + "WHERE PatientID = ?";
+
+        Object[] params = {
+            patient.getFirstName(),
+            patient.getLastName(),
+            patient.getPhoneNumber(),
+            patient.getEmail(),
+            patient.getDob(),
+            patient.isGender(),
+            patient.getUserAddress(),
+            patient.getAvatar(),
+            patient.getPatientID()
+        };
+        return executeQuery(sql, params) > 0;
+    }
+
+    /**
+     * Update patient password
+     *
+     * @param patientId Patient ID
+     * @param currentPassword Current password (for verification)
+     * @param newPassword New password (will be hashed)
+     * @return true if successful, false if current password incorrect or update failed
+     */
+    public boolean updatePatientPassword(int patientId, String currentPassword, String newPassword) {
+        // First verify current password
+        String sqlVerify = "SELECT COUNT(*) as count FROM Patient "
+                + "WHERE PatientID = ? AND AccountPassword = ? AND Hidden = 0";
+        ResultSet rs = null;
+
+        try {
+            Object[] paramsVerify = {patientId, hashSha256(currentPassword)};
+            rs = executeSelectQuery(sqlVerify, paramsVerify);
+
+            if (rs.next() && rs.getInt("count") > 0) {
+                // Current password is correct, update to new password
+                closeResources(rs);
+
+                String sqlUpdate = "UPDATE Patient SET AccountPassword = ? WHERE PatientID = ?";
+                Object[] paramsUpdate = {hashSha256(newPassword), patientId};
+
+                return executeQuery(sqlUpdate, paramsUpdate) > 0;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            closeResources(rs);
+        }
+
+        return false;
     }
 }

@@ -5,13 +5,15 @@
 package constants;
 
 /**
+ * Avatar path constants (Patient only)
  *
  * @author Nguyen Minh Khang - CE190728
  */
 public class AvatarConstants {
 
-    // Avatar path configuration
+    // Default avatar when user has no avatar
     public static final String DEFAULT_AVATAR = "assests/img/0.png";
-    public static final String AVATAR_BASE_PATH = "assests/img/";
-    public static final String AVATAR_PATH_PREFIX = "assests/";
+
+    // Patient avatar upload directory
+    public static final String PATIENT_AVATAR_DIR = "assests/avatar/patient";
 }
