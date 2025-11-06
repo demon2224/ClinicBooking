@@ -32,8 +32,12 @@
         <servlet-class>controller.phamacist.PharmacistManagePrescriptionController</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>LoginController</servlet-name>
-        <servlet-class>controller.authentication.LoginController</servlet-class>
+        <servlet-name>PatientLoginController</servlet-name>
+        <servlet-class>controller.authentication.PatientLoginController</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>StaffLoginController</servlet-name>
+        <servlet-class>controller.authentication.StaffLoginController</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>ManageMyPatientPrescriptionController</servlet-name>
@@ -76,8 +80,12 @@
         <url-pattern>/pharmacist-manage-prescription</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>LoginController</servlet-name>
-        <url-pattern>/login</url-pattern>
+        <servlet-name>PatientLoginController</servlet-name>
+        <url-pattern>/patient-login</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>StaffLoginController</servlet-name>
+        <url-pattern>/staff-login</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>ManageMyPatientPrescriptionController</servlet-name>

@@ -4,11 +4,15 @@
  */
 package dao;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import model.PatientDTO;
 import utils.DBContext;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Patient Data Access Object
@@ -67,7 +71,7 @@ public class PatientDAO extends DBContext {
         List<PatientDTO> patients = new ArrayList<>();
         String sql = "SELECT PatientID, AccountName, FirstName, LastName, PhoneNumber, Email "
                 + "FROM Patient ORDER BY PatientID";
-        
+
         ResultSet rs = null;
         try {
             rs = executeSelectQuery(sql, null);
@@ -130,5 +134,63 @@ public class PatientDAO extends DBContext {
         }
 
         return null;
+    }
+
+    private String hashSha256(String raw) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            byte[] mess = md.digest(raw.getBytes());
+
+            StringBuilder sb = new StringBuilder();
+            for (byte b : mess) {
+                sb.append(String.format("%02x", b));
+            }
+
+            return sb.toString();
+        } catch (NoSuchAlgorithmException ex) {
+            Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, ex);
+            return "";
+        }
+    }
+
+    public PatientDTO getPatientByUsernameAndPassword(String username, String password) {
+
+        String query = "SELECT pt.PatientID, pt.AccountName, pt.AccountPassword, pt.DayCreated, pt.Avatar,\n"
+                + "	pt.Bio, pt.FirstName, pt.LastName, pt.DOB, pt.Gender,\n"
+                + "	pt.UserAddress, pt.PhoneNumber, pt.Email\n"
+                + "FROM [dbo].[Patient] pt\n"
+                + "WHERE pt.Hidden = 0\n"
+                + "AND pt.AccountName = ?\n"
+                + "AND pt.AccountPassword = ?;";
+        Object[] params = {username, hashSha256(password)};
+        ResultSet rs = null;
+        PatientDTO patient = null;
+        try {
+            rs = executeSelectQuery(query, params);
+
+            if (rs.next()) {
+                patient = new PatientDTO();
+
+                patient.setPatientID(rs.getInt("PatientID"));
+                patient.setAccountName(rs.getString("AccountName"));
+                patient.setAccountPassword(rs.getString("AccountPassword"));
+                patient.setDayCreated(rs.getTimestamp("DayCreated"));
+                patient.setAvatar(rs.getString("Avatar"));
+                patient.setBio(rs.getString("Bio"));
+                patient.setFirstName(rs.getString("FirstName"));
+                patient.setLastName(rs.getString("LastName"));
+                patient.setDob(rs.getTimestamp("DOB"));
+                patient.setGender(rs.getBoolean("Gender"));
+                patient.setUserAddress(rs.getString("UserAddress"));
+                patient.setPhoneNumber(rs.getString("PhoneNumber"));
+                patient.setEmail(rs.getString("Email"));;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            closeResources(rs);
+        }
+
+        return patient;
     }
 }
