@@ -43,6 +43,14 @@
         <servlet-name>ManageMyPatientPrescriptionController</servlet-name>
         <servlet-class>controller.doctor.ManageMyPatientPrescriptionController</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>PatientLogoutController</servlet-name>
+        <servlet-class>controller.authentication.PatientLogoutController</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>StaffLogoutController</servlet-name>
+        <servlet-class>controller.authentication.StaffLogoutController</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>PharmacistDashboardController</servlet-name>
         <url-pattern>/pharmacist-dashboard</url-pattern>
@@ -90,6 +98,14 @@
     <servlet-mapping>
         <servlet-name>ManageMyPatientPrescriptionController</servlet-name>
         <url-pattern>/manage-my-patient-prescription</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>PatientLogoutController</servlet-name>
+        <url-pattern>/patient-logout</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>StaffLogoutController</servlet-name>
+        <url-pattern>/staff-logout</url-pattern>
     </servlet-mapping>
     <welcome-file-list>
         <welcome-file>index.jsp</welcome-file>
