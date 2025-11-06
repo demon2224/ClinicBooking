@@ -105,72 +105,48 @@ public class PrescriptionDAO extends DBContext {
         return prescriptionItemList;
     }
 
-//    public List<Prescription> getPatientPrescriptionByDoctorId(int doctorId) {
-//        List<Prescription> list = new ArrayList<>();
-//        String sql = "SELECT TOP 5\n"
-//                + "    p.FirstName + ' ' + p.LastName AS PatientName,\n"
-//                + "    a.DateBegin AS AppointmentDate,\n"
-//                + "    pr.Note AS PrescriptionNote,\n"
-//                + "    ps.PrescriptionStatusName AS PrescriptionStatus,\n"
-//                + "    pr.DateCreate AS PrescriptionDate\n"
-//                + "FROM Prescription pr\n"
-//                + "INNER JOIN Appointment a ON pr.AppointmentID = a.AppointmentID\n"
-//                + "INNER JOIN [User] u ON a.UserID = u.UserID\n"
-//                + "INNER JOIN [Profile] p ON p.UserProfileID = u.UserID\n"
-//                + "INNER JOIN PrescriptionStatus ps ON pr.PrescriptionStatusID = ps.PrescriptionStatusID\n"
-//                + "WHERE a.DoctorID = ?\n"
-//                + "ORDER BY pr.DateCreate DESC;";
-//        try {
-//            Object[] params = {doctorId};
-//            ResultSet rs = executeSelectQuery(sql, params);
-//            if (rs != null) {
-//                while (rs.next()) {
-//                    Prescription prescription = new Prescription(rs.getString("PatientName"), rs.getTimestamp("AppointmentDate"), rs.getString("PrescriptionNote"), rs.getString("PrescriptionStatus"), rs.getTimestamp("PrescriptionDate"));
-//                    list.add(prescription);
-//                }
-//                closeResources(rs);
-//            }
-//        } catch (SQLException ex) {
-//            Logger.getLogger(DoctorDAO.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-//
-//        return list;
-//    }
-//
-//    public List<Prescription> getPrescriptionByDoctorIdAndMedicalRecordID(int medicalRecordID, int doctorId) {
-//        List<Prescription> list = new ArrayList<>();
-//        String sql = "SELECT \n"
-//                + "    mr.MedicalRecordID,\n"
-//                + "    mi.MedicineName,\n"
-//                + "    mt.MedicineTypeName,\n"
-//                + "    pi.Dosage,\n"
-//                + "    pi.Instruction,\n"
-//                + "    mi.Price\n"
-//                + "FROM PrescriptionItem pi\n"
-//                + "INNER JOIN Medicine mi ON pi.MedicineID = mi.MedicineID\n"
-//                + "INNER JOIN MedicineType mt ON mi.MedicineID = mt.MedicineTypeID\n"
-//                + "INNER JOIN Prescription p on p.PrescriptionID = pi.PrescriptionID\n"
-//                + "INNER JOIN Appointment a on a.AppointmentID = p.AppointmentID\n"
-//                + "INNER JOIN [User] u ON a.UserID = u.UserID\n"
-//                + "INNER JOIN [Profile] pr ON pr.UserProfileID = u.UserID\n"
-//                + "INNER JOIN MedicalRecord mr on mr.AppointmentID = p.AppointmentID\n"
-//                + "Where MedicalRecordID = ? and DoctorID = ?";
-//        try {
-//            Object[] params = {medicalRecordID, doctorId};
-//            ResultSet rs = executeSelectQuery(sql, params);
-//            if (rs != null) {
-//                while (rs.next()) {
-//                    Prescription prescription = new Prescription(rs.getString("MedicineName"));
-//                    list.add(prescription);
-//                }
-//                closeResources(rs);
-//            }
-//        } catch (SQLException ex) {
-//            Logger.getLogger(DoctorDAO.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-//
-//        return list;
-//    }
+    /**
+     * Lấy danh sách đơn thuốc của bác sĩ
+     */
+    public List<PrescriptionDTO> getPatientPrescriptionListByDoctorID(int doctorID) {
+        List<PrescriptionDTO> prescriptions = new ArrayList<>();
+        String sql = "SELECT p.PrescriptionID, p.Note, p.DateCreate, p.PrescriptionStatus, "
+                + "pa.FirstName, pa.LastName, a.DateBegin "
+                + "FROM Prescription p "
+                + "JOIN MedicalRecord m ON m.PrescriptionID = p.PrescriptionID "
+                + "JOIN Appointment a ON a.AppointmentID = m.AppointmentID "
+                + "JOIN Patient pa ON pa.PatientID = a.PatientID "
+                + "WHERE a.DoctorID = ? "
+                + "ORDER BY p.DateCreate DESC";
+        Object[] params = {doctorID};
+        ResultSet rs = executeSelectQuery(sql, params);
+        try {
+            while (rs.next()) {
+                PrescriptionDTO pres = new PrescriptionDTO();
+                pres.setPrescriptionID(rs.getInt("PrescriptionID"));
+                pres.setNote(rs.getString("Note"));
+                pres.setDateCreate(rs.getTimestamp("DateCreate"));
+                pres.setPrescriptionStatus(rs.getString("PrescriptionStatus"));
+
+                PatientDTO patient = new PatientDTO();
+                patient.setFirstName(rs.getString("FirstName"));
+                patient.setLastName(rs.getString("LastName"));
+
+                AppointmentDTO appointment = new AppointmentDTO();
+                appointment.setDateBegin(rs.getTimestamp("DateBegin"));
+                appointment.setPatientID(patient);
+
+                pres.setAppointmentID(appointment);
+                prescriptions.add(pres);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(PrescriptionDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            closeResources(rs);
+        }
+        return prescriptions;
+    }
+
     public List<PrescriptionDTO> getAllActivePrescriptions() {
 
         String query = "SELECT p.PrescriptionID, p.PrescriptionStatus, p.DateCreate, st.FirstName as DoctorFirstName, st.LastName as DoctorLastName, pt.FirstName as PatientFirstName, pt.LastName as PatientLastName\n"
@@ -406,6 +382,28 @@ public class PrescriptionDAO extends DBContext {
         closeResources(null);
 
         return rs != 0;
+    }
+
+    /**
+     * Count total prescriptions by doctor
+     */
+    public int countPrescriptionsByDoctor(int doctorId) {
+        String sql = "SELECT COUNT(*) AS Total FROM Prescription p "
+                + "JOIN MedicalRecord m ON p.PrescriptionID = m.PrescriptionID "
+                + "JOIN Appointment a ON a.AppointmentID = m.AppointmentID "
+                + "WHERE a.DoctorID = ?";
+        Object[] params = {doctorId};
+        ResultSet rs = executeSelectQuery(sql, params);
+        try {
+            if (rs.next()) {
+                return rs.getInt("Total");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            closeResources(rs);
+        }
+        return 0;
     }
 
 }

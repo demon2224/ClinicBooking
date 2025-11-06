@@ -4,20 +4,43 @@
  */
 package controller.doctor;
 
+import dao.AppointmentDAO;
+import dao.MedicalRecordDAO;
+import dao.PrescriptionDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.util.List;
+import model.AppointmentDTO;
 import model.DoctorDTO;
+import model.MedicalRecordDTO;
+import model.PrescriptionDTO;
 
 /**
  *
  * @author Le Thien Tri - CE191249
  */
 public class DoctorDashboardController extends HttpServlet {
+
+    private AppointmentDAO appointmentDAO;
+    private MedicalRecordDAO medicalRecordDAO;
+    private PrescriptionDAO prescriptionDAO;
+
+    /**
+     * Initialize all the necessary DAO using in this controller.
+     *
+     * @throws ServletException
+     */
+    @Override
+    public void init() throws ServletException {
+        appointmentDAO = new AppointmentDAO();
+        medicalRecordDAO = new MedicalRecordDAO();
+        prescriptionDAO = new PrescriptionDAO();
+    }
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -58,7 +81,33 @@ public class DoctorDashboardController extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 //        processRequest(request, response);
-        int doctorID = ((DoctorDTO) request.getSession().getAttribute("doctor")).getDoctorID();
+        HttpSession session = request.getSession();
+        DoctorDTO doctor = (DoctorDTO) session.getAttribute("doctor");
+        if (doctor == null) {
+            response.sendRedirect(request.getContextPath() + "/login");
+            return;
+        }
+
+        int doctorID = doctor.getDoctorID();
+
+        // 🔹 Dữ liệu chi tiết
+        List<AppointmentDTO> myPatientAppointmentList = appointmentDAO.getPatientAppointmentOfDoctorByID(doctorID);
+        List<MedicalRecordDTO> myPatientMedicalRecordList = medicalRecordDAO.getPatientMedicalRecordListByDoctorID(doctorID);
+        List<PrescriptionDTO> myPatientPrescriptionList = prescriptionDAO.getPatientPrescriptionListByDoctorID(doctorID);
+
+        // 🔹 Thống kê
+        int todayAppointmentCount = appointmentDAO.countTodayAppointmentsByDoctor(doctorID);
+        int totalMedicalRecordCount = medicalRecordDAO.countMedicalRecordsByDoctor(doctorID);
+        int totalPrescriptionCount = prescriptionDAO.countPrescriptionsByDoctor(doctorID);
+
+        // 🔹 Gửi sang JSP
+        request.setAttribute("myPatientAppointmentList", myPatientAppointmentList);
+        request.setAttribute("myPatientMedicalRecordList", myPatientMedicalRecordList);
+        request.setAttribute("myPatientPrescriptionList", myPatientPrescriptionList);
+
+        request.setAttribute("todayAppointmentCount", todayAppointmentCount);
+        request.setAttribute("totalMedicalRecordCount", totalMedicalRecordCount);
+        request.setAttribute("totalPrescriptionCount", totalPrescriptionCount);
 
         request.getRequestDispatcher("/WEB-INF/doctor/DoctorDashboard.jsp").forward(request, response);
     }

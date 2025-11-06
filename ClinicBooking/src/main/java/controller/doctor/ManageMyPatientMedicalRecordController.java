@@ -4,6 +4,7 @@
  */
 package controller.doctor;
 
+import dao.AppointmentDAO;
 import dao.MedicalRecordDAO;
 import dao.PrescriptionDAO;
 import java.io.IOException;
@@ -13,6 +14,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
+import model.AppointmentDTO;
 import model.DoctorDTO;
 import model.MedicalRecordDTO;
 import model.PrescriptionDTO;
@@ -26,6 +28,7 @@ public class ManageMyPatientMedicalRecordController extends HttpServlet {
 
     private MedicalRecordDAO medicalRecordDAO;
     private PrescriptionDAO prescriptionDAO;
+    private AppointmentDAO appointmentDAO;
 
     /**
      * Initialize all the necessary DAO using in this controller.
@@ -36,6 +39,7 @@ public class ManageMyPatientMedicalRecordController extends HttpServlet {
     public void init() throws ServletException {
         medicalRecordDAO = new MedicalRecordDAO();
         prescriptionDAO = new PrescriptionDAO();
+        appointmentDAO = new AppointmentDAO();
     }
 
     /**
@@ -77,19 +81,26 @@ public class ManageMyPatientMedicalRecordController extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 //        processRequest(request, response);
+        int doctorID = ((DoctorDTO) request.getSession().getAttribute("doctor")).getDoctorID();
 
+        String action = request.getParameter("action");
         try {
-            int doctorID = ((DoctorDTO) request.getSession().getAttribute("doctor")).getDoctorID();
+            switch (action) {
 
-            String action = request.getParameter("action");
-            if ((action == null) || (action.isEmpty())) {
-                showMyPatientMedicalRecordList(request, response, doctorID);
+                case "detail":
+                    showMyPatientMedicalRecordDetail(request, response, doctorID);
+                    break;
+
+                case "create":
+                    createNewMedicalRecord(request, response, doctorID);
+                    break;
+
+                default:
+                    showMyPatientMedicalRecordList(request, response, doctorID);
+                    break;
             }
-            if (action.equals("detail")) {
-                showMyPatientMedicalRecordDetail(request, response, doctorID);
-            }
-        } catch (Exception ex) {
-            log("Error");
+        } catch (ServletException | IOException | NullPointerException e) {
+            showMyPatientMedicalRecordList(request, response, doctorID);
         }
     }
 
@@ -140,7 +151,28 @@ public class ManageMyPatientMedicalRecordController extends HttpServlet {
             request.getRequestDispatcher("/WEB-INF/doctor/MyPatientMedicalRecordDetail.jsp").forward(request, response);
         } catch (Exception e) {
             response.sendRedirect(request.getContextPath() + "/manage-my-patient-medical-record");
-            log("Erro2");
+        }
+    }
+
+    private void createNewMedicalRecord(HttpServletRequest request, HttpServletResponse response, int doctorID)
+            throws ServletException, IOException {
+        try {
+            int appointmentID = Integer.parseInt(request.getParameter("appointmentID"));
+            AppointmentDTO appointment = appointmentDAO.getPatientAppointmentDetailOfDoctorByID(appointmentID, doctorID);
+
+            if (appointment == null || appointment.getAppointmentID() != appointmentID) {
+                response.sendRedirect(request.getContextPath() + "/manage-my-patient-appointment");
+                return;
+            }
+
+            request.setAttribute("appointment", appointment);
+            request.getRequestDispatcher("/WEB-INF/doctor/CreateMyPatientMedicalRecord.jsp").forward(request, response);
+
+        } catch (NumberFormatException ex) {
+            response.sendRedirect(request.getContextPath() + "/manage-my-patient-appointment");
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.sendRedirect(request.getContextPath() + "/manage-my-patient-medical-record");
         }
     }
 
@@ -155,7 +187,50 @@ public class ManageMyPatientMedicalRecordController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+//        processRequest(request, response);
+        int doctorID = ((DoctorDTO) request.getSession().getAttribute("doctor")).getDoctorID();
+        String action = request.getParameter("action");
+
+        if ("create".equals(action)) {
+            try {
+                int appointmentID = Integer.parseInt(request.getParameter("appointmentID"));
+                String symptoms = request.getParameter("symptoms");
+                String diagnosis = request.getParameter("diagnosis");
+                String note = request.getParameter("note");
+
+                // 🔍 Validate required fields (backend check)
+                if (symptoms == null || symptoms.trim().isEmpty()
+                        || diagnosis == null || diagnosis.trim().isEmpty()
+                        || note == null || note.trim().isEmpty()) {
+
+                    AppointmentDTO appointment = appointmentDAO.getPatientAppointmentDetailOfDoctorByID(appointmentID, doctorID);
+                    request.setAttribute("appointment", appointment);
+                    request.setAttribute("error", " All fields (Symptoms, Diagnosis, and Note) are required.");
+                    request.getRequestDispatcher("/WEB-INF/doctor/CreateMyPatientMedicalRecord.jsp").forward(request, response);
+                    return;
+                }
+
+                boolean success = medicalRecordDAO.createMedicalRecord(appointmentID, symptoms.trim(), diagnosis.trim(), note.trim());
+
+                if (success) {
+                    response.sendRedirect(request.getContextPath() + "/manage-my-patient-medical-record");
+                } else {
+                    AppointmentDTO appointment = appointmentDAO.getPatientAppointmentDetailOfDoctorByID(appointmentID, doctorID);
+                    request.setAttribute("appointment", appointment);
+                    request.setAttribute("error", " Failed to create medical record. Please try again.");
+                    request.getRequestDispatcher("/WEB-INF/doctor/CreateMyPatientMedicalRecord.jsp").forward(request, response);
+                }
+
+            } catch (NumberFormatException ex) {
+                response.sendRedirect(request.getContextPath() + "/manage-my-patient-appointment");
+            } catch (Exception e) {
+                e.printStackTrace();
+                response.sendRedirect(request.getContextPath() + "/manage-my-patient-medical-record");
+            }
+
+        } else {
+            doGet(request, response);
+        }
     }
 
     /**

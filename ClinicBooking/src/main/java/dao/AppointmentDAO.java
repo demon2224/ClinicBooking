@@ -47,7 +47,8 @@ public class AppointmentDAO extends DBContext {
                 + "JOIN Staff s on s.StaffID = d.StaffID\n"
                 + "JOIN Patient p on p.PatientID = a.PatientID\n"
                 + "Where d.DoctorID = ? "
-                + "and a.AppointmentStatus = 'Approved'";
+                + "and a.AppointmentStatus = 'Approved'"
+                + "ORDER BY ABS(DATEDIFF(SECOND, a.DateBegin, GETDATE()))";
 //                + "and CAST (a.DateBegin as DATE) = CAST (GETDATE() as DATE)";
         Object[] params = {doctorID};
         ResultSet rs = executeSelectQuery(sql, params);
@@ -334,22 +335,22 @@ public class AppointmentDAO extends DBContext {
      * Get appointment info with doctor and patient info to view
      */
     public AppointmentDTO getAppointmentByIdFull(int appointmentId) {
-    String sql = "SELECT "
-            + "a.AppointmentID, a.PatientID, a.DoctorID, a.AppointmentStatus, "
-            + "a.DateCreate, a.DateBegin, a.DateEnd, a.Note, "
-            + "p.FirstName AS PatientFirstName, p.LastName AS PatientLastName, "
-            + "p.Email AS PatientEmail, p.PhoneNumber AS PatientPhone, "
-            + "p.DOB AS PatientDOB, p.UserAddress AS PatientAddress, p.Gender AS PatientGender, "
-            + "s.StaffID, s.FirstName AS StaffFirstName, s.LastName AS StaffLastName, "
-            + "s.Email AS StaffEmail, s.PhoneNumber AS StaffPhone, "
-            + "s.Gender AS StaffGender, s.UserAddress AS StaffAddress, "
-            + "sp.SpecialtyName, d.YearExperience "
-            + "FROM Appointment a "
-            + "LEFT JOIN Patient p ON a.PatientID = p.PatientID "
-            + "LEFT JOIN Doctor d ON a.DoctorID = d.DoctorID "
-            + "LEFT JOIN Staff s ON d.StaffID = s.StaffID "
-            + "LEFT JOIN Specialty sp ON d.SpecialtyID = sp.SpecialtyID "
-            + "WHERE a.AppointmentID = ?";
+        String sql = "SELECT "
+                + "a.AppointmentID, a.PatientID, a.DoctorID, a.AppointmentStatus, "
+                + "a.DateCreate, a.DateBegin, a.DateEnd, a.Note, "
+                + "p.FirstName AS PatientFirstName, p.LastName AS PatientLastName, "
+                + "p.Email AS PatientEmail, p.PhoneNumber AS PatientPhone, "
+                + "p.DOB AS PatientDOB, p.UserAddress AS PatientAddress, p.Gender AS PatientGender, "
+                + "s.StaffID, s.FirstName AS StaffFirstName, s.LastName AS StaffLastName, "
+                + "s.Email AS StaffEmail, s.PhoneNumber AS StaffPhone, "
+                + "s.Gender AS StaffGender, s.UserAddress AS StaffAddress, "
+                + "sp.SpecialtyName, d.YearExperience "
+                + "FROM Appointment a "
+                + "LEFT JOIN Patient p ON a.PatientID = p.PatientID "
+                + "LEFT JOIN Doctor d ON a.DoctorID = d.DoctorID "
+                + "LEFT JOIN Staff s ON d.StaffID = s.StaffID "
+                + "LEFT JOIN Specialty sp ON d.SpecialtyID = sp.SpecialtyID "
+                + "WHERE a.AppointmentID = ?";
 
         ResultSet rs = null;
         try {
@@ -588,7 +589,6 @@ public class AppointmentDAO extends DBContext {
         return appointments;
     }
 
-
     /**
      * Add appointment if patient already exists by phone number or ID. If not,
      * create a new patient and then insert appointment.
@@ -604,7 +604,7 @@ public class AppointmentDAO extends DBContext {
             if (existingPatientIdStr != null && !existingPatientIdStr.isEmpty()) {
                 patientId = Integer.parseInt(existingPatientIdStr);
             } else {
-            // check phonenumber already exsit or not
+                // check phonenumber already exsit or not
                 String sqlCheck = "SELECT PatientID FROM Patient WHERE PhoneNumber = ?";
                 try ( PreparedStatement psCheck = conn.prepareStatement(sqlCheck)) {
                     psCheck.setString(1, phone);
@@ -673,7 +673,6 @@ public class AppointmentDAO extends DBContext {
                 + " WHERE AppointmentID = ? AND "
                 + "(AppointmentStatus = 'Pending' OR AppointmentStatus = 'Approved')";
 
-
         Object[] params = {appointmentId};
         int rowsAffected = executeQuery(sql, params);
         return rowsAffected > 0;
@@ -692,7 +691,7 @@ public class AppointmentDAO extends DBContext {
                 + "ELSE AppointmentStatus "
                 + "END "
                 + "WHERE AppointmentID = ?";
-        
+
         Object[] params = {appointmentId};
         int rowsAffected = executeQuery(sql, params);
         return rowsAffected > 0;
@@ -711,7 +710,7 @@ public class AppointmentDAO extends DBContext {
                 + "a.DoctorID, "
                 + "a.AppointmentStatus, "
                 + "a.DateCreate, "
-                + "a.DateBegin, "   
+                + "a.DateBegin, "
                 + "a.DateEnd, "
                 + "a.Note, "
                 + "CONCAT(ds.FirstName, ' ', ds.LastName) AS DoctorName, "
@@ -839,10 +838,10 @@ public class AppointmentDAO extends DBContext {
 
             while (rs.next()) {
                 Timestamp existingAppointment = rs.getTimestamp("DateBegin");
-                
+
                 // Calculate absolute difference in milliseconds
                 long timeDifferenceMs = Math.abs(existingAppointment.getTime() - newAppointmentTime.getTime());
-                
+
                 // Convert to hours (1 hour = 3,600,000 milliseconds)
                 long hoursDifference = timeDifferenceMs / (60 * 60 * 1000);
 
@@ -921,10 +920,10 @@ public class AppointmentDAO extends DBContext {
 
             while (rs.next()) {
                 Timestamp existingAppointment = rs.getTimestamp("DateBegin");
-                
+
                 // Calculate absolute difference in milliseconds
                 long timeDifferenceMs = Math.abs(existingAppointment.getTime() - newAppointmentTime.getTime());
-                
+
                 // Convert to minutes (1 minute = 60,000 milliseconds)
                 long minutesDifference = timeDifferenceMs / (60 * 1000);
 
@@ -942,6 +941,27 @@ public class AppointmentDAO extends DBContext {
         } finally {
             closeResources(rs);
         }
+    }
+
+    /**
+     * Count today's appointments for a doctor
+     */
+    public int countTodayAppointmentsByDoctor(int doctorId) {
+        String sql = "SELECT COUNT(*) AS Total FROM Appointment "
+                + "WHERE DoctorID = ? AND CAST(DateBegin AS DATE) = CAST(GETDATE() AS DATE) "
+                + "AND AppointmentStatus IN ('Approved', 'Pending')";
+        Object[] params = {doctorId};
+        ResultSet rs = executeSelectQuery(sql, params);
+        try {
+            if (rs.next()) {
+                return rs.getInt("Total");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            closeResources(rs);
+        }
+        return 0;
     }
 
 }

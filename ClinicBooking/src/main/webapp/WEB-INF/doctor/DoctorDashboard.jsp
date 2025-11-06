@@ -38,183 +38,201 @@
                 margin-left: 260px;
                 padding: 25px;
             }
-            .card {
-                border-radius: 10px;
-            }
-            .table img {
-                border-radius: 50%;
-                width: 40px;
-                height: 40px;
-            }
-            .status-toggle {
-                width: 40px;
-                height: 20px;
-            }
             .navbar {
                 background: white;
                 border-bottom: 1px solid #dee2e6;
             }
-
-            #Logout{
+            #Logout {
                 color: red;
                 border-color: red;
-
             }
-            #Logout:hover{
+            #Logout:hover {
                 background-color: red;
                 color: white;
+            }
+            .badge {
+                font-size: 0.85rem;
+                padding: 6px 10px;
+                border-radius: 8px;
+            }
+            .table th {
+                color: #1B5A90;
+            }
+            .card {
+                border-radius: 10px;
+                box-shadow: 0 2px 5px rgba(0,0,0,0.08);
             }
         </style>
     </head>
     <body>
         <%@include file="../includes/DoctorDashboardSidebar.jsp" %>
 
-        <!-- Main content -->
+        <!-- Main Content -->
         <div class="main-content">
-            <nav class="navbar navbar-light">
-                <div class="container-fluid justify-content-end">
-                    <button class="btn btn-submit" id="Logout" type="submit">Logout</button>
-                </div>
+
+            <!-- Navbar -->
+            <nav class="navbar navbar-light justify-content-between mb-4">
+                <h3 class="fw-bold text-primary mb-0">
+                    <i class="fa-solid fa-user-doctor me-2"></i>Doctor Dashboard
+                </h3>
+                <a href="${pageContext.request.contextPath}/logout" class="btn btn-outline-danger" id="Logout">
+                    <i class="fa-solid fa-right-from-bracket"></i> Logout
+                </a>
             </nav>
 
-            <div class="container-fluid mt-4">
-                <!-- Doctors List -->
-                <div class="card mb-4">
-                    <div class="card-header bg-white">
-                        <h5 class="mb-0">Patient Appointment List</h5>
-                    </div>
-                    <div class="card-body">
-                        <table class="table align-middle">
-                            <thead>
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Email</th>
-                                    <th>Phone</th>
-                                    <th>Note</th>
-                                    <th>Date</th>
-                                    <th>Status</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <c:forEach var="myPatientAppointment" items="${myPatientAppointmentList}">
-                                    <tr>
-                                        <td>${myPatientAppointment.patientName}</td>
-                                        <td>${myPatientAppointment.patientEmail}</td>
-                                        <td>${myPatientAppointment.patientPhone}</td>
-                                        <td>${myPatientAppointment.note}</td>
-                                        <td>
-                                            <fmt:formatDate value="${myPatientAppointment.dateBegin}" pattern="yyyy/MM/dd HH:mm" />
-                                        </td>
-                                        <td>
-                                            <span class="badge
-                                                  <c:choose>
-                                                      <c:when test="${myPatientAppointment.statusName eq 'Pending'}">bg-warning text-dark</c:when>
-                                                      <c:when test="${myPatientAppointment.statusName eq 'Approved'}">bg-primary</c:when>
-                                                      <c:when test="${myPatientAppointment.statusName eq 'Completed'}">bg-success</c:when>
-                                                      <c:when test="${myPatientAppointment.statusName eq 'Canceled'}">bg-danger</c:when>
-                                                      <c:otherwise>bg-secondary</c:otherwise>
-                                                  </c:choose>">
-                                                ${myPatientAppointment.statusName}
-                                            </span>
-                                        </td>
-                                    </tr>
-                                </c:forEach>
-                            </tbody>
-                        </table>
+            <!-- Statistics Cards -->
+            <div class="row mb-4">
+                <div class="col-md-4">
+                    <div class="card text-center p-3 border-0 shadow-sm">
+                        <div class="card-body">
+                            <i class="fa-solid fa-calendar-check fa-2x text-primary mb-2"></i>
+                            <h5 class="fw-bold">${todayAppointmentCount}</h5>
+                            <p class="text-muted mb-0">Today's Appointments</p>
+                        </div>
                     </div>
                 </div>
-
-                <!-- Patients List -->
-                <div class="card mb-4">
-                    <div class="card-header bg-white">
-                        <h5 class="mb-0">Patient Medical Record List</h5>
-                    </div>
-                    <div class="card-body">
-                        <table class="table align-middle">
-                            <thead>
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Diagnosis</th>
-                                    <th>Appointment Date</th>
-                                    <th>Record Create Date</th>   
-                                    <th>Prescription Status</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <c:forEach var="myPatientMedicalRecord" items="${myPatientMedicalRecordList}">
-                                    <tr>
-                                        <td>${myPatientMedicalRecord.patientName}</td>
-                                        <td>${myPatientMedicalRecord.diagnosis}</td>
-                                        <td>
-                                            <fmt:formatDate value="${myPatientMedicalRecord.appointmentDateBegin}" pattern="yyyy/MM/dd HH:mm" />
-                                        </td>
-                                        <td>
-                                            <fmt:formatDate value="${myPatientMedicalRecord.medicalRecordDateCreate}" pattern="yyyy/MM/dd HH:mm" />
-                                        </td>
-                                        <td>
-                                            <span class="badge
-                                                  <c:choose>
-                                                      <c:when test="${myPatientMedicalRecord.prescriptionStatusName eq 'Pending'}">bg-warning text-dark</c:when>
-                                                      <c:when test="${myPatientMedicalRecord.prescriptionStatusName eq 'Delivered'}">bg-success</c:when>
-                                                      <c:when test="${myPatientMedicalRecord.prescriptionStatusName eq 'Canceled'}">bg-danger</c:when>
-                                                      <c:otherwise>bg-secondary</c:otherwise>
-                                                  </c:choose>">
-                                                ${myPatientMedicalRecord.prescriptionStatusName}
-                                            </span>
-                                        </td>
-                                    </tr>
-                                </c:forEach>
-
-                            </tbody>
-                        </table>
+                <div class="col-md-4">
+                    <div class="card text-center p-3 border-0 shadow-sm">
+                        <div class="card-body">
+                            <i class="fa-solid fa-notes-medical fa-2x text-success mb-2"></i>
+                            <h5 class="fw-bold">${totalMedicalRecordCount}</h5>
+                            <p class="text-muted mb-0">Total Medical Records</p>
+                        </div>
                     </div>
                 </div>
-
-                <!-- Appointment List -->
-                <div class="card mb-4">
-                    <div class="card-header bg-white">
-                        <h5 class="mb-0">Patient Prescription List</h5>
-                    </div>
-                    <div class="card-body">
-                        <table class="table align-middle">
-                            <thead>
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Prescription Note</th> 
-                                    <th>Appointment Date</th>                                                       
-                                    <th>Prescription Date</th>
-                                    <th>Prescription Status</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <c:forEach var="myPatientPrescription" items="${myPatientPrescriptionList}">
-                                    <tr>
-                                        <td>${myPatientPrescription.patientName}</td>
-                                        <td>${myPatientPrescription.note}</td>
-                                        <td>
-                                            <fmt:formatDate value="${myPatientPrescription.appointmentDateBegin}" pattern="yyyy/MM/dd HH:mm" />
-                                        </td>                                   
-                                        <td>
-                                            <fmt:formatDate value="${myPatientPrescription.dateCreate}" pattern="yyyy/MM/dd HH:mm" />
-                                        </td>
-                                        <td>
-                                            <span class="badge
-                                                  <c:choose>
-                                                      <c:when test="${myPatientPrescription.prescriptionStatusName eq 'Pending'}">bg-warning text-dark</c:when>
-                                                      <c:when test="${myPatientPrescription.prescriptionStatusName eq 'Delivered'}">bg-success</c:when>
-                                                      <c:when test="${myPatientPrescription.prescriptionStatusName eq 'Canceled'}">bg-danger</c:when>
-                                                      <c:otherwise>bg-secondary</c:otherwise>
-                                                  </c:choose>">
-                                                ${myPatientPrescription.prescriptionStatusName}
-                                            </span>
-                                        </td>
-                                    </tr>
-                                </c:forEach>
-                            </tbody>
-                        </table>
+                <div class="col-md-4">
+                    <div class="card text-center p-3 border-0 shadow-sm">
+                        <div class="card-body">
+                            <i class="fa-solid fa-prescription-bottle-medical fa-2x text-info mb-2"></i>
+                            <h5 class="fw-bold">${totalPrescriptionCount}</h5>
+                            <p class="text-muted mb-0">Total Prescriptions</p>
+                        </div>
                     </div>
                 </div>
             </div>
+
+
+            <!-- Appointment List -->
+            <div class="card mb-4">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0"><i class="fa-solid fa-calendar-days text-primary me-2"></i>My Patient Appointments</h5>
+                </div>
+                <div class="card-body">
+                    <table class="table align-middle table-hover">
+                        <thead>
+                            <tr>
+                                <th>Patient Name</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Note</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <c:forEach var="a" items="${myPatientAppointmentList}">
+                                <tr>
+                                    <td>${a.patientID.firstName} ${a.patientID.lastName}</td>
+                                    <td>${a.patientID.email}</td>
+                                    <td>${a.patientID.phoneNumber}</td>
+                                    <td>${a.note}</td>
+                                    <td><fmt:formatDate value="${a.dateBegin}" pattern="dd/MM/yyyy HH:mm"/></td>
+                                    <td>
+                                        <span class="badge
+                                              <c:choose>
+                                                  <c:when test="${a.appointmentStatus eq 'Pending'}">bg-warning text-dark</c:when>
+                                                  <c:when test="${a.appointmentStatus eq 'Approved'}">bg-primary</c:when>
+                                                  <c:when test="${a.appointmentStatus eq 'Completed'}">bg-success</c:when>
+                                                  <c:when test="${a.appointmentStatus eq 'Canceled'}">bg-danger</c:when>
+                                                  <c:otherwise>bg-secondary</c:otherwise>
+                                              </c:choose>">
+                                            ${a.appointmentStatus}
+                                        </span>
+                                    </td>
+                                </tr>
+                            </c:forEach>
+                            <c:if test="${empty myPatientAppointmentList}">
+                                <tr><td colspan="6" class="text-center text-muted">No appointments found.</td></tr>
+                            </c:if>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Medical Record List -->
+            <div class="card mb-4">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0"><i class="fa-solid fa-notes-medical text-success me-2"></i>My Patient Medical Records</h5>
+                </div>
+                <div class="card-body">
+                    <table class="table align-middle table-hover">
+                        <thead>
+                            <tr>
+                                <th>Patient Name</th>
+                                <th>Diagnosis</th>
+                                <th>Symptoms</th>
+                                <th>Date Created</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <c:forEach var="r" items="${myPatientMedicalRecordList}">
+                                <tr>
+                                    <td>${r.appointmentID.patientID.firstName} ${r.appointmentID.patientID.lastName}</td>
+                                    <td>${r.diagnosis}</td>
+                                    <td>${r.symptoms}</td>
+                                    <td><fmt:formatDate value="${r.dateCreate}" pattern="dd/MM/yyyy HH:mm"/></td>
+                                </tr>
+                            </c:forEach>
+                            <c:if test="${empty myPatientMedicalRecordList}">
+                                <tr><td colspan="4" class="text-center text-muted">No medical records found.</td></tr>
+                            </c:if>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Prescription List -->
+            <div class="card mb-4">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0"><i class="fa-solid fa-prescription-bottle-medical text-info me-2"></i>My Patient Prescriptions</h5>
+                </div>
+                <div class="card-body">
+                    <table class="table align-middle table-hover">
+                        <thead>
+                            <tr>
+                                <th>Patient Name</th>
+                                <th>Note</th>
+                                <th>Date Created</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <c:forEach var="p" items="${myPatientPrescriptionList}">
+                                <tr>
+                                    <td>${p.patientName}</td>
+                                    <td>${p.note}</td>
+                                    <td><fmt:formatDate value="${p.dateCreate}" pattern="dd/MM/yyyy HH:mm"/></td>
+                                    <td>
+                                        <span class="badge
+                                              <c:choose>
+                                                  <c:when test="${p.prescriptionStatusName eq 'Pending'}">bg-warning text-dark</c:when>
+                                                  <c:when test="${p.prescriptionStatusName eq 'Delivered'}">bg-success</c:when>
+                                                  <c:when test="${p.prescriptionStatusName eq 'Canceled'}">bg-danger</c:when>
+                                                  <c:otherwise>bg-secondary</c:otherwise>
+                                              </c:choose>">
+                                            ${p.prescriptionStatusName}
+                                        </span>
+                                    </td>
+                                </tr>
+                            </c:forEach>
+                            <c:if test="${empty myPatientPrescriptionList}">
+                                <tr><td colspan="4" class="text-center text-muted">No prescriptions found.</td></tr>
+                            </c:if>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
         </div>
     </body>
 </html>

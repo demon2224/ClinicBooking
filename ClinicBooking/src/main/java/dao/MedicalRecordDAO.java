@@ -532,4 +532,50 @@ public class MedicalRecordDAO extends DBContext {
         return items;
 
     }
+
+    /**
+     * Create a new medical record for an appointment.
+     *
+     * @param appointmentID ID of the appointment
+     * @param symptoms Patient symptoms
+     * @param diagnosis Diagnosis result
+     * @param note Doctor note
+     * @return true if created successfully
+     */
+    public boolean createMedicalRecord(int appointmentID, String symptoms, String diagnosis, String note) {
+        String sql = "INSERT INTO MedicalRecord (AppointmentID, Symptoms, Diagnosis, Note) VALUES (?, ?, ?, ?)";
+        Object[] params = {appointmentID, symptoms, diagnosis, note};
+        boolean isCreated = false;
+        try {
+            int rs = executeQuery(sql, params);
+            if (rs > 0) {
+                isCreated = true;
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(MedicalRecordDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return isCreated;
+    }
+
+    /**
+     * Count total medical records by doctor
+     */
+    public int countMedicalRecordsByDoctor(int doctorId) {
+        String sql = "SELECT COUNT(*) AS Total FROM MedicalRecord m "
+                + "JOIN Appointment a ON a.AppointmentID = m.AppointmentID "
+                + "WHERE a.DoctorID = ?";
+        Object[] params = {doctorId};
+        ResultSet rs = executeSelectQuery(sql, params);
+        try {
+            if (rs.next()) {
+                return rs.getInt("Total");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            closeResources(rs);
+        }
+        return 0;
+    }
+
 }

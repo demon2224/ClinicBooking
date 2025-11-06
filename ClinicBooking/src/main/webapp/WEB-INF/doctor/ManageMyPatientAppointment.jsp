@@ -3,17 +3,18 @@
     Created on : 10 Oct. 2025, 7:07:00 pm
     Author     : Le Thien Tri - CE191249
 --%>
-
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+
 <!DOCTYPE html>
 <html>
     <head>
         <meta charset="UTF-8">
-        <title>Manage Patient Appointment</title>
+        <title>Manage My Patient Appointments</title>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
         <style>
             body {
                 background-color: #f8f9fa;
@@ -38,101 +39,109 @@
                 margin-left: 260px;
                 padding: 25px;
             }
-            .card {
-                border-radius: 10px;
-            }
-            .table img {
-                border-radius: 50%;
-                width: 40px;
-                height: 40px;
-            }
-            .status-toggle {
-                width: 40px;
-                height: 20px;
-            }
             .navbar {
                 background: white;
                 border-bottom: 1px solid #dee2e6;
+                padding: 12px 24px;
             }
-
-            #Logout{
+            .card {
+                border-radius: 10px;
+                box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+            }
+            .card-header {
+                background-color: #1B5A90;
+                color: white;
+                font-weight: bold;
+                border-top-left-radius: 10px;
+                border-top-right-radius: 10px;
+            }
+            .table th {
+                background-color: #f1f3f5;
+                font-weight: 600;
+            }
+            .table td, .table th {
+                vertical-align: middle;
+            }
+            #Logout {
                 color: red;
                 border-color: red;
-
+                transition: all 0.3s;
             }
-            #Logout:hover{
+            #Logout:hover {
                 background-color: red;
                 color: white;
             }
         </style>
     </head>
+
     <body>
         <%@include file="../includes/DoctorDashboardSidebar.jsp" %>
-        <!-- Main content -->
+
+        <!-- Main Content -->
         <div class="main-content">
-            <nav class="navbar navbar-light">
-                <div class="container-fluid">
-                    <form class="d-flex w-75" action="${pageContext.request.contextPath}/manage-my-patient-appointment" method="get">
-                        <input class="form-control me-2" type="text" name="keyword" 
-                               placeholder="Search by patient name..." value="${param.keyword}">
-                        <button class="btn btn-outline-primary" type="submit">
-                            <i class="fa-solid fa-magnifying-glass"></i> Search
-                        </button>
-                    </form>
-                    <div>
-                        <button class="btn btn-submit" id="Logout" type="submit">Logout</button>
-                    </div>
-                </div>
+            <!-- Header / Navbar -->
+            <nav class="navbar navbar-light justify-content-between">
+                <h3 class="fw-bold text-primary mb-0">
+                    <i class="fa-solid fa-calendar-days me-2"></i>Manage My Patient Appointments
+                </h3>
+                <form class="d-flex" action="${pageContext.request.contextPath}/manage-my-patient-appointment" method="get">
+                    <input class="form-control me-2" type="text" name="keyword"
+                           placeholder="Search by patient name..." value="${param.keyword}">
+                    <button class="btn btn-outline-primary me-3" type="submit">
+                        <i class="fa-solid fa-magnifying-glass"></i> Search
+                    </button>
+                    <a href="${pageContext.request.contextPath}/logout" class="btn btn-outline-danger" id="Logout">
+                        <i class="fa-solid fa-right-from-bracket"></i> Logout
+                    </a>
+                </form>
             </nav>
 
-            <div class="container-fluid mt-4">
-                <!-- Doctors List -->
-                <div class="card mb-4">
-                    <div class="card-header bg-white">
-                        <h5 class="mb-0">Appointment List</h5>
-                    </div>
-                    <div class="card-body">
-                        <table class="table align-middle">
-                            <thead>
+            <!-- Appointment List -->
+            <div class="card mt-4">
+                <div class="card-header">
+                    <i class="fa-solid fa-list me-2"></i>Appointment List
+                </div>
+                <div class="card-body p-4">
+                    <table class="table table-hover align-middle text-center">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Patient Name</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Date Begin</th>
+                                <th>Note</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <c:forEach var="list" items="${list}" varStatus="item">
                                 <tr>
-                                    <th>#</th>
-                                    <th>Name</th>
-                                    <th>Email</th>
-                                    <th>Phone</th>
-                                    <th>Date Begin</th>
-                                    <th>Note</th>
-                                    <th>Action</th>
+                                    <td>${item.count}</td>
+                                    <td>${list.patientID.firstName} ${list.patientID.lastName}</td>
+                                    <td>${list.patientID.email}</td>
+                                    <td>${list.patientID.phoneNumber}</td>
+                                    <td><fmt:formatDate value="${list.dateBegin}" pattern="yyyy/MM/dd HH:mm"/></td>
+                                    <td>${list.note}</td>
+                                    <td>
+                                        <a href="${pageContext.request.contextPath}/manage-my-patient-appointment?action=detail&appointmentID=${list.appointmentID}"
+                                           class="btn btn-sm btn-info text-white">
+                                            <i class="fa-solid fa-eye"></i> View Detail
+                                        </a>
+                                    </td>
                                 </tr>
-                            </thead>
-                            <tbody>
-                                <c:forEach var="list" items="${list}" varStatus="item">
-                                    <tr>
-                                        <td><c:out value="${item.count}"/></td>
-                                        <td>${list.patientID.firstName} ${list.patientID.lastName}</td>
-                                        <td>${list.patientID.email}</td>
-                                        <td>${list.patientID.phoneNumber}</td>
-                                        <td><fmt:formatDate value="${list.dateBegin}" pattern="yyyy/MM/dd HH:mm"/></td>
-                                        <td>${list.note}</td>
-                                        <td>
-                                            <a href="${pageContext.request.contextPath}/manage-my-patient-appointment?action=detail&appointmentID=${list.appointmentID}"
-                                               class="btn btn-sm btn-info text-white text-decoration-none">
-                                                <i class="fa-solid fa-eye"></i> View Detail
-                                            </a>
-                                        </td>
-                                    </tr>
-                                </c:forEach>
+                            </c:forEach>
 
-                                <c:if test="${empty list}">
-                                    <tr><td colspan="7" class="text-center text-muted">No appointments found.</td></tr>
-                                </c:if>
-
-                            </tbody>
-                        </table>
-                    </div>
-                </div>       
-
-
-
+                            <c:if test="${empty list}">
+                                <tr>
+                                    <td colspan="7" class="text-center text-muted py-4">
+                                        <i class="fa-solid fa-circle-info me-2"></i>No appointments found.
+                                    </td>
+                                </tr>
+                            </c:if>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </body>
