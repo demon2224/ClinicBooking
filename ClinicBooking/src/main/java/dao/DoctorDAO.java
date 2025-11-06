@@ -439,4 +439,151 @@ public class DoctorDAO extends DBContext {
         return reviewCount;
     }
 
+    /**
+     * Creates a new doctor review/feedback.
+     *
+     * @param patientId The ID of the patient creating the review.
+     * @param doctorId The ID of the doctor being reviewed.
+     * @param content The review content.
+     * @param rateScore The rating score (1-5).
+     * @return true if the review was created successfully, false otherwise.
+     */
+    public boolean createDoctorReview(int patientId, int doctorId, String content, int rateScore) {
+        String sql = "INSERT INTO DoctorReview (PatientID, DoctorID, Content, RateScore, DateCreate, [Hidden]) "
+                + "VALUES (?, ?, ?, ?, GETDATE(), 0)";
+
+        Object[] params = {patientId, doctorId, content, rateScore};
+
+        try {
+            int rowsAffected = executeQuery(sql, params);
+            return rowsAffected > 0;
+        } catch (Exception ex) {
+            Logger.getLogger(DoctorDAO.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
+    }
+
+    /**
+     * Updates an existing doctor review/feedback.
+     *
+     * @param reviewId The ID of the review to update.
+     * @param patientId The ID of the patient who created the review.
+     * @param content The updated review content.
+     * @param rateScore The updated rating score (1-5).
+     * @return true if the review was updated successfully, false otherwise.
+     */
+    public boolean updateDoctorReview(int reviewId, int patientId, String content, int rateScore) {
+        String sql = "UPDATE DoctorReview SET Content = ?, RateScore = ? "
+                + "WHERE DoctorReviewID = ? AND PatientID = ?";
+
+        Object[] params = {content, rateScore, reviewId, patientId};
+
+        try {
+            int rowsAffected = executeQuery(sql, params);
+            return rowsAffected > 0;
+        } catch (Exception ex) {
+            Logger.getLogger(DoctorDAO.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
+    }
+
+    /**
+     * Deletes a doctor review/feedback.
+     *
+     * @param reviewId The ID of the review to delete.
+     * @param patientId The ID of the patient who created the review.
+     * @return true if the review was deleted successfully, false otherwise.
+     */
+    public boolean deleteDoctorReview(int reviewId, int patientId) {
+        String sql = "DELETE FROM DoctorReview WHERE DoctorReviewID = ? AND PatientID = ?";
+
+        Object[] params = {reviewId, patientId};
+
+        try {
+            int rowsAffected = executeQuery(sql, params);
+            return rowsAffected > 0;
+        } catch (Exception ex) {
+            Logger.getLogger(DoctorDAO.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
+    }
+
+    /**
+     * Gets a specific review by ID and patient ID (for security).
+     *
+     * @param reviewId The ID of the review.
+     * @param patientId The ID of the patient who created the review.
+     * @return DoctorReviewDTO if found, null otherwise.
+     */
+    public DoctorReviewDTO getReviewByIdAndPatientId(int reviewId, int patientId) {
+        String sql = "SELECT dr.DoctorReviewID, dr.Content, dr.RateScore, dr.DateCreate, "
+                + "d.DoctorID, st.FirstName AS DoctorFirstName, st.LastName AS DoctorLastName, "
+                + "s.SpecialtyName "
+                + "FROM DoctorReview dr "
+                + "INNER JOIN Doctor d ON dr.DoctorID = d.DoctorID "
+                + "INNER JOIN Staff st ON d.StaffID = st.StaffID "
+                + "LEFT JOIN Specialty s ON d.SpecialtyID = s.SpecialtyID "
+                + "WHERE dr.DoctorReviewID = ? AND dr.PatientID = ?";
+
+        Object[] params = {reviewId, patientId};
+        ResultSet rs = executeSelectQuery(sql, params);
+
+        try {
+            if (rs != null && rs.next()) {
+                DoctorReviewDTO review = new DoctorReviewDTO();
+                review.setDoctorReviewID(rs.getInt("DoctorReviewID"));
+                review.setContent(rs.getString("Content"));
+                review.setRateScore(rs.getInt("RateScore"));
+                review.setDateCreate(rs.getTimestamp("DateCreate"));
+
+                // Create DoctorDTO with basic info
+                DoctorDTO doctor = new DoctorDTO();
+                doctor.setDoctorID(rs.getInt("DoctorID"));
+
+                StaffDTO staff = new StaffDTO();
+                staff.setFirstName(rs.getString("DoctorFirstName"));
+                staff.setLastName(rs.getString("DoctorLastName"));
+                doctor.setStaffID(staff);
+
+                SpecialtyDTO specialty = new SpecialtyDTO();
+                specialty.setSpecialtyName(rs.getString("SpecialtyName"));
+                doctor.setSpecialtyID(specialty);
+
+                review.setDoctorID(doctor);
+
+                return review;
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(DoctorDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            closeResources(rs);
+        }
+        return null;
+    }
+
+    /**
+     * Checks if a patient has already reviewed a specific doctor.
+     *
+     * @param patientId The ID of the patient.
+     * @param doctorId The ID of the doctor.
+     * @return true if the patient has already reviewed this doctor, false otherwise.
+     */
+    public boolean hasPatientReviewedDoctor(int patientId, int doctorId) {
+        String sql = "SELECT COUNT(*) as ReviewCount FROM DoctorReview WHERE PatientID = ? AND DoctorID = ?";
+
+        Object[] params = {patientId, doctorId};
+        ResultSet rs = executeSelectQuery(sql, params);
+
+        try {
+            if (rs != null && rs.next()) {
+                return rs.getInt("ReviewCount") > 0;
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(DoctorDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            closeResources(rs);
+        }
+        return false;
+    }
+
 }

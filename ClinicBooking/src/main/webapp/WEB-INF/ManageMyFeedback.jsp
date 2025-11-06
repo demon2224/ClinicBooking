@@ -15,6 +15,9 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>My Feedbacks - CLINIC</title>
 
+        <!-- Bootstrap CSS -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
         <!-- Font Awesome Icons -->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
@@ -358,6 +361,144 @@
             .back-link:hover {
                 color: #1e40af;
             }
+            .star-rating {
+                direction: rtl;
+                display: flex;
+                justify-content: flex-start;
+            }
+
+            .star-rating input[type="radio"] {
+                display: none;
+            }
+
+            .star-label {
+                color: #ddd;
+                font-size: 2rem;
+                cursor: pointer;
+                transition: color 0.2s;
+                margin: 0 2px;
+            }
+
+            .star-rating input[type="radio"]:checked ~ .star-label,
+            .star-rating input[type="radio"]:hover ~ .star-label {
+                color: #fbbf24;
+            }
+
+            .star-rating .star-label:hover {
+                color: #fbbf24;
+            }
+
+            /* Rating validation error */
+            .invalid-feedback {
+                display: block;
+                margin-top: 0.25rem;
+                font-size: 0.875rem;
+                color: #dc3545;
+            }
+
+            /* Modal Enhancements */
+            .modal-header {
+                background: #f8fafc;
+                border-bottom: 1px solid #e2e8f0;
+            }
+
+            .modal-title {
+                color: #175CDD;
+                font-weight: 600;
+            }
+
+            .form-label {
+                color: #374151;
+                margin-bottom: 0.5rem;
+            }
+
+            .form-select:focus,
+            .form-control:focus {
+                border-color: #175CDD;
+                box-shadow: 0 0 0 0.2rem rgba(23, 92, 221, 0.25);
+            }
+
+            .btn-primary {
+                background-color: #175CDD;
+                border-color: #175CDD;
+            }
+
+            .btn-primary:hover {
+                background-color: #1e40af;
+                border-color: #1e40af;
+            }
+
+            /* Ensure modal displays properly - Override any custom CSS conflicts */
+            .modal {
+                z-index: 1050 !important;
+                position: fixed !important;
+                top: 0 !important;
+                left: 0 !important;
+                width: 100% !important;
+                height: 100% !important;
+                overflow-x: hidden !important;
+                overflow-y: auto !important;
+                outline: 0 !important;
+            }
+
+            .modal.show {
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+            }
+
+            .modal-backdrop {
+                z-index: 1040 !important;
+                position: fixed !important;
+                top: 0 !important;
+                left: 0 !important;
+                width: 100vw !important;
+                height: 100vh !important;
+                background-color: rgba(0, 0, 0, 0.5) !important;
+            }
+
+            .modal-dialog {
+                margin: 0 auto !important;
+                position: relative !important;
+                width: auto !important;
+                max-width: 800px !important;
+                pointer-events: none !important;
+            }
+
+            .modal-dialog-centered {
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                min-height: 100vh !important;
+            }
+
+            .modal.fade .modal-dialog {
+                transform: translateY(-50px) !important;
+                transition: transform 0.3s ease-out !important;
+            }
+
+            .modal.show .modal-dialog {
+                transform: translateY(0) !important;
+            }
+
+            .modal-content {
+                position: relative !important;
+                display: flex !important;
+                flex-direction: column !important;
+                width: 100% !important;
+                pointer-events: auto !important;
+                background-color: #fff !important;
+                background-clip: padding-box !important;
+                border: 1px solid rgba(0, 0, 0, 0.2) !important;
+                border-radius: 0.3rem !important;
+                outline: 0 !important;
+            }
+
+            /* Ensure button style is not overridden */
+            .btn-action.btn-create {
+                cursor: pointer !important;
+                pointer-events: auto !important;
+            }
 
             /* Responsive Design */
             @media (max-width: 768px) {
@@ -408,11 +549,10 @@
             </div>
             <div class="feedback-section">
                 <div class="section-header">
-                    <a href="${pageContext.request.contextPath}/manage-my-feedback?action=create"
-                       class="btn-action btn-create">
+                    <button type="button" class="btn-action btn-create" data-bs-toggle="modal" data-bs-target="#createFeedbackModal">
                         <i class="fas fa-plus"></i>
                         New Review
-                    </a>
+                    </button>
                 </div>
                 <div class="feedback-content">
                     <c:choose>
@@ -465,10 +605,16 @@
                                            class="btn-action btn-view">
                                             <i class="fas fa-eye"></i> View Detail
                                         </a>
-                                        <a href="${pageContext.request.contextPath}/manage-my-feedback?action=edit&reviewId=${review.doctorReviewID}"
-                                           class="btn-action btn-edit">
+                                        <button type="button" class="btn-action btn-edit" 
+                                                data-bs-toggle="modal" 
+                                                data-bs-target="#editFeedbackModal"
+                                                data-review-id="${review.doctorReviewID}"
+                                                data-doctor-name="Dr. ${review.doctorID.staffID.firstName} ${review.doctorID.staffID.lastName}"
+                                                data-specialty="${review.doctorID.specialtyID.specialtyName}"
+                                                data-rating="${review.rateScore}"
+                                                data-content="${review.content}">
                                             <i class="fas fa-edit"></i> Edit
-                                        </a>
+                                        </button>
                                         <button class="btn-action btn-delete"
                                                 data-review-id="${review.doctorReviewID}">
                                             <i class="fas fa-trash"></i> Delete
@@ -479,6 +625,472 @@
                         </c:otherwise>
                     </c:choose>
                 </div>
+            </div>
         </main>
+
+        <!-- Create Feedback Modal -->
+        <div class="modal fade" id="createFeedbackModal" tabindex="-1" aria-labelledby="createFeedbackModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="createFeedbackModalLabel">
+                            <i class="fas fa-plus-circle"></i> Write New Review
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form id="createFeedbackForm" method="post" action="${pageContext.request.contextPath}/manage-my-feedback">
+                        <div class="modal-body">
+                            <input type="hidden" name="action" value="create">
+
+                            <!-- Doctor Selection -->
+                            <div class="mb-3">
+                                <label for="doctorSelect" class="form-label fw-bold">
+                                    <i class="fas fa-user-md"></i> Select Doctor <span class="text-danger">*</span>
+                                </label>
+                                <select class="form-select" id="doctorSelect" name="doctorId">
+                                    <option value="">Choose a doctor to review...</option>
+                                    <c:forEach var="doctor" items="${availableDoctors}">
+                                        <option value="${doctor.doctorID}">
+                                            Dr. ${doctor.staffID.firstName} ${doctor.staffID.lastName} - ${doctor.specialtyID.specialtyName}
+                                        </option>
+                                    </c:forEach>
+                                </select>
+                                <div class="invalid-feedback" id="doctorError" style="display: none;">
+                                    Please select a doctor.
+                                </div>
+                            </div>
+
+                            <!-- Rating -->
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">
+                                    <i class="fas fa-star"></i> Your Rating <span class="text-danger">*</span>
+                                </label>
+                                <input type="hidden" name="rating" id="ratingValue">
+                                <div class="rating-input">
+                                    <div class="star-rating">
+                                        <input type="radio" name="ratingDisplay" value="5" id="star5">
+                                        <label for="star5" class="star-label">★</label>
+                                        <input type="radio" name="ratingDisplay" value="4" id="star4">
+                                        <label for="star4" class="star-label">★</label>
+                                        <input type="radio" name="ratingDisplay" value="3" id="star3">
+                                        <label for="star3" class="star-label">★</label>
+                                        <input type="radio" name="ratingDisplay" value="2" id="star2">
+                                        <label for="star2" class="star-label">★</label>
+                                        <input type="radio" name="ratingDisplay" value="1" id="star1">
+                                        <label for="star1" class="star-label">★</label>
+                                    </div>
+                                    <div class="invalid-feedback" id="ratingError" style="display: none;">
+                                        Please select a rating.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Review Content -->
+                            <div class="mb-3">
+                                <label for="reviewContent" class="form-label fw-bold">
+                                    <i class="fas fa-comment"></i> Your Review <span class="text-danger">*</span>
+                                </label>
+                                <textarea class="form-control" id="reviewContent" name="content" rows="5"
+                                          maxlength="500" placeholder="Share your experience with this doctor..."></textarea>
+                                <div class="invalid-feedback" id="contentError" style="display: none;">
+                                    Please write your review (1-500 characters).
+                                </div>
+                                <div class="form-text">
+                                    <span id="charCount">0</span>/500 characters
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                <i class="fas fa-times"></i> Cancel
+                            </button>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-paper-plane"></i> Submit
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Edit Feedback Modal -->
+        <div class="modal fade" id="editFeedbackModal" tabindex="-1" aria-labelledby="editFeedbackModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editFeedbackModalLabel">
+                            <i class="fas fa-edit"></i> Edit Your Review
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form id="editFeedbackForm" method="post" action="${pageContext.request.contextPath}/manage-my-feedback">
+                        <div class="modal-body">
+                            <input type="hidden" name="action" value="update">
+                            <input type="hidden" name="reviewId" id="editReviewId">
+
+                            <!-- Doctor Info (Read-only) -->
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">
+                                    <i class="fas fa-user-md"></i> Doctor
+                                </label>
+                                <div class="form-control bg-light" id="editDoctorInfo" readonly style="background-color: #e9ecef;">
+                                    <!-- Will be populated by JavaScript -->
+                                </div>
+                            </div>
+
+                            <!-- Rating -->
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">
+                                    <i class="fas fa-star"></i> Your Rating <span class="text-danger">*</span>
+                                </label>
+                                <input type="hidden" name="rating" id="editRatingValue">
+                                <div class="rating-input">
+                                    <div class="star-rating">
+                                        <input type="radio" name="editRatingDisplay" value="5" id="editStar5">
+                                        <label for="editStar5" class="star-label">★</label>
+                                        <input type="radio" name="editRatingDisplay" value="4" id="editStar4">
+                                        <label for="editStar4" class="star-label">★</label>
+                                        <input type="radio" name="editRatingDisplay" value="3" id="editStar3">
+                                        <label for="editStar3" class="star-label">★</label>
+                                        <input type="radio" name="editRatingDisplay" value="2" id="editStar2">
+                                        <label for="editStar2" class="star-label">★</label>
+                                        <input type="radio" name="editRatingDisplay" value="1" id="editStar1">
+                                        <label for="editStar1" class="star-label">★</label>
+                                    </div>
+                                    <div class="invalid-feedback" id="editRatingError" style="display: none;">
+                                        Please select a rating.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Review Content -->
+                            <div class="mb-3">
+                                <label for="editReviewContent" class="form-label fw-bold">
+                                    <i class="fas fa-comment"></i> Your Review <span class="text-danger">*</span>
+                                </label>
+                                <textarea class="form-control" id="editReviewContent" name="content" rows="5"
+                                          maxlength="500" placeholder="Share your experience with this doctor..."></textarea>
+                                <div class="invalid-feedback" id="editContentError" style="display: none;">
+                                    Please write your review (1-500 characters).
+                                </div>
+                                <div class="form-text">
+                                    <span id="editCharCount">0</span>/500 characters
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                <i class="fas fa-times"></i> Cancel
+                            </button>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Update Review
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Success Modal -->
+        <div class="modal fade" id="successModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content text-center border-0 shadow-lg">
+                    <div class="modal-body p-5">
+                        <i class="fa-solid fa-circle-check text-success fa-4x mb-3"></i>
+                        <h4 class="mb-3 text-success fw-bold">Success!</h4>
+                        <p class="text-secondary mb-4" id="successMessage">${successMessage}</p>
+                        <button type="button" class="btn btn-success px-4" data-bs-dismiss="modal">OK</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Error Modal -->
+        <div class="modal fade" id="errorModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content text-center border-0 shadow-lg">
+                    <div class="modal-body p-5">
+                        <i class="fa-solid fa-circle-xmark text-danger fa-4x mb-3"></i>
+                        <h4 class="mb-3 text-danger fw-bold">Error</h4>
+                        <p class="text-secondary mb-4" id="errorMessage">${errorMessage}</p>
+                        <button type="button" class="btn btn-danger px-4" data-bs-dismiss="modal">OK</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Delete Confirmation Modal -->
+        <div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Confirm Delete</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Are you sure you want to delete this review? This action cannot be undone.</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Delete</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bootstrap JS -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                // Get form elements
+                const createFeedbackForm = document.getElementById('createFeedbackForm');
+                const doctorSelect = document.getElementById('doctorSelect');
+                const reviewContent = document.getElementById('reviewContent');
+                const ratingDisplayInputs = document.querySelectorAll('input[name="ratingDisplay"]');
+                const ratingValue = document.getElementById('ratingValue');
+
+                // Get error message elements
+                const doctorError = document.getElementById('doctorError');
+                const contentError = document.getElementById('contentError');
+                const ratingError = document.getElementById('ratingError');
+
+                // Rating functionality - sync display rating with hidden input
+                ratingDisplayInputs.forEach(input => {
+                    input.addEventListener('change', function () {
+                        if (ratingValue) {
+                            ratingValue.value = this.value;
+                        }
+                        // Hide error when rating is selected
+                        if (ratingError) {
+                            ratingError.style.display = 'none';
+                        }
+                    });
+                });
+
+                // Hide doctor error when selection changes
+                if (doctorSelect) {
+                    doctorSelect.addEventListener('change', function () {
+                        if (this.value && doctorError) {
+                            doctorError.style.display = 'none';
+                        }
+                    });
+                }
+
+                // Hide content error when typing
+                if (reviewContent) {
+                    reviewContent.addEventListener('input', function () {
+                        if (this.value.trim().length > 0 && contentError) {
+                            contentError.style.display = 'none';
+                        }
+                    });
+                }
+
+                // Form validation
+                if (createFeedbackForm) {
+                    createFeedbackForm.addEventListener('submit', function (e) {
+                        let isValid = true;
+
+                        // Validate doctor selection
+                        if (!doctorSelect || !doctorSelect.value) {
+                            if (doctorError) {
+                                doctorError.style.display = 'block';
+                            }
+                            isValid = false;
+                        }
+
+                        // Validate content
+                        if (!reviewContent || reviewContent.value.trim().length === 0) {
+                            if (contentError) {
+                                contentError.style.display = 'block';
+                            }
+                            isValid = false;
+                        }
+
+                        // Validate rating
+                        if (!ratingValue || !ratingValue.value) {
+                            if (ratingError) {
+                                ratingError.style.display = 'block';
+                            }
+                            isValid = false;
+                        }
+
+                        if (!isValid) {
+                            e.preventDefault();
+                            return false;
+                        }
+                    });
+                }
+
+                // Character counter for review content
+                const charCount = document.getElementById('charCount');
+
+                if (reviewContent && charCount) {
+                    reviewContent.addEventListener('input', function () {
+                        const currentLength = this.value.length;
+                        charCount.textContent = currentLength;
+
+                        if (currentLength > 480) {
+                            charCount.style.color = '#dc2626';
+                        } else if (currentLength > 400) {
+                            charCount.style.color = '#f59e0b';
+                        } else {
+                            charCount.style.color = '#64748b';
+                        }
+                    });
+                }
+
+                // Edit Modal - Load review data
+                const editFeedbackModal = document.getElementById('editFeedbackModal');
+                if (editFeedbackModal) {
+                    editFeedbackModal.addEventListener('show.bs.modal', function (event) {
+                        const button = event.relatedTarget;
+                        const reviewId = button.getAttribute('data-review-id');
+                        const doctorName = button.getAttribute('data-doctor-name');
+                        const specialty = button.getAttribute('data-specialty');
+                        const rating = button.getAttribute('data-rating');
+                        const content = button.getAttribute('data-content');
+
+                        // Populate form fields
+                        document.getElementById('editReviewId').value = reviewId;
+                        document.getElementById('editDoctorInfo').textContent = doctorName + ' - ' + specialty;
+                        document.getElementById('editReviewContent').value = content;
+                        document.getElementById('editRatingValue').value = rating;
+                        
+                        // Update character count
+                        const editCharCount = document.getElementById('editCharCount');
+                        if (editCharCount) {
+                            editCharCount.textContent = content.length;
+                        }
+
+                        // Set rating stars
+                        const ratingInput = document.querySelector(`input[name="editRatingDisplay"][value="${rating}"]`);
+                        if (ratingInput) {
+                            ratingInput.checked = true;
+                        }
+                    });
+                }
+
+                // Edit form - Rating functionality
+                const editRatingDisplayInputs = document.querySelectorAll('input[name="editRatingDisplay"]');
+                const editRatingValue = document.getElementById('editRatingValue');
+                const editRatingError = document.getElementById('editRatingError');
+
+                editRatingDisplayInputs.forEach(input => {
+                    input.addEventListener('change', function () {
+                        if (editRatingValue) {
+                            editRatingValue.value = this.value;
+                        }
+                        if (editRatingError) {
+                            editRatingError.style.display = 'none';
+                        }
+                    });
+                });
+
+                // Edit form - Character counter
+                const editReviewContent = document.getElementById('editReviewContent');
+                const editCharCount = document.getElementById('editCharCount');
+                const editContentError = document.getElementById('editContentError');
+
+                if (editReviewContent && editCharCount) {
+                    editReviewContent.addEventListener('input', function () {
+                        const currentLength = this.value.length;
+                        editCharCount.textContent = currentLength;
+
+                        if (currentLength > 480) {
+                            editCharCount.style.color = '#dc2626';
+                        } else if (currentLength > 400) {
+                            editCharCount.style.color = '#f59e0b';
+                        } else {
+                            editCharCount.style.color = '#64748b';
+                        }
+
+                        if (this.value.trim().length > 0 && editContentError) {
+                            editContentError.style.display = 'none';
+                        }
+                    });
+                }
+
+                // Edit form validation
+                const editFeedbackForm = document.getElementById('editFeedbackForm');
+                if (editFeedbackForm) {
+                    editFeedbackForm.addEventListener('submit', function (e) {
+                        let isValid = true;
+
+                        // Validate content
+                        if (!editReviewContent || editReviewContent.value.trim().length === 0) {
+                            if (editContentError) {
+                                editContentError.style.display = 'block';
+                            }
+                            isValid = false;
+                        }
+
+                        // Validate rating
+                        if (!editRatingValue || !editRatingValue.value) {
+                            if (editRatingError) {
+                                editRatingError.style.display = 'block';
+                            }
+                            isValid = false;
+                        }
+
+                        if (!isValid) {
+                            e.preventDefault();
+                            return false;
+                        }
+                    });
+                }
+
+                // Delete functionality
+                const deleteButtons = document.querySelectorAll('.btn-delete');
+                const deleteModal = document.getElementById('deleteModal');
+                const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+                let reviewIdToDelete = null;
+
+                deleteButtons.forEach(button => {
+                    button.addEventListener('click', function () {
+                        reviewIdToDelete = this.getAttribute('data-review-id');
+                        const modal = new bootstrap.Modal(deleteModal);
+                        modal.show();
+                    });
+                });
+
+                if (confirmDeleteBtn) {
+                    confirmDeleteBtn.addEventListener('click', function () {
+                        if (reviewIdToDelete) {
+                            // Create form and submit
+                            const form = document.createElement('form');
+                            form.method = 'POST';
+                            form.action = '${pageContext.request.contextPath}/manage-my-feedback';
+
+                            const actionInput = document.createElement('input');
+                            actionInput.type = 'hidden';
+                            actionInput.name = 'action';
+                            actionInput.value = 'delete';
+
+                            const reviewIdInput = document.createElement('input');
+                            reviewIdInput.type = 'hidden';
+                            reviewIdInput.name = 'reviewId';
+                            reviewIdInput.value = reviewIdToDelete;
+
+                            form.appendChild(actionInput);
+                            form.appendChild(reviewIdInput);
+                            document.body.appendChild(form);
+                            form.submit();
+                        }
+                    });
+                }
+
+                // Show success/error modals if messages exist
+            <c:if test="${not empty successMessage}">
+                const successModal = new bootstrap.Modal(document.getElementById('successModal'));
+                successModal.show();
+            </c:if>
+
+            <c:if test="${not empty errorMessage}">
+                const errorModal = new bootstrap.Modal(document.getElementById('errorModal'));
+                errorModal.show();
+            </c:if>
+            });
+        </script>
     </body>
 </html>

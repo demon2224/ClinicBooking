@@ -21,7 +21,7 @@ public class ManageMyFeedbackConstants {
     // Validation constants
     public static final int MIN_RATE_SCORE = 1;
     public static final int MAX_RATE_SCORE = 5;
-    public static final int MIN_CONTENT_LENGTH = 10;
+    public static final int MIN_CONTENT_LENGTH = 1;
     public static final int MAX_CONTENT_LENGTH = 500;
 
     // Error messages
@@ -32,13 +32,20 @@ public class ManageMyFeedbackConstants {
             + MAX_RATE_SCORE + ".";
     public static final String ERROR_INVALID_REVIEW_ID = "The review you requested could not be found.";
     public static final String ERROR_INVALID_DOCTOR_ID = "Please select a doctor you wish to review.";
-    public static final String ERROR_NOT_FOUND = "Review not found!";
+    public static final String ERROR_REVIEW_NOT_FOUND = "Review not found!";
     public static final String ERROR_REQUIRED_REVIEW_ID = "An error occurred while trying to open this review. Please try again.";
     public static final String ERROR_UNAUTHORIZED_ACCESS = "You don't have permission to view this review.";
+    public static final String ERROR_EXISTS_DOCTOR_REVIEW = "You have already reviewed this doctor.";
+    public static final String ERROR_FAILED_SUBMIT_REVIEW = "Failed to submit your feedback. Please try again.";
+    public static final String ERROR_FAILED_DELETE_REVIEW = "Failed to delete your feedback. Please try again.";
+    public static final String ERROR_FAILED_UPDATE_REVIEW = "Failed to update your feedback. Please try again.";
+
+    // Success messages
+    public static final String SUCCESS_FEEDBACK_SUBMIT = "Your feedback has been submitted successfully!";
+    public static final String SUCCESS_FEEDBACK_UPDATE = "Your feedback has been updated successfully!";
+    public static final String SUCCESS_FEEDBACK_DELETE = "Your feedback has been deleted successfully!";
 
     // View modes
-    public static final String VIEW_MODE_CREATE = "create";
     public static final String VIEW_MODE_DETAIL = "detail";
-    public static final String VIEW_MODE_EDIT = "edit";
     public static final String VIEW_MODE_LIST = "list";
 }

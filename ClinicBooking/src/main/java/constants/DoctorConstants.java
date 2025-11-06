@@ -20,4 +20,5 @@ public class DoctorConstants {
     // Encoding and error message
     public static final String URL_ENCODING = "UTF-8";
     public static final String ERROR_MSG = "An error occurred: ";
+    public static final String ERROR_DOCTOR_NOT_FOUND = "Doctor not found.";
 }
