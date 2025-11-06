@@ -360,6 +360,13 @@ public class PrescriptionDAO extends DBContext {
 
     public boolean cancelPrescription(int prescriptionID) {
 
+        boolean retrieveResult = retrievePrescriptionItem(prescriptionID);
+
+        // If can not retrieve prescription then return false.
+        if (!retrieveResult) {
+            return false;
+        }
+
         String query = "UPDATE [dbo].[Prescription]\n"
                 + "SET PrescriptionStatus = 'Canceled'\n"
                 + "WHERE PrescriptionID = ?;";
@@ -404,6 +411,23 @@ public class PrescriptionDAO extends DBContext {
             closeResources(rs);
         }
         return 0;
+    }
+    
+    private boolean retrievePrescriptionItem(int prescriptionID) {
+        String query = "UPDATE m\n"
+                + "	SET m.Quantity = m.Quantity + pit.Dosage\n"
+                + "FROM [dbo].[Prescription] p\n"
+                + "JOIN [dbo].[PrescriptionItem] pit\n"
+                + "ON pit.PrescriptionID = p.PrescriptionID\n"
+                + "JOIN [dbo].[Medicine] m\n"
+                + "ON m.MedicineID = pit.MedicineID\n"
+                + "WHERE p.PrescriptionID = ?;";
+        Object[] params = {prescriptionID};
+
+        int rs = executeQuery(query, params);
+        closeResources(null);
+
+        return rs != 0;
     }
 
 }
