@@ -474,6 +474,46 @@
                 <h1>Profile</h1>
             </div>
 
+            <!-- Success Modal -->
+            <c:if test="${not empty successMessage}">
+                <div id="messageModal" class="modal-overlay">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3 class="modal-title">
+                                <i class="fas fa-check-circle text-success"></i> Success
+                            </h3>
+                            <button type="button" class="modal-close" onclick="closeMessageModal()">&times;</button>
+                        </div>
+                        <div class="modal-body">
+                            <p>${successMessage}</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-success" onclick="closeMessageModal()">OK</button>
+                        </div>
+                    </div>
+                </div>
+            </c:if>
+
+            <!-- Error Modal for Password Change -->
+            <c:if test="${not empty passwordError}">
+                <div id="passwordErrorModal" class="modal-overlay">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3 class="modal-title">
+                                <i class="fas fa-exclamation-triangle text-error"></i> Error
+                            </h3>
+                            <button type="button" class="modal-close" onclick="closePasswordErrorModal()">&times;</button>
+                        </div>
+                        <div class="modal-body">
+                            <p>${passwordError}</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger" onclick="closePasswordErrorModal()">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </c:if>
+
             <!-- Profile Container -->
             <div class="profile-container">
                 <div class="profile-layout">
@@ -583,13 +623,6 @@
                     <div class="modal-body">
                         <!-- Error Messages -->
                         <div id="errorContainer" class="error-messages" style="display: none;"></div>
-
-                        <!-- Success Message -->
-                        <c:if test="${not empty successMessage}">
-                            <div class="success-message">
-                                <i class="fas fa-check-circle"></i> ${successMessage}
-                            </div>
-                        </c:if>
 
                         <!-- Current Password -->
                         <div class="form-group">
@@ -835,13 +868,35 @@
                 }
             });
 
-            // Auto-open modal if there's a password change error
-            <c:if test="${not empty passwordError}">
-            window.addEventListener('DOMContentLoaded', function () {
-                modal.classList.add('active');
-                displayErrors(['${passwordError}']);
+            // Close modals
+            function closeMessageModal() {
+                const modal = document.getElementById('messageModal');
+                if (modal) {
+                    modal.style.display = 'none';
+                }
+            }
+
+            function closePasswordErrorModal() {
+                const modal = document.getElementById('passwordErrorModal');
+                if (modal) {
+                    modal.style.display = 'none';
+                }
+                // Open change password modal after closing error
+                document.getElementById('changePasswordModal').classList.add('active');
+            }
+
+            // Auto-show modals on page load
+            window.addEventListener('DOMContentLoaded', function() {
+                const messageModal = document.getElementById('messageModal');
+                if (messageModal) {
+                    messageModal.style.display = 'flex';
+                }
+
+                const passwordErrorModal = document.getElementById('passwordErrorModal');
+                if (passwordErrorModal) {
+                    passwordErrorModal.style.display = 'flex';
+                }
             });
-            </c:if>
         </script>
     </body>
 </html>

@@ -981,7 +981,7 @@ public class AppointmentDAO extends DBContext {
     public List<DoctorDTO> getDoctorsEligibleForReview(int patientId) {
         List<DoctorDTO> doctors = new ArrayList<>();
         String sql = "SELECT DISTINCT d.DoctorID, s.StaffID, s.FirstName, s.LastName, "
-                + "sp.SpecialtyID, sp.SpecialtyName "
+                + "sp.SpecialtyID, sp.SpecialtyName, a.DateEnd "
                 + "FROM Appointment a "
                 + "JOIN Doctor d ON a.DoctorID = d.DoctorID "
                 + "JOIN Staff s ON d.StaffID = s.StaffID "
@@ -993,7 +993,6 @@ public class AppointmentDAO extends DBContext {
                 + "    SELECT 1 FROM DoctorReview dr "
                 + "    WHERE dr.PatientID = a.PatientID "
                 + "    AND dr.DoctorID = d.DoctorID "
-                + "    AND dr.AppointmentID = a.AppointmentID "
                 + ") "
                 + "ORDER BY a.DateEnd DESC";
 

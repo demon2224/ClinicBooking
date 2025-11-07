@@ -243,6 +243,8 @@
                 display: block;
             }
 
+            /* Inline validation removed - using backend modal only */
+
             @media (max-width: 992px) {
                 .edit-profile-layout {
                     grid-template-columns: 1fr;
@@ -287,27 +289,52 @@
                 <h1>Edit Profile</h1>
             </div>
 
+            <!-- Error Modal -->
+            <c:if test="${not empty errors}">
+                <div id="messageModal" class="modal-overlay">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3 class="modal-title">
+                                <i class="fas fa-exclamation-triangle text-error"></i> Error
+                            </h3>
+                            <button type="button" class="modal-close" onclick="closeModal()">&times;</button>
+                        </div>
+                        <div class="modal-body">
+                            <ul style="margin: 0; padding-left: 1.5rem; color: #374151;">
+                                <c:forEach var="error" items="${errors}">
+                                    <li>${error}</li>
+                                </c:forEach>
+                            </ul>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger" onclick="closeModal()">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </c:if>
+
+            <!-- Success Modal -->
+            <c:if test="${not empty successMessage}">
+                <div id="messageModal" class="modal-overlay">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3 class="modal-title">
+                                <i class="fas fa-check-circle text-success"></i> Success
+                            </h3>
+                            <button type="button" class="modal-close" onclick="closeModal()">&times;</button>
+                        </div>
+                        <div class="modal-body">
+                            <p>${successMessage}</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-success" onclick="closeModal()">OK</button>
+                        </div>
+                    </div>
+                </div>
+            </c:if>
+
             <!-- Edit Profile Container -->
             <div class="edit-profile-container">
-                <!-- Error Messages -->
-                <c:if test="${not empty errors}">
-                    <div class="alert alert-danger" role="alert">
-                        <strong>Errors:</strong>
-                        <ul style="margin-bottom: 0;">
-                            <c:forEach var="error" items="${errors}">
-                                <li>${error}</li>
-                            </c:forEach>
-                        </ul>
-                    </div>
-                </c:if>
-
-                <!-- Success Message -->
-                <c:if test="${not empty successMessage}">
-                    <div class="alert alert-success" role="alert">
-                        <i class="fas fa-check-circle"></i> ${successMessage}
-                    </div>
-                </c:if>
-
                 <form method="post" action="${pageContext.request.contextPath}/profile" enctype="multipart/form-data">
                     <input type="hidden" name="action" value="update">
                     
@@ -424,20 +451,7 @@
             document.getElementById('editAvatarUpload').addEventListener('change', function (e) {
                 const file = e.target.files[0];
                 if (file) {
-                    // Validate file size (10MB max)
-                    if (file.size > 10 * 1024 * 1024) {
-                        alert('File size must not exceed 10MB');
-                        this.value = '';
-                        return;
-                    }
-
-                    // Validate file type
-                    const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
-                    if (!validTypes.includes(file.type)) {
-                        alert('Only JPG, PNG, and GIF files are allowed');
-                        this.value = '';
-                        return;
-                    }
+                    // File validation will be handled by backend - show in modal
 
                     // Preview image
                     const reader = new FileReader();
@@ -448,64 +462,24 @@
                 }
             });
 
-            // Form validation
-            document.querySelector('form').addEventListener('submit', function (e) {
-                const firstName = document.getElementById('firstName').value.trim();
-                const lastName = document.getElementById('lastName').value.trim();
-                const phoneNumber = document.getElementById('phoneNumber').value.trim();
-                const email = document.getElementById('email').value.trim();
-                const dob = document.getElementById('dob').value;
+            // Avatar upload preview (keep simple, no validation popups)
 
-                // Required fields
-                if (!firstName || !lastName || !phoneNumber || !email || !dob) {
-                    e.preventDefault();
-                    alert('Please fill in all required fields (marked with *)');
-                    return false;
-                }
+            // Form validation removed - let backend handle all validation via modal
 
-                // Name validation (2-50 characters, letters only)
-                const namePattern = /^[a-zA-Z\s]{2,50}$/;
-                if (!namePattern.test(firstName)) {
-                    e.preventDefault();
-                    alert('First name must be 2-50 characters and contain only letters');
-                    return false;
+            // Close modal function
+            function closeModal() {
+                const modal = document.getElementById('messageModal');
+                if (modal) {
+                    modal.style.display = 'none';
                 }
-                if (!namePattern.test(lastName)) {
-                    e.preventDefault();
-                    alert('Last name must be 2-50 characters and contain only letters');
-                    return false;
-                }
+            }
 
-                // Phone validation (10 digits starting with 0)
-                const phonePattern = /^0[0-9]{9}$/;
-                if (!phonePattern.test(phoneNumber)) {
-                    e.preventDefault();
-                    alert('Phone number must be 10 digits and start with 0');
-                    return false;
+            // Auto-show modal on page load
+            window.addEventListener('DOMContentLoaded', function() {
+                const modal = document.getElementById('messageModal');
+                if (modal) {
+                    modal.style.display = 'flex';
                 }
-
-                // Email validation
-                const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                if (!emailPattern.test(email)) {
-                    e.preventDefault();
-                    alert('Please enter a valid email address');
-                    return false;
-                }
-
-                // Age validation (must be 18+)
-                const dobDate = new Date(dob);
-                const today = new Date();
-                const age = today.getFullYear() - dobDate.getFullYear();
-                const monthDiff = today.getMonth() - dobDate.getMonth();
-                
-                if (age < 18 || (age === 18 && monthDiff < 0) || 
-                    (age === 18 && monthDiff === 0 && today.getDate() < dobDate.getDate())) {
-                    e.preventDefault();
-                    alert('You must be at least 18 years old');
-                    return false;
-                }
-
-                return true;
             });
         </script>
     </body>

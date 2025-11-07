@@ -22,21 +22,23 @@ public class ProfileValidate {
     private static final String PHONE_REGEX = "^(0|\\+84)[0-9]{9}$";
     private static final String NAME_REGEX = "^[a-zA-Z\\s]{2,50}$";
     private static final String PASSWORD_REGEX = "^(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!])(?=\\S+$).{6,}$";
+    private static final String ADDRESS_REGEX = "^[a-zA-Z0-9\\s,.-]{5,200}$";
 
     /**
      * Validate all profile input fields
      *
-     * @param firstName First name
-     * @param lastName Last name
+     * @param firstName   First name
+     * @param lastName    Last name
      * @param phoneNumber Phone number
-     * @param email Email address
-     * @param dob Date of birth string
-     * @param gender Gender
+     * @param email       Email address
+     * @param dob         Date of birth string
+     * @param gender      Gender
+     * @param address     Address
      * @return List of error messages (empty if valid)
      */
     public static List<String> validateProfileInput(String firstName, String lastName,
             String phoneNumber, String email,
-            String dob, String gender) {
+            String dob, String gender, String address) {
         List<String> errors = new ArrayList<>();
 
         // Validate first name
@@ -57,6 +59,11 @@ public class ProfileValidate {
         // Validate email
         if (!isValidEmail(email)) {
             errors.add("Invalid email");
+        }
+
+        // Validate address
+        if (!isValidAddress(address)) {
+            errors.add("Invalid address (5-200 characters, letters, numbers, spaces, commas, dots, and hyphens only)");
         }
 
         // Validate DOB
@@ -157,8 +164,22 @@ public class ProfileValidate {
     }
 
     /**
+     * Validate address
+     *
+     * @param address Address to validate
+     * @return true if valid
+     */
+    public static boolean isValidAddress(String address) {
+        if (address == null || address.trim().isEmpty()) {
+            return false;
+        }
+        return address.matches(ADDRESS_REGEX);
+    }
+
+    /**
      * Validate password for password change Password must contain: - At least 6
-     * characters - At least one uppercase letter - At least one lowercase letter - At
+     * characters - At least one uppercase letter - At least one lowercase letter -
+     * At
      * least one special character (@#$%^&+=!)
      *
      * @param password Password to validate
@@ -211,7 +232,7 @@ public class ProfileValidate {
     /**
      * Check if new password matches confirmation
      *
-     * @param password New password
+     * @param password        New password
      * @param confirmPassword Password confirmation
      * @return true if matched
      */

@@ -28,8 +28,7 @@ import validate.ProfileValidate;
  *
  * @author Nguyen Minh Khang - CE190728
  */
-@MultipartConfig(
-        fileSizeThreshold = 1024 * 1024 * 1, // 1 MB
+@MultipartConfig(fileSizeThreshold = 1024 * 1024 * 1, // 1 MB
         maxFileSize = 1024 * 1024 * 10, // 10 MB
         maxRequestSize = 1024 * 1024 * 15 // 15 MB
 )
@@ -204,8 +203,7 @@ public class ProfileController extends HttpServlet {
 
             // Validate input
             List<String> errors = ProfileValidate.validateProfileInput(
-                    firstName, lastName, phoneNumber, email, dobStr, genderStr
-            );
+                    firstName, lastName, phoneNumber, email, dobStr, genderStr, address);
 
             // Check if email is unique (if changed)
             PatientDTO currentPatient = patientDAO.getPatientById(patientId);
@@ -236,8 +234,7 @@ public class ProfileController extends HttpServlet {
                 }
 
                 newAvatarPath = AvatarHandler.handleAvatarUpload(
-                        avatarPart, patientId, "patient", getServletContext()
-                );
+                        avatarPart, patientId, "patient", getServletContext());
 
                 if (newAvatarPath == null) {
                     errors.add("Upload avatar failed");
