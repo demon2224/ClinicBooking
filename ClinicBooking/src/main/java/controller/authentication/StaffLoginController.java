@@ -68,38 +68,7 @@ public class StaffLoginController extends HttpServlet {
             throws ServletException, IOException {
 //        processRequest(request, response);
 
-        try {
-            HttpSession session = request.getSession();
-            StaffDTO staff = (StaffDTO) session.getAttribute("staff");
-            boolean isExistAccount = staff != null;
-
-            if (isExistAccount) {
-                String role = staff.getRole();
-                switch (role) {
-                    case "Receptionist":
-                        response.sendRedirect(request.getContextPath() + "/receptionist-dashboard");
-                        break;
-
-                    case "Pharmacist":
-                        response.sendRedirect(request.getContextPath() + "/pharmacist-dashboard");
-                        break;
-
-                    case "Doctor":
-                        response.sendRedirect(request.getContextPath() + "/doctor-dashboard");
-                        break;
-
-                    case "Admin":
-                        response.sendRedirect(request.getContextPath() + "/admin-dashboard");
-                        break;
-                    default:
-                        throw new NullPointerException();
-                }
-            } else {
-                request.getRequestDispatcher("/WEB-INF/authentication/StaffLogin.jsp").forward(request, response);
-            }
-        } catch (IOException | NullPointerException e) {
-            request.getRequestDispatcher("/WEB-INF/authentication/StaffLogin.jsp").forward(request, response);
-        }
+        request.getRequestDispatcher("/WEB-INF/authentication/StaffLogin.jsp").forward(request, response);
     }
 
     /**
@@ -137,6 +106,32 @@ public class StaffLoginController extends HttpServlet {
         }
     }
 
+    private void redirectToDashboard(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        HttpSession session = request.getSession();
+        StaffDTO staff = (StaffDTO) session.getAttribute("staff");
+        String role = staff.getRole();
+        switch (role) {
+            case "Receptionist":
+                response.sendRedirect(request.getContextPath() + "/receptionist-dashboard");
+                break;
+
+            case "Pharmacist":
+                response.sendRedirect(request.getContextPath() + "/pharmacist-dashboard");
+                break;
+
+            case "Doctor":
+                response.sendRedirect(request.getContextPath() + "/doctor-dashboard");
+                break;
+
+            case "Admin":
+                response.sendRedirect(request.getContextPath() + "/admin-dashboard");
+                break;
+
+            default:
+                throw new IOException();
+        }
+    }
+
     private void staffLogin(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
         String staffUsernameParam = request.getParameter("staff-username");
@@ -157,7 +152,7 @@ public class StaffLoginController extends HttpServlet {
                 HttpSession session = request.getSession();
                 session.setAttribute("staff", staff);
                 request.getSession().setAttribute("loginSuccessMsg", "Login successfully!");
-                response.sendRedirect(request.getContextPath() + "/staff-login");
+                redirectToDashboard(request, response);
             } else {
                 request.getSession().setAttribute("loginErrorMsg", "Logic failed");
                 response.sendRedirect(request.getContextPath() + "/staff-login");
