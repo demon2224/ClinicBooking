@@ -218,7 +218,6 @@ public class ReceptionistManageAppointmentController extends HttpServlet {
         String dateBeginStr = request.getParameter("dateBegin");
         String note = request.getParameter("note");
 
-        // Kiểm tra doctorId
         if (doctorIdStr == null || doctorIdStr.isEmpty()) {
             request.setAttribute("error", "Please select a doctor!");
             request.getRequestDispatcher("/WEB-INF/receptionist/AddAppointment.jsp").forward(request, response);
@@ -226,7 +225,6 @@ public class ReceptionistManageAppointmentController extends HttpServlet {
         }
         int doctorId = Integer.parseInt(doctorIdStr);
 
-        // Kiểm tra dateBegin
         if (dateBeginStr == null || dateBeginStr.isEmpty()) {
             request.setAttribute("error", "Please select a date and time for the appointment!");
             request.getRequestDispatcher("/WEB-INF/receptionist/AddAppointment.jsp").forward(request, response);
@@ -242,7 +240,6 @@ public class ReceptionistManageAppointmentController extends HttpServlet {
             return;
         }
 
-        // Kiểm tra patient info
         if ((existingPatientId == null || existingPatientId.isEmpty())
                 && (fullName == null || fullName.trim().isEmpty() || phone == null || phone.trim().isEmpty())) {
             request.setAttribute("error", "Please select an existing patient or enter full name and phone for new patient.");
