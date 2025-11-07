@@ -116,10 +116,9 @@ public class PatientLoginController extends HttpServlet {
 
         if (!isValidPatientUsername
                 || !isValidPatientPassword) {
-            response.sendRedirect(request.getContextPath() + "/home");
+            response.sendRedirect(request.getContextPath() + "/patient-login");
 
         } else {
-            response.sendRedirect(request.getContextPath() + "/home");
             PatientDTO patient = patientDAO.getPatientByUsernameAndPassword(patientUsernameParam, patientPasswordParam);
             boolean isExistAccount = patient != null;
 
@@ -129,7 +128,7 @@ public class PatientLoginController extends HttpServlet {
                 request.getSession().setAttribute("loginSuccessMsg", "Login successfully!");
                 response.sendRedirect(request.getContextPath() + "/home");
             } else {
-                request.getSession().setAttribute("loginErrorMsg", "Login successfully!");
+                request.getSession().setAttribute("loginErrorMsg", "Wrong password or username!");
                 response.sendRedirect(request.getContextPath() + "/patient-login");
             }
         }
@@ -139,10 +138,10 @@ public class PatientLoginController extends HttpServlet {
         if (LoginValidate.isEmpty(patientPasswordParam)) {
             request.getSession().setAttribute("patientPasswordErrorMsg", "Password can't be empty.");
             return false;
-        } else if (LoginValidate.isValidUsernameLength(patientPasswordParam)) {
+        } else if (!LoginValidate.isValidPasswordLength(patientPasswordParam)) {
             request.getSession().setAttribute("patientPasswordErrorMsg", "Password length must be range in 8 to 200.");
             return false;
-        } else if (LoginValidate.isValidPassword(patientPasswordParam)) {
+        } else if (!LoginValidate.isValidPassword(patientPasswordParam)) {
             request.getSession().setAttribute("patientPasswordErrorMsg", "Password must be contain 1 special character and 1 uppercase character.");
             return false;
         } else {
@@ -154,11 +153,11 @@ public class PatientLoginController extends HttpServlet {
         if (LoginValidate.isEmpty(patientUsernameParam)) {
             request.getSession().setAttribute("patientUsernameErrorMsg", "Username can't be empty.");
             return false;
+        } else if (!LoginValidate.isValidUsernameLength(patientUsernameParam)) {
+            request.getSession().setAttribute("patientUsernameErrorMsg", "Username length must be range in 8 to 200.");
+            return false;
         } else if (!LoginValidate.isValidUsername(patientUsernameParam)) {
             request.getSession().setAttribute("patientUsernameErrorMsg", "Username only can contain letter and number.");
-            return false;
-        } else if (LoginValidate.isValidUsernameLength(patientUsernameParam)) {
-            request.getSession().setAttribute("patientUsernameErrorMsg", "Username length must be range in 8 to 200.");
             return false;
         } else {
             return true;

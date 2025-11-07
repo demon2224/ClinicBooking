@@ -16,81 +16,57 @@
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assests/css/bootstrap.min.css">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assests/css/all.min.css" />
         <style>
-            /* CSS tuỳ chỉnh nhỏ để cố định chiều cao và căn giữa, không sử dụng class tuỳ chỉnh tự viết mà chỉ dùng inline style hoặc utility class của Bootstrap */
+            body {
+                background-color: #cfe9ff; /* xanh biển nhạt */
+            }
             .login-page-container {
                 min-height: 100vh;
             }
             .image-side {
-                /* Tùy chỉnh ảnh nền cho cột bên trái (chỉ dùng background image) */
-                background: url('assets/img/CBS_Back') no-repeat center center;
+                background: url('${pageContext.request.contextPath}/assets/img/CBS_Back') no-repeat center center;
                 background-size: cover;
             }
         </style>
     </head>
-    <body class="bg-light">
+    <body>
 
         <div class="container-fluid login-page-container d-flex align-items-center justify-content-center">
-            <div class="row w-100 shadow-lg" style="max-width: 1200px; height: 700px;">
-                <div class="col-md-7 d-none d-md-block image-side rounded-start">
+            <div class="row w-100 shadow-lg bg-white rounded-4 overflow-hidden" style="max-width: 1000px;">
+                <div class="col-md-6 d-none d-md-block image-side">
                 </div>
 
-                <div class="col-md-5 d-flex align-items-center bg-white rounded-end">
-                    <div class="card border-0 w-100 p-4 p-md-5">
-                        <div class="card-body">
-                            <h2 class="card-title text-center mb-4">Đăng Nhập Hệ Thống</h2>
+                <div class="col-md-6 d-flex align-items-center p-4 p-md-5">
+                    <div class="w-100">
+                        <h2 class="text-center mb-4 fw-bold">Patient Login</h2>
 
-                            <ul class="nav nav-pills nav-justified mb-4" id="loginTab" role="tablist">
-                                <li class="nav-item" role="presentation">
-                                    <button class="nav-link active" id="staff-tab" data-bs-toggle="pill" data-bs-target="#staff-login" type="button" role="tab" aria-controls="staff-login" aria-selected="true"><i class="fas fa-user-md me-2"></i>Nhân viên</button>
-                                </li>
-                                <li class="nav-item" role="presentation">
-                                    <button class="nav-link" id="patient-tab" data-bs-toggle="pill" data-bs-target="#patient-login" type="button" role="tab" aria-controls="patient-login" aria-selected="false"><i class="fas fa-procedures me-2"></i>Bệnh nhân</button>
-                                </li>
-                            </ul>
+                        <form action="${pageContext.request.contextPath}/patient-login" method="POST">
+                            <input type="hidden" name="user" value="patient">
+                            
+                            <div class="mb-3">
+                                <label for="patient-username" class="form-label">Username</label>
+                                <input type="text" class="form-control" id="patient-username" name="patient-username" required>
+                            </div>
 
-                            <div class="tab-content" id="loginTabContent">
-                                <div class="tab-pane fade show active" id="staff-login" role="tabpanel" aria-labelledby="staff-tab">
-                                    <form action="${pageContext.request.contextPath}/login" method="POST">
-                                        <input type="hidden" name="user" value="staff">
-                                        <div class="mb-3">
-                                            <label for="staff-username" class="form-label">Tài khoản (Username)</label>
-                                            <input type="text" class="form-control" id="staff-username" name="username" required>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label for="staff-password" class="form-label">Mật khẩu (Password)</label>
-                                            <input type="password" class="form-control" id="staff-password" name="password" required>
-                                        </div>
-                                        <div class="mb-3 form-check">
-                                            <input type="checkbox" class="form-check-input" id="staff-remember-me">
-                                            <label class="form-check-label" for="staff-remember-me">Ghi nhớ đăng nhập</label>
-                                        </div>
-                                        <button type="submit" class="btn btn-primary w-100">Đăng nhập Nhân viên</button>
-                                    </form>
-                                </div>
-
-                                <div class="tab-pane fade" id="patient-login" role="tabpanel" aria-labelledby="patient-tab">
-                                    <form action="${pageContext.request.contextPath}/login" method="POST">
-                                        <input type="hidden" name="user" value="patient">
-                                        <div class="mb-3">
-                                            <label for="patient-username" class="form-label">Tài khoản (Username)</label>
-                                            <input type="text" class="form-control" id="patient-username" name="username" required>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label for="patient-password" class="form-label">Mật khẩu (Password)</label>
-                                            <input type="password" class="form-control" id="patient-password" name="password" required>
-                                        </div>
-                                        <div class="mb-3 form-check">
-                                            <input type="checkbox" class="form-check-input" id="patient-remember-me">
-                                            <label class="form-check-label" for="patient-remember-me">Ghi nhớ đăng nhập</label>
-                                        </div>
-                                        <button type="submit" class="btn btn-success w-100">Đăng nhập Bệnh nhân</button>
-                                    </form>
+                            <div class="mb-3 position-relative">
+                                <label for="patient-password" class="form-label">Password</label>
+                                <div class="input-group">
+                                    <input type="password" class="form-control" id="patient-password" name="patient-password" required>
+                                    <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                                        <i class="fas fa-eye"></i> Show
+                                    </button>
                                 </div>
                             </div>
 
-                            <div class="text-center mt-3">
-                                <a href="#" class="text-decoration-none">Quên mật khẩu?</a>
+                            <div class="mb-3 form-check">
+                                <input type="checkbox" class="form-check-input" id="patient-remember-me">
+                                <label class="form-check-label" for="patient-remember-me">Remember me</label>
                             </div>
+
+                            <button type="submit" class="btn btn-success w-100">Login</button>
+                        </form>
+
+                        <div class="text-center mt-3">
+                            <a href="#" class="text-decoration-none">Forgot password?</a>
                         </div>
                     </div>
                 </div>
@@ -98,5 +74,21 @@
         </div>
 
         <script src="${pageContext.request.contextPath}/assests/js/bootstrap.bundle.min.js"></script> 
+        <script>
+            // Toggle show/hide password
+            const togglePassword = document.getElementById("togglePassword");
+            const passwordField = document.getElementById("patient-password");
+
+            togglePassword.addEventListener("click", function () {
+                const type = passwordField.getAttribute("type") === "password" ? "text" : "password";
+                passwordField.setAttribute("type", type);
+
+                if (type === "text") {
+                    this.innerHTML = '<i class="fas fa-eye-slash"></i> Hide';
+                } else {
+                    this.innerHTML = '<i class="fas fa-eye"></i> Show';
+                }
+            });
+        </script>
     </body>
 </html>
