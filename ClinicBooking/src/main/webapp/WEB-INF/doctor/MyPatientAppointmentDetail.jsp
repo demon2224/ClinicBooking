@@ -61,7 +61,7 @@
                 background-color: #28a745;
                 color: white;
                 font-weight: 600;
-                border-radius: 30px;
+                border-radius: 10px;
                 padding: 10px 25px;
                 transition: all 0.3s ease;
             }
@@ -83,6 +83,15 @@
                 <h2 class="fw-bold text-primary">
                     <i class="fa-solid fa-calendar-check me-2"></i>Appointment Detail
                 </h2>
+                 <!-- Create Medical Record Button -->
+            <c:if test="${not requestScope.isExist}">
+                <div class="text-center mt-4">
+                    <a href="${pageContext.request.contextPath}/manage-my-patient-medical-record?action=create&appointmentID=${detail.appointmentID}"
+                       class="btn btn-create-record">
+                        <i class="fa-solid fa-notes-medical me-2"></i>Create Medical Record
+                    </a>
+                </div>
+            </c:if>
             </div>
 
             <!-- Appointment Information -->
@@ -150,17 +159,7 @@
                         <tr><th>Address</th><td>${detail.patientID.userAddress}</td></tr>
                     </table>
                 </div>
-            </div>
-
-            <!-- Create Medical Record Button -->
-            <c:if test="${not requestScope.isExist}">
-                <div class="text-center mt-4">
-                    <a href="${pageContext.request.contextPath}/manage-my-patient-medical-record?action=create&appointmentID=${detail.appointmentID}"
-                       class="btn btn-create-record">
-                        <i class="fa-solid fa-notes-medical me-2"></i>Create Medical Record
-                    </a>
-                </div>
-            </c:if>
+            </div>         
         </div>
     </body>
 </html>

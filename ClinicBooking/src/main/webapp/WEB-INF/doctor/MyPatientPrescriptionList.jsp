@@ -87,23 +87,26 @@
 
         <!-- Main Content -->
         <div class="main-content">
-            <!-- Header -->
-            <nav class="navbar navbar-light justify-content-between">
-                <h3 class="fw-bold text-primary mb-0">
-                    <i class="fa-solid fa-prescription-bottle-medical me-2"></i>Manage My Patient Prescriptions
+            <nav class="navbar navbar-light justify-content-between px-3 py-2 border-bottom shadow-sm">
+                <h3 class="fw-bold text-primary mb-0 d-flex align-items-center">
+                    <i class="fa-solid fa-prescription-bottle-medical me-2"></i>
+                    Manage My Patient Prescriptions
                 </h3>
-                <form class="d-flex" action="${pageContext.request.contextPath}/manage-my-patient-prescription" method="get">
+                <form class="d-flex align-items-center"
+                      action="${pageContext.request.contextPath}/manage-my-patient-prescription" method="get">
                     <input class="form-control me-2" type="text" name="keyword"
                            placeholder="Search by patient name..." value="${param.keyword}">
-                    <button class="btn btn-outline-primary me-3" type="submit">
-                        <i class="fa-solid fa-magnifying-glass"></i> Search
+                    <button class="btn btn-outline-primary me-3 d-flex align-items-center" type="submit">
+                        <i class="fa-solid fa-magnifying-glass me-2"></i>
+                        <span>Search</span>
                     </button>
-                    <a href="${pageContext.request.contextPath}/logout" class="btn btn-outline-danger" id="Logout">
-                        <i class="fa-solid fa-right-from-bracket"></i> Logout
+                    <a href="${pageContext.request.contextPath}/logout"
+                       class="btn btn-outline-danger d-flex align-items-center" id="Logout">
+                        <i class="fa-solid fa-right-from-bracket me-2"></i>
+                        <span>Logout</span>
                     </a>
                 </form>
             </nav>
-
             <!-- Prescription List -->
             <div class="card mt-4">
                 <div class="card-header">

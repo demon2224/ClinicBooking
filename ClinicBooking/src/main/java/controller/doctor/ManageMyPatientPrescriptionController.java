@@ -134,7 +134,6 @@ public class ManageMyPatientPrescriptionController extends HttpServlet {
                 response.sendRedirect(request.getContextPath() + "/manage-my-patient-prescription");
             }
         } catch (Exception e) {
-            e.printStackTrace();
             response.sendRedirect(request.getContextPath() + "/manage-my-patient-prescription");
         }
     }

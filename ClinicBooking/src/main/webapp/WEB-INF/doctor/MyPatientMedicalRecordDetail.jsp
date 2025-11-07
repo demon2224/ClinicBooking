@@ -61,7 +61,7 @@
                 background-color: #28a745;
                 color: white;
                 font-weight: 600;
-                border-radius: 30px;
+                border-radius: 10px;
                 padding: 10px 25px;
                 transition: all 0.3s ease;
             }
@@ -88,6 +88,14 @@
                 <h2 class="fw-bold text-primary">
                     <i class="fa-solid fa-file-medical me-2"></i>Medical Record Detail
                 </h2>
+                <c:if test="${not requestScope.isExist}">
+                    <div class="text-center mt-4">
+                        <a href="${pageContext.request.contextPath}/manage-my-patient-prescription?action=create&medicalRecordID=${detail.medicalRecordID}"
+                           class="btn btn-create-record">
+                            <i class="fa-solid fa-pills me-2"></i>Create Prescription
+                        </a>
+                    </div>
+                </c:if>
             </div>
 
             <!-- Appointment Information -->
@@ -173,18 +181,9 @@
             </div>
 
             <!-- Prescription Section -->
-            <c:choose>
-                <c:when test="${not requestScope.isExist}">
-                    <div class="text-center mt-4">
-                        <a href="${pageContext.request.contextPath}/manage-my-patient-prescription?action=create&medicalRecordID=${detail.medicalRecordID}"
-                           class="btn btn-create-record">
-                            <i class="fa-solid fa-pills me-2"></i>Create Prescription
-                        </a>
-                    </div>
-                </c:when>
-
-                <c:otherwise>
-                    <div class="card">
+            
+              <c:if test="${ requestScope.isExist}">
+                     <div class="card">
                         <div class="card-header">
                             <i class="fa-solid fa-prescription-bottle-medical me-2"></i>Prescription Information
                         </div>
@@ -217,8 +216,7 @@
                             </table>
                         </div>
                     </div>
-                </c:otherwise>
-            </c:choose>
+                </c:if>         
         </div>
     </body>
 </html>

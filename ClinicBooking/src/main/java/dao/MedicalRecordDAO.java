@@ -80,6 +80,7 @@ public class MedicalRecordDAO extends DBContext {
                     PatientDTO patient = new PatientDTO();
                     patient.setFirstName(rs.getString("FirstName"));
                     patient.setLastName(rs.getString("LastName"));
+                    // Appointmnet
                     AppointmentDTO appointment = new AppointmentDTO();
                     appointment.setPatientID(patient);
                     // Medical Record
