@@ -85,13 +85,13 @@ public class PatientLoginController extends HttpServlet {
 //        processRequest(request, response);
 
         removeSessionMsg(request);
-        String user = request.getParameter("user");
+        String action = request.getParameter("action");
 
         try {
-            switch (user) {
+            switch (action) {
 
-                // If the user is patient.
-                case "patient":
+                // If the action is login.
+                case "login":
                     patientLogin(request, response);
                     break;
 

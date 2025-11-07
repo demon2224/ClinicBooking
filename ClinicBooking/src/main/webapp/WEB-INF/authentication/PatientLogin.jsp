@@ -40,8 +40,8 @@
                         <h2 class="text-center mb-4 fw-bold">Patient Login</h2>
 
                         <form action="${pageContext.request.contextPath}/patient-login" method="POST">
-                            <input type="hidden" name="user" value="patient">
-                            
+                            <input type="hidden" name="action" value="login">
+
                             <div class="mb-3">
                                 <label for="patient-username" class="form-label">Username</label>
                                 <input type="text" class="form-control" id="patient-username" name="patient-username" required>
@@ -65,9 +65,13 @@
                             <button type="submit" class="btn btn-success w-100">Login</button>
                         </form>
 
-                        <div class="text-center mt-3">
-                            <a href="#" class="text-decoration-none">Forgot password?</a>
-                        </div>
+                        <form action="${pageContext.request.contextPath}/patient-login" method="POST">
+                            <input type="hidden" name="action" value="forgot-password">
+                            <div class="text-center mt-3">
+                                <button type="submit" class="btn btn-success w-100">Forgot password?</button>
+                            </div>
+                        </form>
+
                     </div>
                 </div>
             </div>
