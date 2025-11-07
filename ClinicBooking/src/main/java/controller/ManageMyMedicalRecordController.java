@@ -39,8 +39,7 @@ public class ManageMyMedicalRecordController extends HttpServlet {
     }
 
     /**
-     * Handles GET requests - Display medical records list or medical record
-     * detail
+     * Handles GET requests - Display medical records list or medical record detail
      *
      * @param request
      * @param response
@@ -140,17 +139,17 @@ public class ManageMyMedicalRecordController extends HttpServlet {
 
         // Get search parameters
         String searchQuery = request.getParameter("search");
-        List<MedicalRecordDTO> MedicalRecordsList;
+        List<MedicalRecordDTO> medicalRecords;
 
         // Apply search
         if (searchQuery != null && !searchQuery.trim().isEmpty()) {
-            MedicalRecordsList = medicalRecordDAO.searchMedicalRecordsByPatientId(patientId, searchQuery);
+            medicalRecords = medicalRecordDAO.searchMedicalRecordsByPatientId(patientId, searchQuery);
         } else {
-            MedicalRecordsList = medicalRecordDAO.getMedicalRecordsByPatientId(patientId);
+            medicalRecords = medicalRecordDAO.getMedicalRecordsByPatientId(patientId);
         }
 
         // Set attributes for JSP
-        request.setAttribute("MedicalRecordsList", MedicalRecordsList);
+        request.setAttribute("medicalRecords", medicalRecords);
         request.setAttribute("searchQuery", searchQuery);
 
         // Forward to JSP
