@@ -60,6 +60,38 @@
             label {
                 font-weight: 500;
             }
+            #patientSuggestions {
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                z-index: 2000;
+                background: #fff;
+                border: 1px solid #ccc;
+                border-top: none;
+                border-radius: 0 0 8px 8px;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                max-height: 200px;
+                overflow-y: auto;
+                display: none;
+            }
+
+            #patientSuggestions .list-group-item {
+                border: none;
+                border-bottom: 1px solid #eee;
+                padding: 10px 12px;
+                cursor: pointer;
+            }
+
+            #patientSuggestions .list-group-item:last-child {
+                border-bottom: none;
+            }
+
+            #patientSuggestions .list-group-item:hover {
+                background-color: #f8f9fa;
+            }
+
+
         </style>
     </head>
 
@@ -132,18 +164,14 @@
                         <i class="fa-solid fa-user me-2"></i>Patient Information
                     </div>
                     <div class="card-body">
-                        <div class="mb-3 row">
-                            <label class="col-sm-3 col-form-label">Select Existing Patient</label>
-                            <div class="col-sm-9">
-                                <select class="form-select" name="existingPatientId" id="existingPatientSelect">
-                                    <option value="">-- New Patient --</option>
-                                    <c:forEach var="p" items="${patients}">
-                                        <option value="${p.patientID}">${p.lastName} ${p.firstName} - ${p.phoneNumber}</option>
-                                    </c:forEach>
-                                </select>
+                        <div class="mb-3 row position-relative">
+                            <label class="col-sm-3 col-form-label">Search Existing Patient</label>
+                            <div class="col-sm-9 position-relative">
+                                <input type="text" class="form-control" id="patientSearch" placeholder="Type patient name...">
+                                <input type="hidden" name="existingPatientId" id="existingPatientId">
+                                <ul id="patientSuggestions" class="list-group"></ul>
                             </div>
                         </div>
-
                         <div class="mb-3 row">
                             <label class="col-sm-3 col-form-label required">Full Name</label>
                             <div class="col-sm-9">
@@ -238,7 +266,7 @@
                 const now = new Date();
                 if (selected < now) {
                     alert("You cannot select a past date or time!");
-                    this.value = ""; 
+                    this.value = "";
                 }
             });
 
@@ -256,6 +284,64 @@
             // Set minimum date and time when the page loads
             setMinDateTime();
         </script>
+        <script>
+            $(document).ready(function () {
+                // Khi người dùng gõ tên bệnh nhân
+                $('#patientSearch').on('input', function () {
+                    let query = $(this).val().trim();
+                    if (query.length < 2) {
+                        $('#patientSuggestions').hide();
+                        return;
+                    }
+
+                    $.ajax({
+                        url: '${pageContext.request.contextPath}/receptionist-manage-appointment',
+                        type: 'get',
+                        data: {action: 'searchPatients', query: query},
+                        success: function (data) {
+                            let list = $('#patientSuggestions');
+                            list.empty();
+
+                            if (data.length === 0) {
+                                list.hide();
+                                return;
+                            }
+
+                            $.each(data, function (i, p) {
+                                list.append('<li class="list-group-item list-group-item-action" data-id="' + p.id + '">'
+                                        + p.name + '</li>');
+                            });
+
+                            list.show();
+                        },
+                        error: function () {
+                            console.error('Error fetching patients');
+                        }
+                    });
+                });
+
+                // Khi chọn 1 gợi ý
+                $(document).on('click', '#patientSuggestions li', function () {
+                    const name = $(this).text();
+                    const id = $(this).data('id');
+                    $('#patientSearch').val(name);
+                    $('#existingPatientId').val(id);
+                    $('#patientSuggestions').hide();
+
+                    // Disable nhập mới nếu đã chọn bệnh nhân cũ
+                    $('#patientName, #phone, #genderSelect').prop('disabled', true);
+                });
+
+                // Khi xóa text => bật lại input
+                $('#patientSearch').on('input', function () {
+                    if ($(this).val().trim() === '') {
+                        $('#existingPatientId').val('');
+                        $('#patientName, #phone, #genderSelect').prop('disabled', false);
+                    }
+                });
+            });
+        </script>
+
     </body>
 </html>  
 

@@ -253,7 +253,8 @@ public class PatientDAO extends DBContext {
      * @param patientId Patient ID
      * @param currentPassword Current password (for verification)
      * @param newPassword New password (will be hashed)
-     * @return true if successful, false if current password incorrect or update failed
+     * @return true if successful, false if current password incorrect or update
+     * failed
      */
     public boolean updatePatientPassword(int patientId, String currentPassword, String newPassword) {
         // First verify current password
@@ -282,4 +283,32 @@ public class PatientDAO extends DBContext {
 
         return false;
     }
+
+    /**
+     * Search patients by keyword (used for autocomplete)
+     *
+     * @param keyword the string user typed (partial name)
+     * @return list of top 10 matched patients (by first name or last name)
+     */
+    public List<PatientDTO> searchPatientsByName(String keyword) {
+        List<PatientDTO> list = new ArrayList<>();
+        String sql = "SELECT TOP 10 PatientID, FirstName, LastName "
+                + "FROM Patient "
+                + "WHERE FirstName LIKE ? OR LastName LIKE ? ORDER BY FirstName ASC";
+        try {
+            ResultSet rs = executeSelectQuery(sql, new Object[]{"%" + keyword + "%", "%" + keyword + "%"});
+            while (rs.next()) {
+                PatientDTO p = new PatientDTO();
+                p.setPatientID(rs.getInt("PatientID"));
+                p.setFirstName(rs.getString("FirstName"));
+                p.setLastName(rs.getString("LastName"));
+                list.add(p);
+            }
+            rs.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
 }

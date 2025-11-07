@@ -68,6 +68,9 @@ public class ReceptionistManageAppointmentController extends HttpServlet {
                     case "getDoctorsBySpecialty":
                         handleGetDoctorsBySpecialty(request, response);
                         break;
+                    case "searchPatients":
+                        handleSearchPatients(request, response);
+                        break;
                     default:
                         handleViewAppointmentList(request, response, searchQuery);
                         break;
@@ -104,6 +107,7 @@ public class ReceptionistManageAppointmentController extends HttpServlet {
                 case "addAppointment":
                     handleAddAppointment(request, response);
                     break;
+
                 default:
                     response.sendRedirect(request.getContextPath() + "/receptionist-manage-appointment");
             }
@@ -260,6 +264,34 @@ public class ReceptionistManageAppointmentController extends HttpServlet {
         }
 
         response.sendRedirect(request.getContextPath() + "/receptionist-manage-appointment");
+    }
+
+    private void handleSearchPatients(HttpServletRequest request, HttpServletResponse response)
+            throws IOException {
+        String query = request.getParameter("query");
+        if (query == null || query.trim().isEmpty()) {
+            response.getWriter().write("[]");
+            return;
+        }
+
+        List<PatientDTO> patients = patientDAO.searchPatientsByName(query);
+
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+
+        StringBuilder json = new StringBuilder("[");
+        for (int i = 0; i < patients.size(); i++) {
+            PatientDTO p = patients.get(i);
+            json.append("{")
+                    .append("\"id\":").append(p.getPatientID()).append(",")
+                    .append("\"name\":\"").append(p.getFirstName()).append(" ").append(p.getLastName()).append("\"")
+                    .append("}");
+            if (i < patients.size() - 1) {
+                json.append(",");
+            }
+        }
+        json.append("]");
+        response.getWriter().write(json.toString());
     }
 
     /**

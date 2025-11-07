@@ -601,7 +601,6 @@ public class AppointmentDAO extends DBContext {
             if (existingPatientIdStr != null && !existingPatientIdStr.isEmpty()) {
                 patientId = Integer.parseInt(existingPatientIdStr);
             } else {
-                // Kiểm tra phone đã tồn tại chưa
                 String sqlCheck = "SELECT PatientID FROM Patient WHERE PhoneNumber = ?";
                 try ( PreparedStatement psCheck = conn.prepareStatement(sqlCheck)) {
                     psCheck.setString(1, phone);
@@ -609,7 +608,6 @@ public class AppointmentDAO extends DBContext {
                         if (rs.next()) {
                             patientId = rs.getInt("PatientID");
                         } else {
-                            // Thêm mới patient
                             String firstName = "";
                             String lastName = "";
                             if (fullName != null && !fullName.trim().isEmpty()) {
@@ -646,10 +644,10 @@ public class AppointmentDAO extends DBContext {
             // Thêm appointment
             String sqlAppointment = "INSERT INTO Appointment "
                     + "(PatientID, DoctorID, AppointmentStatus, DateCreate, DateBegin, DateEnd, Note, Hidden) "
-                    + "VALUES (?, ?, 'Pending', GETDATE(), ?, ?, ?, 1)";
+                    + "VALUES (?, ?, 'Approved', GETDATE(), ?, ?, ?, 1)";
             try ( PreparedStatement psAppt = conn.prepareStatement(sqlAppointment)) {
                 Timestamp tsBegin = Timestamp.valueOf(dateBegin);
-                Timestamp tsEnd = Timestamp.valueOf(dateBegin.plusHours(1)); // kết thúc +1h
+                Timestamp tsEnd = null;
 
                 psAppt.setInt(1, patientId);
                 psAppt.setInt(2, doctorId);
@@ -695,6 +693,10 @@ public class AppointmentDAO extends DBContext {
                 + "WHEN AppointmentStatus = 'Pending' THEN 'Approved' "
                 + "WHEN AppointmentStatus = 'Approved' THEN 'Completed' "
                 + "ELSE AppointmentStatus "
+                + "END, "
+                + "DateEnd = CASE "
+                + "WHEN AppointmentStatus = 'Approved' THEN GETDATE() "
+                + "ELSE DateEnd "
                 + "END "
                 + "WHERE AppointmentID = ?";
 
@@ -1093,5 +1095,6 @@ public class AppointmentDAO extends DBContext {
 
         return false;
     }
+
 
 }

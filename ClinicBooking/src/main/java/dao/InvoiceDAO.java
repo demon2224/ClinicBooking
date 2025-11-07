@@ -161,17 +161,17 @@ public class InvoiceDAO extends DBContext {
 
             while (rs.next()) {
                 // Patient
-                PatientDTO patient = new model.PatientDTO();
+                PatientDTO patient = new PatientDTO();
                 patient.setFirstName(rs.getString("PatientFirstName"));
                 patient.setLastName(rs.getString("PatientLastName"));
 
                 // Staff (for doctor)
-                StaffDTO staff = new model.StaffDTO();
+                StaffDTO staff = new StaffDTO();
                 staff.setFirstName(rs.getString("DoctorFirstName"));
                 staff.setLastName(rs.getString("DoctorLastName"));
 
                 // Doctor 
-                DoctorDTO doctor = new model.DoctorDTO();
+                DoctorDTO doctor = new DoctorDTO();
                 doctor.setStaffID(staff);
 
                 // Appointment 
@@ -180,11 +180,11 @@ public class InvoiceDAO extends DBContext {
                 appointment.setDoctorID(doctor);
 
                 // MedicalRecord 
-                MedicalRecordDTO medicalRecord = new model.MedicalRecordDTO();
+                MedicalRecordDTO medicalRecord = new MedicalRecordDTO();
                 medicalRecord.setAppointmentID(appointment);
 
                 // Specialty
-                SpecialtyDTO specialty = new model.SpecialtyDTO();
+                SpecialtyDTO specialty = new SpecialtyDTO();
                 specialty.setSpecialtyID(rs.getInt("SpecialtyID"));
                 specialty.setSpecialtyName(rs.getString("SpecialtyName"));
                 specialty.setPrice(rs.getDouble("TotalAmount"));

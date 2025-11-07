@@ -140,9 +140,9 @@ public class ManageInvoiceController extends HttpServlet {
         boolean updated = invoiceDAO.updateInvoice(invoiceId, newStatus, paymentType);
 
         if (updated) {
-            request.setAttribute("message", "✅ Invoice updated successfully!");
+            request.setAttribute("message", "Invoice updated successfully!");
         } else {
-            request.setAttribute("message", "❌ Failed to update invoice!");
+            request.setAttribute("message", "Failed to update invoice!");
         }
 
         showInvoiceList(request, response);
@@ -158,9 +158,9 @@ public class ManageInvoiceController extends HttpServlet {
         boolean result = invoiceDAO.cancelInvoice(invoiceId);
 
         if (result) {
-            request.setAttribute("message", "✅ Invoice canceled successfully!");
+            request.setAttribute("message", "Invoice canceled successfully!");
         } else {
-            request.setAttribute("message", "❌ Failed to cancel invoice!");
+            request.setAttribute("message", "Failed to cancel invoice!");
         }
 
         showInvoiceList(request, response);
