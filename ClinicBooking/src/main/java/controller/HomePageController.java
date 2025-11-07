@@ -47,6 +47,19 @@ public class HomePageController extends HttpServlet {
         // Forward to Homepage.jsp
         request.getRequestDispatcher("/WEB-INF/doctor/DoctorDashboard.jsp").forward(request, response);
 //        request.getRequestDispatcher("/WEB-INF/HomePage.jsp").forward(request, response);
+
+//        // Using for test patient login.
+//        HttpSession session = request.getSession();
+//        PatientDTO patient = (PatientDTO) session.getAttribute("patient");
+//
+//        if (patient != null) {
+//            request.getRequestDispatcher("/WEB-INF/HomePage.jsp").forward(request, response);
+//        } else {
+//            response.sendRedirect(request.getContextPath() + "/patient-login");
+//        }
+//
+//        // Using for test staff login.
+//        response.sendRedirect(request.getContextPath() + "/staff-login");
     }
 
     /**

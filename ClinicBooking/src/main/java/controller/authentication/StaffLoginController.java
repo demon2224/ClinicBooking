@@ -91,16 +91,15 @@ public class StaffLoginController extends HttpServlet {
                     case "Admin":
                         response.sendRedirect(request.getContextPath() + "/admin-dashboard");
                         break;
+                    default:
+                        throw new NullPointerException();
                 }
-
+            } else {
+                request.getRequestDispatcher("/WEB-INF/authentication/StaffLogin.jsp").forward(request, response);
             }
         } catch (IOException | NullPointerException e) {
             request.getRequestDispatcher("/WEB-INF/authentication/StaffLogin.jsp").forward(request, response);
         }
-    }
-
-    private void redirectStaffToDashboard(HttpServletRequest request, HttpServletResponse response) {
-
     }
 
     /**
@@ -117,13 +116,13 @@ public class StaffLoginController extends HttpServlet {
 //        processRequest(request, response);
 
         removeSessionMsg(request);
-        String user = request.getParameter("user");
+        String action = request.getParameter("action");
 
         try {
-            switch (user) {
+            switch (action) {
 
                 // If the user is patient.
-                case "staff":
+                case "login":
                     staffLogin(request, response);
                     break;
 
@@ -148,10 +147,9 @@ public class StaffLoginController extends HttpServlet {
 
         if (!isValidPatientUsername
                 || !isValidPatientPassword) {
-            response.sendRedirect(request.getContextPath() + "/home");
+            response.sendRedirect(request.getContextPath() + "/staff-login");
 
         } else {
-            response.sendRedirect(request.getContextPath() + "/home");
             StaffDTO staff = staffDAO.getStaffByUsernameAndPassword(staffUsernameParam, staffPasswordParam);
             boolean isExistAccount = staff != null;
 
@@ -159,9 +157,9 @@ public class StaffLoginController extends HttpServlet {
                 HttpSession session = request.getSession();
                 session.setAttribute("staff", staff);
                 request.getSession().setAttribute("loginSuccessMsg", "Login successfully!");
-                response.sendRedirect(request.getContextPath() + "/home");
+                response.sendRedirect(request.getContextPath() + "/staff-login");
             } else {
-                request.getSession().setAttribute("loginErrorMsg", "Login successfully!");
+                request.getSession().setAttribute("loginErrorMsg", "Logic failed");
                 response.sendRedirect(request.getContextPath() + "/staff-login");
             }
         }
@@ -171,10 +169,10 @@ public class StaffLoginController extends HttpServlet {
         if (LoginValidate.isEmpty(staffPasswordParam)) {
             request.getSession().setAttribute("staffPasswordErrorMsg", "Password can't be empty.");
             return false;
-        } else if (LoginValidate.isValidUsernameLength(staffPasswordParam)) {
+        } else if (!LoginValidate.isValidPasswordLength(staffPasswordParam)) {
             request.getSession().setAttribute("staffPasswordErrorMsg", "Password length must be range in 8 to 200.");
             return false;
-        } else if (LoginValidate.isValidPassword(staffPasswordParam)) {
+        } else if (!LoginValidate.isValidPassword(staffPasswordParam)) {
             request.getSession().setAttribute("patientPasswordErrorMsg", "Password must be contain 1 special character and 1 uppercase character.");
             return false;
         } else {
@@ -186,11 +184,11 @@ public class StaffLoginController extends HttpServlet {
         if (LoginValidate.isEmpty(patientUsernameParam)) {
             request.getSession().setAttribute("staffUsernameErrorMsg", "Username can't be empty.");
             return false;
+        } else if (!LoginValidate.isValidUsernameLength(patientUsernameParam)) {
+            request.getSession().setAttribute("staffUsernameErrorMsg", "Username length must be range in 8 to 200.");
+            return false;
         } else if (!LoginValidate.isValidUsername(patientUsernameParam)) {
             request.getSession().setAttribute("staffUsernameErrorMsg", "Username only can contain letter and number.");
-            return false;
-        } else if (LoginValidate.isValidUsernameLength(patientUsernameParam)) {
-            request.getSession().setAttribute("staffUsernameErrorMsg", "Username length must be range in 8 to 200.");
             return false;
         } else {
             return true;
