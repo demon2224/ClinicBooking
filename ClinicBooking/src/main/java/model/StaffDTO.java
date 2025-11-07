@@ -32,6 +32,25 @@ public class StaffDTO {
     public StaffDTO() {
     }
 
+    public StaffDTO(int staffID, String jobStatus, String role, String accountName, String accountPassword, Timestamp daycreated, String avatar, String bio, String firstName, String lastName, Timestamp dob, boolean gender, String userAddress, String phoneNumber, String email, boolean hidden) {
+        this.staffID = staffID;
+        this.jobStatus = jobStatus;
+        this.role = role;
+        this.accountName = accountName;
+        this.accountPassword = accountPassword;
+        this.daycreated = daycreated;
+        this.avatar = avatar;
+        this.bio = bio;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.dob = dob;
+        this.gender = gender;
+        this.userAddress = userAddress;
+        this.phoneNumber = phoneNumber;
+        this.email = email;
+        this.hidden = hidden;
+    }
+
     public int getStaffID() {
         return staffID;
     }
@@ -159,7 +178,7 @@ public class StaffDTO {
     public void setHidden(boolean hidden) {
         this.hidden = hidden;
     }
-    
+
     public String getFullName() {
         return this.firstName == null && this.lastName == null ? "" : this.firstName + " " + this.lastName;
     }
