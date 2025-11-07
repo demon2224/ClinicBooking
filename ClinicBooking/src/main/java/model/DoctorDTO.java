@@ -18,6 +18,13 @@ public class DoctorDTO {
     public DoctorDTO() {
     }
 
+    public DoctorDTO(int doctorID, StaffDTO staffID, SpecialtyDTO specialtyID, int yearExperience) {
+        this.doctorID = doctorID;
+        this.staffID = staffID;
+        this.specialtyID = specialtyID;
+        this.yearExperience = yearExperience;
+    }
+
     public int getDoctorID() {
         return doctorID;
     }
