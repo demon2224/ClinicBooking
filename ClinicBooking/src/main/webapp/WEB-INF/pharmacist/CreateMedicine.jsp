@@ -120,8 +120,8 @@
                                     <label class="form-label required">Medicine Type</label>
                                     <select class="form-select" name="medicineType" required>
                                         <c:forEach items="${requestScope.medicineTypeList}" var="type">
-                                            <option value="${type.medicineType}">
-                                                <c:out value="${type.medicineType}"/>
+                                            <option value="${type}">
+                                                <c:out value="${type}"/>
                                             </option>
                                         </c:forEach>
                                     </select>

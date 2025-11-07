@@ -10,7 +10,7 @@ package validate;
  */
 public class MedicineInfomationValidate {
 
-    public static final String MEDICINE_NAME_REGEX = "^[a-zA-Z\\s]+$";
+    public static final String MEDICINE_NAME_REGEX = "^[a-zA-Z0-9 ]+$";
     public static final String MEDICINE_CODE_REGEX = "^([a-zA-Z]){3}([0-9]){3}$";
     public static final String DATE_FORMAT = "yyyy-MM-dd";
 

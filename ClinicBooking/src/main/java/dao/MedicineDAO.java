@@ -170,7 +170,7 @@ public class MedicineDAO extends DBContext {
                 + "	MedicineCode = ?,\n"
                 + "	Price = ?\n"
                 + "WHERE MedicineID = ?"
-                + "AND Hidden = 1;";
+                + "AND Hidden = 0;";
         Object[] params = {medicineType, medicineStatus, medicineName, medicineCode, price, medicineID};
 
         int rs = executeQuery(query, params);

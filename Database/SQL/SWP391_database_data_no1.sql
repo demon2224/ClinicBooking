@@ -191,36 +191,36 @@ BEGIN
 	-- 8. MEDICINES (30) - Không phụ thuộc
 	INSERT INTO Medicine (MedicineType, MedicineStatus, MedicineName, MedicineCode, Quantity, Price)
 	VALUES
-	('Tablet',1,'Paracetamol 500mg','MED-PARA-500',200,1.50), -- ID 1
-	('Capsule',1,'Amoxicillin 500mg','MED-AMOX-500',150,2.25), -- ID 2
-	('Syrup',1,'Cough Syrup 100ml','MED-COUGH-100',80,4.50), -- ID 3
-	('Ointment',1,'Hydrocortisone 1%','MED-HYDRO-1',60,3.00), -- ID 4
-	('Drops',1,'Eye Drops 10ml','MED-EYE-10',50,5.50), -- ID 5
-	('Tablet',1,'Ibuprofen 200mg','MED-IBU-200',180,1.75), -- ID 6
-	('Capsule',1,'Omeprazole 20mg','MED-OMEP-20',120,6.00), -- ID 7
-	('Tablet',1,'Aspirin 81mg','MED-ASP-81',300,0.90), -- ID 8
-	('Capsule',1,'Metformin 500mg','MED-MET-500',160,2.10), -- ID 9
-	('Tablet',1,'Loratadine 10mg','MED-LORA-10',140,1.20), -- ID 10
-	('Syrup',1,'Children Multivitamin','MED-MULTI-100',90,7.50), -- ID 11
-	('Tablet',1,'Prednisone 10mg','MED-PRED-10',50,2.80), -- ID 12
-	('Capsule',1,'Doxycycline 100mg','MED-DOXY-100',70,3.60), -- ID 13
-	('Ointment',1,'Antifungal Cream','MED-AF-50',40,4.00), -- ID 14
-	('Drops',1,'Ear Drops 10ml','MED-EAR-10',30,6.50), -- ID 15
-	('Tablet',1,'Clopidogrel 75mg','MED-CLOP-75',60,8.00), -- ID 16
-	('Capsule',1,'Levothyroxine 50mcg','MED-LEVO-50',90,3.20), -- ID 17
-	('Tablet',1,'Zinc Supplement 50mg','MED-ZINC-50',200,1.10), -- ID 18
-	('Capsule',1,'Fluconazole 150mg','MED-FLU-150',45,5.60), -- ID 19
-	('Syrup',1,'Antacid Syrup','MED-Acid-100',110,3.90), -- ID 20
-	('Tablet',1,'Losartan 50mg','MED-LOS-50',75,2.70), -- ID 21
-	('Capsule',1,'Albuterol 2mg','MED-ALB-2',100,4.40), -- ID 22
-	('Tablet',1,'Vitamin D 1000IU','MED-VD-1000',210,1.30), -- ID 23
-	('Capsule',1,'Nitrofurantoin 100mg','MED-NIT-100',55,4.80), -- ID 24
-	('Tablet',1,'Tramadol 50mg','MED-TRAM-50',35,6.75), -- ID 25
-	('Ointment',1,'Antiseptic Ointment','MED-ANT-30',40,2.50), -- ID 26
-	('Drops',1,'Nasal Drops 15ml','MED-NAS-15',65,3.30), -- ID 27
-	('Capsule',1,'Gabapentin 300mg','MED-GABA-300',25,7.20), -- ID 28
-	('Tablet',1,'Hydrochlorothiazide 25mg','MED-HCTZ-25',120,1.90), -- ID 29
-	('Capsule',1,'Clarithromycin 500mg','MED-CLA-500',50,5.00); -- ID 30
+	('Tablet',1,'Paracetamol 500mg','MED001',200,1.50), -- ID 1
+	('Capsule',1,'Amoxicillin 500mg','MED002',150,2.25), -- ID 2
+	('Syrup',1,'Cough Syrup 100ml','MED003',80,4.50), -- ID 3
+	('Ointment',1,'Hydrocortisone 1%','MED004',60,3.00), -- ID 4
+	('Drops',1,'Eye Drops 10ml','MED005',50,5.50), -- ID 5
+	('Tablet',1,'Ibuprofen 200mg','MED006',180,1.75), -- ID 6
+	('Capsule',1,'Omeprazole 20mg','MED007',120,6.00), -- ID 7
+	('Tablet',1,'Aspirin 81mg','MED008',300,0.90), -- ID 8
+	('Capsule',1,'Metformin 500mg','MED009',160,2.10), -- ID 9
+	('Tablet',1,'Loratadine 10mg','MED010',140,1.20), -- ID 10
+	('Syrup',1,'Children Multivitamin','MED011',90,7.50), -- ID 11
+	('Tablet',1,'Prednisone 10mg','MED012',50,2.80), -- ID 12
+	('Capsule',1,'Doxycycline 100mg','MED013',70,3.60), -- ID 13
+	('Ointment',1,'Antifungal Cream','MED014',40,4.00), -- ID 14
+	('Drops',1,'Ear Drops 10ml','MED015',30,6.50), -- ID 15
+	('Tablet',1,'Clopidogrel 75mg','MED016',60,8.00), -- ID 16
+	('Capsule',1,'Levothyroxine 50mcg','MED017',90,3.20), -- ID 17
+	('Tablet',1,'Zinc Supplement 50mg','MED018',200,1.10), -- ID 18
+	('Capsule',1,'Fluconazole 150mg','MED019',45,5.60), -- ID 19
+	('Syrup',1,'Antacid Syrup','MED020',110,3.90), -- ID 20
+	('Tablet',1,'Losartan 50mg','MED021',75,2.70), -- ID 21
+	('Capsule',1,'Albuterol 2mg','MED022',100,4.40), -- ID 22
+	('Tablet',1,'Vitamin D 1000IU','MED023',210,1.30), -- ID 23
+	('Capsule',1,'Nitrofurantoin 100mg','MED024',55,4.80), -- ID 24
+	('Tablet',1,'Tramadol 50mg','MED025',35,6.75), -- ID 25
+	('Ointment',1,'Antiseptic Ointment','MED026',40,2.50), -- ID 26
+	('Drops',1,'Nasal Drops 15ml','MED027',65,3.30), -- ID 27
+	('Capsule',1,'Gabapentin 300mg','MED028',25,7.20), -- ID 28
+	('Tablet',1,'Hydrochlorothiazide 25mg','MED029',120,1.90), -- ID 29
+	('Capsule',1,'Clarithromycin 500mg','MED030',50,5.00); -- ID 30
 
 	-- 9. APPOINTMENTS - Current date: 2025-11-03 (Tuân thủ các quy tắc đặt lịch)
 	-- Rules: 1) Đặt trước 24h, 2) Cách nhau 24h, 3) 7h-17h, 4) Trong 30 ngày, 5) Không trùng giờ bác sĩ, 6) Cách nhau 30 phút

@@ -167,7 +167,7 @@ public class ManageMedicineController extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     private void handleCreateRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
+        
         // Get all the medicine type.
         String[] medicineTypeList = MedicineInfomationValidate.MEDICINE_TYPE_LIST;
         request.setAttribute("medicineTypeList", medicineTypeList);
@@ -355,7 +355,7 @@ public class ManageMedicineController extends HttpServlet {
             boolean isValidMedicineType = isValidMedicineType(request, medicineTypeParam);
             boolean isValidMedicinePrice = isValidMedicinePrice(request, medicinePriceParam);
             boolean isValidMedicineStatus = isValidMedicineStatus(request, medicineStatusParam);
-
+            
             if (!isValidMedicineName
                     || !isValidMedicineCode
                     || !isValidMedicineType
@@ -434,7 +434,7 @@ public class ManageMedicineController extends HttpServlet {
             request.getSession().setAttribute("medicineNameErrorMsg", "The medicine name can't be empty.");
             return false;
         } else if (!MedicineInfomationValidate.isValidMedicineName(medicineNameParam)) {
-            request.getSession().setAttribute("medicineNameErrorMsg", "The medicine name only contains character.");
+            request.getSession().setAttribute("medicineNameErrorMsg", "The medicine name only contains character, number or white space.");
             return false;
         } else {
             return true;
