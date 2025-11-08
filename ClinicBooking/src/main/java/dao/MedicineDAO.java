@@ -259,15 +259,24 @@ public class MedicineDAO extends DBContext {
                 + "from [dbo].[Medicine] m\n"
                 + "WHERE m.MedicineCode = ?;";
         Object[] params = {medicineCode};
+        ResultSet rs = null;
 
-        int rs = executeQuery(query, params);
-        closeResources(null);
+        try {
+            rs = executeSelectQuery(query, params);
+            if (rs.next()) {
+                return true;
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(MedicineDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            closeResources(rs);
+        }
 
-        return rs != 0;
+        return false;
     }
-    
+
     public String getMedicineCodeByMedicineID(int medicineID) {
-        
+
         String query = "SELECT m.MedicineCode\n"
                 + "from [dbo].[Medicine] m\n"
                 + "WHERE m.MedicineID = ?;";
