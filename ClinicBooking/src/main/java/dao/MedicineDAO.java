@@ -152,7 +152,7 @@ public class MedicineDAO extends DBContext {
     public boolean createNewMedicine(String medicineName, String medicineCode, String medicineType, double price, int status) {
         String query = "INSERT INTO [dbo].[Medicine] (MedicineType, MedicineStatus, MedicineName, MedicineCode, Price, Hidden)\n"
                 + "VALUES\n"
-                + "	(?, ?, ?, ?, ?, ?, 1);";
+                + "	(?, ?, ?, ?, ?, 0);";
         Object[] params = {medicineType, status, medicineName, medicineCode, price};
         int rs = executeQuery(query, params);
         closeResources(null);
@@ -296,5 +296,10 @@ public class MedicineDAO extends DBContext {
         }
 
         return medicineCode;
+    }
+    
+    public boolean isAbleToChangeMedicineCode(int medicineID, String medicineCodeParam) {
+        return !getMedicineCodeByMedicineID(medicineID).equals(medicineCodeParam.trim()) &&
+                isExistMedicineCode(medicineCodeParam.trim());
     }
 }
