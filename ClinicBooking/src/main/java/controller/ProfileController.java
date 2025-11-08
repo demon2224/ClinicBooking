@@ -42,17 +42,18 @@ public class ProfileController extends HttpServlet {
     }
 
     /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
+     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
+     * methods.
      *
-     * @param request servlet request
+     * @param request  servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * @throws IOException      if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        try ( PrintWriter out = response.getWriter()) {
+        try (PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
             out.println("<!DOCTYPE html>");
             out.println("<html>");
@@ -69,10 +70,10 @@ public class ProfileController extends HttpServlet {
     /**
      * Handles the HTTP <code>GET</code> method.
      *
-     * @param request servlet request
+     * @param request  servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * @throws IOException      if an I/O error occurs
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -92,13 +93,13 @@ public class ProfileController extends HttpServlet {
      */
     private void viewProfile(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        HttpSession session = request.getSession(false);
-        if (session == null || session.getAttribute("patientID") == null) {
+        HttpSession session = request.getSession();
+        if (session == null || session.getAttribute("patient") == null) {
             response.sendRedirect(request.getContextPath() + "/patient-login");
             return;
         }
         try {
-            int patientId = (int) session.getAttribute("patientID");
+            int patientId = ((PatientDTO) session.getAttribute("patient")).getPatientID();
 
             // Get patient from database
             PatientDTO patient = patientDAO.getPatientById(patientId);
@@ -125,16 +126,16 @@ public class ProfileController extends HttpServlet {
     private void showEditProfileForm(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        HttpSession session = request.getSession(false);
+        HttpSession session = request.getSession();
 
-        if (session == null || session.getAttribute("patientID") == null) {
+        if (session == null || session.getAttribute("patient") == null) {
             response.sendRedirect(request.getContextPath() + "/patient-login");
             return;
         }
 
         try {
 
-            int patientId = (int) session.getAttribute("patientID");
+            int patientId = ((PatientDTO) session.getAttribute("patient")).getPatientID();
 
             PatientDTO patient = patientDAO.getPatientById(patientId);
 
@@ -157,17 +158,17 @@ public class ProfileController extends HttpServlet {
     /**
      * Handles the HTTP <code>POST</code> method.
      *
-     * @param request servlet request
+     * @param request  servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * @throws IOException      if an I/O error occurs
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         HttpSession session = request.getSession(false);
-        if (session == null || session.getAttribute("patientID") == null) {
+        if (session == null || session.getAttribute("patient") == null) {
             response.sendRedirect(request.getContextPath() + "/patient-login");
             return;
         }
@@ -190,9 +191,10 @@ public class ProfileController extends HttpServlet {
             throws ServletException, IOException {
 
         try {
-            int patientId = (int) session.getAttribute("patientID");
+            PatientDTO patient = (PatientDTO) session.getAttribute("patient");
+            int patientId = patient.getPatientID();
 
-            // Get form data
+            // Get form data from request parameters
             String firstName = request.getParameter("firstName");
             String lastName = request.getParameter("lastName");
             String phoneNumber = request.getParameter("phoneNumber");
@@ -246,7 +248,7 @@ public class ProfileController extends HttpServlet {
             }
 
             // Update patient data
-            PatientDTO patient = patientDAO.getPatientById(patientId);
+            patient = patientDAO.getPatientById(patientId);
             patient.setFirstName(firstName);
             patient.setLastName(lastName);
             patient.setPhoneNumber(phoneNumber);
@@ -283,8 +285,7 @@ public class ProfileController extends HttpServlet {
     private void changePassword(HttpServletRequest request, HttpServletResponse response, HttpSession session)
             throws ServletException, IOException {
 
-        int patientId = (int) session.getAttribute("patientID");
-
+        int patientId = ((PatientDTO) session.getAttribute("patient")).getPatientID();
         // Get form data
         String currentPassword = request.getParameter("currentPassword");
         String newPassword = request.getParameter("newPassword");

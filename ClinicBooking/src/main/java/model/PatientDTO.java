@@ -5,6 +5,7 @@
 package model;
 
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 
 /**
  *
@@ -168,4 +169,14 @@ public class PatientDTO {
         return this.firstName == null && this.lastName == null ? "" : this.firstName + " " + this.lastName;
     }
 
+    public String getDobStringFormat() {
+        if (this.dob == null) {
+            return "";
+        }
+        return new SimpleDateFormat("dd/MM/yyyy").format(this.dob);
+    }
+
+    public String getGenderStringFormat() {
+        return gender ? "Male" : "Female";
+    }
 }

@@ -140,10 +140,26 @@ public class ProfileValidate {
                 return false;
             }
 
-            // Check minimum age (18 years)
-            long ageInMillis = now.getTime() - dob.getTime();
-            long years = ageInMillis / (1000L * 60 * 60 * 24 * 365);
-            return years >= 18;
+            // Calculate age properly using Calendar
+            java.util.Calendar dobCal = java.util.Calendar.getInstance();
+            dobCal.setTime(dob);
+
+            java.util.Calendar nowCal = java.util.Calendar.getInstance();
+            nowCal.setTime(now);
+
+            int age = nowCal.get(java.util.Calendar.YEAR) - dobCal.get(java.util.Calendar.YEAR);
+
+            // If birthday hasn't occurred this year, subtract 1
+            int currentMonth = nowCal.get(java.util.Calendar.MONTH);
+            int currentDay = nowCal.get(java.util.Calendar.DAY_OF_MONTH);
+            int birthMonth = dobCal.get(java.util.Calendar.MONTH);
+            int birthDay = dobCal.get(java.util.Calendar.DAY_OF_MONTH);
+
+            if (currentMonth < birthMonth || (currentMonth == birthMonth && currentDay < birthDay)) {
+                age--;
+            }
+
+            return age >= 18;
 
         } catch (ParseException e) {
             return false;
