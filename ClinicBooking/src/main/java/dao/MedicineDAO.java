@@ -212,7 +212,7 @@ public class MedicineDAO extends DBContext {
                 + "WHERE m.MedicineID = ?\n"
                 + "AND m.Hidden = 0;";
         Object[] params = {medicineID};
-        ResultSet rs;
+        ResultSet rs = null;
         int medicine = 0;
 
         try {
@@ -222,18 +222,21 @@ public class MedicineDAO extends DBContext {
             }
         } catch (SQLException ex) {
             Logger.getLogger(PrescriptionDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            closeResources(rs);
         }
 
         return medicine != 0;
     }
 
     public int getQuantityMedicineByMedicineID(int medicineID) {
+
         String query = "SELECT m.Quantity\n"
                 + "FROM [dbo].[Medicine] m\n"
                 + "WHERE m.MedicineID = ?\n"
                 + "AND m.Hidden = 0;";
         Object[] params = {medicineID};
-        ResultSet rs;
+        ResultSet rs = null;
         int quantity = 0;
 
         try {
@@ -243,9 +246,46 @@ public class MedicineDAO extends DBContext {
             }
         } catch (SQLException ex) {
             Logger.getLogger(PrescriptionDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            closeResources(rs);
         }
 
         return quantity;
     }
 
+    public boolean isExistMedicineCode(String medicineCode) {
+
+        String query = "SELECT m.MedicineID\n"
+                + "from [dbo].[Medicine] m\n"
+                + "WHERE m.MedicineCode = ?;";
+        Object[] params = {medicineCode};
+
+        int rs = executeQuery(query, params);
+        closeResources(null);
+
+        return rs != 0;
+    }
+    
+    public String getMedicineCodeByMedicineID(int medicineID) {
+        
+        String query = "SELECT m.MedicineCode\n"
+                + "from [dbo].[Medicine] m\n"
+                + "WHERE m.MedicineID = ?;";
+        Object[] params = {medicineID};
+        ResultSet rs = null;
+        String medicineCode = null;
+
+        try {
+            rs = executeSelectQuery(query, params);
+            if (rs.next()) {
+                medicineCode = rs.getString("MedicineCode");
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(PrescriptionDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            closeResources(rs);
+        }
+
+        return medicineCode;
+    }
 }
