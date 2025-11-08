@@ -169,13 +169,10 @@ public class ManageMyPatientPrescriptionController extends HttpServlet {
 
             // Tạo đơn thuốc
             boolean createPrescriptionResult = prescriptionDAO.createPrescription(appointmentID, note);
-            log("11111111111111111");
             if (createPrescriptionResult) {
-                log("222222222222222222");
                 Integer prescriptionID = prescriptionDAO.getPrescriptionIDByAppointmentID(appointmentID);
 
                 if (prescriptionID == null) {
-                    log("33333333333333");
                     throw new Exception();
                 }
 
@@ -191,7 +188,6 @@ public class ManageMyPatientPrescriptionController extends HttpServlet {
                 }
 
                 if (currentState) {
-                    log("444444444444444444444");
                     for (int i = 0; i < medicineIDs.length; i++) {
                         int medicineID = Integer.parseInt(medicineIDs[i]);
                         int dosage = Integer.parseInt(medicineIDs[i]);
@@ -201,12 +197,10 @@ public class ManageMyPatientPrescriptionController extends HttpServlet {
                     response.sendRedirect(request.getContextPath()
                             + "/manage-my-patient-prescription?action=detail&prescriptionID=" + prescriptionID);
                 } else {
-                    log("okkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk");
                     prescriptionDAO.deletePrescription(prescriptionID);
                     response.sendRedirect(request.getContextPath()
                             + "/manage-my-patient-prescription?action=create&medicalRecordID=" + medicalRecordID);
                 }
-                log("555555555555555555");
             } else {
                 //Set thong6 bao1 loi46
                 response.sendRedirect(request.getContextPath()
@@ -215,7 +209,7 @@ public class ManageMyPatientPrescriptionController extends HttpServlet {
 
         } catch (Exception e) {
             e.printStackTrace();
-            request.setAttribute("error", "❌ Lỗi khi tạo đơn thuốc!");
+            request.setAttribute("error", "Lỗi khi tạo đơn thuốc!");
             int medicalRecordID = Integer.parseInt(request.getParameter("medicalRecordID"));
             response.sendRedirect(request.getContextPath()
                     + "/manage-my-patient-prescription?action=create&medicalRecordID=" + medicalRecordID);

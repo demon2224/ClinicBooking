@@ -169,7 +169,7 @@ public class ManageMyPatientMedicalRecordController extends HttpServlet {
             int appointmentID = Integer.parseInt(request.getParameter("appointmentID"));
             AppointmentDTO appointment = appointmentDAO.getPatientAppointmentDetailOfDoctorByID(appointmentID, doctorID);
 
-            if (appointment == null || appointment.getAppointmentID() != appointmentID) {
+            if ((appointment == null) || (appointment.getAppointmentID() != appointmentID)) {
                 response.sendRedirect(request.getContextPath() + "/manage-my-patient-appointment");
                 return;
             }
@@ -188,7 +188,6 @@ public class ManageMyPatientMedicalRecordController extends HttpServlet {
         } catch (NumberFormatException ex) {
             response.sendRedirect(request.getContextPath() + "/manage-my-patient-appointment");
         } catch (Exception e) {
-            e.printStackTrace();
             response.sendRedirect(request.getContextPath() + "/manage-my-patient-medical-record");
         }
     }
@@ -240,7 +239,6 @@ public class ManageMyPatientMedicalRecordController extends HttpServlet {
             } catch (NumberFormatException ex) {
                 response.sendRedirect(request.getContextPath() + "/manage-my-patient-appointment");
             } catch (Exception e) {
-                e.printStackTrace();
                 response.sendRedirect(request.getContextPath() + "/manage-my-patient-medical-record");
             }
 
