@@ -817,16 +817,19 @@ public class AppointmentDAO extends DBContext {
             appointmentDateTime,
             note
         };
+        boolean result = false;
 
         try {
             int rowsAffected = executeQuery(sql, params);
             closeResources(null);
-            return rowsAffected > 0;
+            result =  rowsAffected > 0;
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
             closeResources(null);
-            return false;
         }
+        
+        return result;
     }
 
     /**
@@ -1095,6 +1098,5 @@ public class AppointmentDAO extends DBContext {
 
         return false;
     }
-
 
 }
