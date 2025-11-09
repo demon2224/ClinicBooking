@@ -322,7 +322,6 @@ public class ManageMedicineController extends HttpServlet {
             
             int medicineID = Integer.parseInt(medicineIDParam);
             boolean deleteResult = medicineDAO.deleteMedicine(medicineID);
-            log(medicineIDParam);
             
             if (deleteResult) {
                 request.getSession().setAttribute("medicineDeleteSuccessMsg", "Delete medicine successfully.");
@@ -398,7 +397,7 @@ public class ManageMedicineController extends HttpServlet {
         boolean isValidMedicineType = isValidMedicineType(request, medicineTypeParam);
         boolean isValidMedicinePrice = isValidMedicinePrice(request, medicinePriceParam);
         boolean isValidMedicineStatus = isValidMedicineStatus(request, medicineStatusParam);
-        
+
         if (!isValidMedicineName
                 || !isValidMedicineCode
                 || !isValidMedicineType
@@ -452,8 +451,7 @@ public class ManageMedicineController extends HttpServlet {
         } else if (!MedicineInfomationValidate.isValidMedicineCode(medicineCodeParam.trim())) {
             request.getSession().setAttribute("medicineCodeErrorMsg", "Medicine code must be 3 letters followed by 3 numbers (e.g. ABC123).");
             return false;
-        } else if (!medicineDAO.getMedicineCodeByMedicineID(medicineID).equals(medicineCodeParam.trim()) &&
-                medicineDAO.isExistMedicineCode(medicineCodeParam.trim())) {
+        } else if (medicineDAO.isAbleToChangeMedicineCode(medicineID,  medicineCodeParam)) {
             request.getSession().setAttribute("medicineCodeErrorMsg", "Medicine code is exist.");
             return false;
         } else {
