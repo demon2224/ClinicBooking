@@ -68,7 +68,30 @@ public class PatientLoginController extends HttpServlet {
             throws ServletException, IOException {
 //        processRequest(request, response);
 
-        request.getRequestDispatcher("/WEB-INF/authentication/PatientLogin.jsp").forward(request, response);
+        removeSessionMsg(request);
+        String action = request.getParameter("action");
+        
+        try {
+            switch (action) {
+
+                // If the action is login.
+                case "login":
+                    request.getRequestDispatcher("/WEB-INF/authentication/PatientLogin.jsp").forward(request, response);
+                    break;
+                    
+                case "register":
+                    request.getRequestDispatcher("/WEB-INF/authentication/Register.jsp").forward(request, response);
+                    break;
+
+                // If the user is not above then send redirect them to login view.
+                default:
+                    request.getRequestDispatcher("/WEB-INF/authentication/PatientLogin.jsp").forward(request, response);
+                    break;
+            }
+        } catch (IOException | NullPointerException e) {
+            // If an exception occur then show the user the medicine list.
+            request.getRequestDispatcher("/WEB-INF/authentication/PatientLogin.jsp").forward(request, response);
+        }
     }
 
     /**
@@ -94,6 +117,10 @@ public class PatientLoginController extends HttpServlet {
                 case "login":
                     patientLogin(request, response);
                     break;
+                    
+                case "register":
+                    register(request, response);
+                    break;
 
                 // If the user is not above then send redirect them to login view.
                 default:
@@ -104,6 +131,10 @@ public class PatientLoginController extends HttpServlet {
             // If an exception occur then show the user the medicine list.
             handleInvalidRequest(request, response);
         }
+    }
+    
+    private void register(HttpServletRequest request, HttpServletResponse response) {
+        
     }
 
     private void patientLogin(HttpServletRequest request, HttpServletResponse response) throws IOException {

@@ -59,6 +59,12 @@ public class PatientLogoutController extends HttpServlet {
             throws ServletException, IOException {
 //        processResquest(request, response);
 
+        HttpSession session = request.getSession();
+        PatientDTO patient = (PatientDTO) session.getAttribute("patient");
+
+        if (patient != null) {
+            session.invalidate();
+        }
         response.sendRedirect(request.getContextPath() + "/patient-login");
     }
 
@@ -75,13 +81,7 @@ public class PatientLogoutController extends HttpServlet {
             throws ServletException, IOException {
 //        processRequest(request, response);
 
-        HttpSession session = request.getSession();
-        PatientDTO patient = (PatientDTO) session.getAttribute("patient");
-
-        if (patient != null) {
-            session.removeAttribute("patient");
-        }
-        response.sendRedirect(request.getContextPath() + "/patient-logout");
+        response.sendRedirect(request.getContextPath() + "/patient-login");
     }
 
     /**

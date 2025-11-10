@@ -55,19 +55,25 @@
         </nav>
 
         <!-- User Actions Buttons -->
-        <div class="user-actions">
+        <c:if test="${empty sessionScope.patient}">
+            <div class="user-actions">
 
-            <!-- Register Button -->
-            <a href="#" class="btn btn-register">
-                <i class="fas fa-user-plus"></i>
-                Register
-            </a>
+                <!-- Login Button -->
+                <a href="${pageContext.request.contextPath}/patient-login" class="btn btn-login">
+                    <i class="fas fa-sign-in-alt"></i>
+                    Login
+                </a>
+            </div>
+        </c:if>
+        <c:if test="${not empty sessionScope.patient}">
+            <div class="user-actions">
 
-            <!-- Login Button -->
-            <a href="#" class="btn btn-login">
-                <i class="fas fa-sign-in-alt"></i>
-                Login
-            </a>
-        </div>
+                <!-- Logout Button -->
+                <a href="${pageContext.request.contextPath}/patient-logout" class="btn btn-logout">
+                    <i class="fas fa-sign-in-alt"></i>
+                    Logout
+                </a>
+            </div>
+        </c:if>
     </div>
 </header>

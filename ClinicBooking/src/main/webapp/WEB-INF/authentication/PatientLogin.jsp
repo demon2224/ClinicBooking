@@ -12,7 +12,7 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Đăng nhập - Clinic Booking</title>
+        <title>Login - Clinic Booking</title>
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assests/css/bootstrap.min.css">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assests/css/all.min.css" />
         <style>
@@ -62,13 +62,22 @@
                                 <label class="form-check-label" for="patient-remember-me">Remember me</label>
                             </div>
 
-                            <button type="submit" class="btn btn-success w-100">Login</button>
+                            <button type="submit" class="btn btn-success w-100 rounded-pill">Login</button>
                         </form>
 
                         <form action="${pageContext.request.contextPath}/patient-login" method="POST">
                             <input type="hidden" name="action" value="forgot-password">
                             <div class="text-center mt-3">
-                                <button type="submit" class="btn btn-success w-100">Forgot password?</button>
+                                <button type="submit" class="btn btn-success w-100 rounded-pill">Forgot password?</button>
+                            </div>
+                        </form>
+
+                        <form action="${pageContext.request.contextPath}/patient-login" method="POST">
+                            <input type="hidden" name="action" value="register">
+                            <div class="text-center mt-3">
+                                <button type="submit" class="btn btn-success w-100 rounded-pill">
+                                    Register
+                                </button>
                             </div>
                         </form>
 

@@ -60,6 +60,12 @@ public class StaffLogoutController extends HttpServlet {
             throws ServletException, IOException {
 //        processRequest(request, response);
 
+        HttpSession session = request.getSession();
+        StaffDTO staff = (StaffDTO) session.getAttribute("staff");
+
+        if (staff != null) {
+            session.invalidate();
+        }
         response.sendRedirect(request.getContextPath() + "/staff-login");
     }
 
@@ -76,13 +82,7 @@ public class StaffLogoutController extends HttpServlet {
             throws ServletException, IOException {
 //        processRequest(request, response);
 
-        HttpSession session = request.getSession();
-        StaffDTO staff = (StaffDTO) session.getAttribute("staff");
-
-        if (staff != null) {
-            session.removeAttribute("staff");
-        }
-        response.sendRedirect(request.getContextPath() + "/staff-logout");
+        response.sendRedirect(request.getContextPath() + "/staff-login");
     }
 
     /**
