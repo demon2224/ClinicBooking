@@ -616,13 +616,6 @@ public class PrescriptionDAO extends DBContext {
         try {
             rs = executeSelectQuery(sql, params);
             if (rs.next()) {
-                // Doctor info
-                StaffDTO staff = new StaffDTO();
-                staff.setFirstName(rs.getString("DoctorFirstName"));
-                staff.setLastName(rs.getString("DoctorLastName"));
-                DoctorDTO doctor = new DoctorDTO();
-                doctor.setStaffID(staff);
-
                 // Patient info
                 PatientDTO patient = new PatientDTO();
                 patient.setFirstName(rs.getString("PatientFirstName"));
@@ -635,7 +628,6 @@ public class PrescriptionDAO extends DBContext {
 
                 // Appointment
                 AppointmentDTO appointment = new AppointmentDTO();
-                appointment.setDoctorID(doctor);
                 appointment.setPatientID(patient);
 
                 // Prescription
@@ -656,8 +648,10 @@ public class PrescriptionDAO extends DBContext {
         }
         return prescription;
     }
+
     /**
      * Get all prescriptions for a specific patient
+     *
      * @param patientId The patient ID
      * @return List of prescriptions for the patient
      */
@@ -677,18 +671,18 @@ public class PrescriptionDAO extends DBContext {
                 + "JOIN Specialty sp ON d.SpecialtyID = sp.SpecialtyID "
                 + "WHERE a.PatientID = ? AND p.PrescriptionStatus = 'Delivered' "
                 + "ORDER BY p.DateCreate DESC";
-        
+
         Object[] params = {patientId};
         ResultSet rs = executeSelectQuery(sql, params);
         List<PrescriptionDTO> prescriptions = new ArrayList<>();
-        
+
         try {
             while (rs.next()) {
                 PrescriptionDTO prescription = new PrescriptionDTO();
                 prescription.setPrescriptionID(rs.getInt("PrescriptionID"));
                 prescription.setPrescriptionStatus(rs.getString("PrescriptionStatus"));
                 prescription.setDateCreate(rs.getTimestamp("PrescriptionDateCreate"));
-                
+
                 // Create appointment
                 AppointmentDTO appointment = new AppointmentDTO();
                 appointment.setAppointmentID(rs.getInt("AppointmentID"));
@@ -696,31 +690,31 @@ public class PrescriptionDAO extends DBContext {
                 appointment.setDateEnd(rs.getTimestamp("DateEnd"));
                 appointment.setNote(rs.getString("Note"));
                 appointment.setAppointmentStatus(rs.getString("AppointmentStatus"));
-                
+
                 // Create patient
                 PatientDTO patient = new PatientDTO();
                 patient.setPatientID(rs.getInt("PatientID"));
                 patient.setFirstName(rs.getString("PatientFirstName"));
                 patient.setLastName(rs.getString("PatientLastName"));
-                
+
                 // Create doctor and staff
                 DoctorDTO doctor = new DoctorDTO();
                 doctor.setDoctorID(rs.getInt("DocID"));
-                
+
                 StaffDTO staff = new StaffDTO();
                 staff.setFirstName(rs.getString("DoctorFirstName"));
                 staff.setLastName(rs.getString("DoctorLastName"));
                 doctor.setStaffID(staff);
-                
+
                 // Create specialty
                 model.SpecialtyDTO specialty = new model.SpecialtyDTO();
                 specialty.setSpecialtyName(rs.getString("SpecialtyName"));
                 doctor.setSpecialtyID(specialty);
-                
+
                 appointment.setPatientID(patient);
                 appointment.setDoctorID(doctor);
                 prescription.setAppointmentID(appointment);
-                
+
                 prescriptions.add(prescription);
             }
         } catch (SQLException e) {
@@ -728,12 +722,14 @@ public class PrescriptionDAO extends DBContext {
         } finally {
             closeResources(rs);
         }
-        
+
         return prescriptions;
     }
 
     /**
-     * Search prescriptions for a specific patient by doctor name or medicine name
+     * Search prescriptions for a specific patient by doctor name or medicine
+     * name
+     *
      * @param patientId The patient ID
      * @param searchQuery The search query
      * @return List of matching prescriptions
@@ -757,19 +753,19 @@ public class PrescriptionDAO extends DBContext {
                 + "WHERE a.PatientID = ? AND p.PrescriptionStatus = 'Delivered' "
                 + "AND (s.FirstName LIKE ? OR s.LastName LIKE ? OR sp.SpecialtyName LIKE ?) "
                 + "ORDER BY p.DateCreate DESC";
-        
+
         String searchPattern = "%" + searchQuery + "%";
         Object[] params = {patientId, searchPattern, searchPattern, searchPattern};
         ResultSet rs = executeSelectQuery(sql, params);
         List<PrescriptionDTO> prescriptions = new ArrayList<>();
-        
+
         try {
             while (rs.next()) {
                 PrescriptionDTO prescription = new PrescriptionDTO();
                 prescription.setPrescriptionID(rs.getInt("PrescriptionID"));
                 prescription.setPrescriptionStatus(rs.getString("PrescriptionStatus"));
                 prescription.setDateCreate(rs.getTimestamp("PrescriptionDateCreate"));
-                
+
                 // Create appointment
                 AppointmentDTO appointment = new AppointmentDTO();
                 appointment.setAppointmentID(rs.getInt("AppointmentID"));
@@ -777,31 +773,31 @@ public class PrescriptionDAO extends DBContext {
                 appointment.setDateEnd(rs.getTimestamp("DateEnd"));
                 appointment.setNote(rs.getString("Note"));
                 appointment.setAppointmentStatus(rs.getString("AppointmentStatus"));
-                
+
                 // Create patient
                 PatientDTO patient = new PatientDTO();
                 patient.setPatientID(rs.getInt("PatientID"));
                 patient.setFirstName(rs.getString("PatientFirstName"));
                 patient.setLastName(rs.getString("PatientLastName"));
-                
+
                 // Create doctor and staff
                 DoctorDTO doctor = new DoctorDTO();
                 doctor.setDoctorID(rs.getInt("DocID"));
-                
+
                 StaffDTO staff = new StaffDTO();
                 staff.setFirstName(rs.getString("DoctorFirstName"));
                 staff.setLastName(rs.getString("DoctorLastName"));
                 doctor.setStaffID(staff);
-                
+
                 // Create specialty
                 model.SpecialtyDTO specialty = new model.SpecialtyDTO();
                 specialty.setSpecialtyName(rs.getString("SpecialtyName"));
                 doctor.setSpecialtyID(specialty);
-                
+
                 appointment.setPatientID(patient);
                 appointment.setDoctorID(doctor);
                 prescription.setAppointmentID(appointment);
-                
+
                 prescriptions.add(prescription);
             }
         } catch (SQLException e) {
@@ -809,10 +805,10 @@ public class PrescriptionDAO extends DBContext {
         } finally {
             closeResources(rs);
         }
-        
+
         return prescriptions;
     }
-    
+
     public boolean createPrescription(int appointmentID, String note) {
         String sql = "INSERT INTO Prescription (AppointmentID, Note, DateCreate, PrescriptionStatus, Hidden)\n"
                 + "VALUES (?, ?, GETDATE(), 'Pending', 0)";
