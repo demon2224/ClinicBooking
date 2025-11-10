@@ -23,7 +23,7 @@
     </head>
     <body class="appointment-page">
         <!-- Include Header -->
-        <jsp:include page="includes/header.jsp">
+        <jsp:include page="../includes/header.jsp">
             <jsp:param name="activePage" value="manage-medical-records" />
         </jsp:include>
 
@@ -219,14 +219,14 @@
                                                 <div class="header-cell">Instructions</div>
                                                 <div class="header-cell">Subtotal</div>
                                             </div>
-                                            
+
                                             <c:set var="totalPrice" value="0" />
                                             <c:forEach var="item" items="${medicalRecord.prescriptionDTO.prescriptionItemList}">
                                                 <c:set var="itemPrice" value="${item.medicineID.price != null ? item.medicineID.price : 0}" />
                                                 <c:set var="dosageNum" value="${item.dosage != null ? item.dosage : 1}" />
                                                 <c:set var="subtotal" value="${itemPrice * dosageNum}" />
                                                 <c:set var="totalPrice" value="${totalPrice + subtotal}" />
-                                                
+
                                                 <div class="table-row">
                                                     <div class="table-cell medicine-name-cell">
                                                         <i class="fas fa-capsules"></i>
@@ -249,7 +249,7 @@
                                                     </div>
                                                 </div>
                                             </c:forEach>
-                                            
+
                                             <div class="table-footer">
                                                 <div class="total-row">
                                                     <div class="total-label">Total:</div>

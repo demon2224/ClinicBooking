@@ -24,7 +24,7 @@
 </head>
 <body class="appointment-page">
     <!-- Include Header -->
-    <jsp:include page="includes/header.jsp">
+    <jsp:include page="../includes/header.jsp">
         <jsp:param name="activePage" value="manage-appointments" />
     </jsp:include>
 
@@ -277,23 +277,23 @@
         function showConfirmModal(appointmentId) {
             const modal = document.getElementById('confirmModal');
             const confirmBtn = document.getElementById('confirmCancelBtn');
-            
+
             if (modal && confirmBtn) {
                 modal.style.display = 'flex';
                 document.body.style.overflow = 'hidden'; // Disable scrolling
-                
+
                 // Store appointment ID for confirmation
                 confirmBtn.setAttribute('data-appointment-id', appointmentId);
-                
+
                 // Close modal when clicking outside
-                modal.addEventListener('click', function(e) {
+                modal.addEventListener('click', function (e) {
                     if (e.target === modal) {
                         closeConfirmModal();
                     }
                 });
-                
+
                 // Close modal with Escape key
-                document.addEventListener('keydown', function(e) {
+                document.addEventListener('keydown', function (e) {
                     if (e.key === 'Escape') {
                         closeConfirmModal();
                     }
@@ -307,16 +307,16 @@
             if (modal) {
                 modal.style.display = 'flex';
                 document.body.style.overflow = 'hidden'; // Disable scrolling when modal is open
-                
+
                 // Close modal when clicking outside
-                modal.addEventListener('click', function(e) {
+                modal.addEventListener('click', function (e) {
                     if (e.target === modal) {
                         closeModal();
                     }
                 });
-                
+
                 // Close modal with Escape key
-                document.addEventListener('keydown', function(e) {
+                document.addEventListener('keydown', function (e) {
                     if (e.key === 'Escape') {
                         closeModal();
                     }
@@ -336,9 +336,9 @@
             });
 
             // Handle confirm button click
-            document.getElementById('confirmCancelBtn').addEventListener('click', function() {
+            document.getElementById('confirmCancelBtn').addEventListener('click', function () {
                 const appointmentId = this.getAttribute('data-appointment-id');
-                
+
                 // Create form to submit cancellation
                 const form = document.createElement('form');
                 form.method = 'POST';
