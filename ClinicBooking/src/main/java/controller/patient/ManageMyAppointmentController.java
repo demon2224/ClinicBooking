@@ -293,7 +293,12 @@ public class ManageMyAppointmentController extends HttpServlet {
 
         HttpSession session = request.getSession();
         PatientDTO patient = (PatientDTO) session.getAttribute("patient");
-
+       
+        if (patient == null) {
+            response.sendRedirect(request.getContextPath() + "/patient-login");
+            return;
+        }
+        
         try {
             String doctorIdParam = request.getParameter("doctorId");
             String appointmentDateTimeParam = request.getParameter("appointmentDateTime");
