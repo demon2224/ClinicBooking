@@ -104,8 +104,10 @@
     </servlet>
     <!-- ================= MAPPINGS ================= -->
     <servlet>
-        <servlet-name>ManageMyInvoceController</servlet-name>
-        <servlet-class>controller.patient.ManageMyInvoceController</servlet-class>
+        <servlet-name>ManageMyInvoiceController</servlet-name>
+        <servlet-class>controller.patient.ManageMyInvoiceController</servlet-class>
+    </servlet>
+    <servlet>
         <servlet-name>RegisterController</servlet-name>
         <servlet-class>controller.authentication.RegisterController</servlet-class>
     </servlet>
@@ -220,8 +222,10 @@
     </filter-mapping>
     <!-- ================= WELCOME FILE ================= -->
     <servlet-mapping>
-        <servlet-name>ManageMyInvoceController</servlet-name>
-        <url-pattern>/manage-my-invoce</url-pattern>
+        <servlet-name>ManageMyInvoiceController</servlet-name>
+        <url-pattern>/manage-my-invoices</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
         <servlet-name>RegisterController</servlet-name>
         <url-pattern>/register</url-pattern>
     </servlet-mapping>

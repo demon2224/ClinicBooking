@@ -7783,8 +7783,12 @@ body.appointment-page {
 }
 
 @keyframes gradientShift {
-    0%, 100% { background-position: 200% 0; }
-    50% { background-position: -200% 0; }
+    0%, 100% {
+        background-position: 200% 0;
+    }
+    50% {
+        background-position: -200% 0;
+    }
 }
 
 .gradient-header {
@@ -8045,27 +8049,27 @@ body.appointment-page {
         gap: 1rem;
         padding: 1.5rem;
     }
-    
+
     .modern-form {
         padding: 1.5rem;
     }
-    
+
     .modern-actions {
         flex-direction: column;
         gap: 0.75rem;
     }
-    
+
     .modern-btn-secondary,
     .modern-btn-primary {
         width: 100%;
         justify-content: center;
     }
-    
+
     .modern-label {
         flex-direction: column;
         gap: 0.75rem;
     }
-    
+
     .label-icon {
         align-self: flex-start;
     }
@@ -8198,11 +8202,11 @@ body.appointment-page {
         grid-template-columns: 1fr;
         gap: 1rem;
     }
-    
+
     .doctor-info-item {
         padding: 1rem;
     }
-    
+
     .doctor-info-icon {
         width: 40px;
         height: 40px;
@@ -8275,11 +8279,11 @@ body.appointment-page {
         padding: 1rem;
         margin-top: 0.8rem;
     }
-    
+
     .booking-rules-notice .rules-list li {
         font-size: 0.8rem;
     }
-    
+
     .booking-rules-notice .notice-header {
         font-size: 0.9rem;
     }
@@ -8610,7 +8614,7 @@ body.appointment-page {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-}   
+}
 
 .medicine-info .medicine-name i {
     color: #175CDD;
@@ -8648,61 +8652,61 @@ body.appointment-page {
         width: 95%;
         margin: 1rem;
     }
-    
+
     .modal-header {
         padding: 1rem;
     }
-    
+
     .modal-body {
         padding: 1.5rem 1rem;
     }
-    
+
     .modal-footer {
         padding: 1rem;
     }
-    
+
     .modal-title {
         font-size: 1.1rem;
     }
-    
+
     .reviews-header {
         flex-direction: column;
         align-items: flex-start;
         gap: 1rem;
     }
-    
+
     .review-meta {
         flex-direction: column;
         align-items: flex-start;
         gap: 0.5rem;
     }
-    
+
     .reviewer-info {
         flex-direction: column;
         align-items: center;
         text-align: center;
     }
-    
+
     .reviewer-avatar {
         margin-right: 0;
         margin-bottom: 0.5rem;
     }
-    
+
     .medicine-details {
         gap: 0.3rem;
     }
-    
+
     .medicine-list {
         grid-template-columns: 1fr;
         gap: 1rem;
     }
-    
+
     .medicine-details-row {
         display: flex;
         flex-direction: column;
         gap: 0.3rem;
     }
-    
+
     .medicine-details span {
         font-size: 0.85rem;
     }
@@ -8832,7 +8836,7 @@ body.appointment-page {
         grid-template-columns: 1fr;
         gap: 0;
     }
-    
+
     .header-cell,
     .table-cell {
         border-right: none;
@@ -8840,7 +8844,7 @@ body.appointment-page {
         text-align: left;
         padding: 0.8rem 1rem;
     }
-    
+
     .header-cell:before,
     .table-cell:before {
         content: attr(data-label);
@@ -8849,11 +8853,189 @@ body.appointment-page {
         display: block;
         margin-bottom: 0.3rem;
     }
-    
+
     .instructions-cell {
         white-space: normal;
         max-width: none;
         text-overflow: initial;
         overflow: visible;
+    }
+}
+
+/* ====================================
+   Invoice Detail Styles
+   ==================================== */
+
+/* Status badge for invoice status */
+.status-badge {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Invoice item section */
+.invoice-item-section {
+    margin-bottom: 2rem;
+    border: 1px solid #e9ecef;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #ffffff;
+}
+
+.section-subtitle {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    color: #2c3e50;
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid #e9ecef;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.section-subtitle i {
+    color: #175CDD;
+}
+
+/* Invoice details table */
+.invoice-details-table {
+    width: 100%;
+    background: #ffffff;
+}
+
+.invoice-details-table .table-header {
+    display: grid;
+    grid-template-columns: 2fr 1.5fr 1fr;
+    background: linear-gradient(135deg, #175CDD 0%, #1450C4 100%);
+    color: white;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.invoice-details-table .table-row {
+    display: grid;
+    grid-template-columns: 2fr 1.5fr 1fr;
+    border-bottom: none;
+    padding: 1rem 0;
+}
+
+.invoice-details-table .table-cell {
+    padding: 1rem 0.8rem;
+    text-align: center;
+    border-right: 1px solid #f0f0f0;
+    font-size: 0.9rem;
+}
+
+.invoice-details-table .table-cell:first-child {
+    text-align: left;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.invoice-details-table .table-cell i {
+    color: #175CDD;
+}
+
+/* Invoice summary */
+.invoice-summary {
+    margin-top: 2rem;
+    background: #f8f9fc;
+    border-radius: 12px;
+    padding: 1.5rem;
+    border: 2px solid #e9ecef;
+}
+
+.summary-table {
+    width: 100%;
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.8rem 0;
+    border-bottom: 1px solid #e9ecef;
+    font-size: 1rem;
+}
+
+.summary-row:last-child {
+    border-bottom: none;
+}
+
+.summary-label {
+    color: #6c757d;
+    font-weight: 500;
+}
+
+.summary-amount {
+    color: #2c3e50;
+    font-weight: 600;
+}
+
+.total-row {
+    border-top: 2px solid #175CDD;
+    padding-top: 1rem;
+    margin-top: 0.5rem;
+    font-size: 1.2rem;
+    font-weight: 700;
+}
+
+.total-row .total-label {
+    color: #2c3e50;
+    font-size: 1.1rem;
+}
+
+.total-row .total-amount {
+    color: #175CDD;
+    font-size: 1.4rem;
+}
+
+/* Mobile responsiveness for invoice details */
+@media (max-width: 768px) {
+    .invoice-details-table .table-header,
+    .invoice-details-table .table-row {
+        grid-template-columns: 1fr;
+        gap: 0;
+    }
+
+    .invoice-details-table .header-cell,
+    .invoice-details-table .table-cell {
+        border-right: none;
+        border-bottom: 1px solid #f0f0f0;
+        text-align: left;
+        padding: 0.8rem 1rem;
+    }
+
+    .invoice-details-table .table-cell:first-child {
+        justify-content: flex-start;
+    }
+
+    .section-subtitle {
+        font-size: 1rem;
+        padding: 0.8rem 1rem;
+    }
+
+    .invoice-summary {
+        padding: 1rem;
+    }
+
+    .summary-row {
+        font-size: 0.9rem;
+        padding: 0.6rem 0;
+    }
+
+    .total-row {
+        font-size: 1rem;
+    }
+
+    .total-row .total-amount {
+        font-size: 1.2rem;
     }
 }

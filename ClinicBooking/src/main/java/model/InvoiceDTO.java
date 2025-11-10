@@ -16,6 +16,7 @@ public class InvoiceDTO {
     private MedicalRecordDTO medicalRecordID;
     private PrescriptionDTO prescriptionID;
     private SpecialtyDTO specialtyID;
+    private PatientDTO patientID;
     private String paymentType;
     private String invoiceStatus;
     private Timestamp dateCreate;
@@ -96,6 +97,14 @@ public class InvoiceDTO {
 
     public void setTotalFee(double totalFee) {
         this.totalFee = totalFee;
+    }
+
+    public PatientDTO getPatientID() {
+        return patientID;
+    }
+
+    public void setPatientID(PatientDTO patientID) {
+        this.patientID = patientID;
     }
     
 }

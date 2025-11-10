@@ -33,30 +33,29 @@ public class HomePageController extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        HttpSession session = request.getSession();
-        PatientDTO patient = ((new PatientDAO()).getPatientById(1)); // Get first patient for demo
+//        HttpSession session = request.getSession();
+//        PatientDTO patient = ((new PatientDAO()).getPatientById(1)); // Get first patient for demo
 //        DoctorDTO doctor = ((new DoctorDAO()).getDoctorById(1));
 //        if ((session != null) && (doctor != null)) {
-        if ((session != null) && (patient != null)) {
-            session.setAttribute("patient", patient); // Changed from "user" to "patient"
+//        if ((session != null) && (patient != null)) {
+//            session.setAttribute("patient", patient); // Changed from "user" to "patient"
 //            session.setAttribute("doctor", doctor);
-        }
+//        }
 
         // Since Patient table doesn't have RoleID, redirect to patient homepage
         // Remove role-based redirects as patients don't have roles
         // Forward to Homepage.jsp
 //        request.getRequestDispatcher("/WEB-INF/doctor/DoctorDashboard.jsp").forward(request, response);
-        request.getRequestDispatcher("/WEB-INF/HomePage.jsp").forward(request, response);
+//        request.getRequestDispatcher("/WEB-INF/HomePage.jsp").forward(request, response);
+        // Using for test patient login.
+        HttpSession session = request.getSession();
+        PatientDTO patient = (PatientDTO) session.getAttribute("patient");
 
-//        // Using for test patient login.
-//        HttpSession session = request.getSession();
-//        PatientDTO patient = (PatientDTO) session.getAttribute("patient");
-//
-//        if (patient != null) {
-//            request.getRequestDispatcher("/WEB-INF/HomePage.jsp").forward(request, response);
-//        } else {
-//            response.sendRedirect(request.getContextPath() + "/patient-login");
-//        }
+        if (patient != null) {
+            request.getRequestDispatcher("/WEB-INF/HomePage.jsp").forward(request, response);
+        } else {
+            response.sendRedirect(request.getContextPath() + "/patient-login");
+        }
 //
 //        // Using for test staff login.
 //        response.sendRedirect(request.getContextPath() + "/staff-login");

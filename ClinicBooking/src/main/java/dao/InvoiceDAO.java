@@ -31,9 +31,10 @@ public class InvoiceDAO extends DBContext {
 
         String sql = "SELECT "
                 + " i.InvoiceID, "
-                + " p.FirstName AS PatientFirstName, p.LastName AS PatientLastName, "
+                + " p.PatientID, p.FirstName AS PatientFirstName, p.LastName AS PatientLastName, "
                 + " p.DOB, p.Gender, p.UserAddress, p.PhoneNumber, p.Email, "
-                + " ds.FirstName AS DoctorFirstName, ds.LastName AS DoctorLastName, "
+                + " d.DoctorID, ds.FirstName AS DoctorFirstName, ds.LastName AS DoctorLastName, "
+                + " ds.Email as DoctorEmail, d.YearExperience, "
                 + " s.SpecialtyID, s.SpecialtyName, ISNULL(s.Price,0) AS ConsultationFee, "
                 + " ISNULL(s.Price,0) + ISNULL(( "
                 + "     SELECT SUM(pi.Dosage * m.Price) "
@@ -42,8 +43,9 @@ public class InvoiceDAO extends DBContext {
                 + "     WHERE pi.PrescriptionID = pre.PrescriptionID "
                 + " ),0) AS TotalFee, "
                 + " i.PaymentType, i.InvoiceStatus, i.DateCreate, i.DatePay, "
-                + " pre.Note AS PrescriptionNote, "
-                + " mr.Symptoms, mr.Diagnosis, mr.Note AS MedicalNote "
+                + " pre.PrescriptionID, pre.Note AS PrescriptionNote, "
+                + " mr.MedicalRecordID, mr.Symptoms, mr.Diagnosis, mr.Note AS MedicalNote, "
+                + " a.AppointmentID "
                 + "FROM Invoice i "
                 + "JOIN MedicalRecord mr ON i.MedicalRecordID = mr.MedicalRecordID "
                 + "JOIN Appointment a ON mr.AppointmentID = a.AppointmentID "
@@ -70,11 +72,13 @@ public class InvoiceDAO extends DBContext {
                         rs.getString("PhoneNumber"),
                         rs.getString("Email")
                 );
+                patient.setPatientID(rs.getInt("PatientID"));
 
                 // Staff (Doctor)
                 StaffDTO staff = new StaffDTO();
                 staff.setFirstName(rs.getString("DoctorFirstName"));
                 staff.setLastName(rs.getString("DoctorLastName"));
+                staff.setEmail(rs.getString("DoctorEmail"));
 
                 // Specialty
                 SpecialtyDTO specialty = new SpecialtyDTO();
@@ -84,24 +88,38 @@ public class InvoiceDAO extends DBContext {
 
                 // Doctor
                 DoctorDTO doctor = new DoctorDTO();
+                doctor.setDoctorID(rs.getInt("DoctorID"));
                 doctor.setStaffID(staff);
                 doctor.setSpecialtyID(specialty);
+                doctor.setYearExperience(rs.getInt("YearExperience"));
 
                 // Appointment
                 AppointmentDTO appointment = new AppointmentDTO();
+                appointment.setAppointmentID(rs.getInt("AppointmentID"));
                 appointment.setPatientID(patient);
                 appointment.setDoctorID(doctor);
 
                 // MedicalRecord
                 MedicalRecordDTO medicalRecord = new MedicalRecordDTO();
+                medicalRecord.setMedicalRecordID(rs.getInt("MedicalRecordID"));
                 medicalRecord.setAppointmentID(appointment);
                 medicalRecord.setSymptoms(rs.getString("Symptoms"));
                 medicalRecord.setDiagnosis(rs.getString("Diagnosis"));
                 medicalRecord.setNote(rs.getString("MedicalNote"));
 
                 // Prescription
-                PrescriptionDTO prescription = new PrescriptionDTO();
-                prescription.setNote(rs.getString("PrescriptionNote"));
+                PrescriptionDTO prescription = null;
+                if (rs.getObject("PrescriptionID") != null) {
+                    prescription = new PrescriptionDTO();
+                    prescription.setPrescriptionID(rs.getInt("PrescriptionID"));
+                    prescription.setNote(rs.getString("PrescriptionNote"));
+                    
+                    // Load prescription items automatically like in PrescriptionDAO.getPrescriptionById
+                    PrescriptionDAO prescriptionDAO = new PrescriptionDAO();
+                    prescription.setPrescriptionItemList(
+                        prescriptionDAO.getAllPrescriptionItemByPrescriptionID(rs.getInt("PrescriptionID"))
+                    );
+                }
 
                 // Invoice
                 invoice = new InvoiceDTO();
@@ -118,7 +136,7 @@ public class InvoiceDAO extends DBContext {
 
         } catch (SQLException e) {
             e.printStackTrace();
-        }
+        }   
 
         return invoice;
     }
@@ -328,6 +346,193 @@ public class InvoiceDAO extends DBContext {
         Object[] params = {invoiceId};
         int rowsAffected = executeQuery(sql, params);
         return rowsAffected > 0;
+    }
+
+    /**
+     * Get all invoices for a specific patient
+     * @param patientId The patient ID
+     * @return List of invoices for the patient
+     */
+    public List<InvoiceDTO> getInvoicesByPatientId(int patientId) {
+        List<InvoiceDTO> list = new ArrayList<>();
+
+        String sql = "SELECT "
+                + " i.InvoiceID, "
+                + " p.FirstName AS PatientFirstName, p.LastName AS PatientLastName, "
+                + " ds.FirstName AS DoctorFirstName, ds.LastName AS DoctorLastName, "
+                + " s.SpecialtyID, s.SpecialtyName, ISNULL(s.Price, 0) AS ConsultationFee, "
+                + " i.PaymentType, i.InvoiceStatus, i.DateCreate, i.DatePay, "
+                + " ISNULL(s.Price, 0) + ISNULL(SUM(pi.Dosage * m.Price), 0) AS TotalAmount "
+                + "FROM Invoice i "
+                + "JOIN MedicalRecord mr ON i.MedicalRecordID = mr.MedicalRecordID "
+                + "JOIN Appointment a ON mr.AppointmentID = a.AppointmentID "
+                + "JOIN Patient p ON a.PatientID = p.PatientID "
+                + "JOIN Doctor d ON a.DoctorID = d.DoctorID "
+                + "JOIN Staff ds ON d.StaffID = ds.StaffID "
+                + "LEFT JOIN Specialty s ON d.SpecialtyID = s.SpecialtyID "
+                + "LEFT JOIN Prescription pre ON i.PrescriptionID = pre.PrescriptionID "
+                + "LEFT JOIN PrescriptionItem pi ON pre.PrescriptionID = pi.PrescriptionID "
+                + "LEFT JOIN Medicine m ON pi.MedicineID = m.MedicineID "
+                + "WHERE p.PatientID = ? "
+                + "GROUP BY "
+                + " i.InvoiceID, "
+                + " p.FirstName, p.LastName, "
+                + " ds.FirstName, ds.LastName, "
+                + " s.SpecialtyID, s.SpecialtyName, s.Price, "
+                + " i.PaymentType, i.InvoiceStatus, i.DateCreate, i.DatePay "
+                + "ORDER BY i.DateCreate DESC";
+
+        try ( Connection conn = getConnection();  PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, patientId);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                // Patient
+                PatientDTO patient = new PatientDTO();
+                patient.setPatientID(patientId);
+                patient.setFirstName(rs.getString("PatientFirstName"));
+                patient.setLastName(rs.getString("PatientLastName"));
+
+                // Staff (for doctor)
+                StaffDTO staff = new StaffDTO();
+                staff.setFirstName(rs.getString("DoctorFirstName"));
+                staff.setLastName(rs.getString("DoctorLastName"));
+
+                // Doctor 
+                DoctorDTO doctor = new DoctorDTO();
+                doctor.setStaffID(staff);
+
+                // Appointment 
+                AppointmentDTO appointment = new AppointmentDTO();
+                appointment.setPatientID(patient);
+                appointment.setDoctorID(doctor);
+
+                // MedicalRecord 
+                MedicalRecordDTO medicalRecord = new MedicalRecordDTO();
+                medicalRecord.setAppointmentID(appointment);
+
+                // Specialty
+                SpecialtyDTO specialty = new SpecialtyDTO();
+                specialty.setSpecialtyID(rs.getInt("SpecialtyID"));
+                specialty.setSpecialtyName(rs.getString("SpecialtyName"));
+                specialty.setPrice(rs.getDouble("ConsultationFee"));
+
+                // Invoice
+                InvoiceDTO invoice = new InvoiceDTO();
+                invoice.setInvoiceID(rs.getInt("InvoiceID"));
+                invoice.setMedicalRecordID(medicalRecord);
+                invoice.setSpecialtyID(specialty);
+                invoice.setPaymentType(rs.getString("PaymentType"));
+                invoice.setInvoiceStatus(rs.getString("InvoiceStatus"));
+                invoice.setDateCreate(rs.getTimestamp("DateCreate"));
+                invoice.setDatePay(rs.getTimestamp("DatePay"));
+                invoice.setTotalFee(rs.getDouble("TotalAmount"));
+
+                list.add(invoice);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return list;
+    }
+
+    /**
+     * Search invoices for a specific patient by doctor name or specialty
+     * @param patientId The patient ID
+     * @param searchQuery The search query
+     * @return List of matching invoices for the patient
+     */
+    public List<InvoiceDTO> searchInvoicesByPatientId(int patientId, String searchQuery) {
+        List<InvoiceDTO> invoices = new ArrayList<>();
+
+        String sql = "SELECT "
+                + " i.InvoiceID, "
+                + " p.FirstName AS PatientFirstName, p.LastName AS PatientLastName, "
+                + " ds.FirstName AS DoctorFirstName, ds.LastName AS DoctorLastName, "
+                + " s.SpecialtyID, s.SpecialtyName, ISNULL(s.Price, 0) AS ConsultationFee, "
+                + " i.PaymentType, i.InvoiceStatus, i.DateCreate, i.DatePay, "
+                + " ISNULL(s.Price, 0) + ISNULL(SUM(pi.Dosage * m.Price), 0) AS TotalAmount "
+                + "FROM Invoice i "
+                + "JOIN MedicalRecord mr ON i.MedicalRecordID = mr.MedicalRecordID "
+                + "JOIN Appointment a ON mr.AppointmentID = a.AppointmentID "
+                + "JOIN Patient p ON a.PatientID = p.PatientID "
+                + "JOIN Doctor d ON a.DoctorID = d.DoctorID "
+                + "JOIN Staff ds ON d.StaffID = ds.StaffID "
+                + "LEFT JOIN Specialty s ON d.SpecialtyID = s.SpecialtyID "
+                + "LEFT JOIN Prescription pre ON i.PrescriptionID = pre.PrescriptionID "
+                + "LEFT JOIN PrescriptionItem pi ON pre.PrescriptionID = pi.PrescriptionID "
+                + "LEFT JOIN Medicine m ON pi.MedicineID = m.MedicineID "
+                + "WHERE p.PatientID = ? AND ("
+                + "   CONCAT(ds.FirstName, ' ', ds.LastName) LIKE ? "
+                + "   OR s.SpecialtyName LIKE ? "
+                + ") "
+                + "GROUP BY "
+                + " i.InvoiceID, "
+                + " p.FirstName, p.LastName, "
+                + " ds.FirstName, ds.LastName, "
+                + " s.SpecialtyID, s.SpecialtyName, s.Price, "
+                + " i.PaymentType, i.InvoiceStatus, i.DateCreate, i.DatePay "
+                + "ORDER BY i.DateCreate DESC";
+
+        String pattern = "%" + searchQuery.trim() + "%";
+
+        try ( Connection conn = getConnection();  PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, patientId);
+            ps.setString(2, pattern);
+            ps.setString(3, pattern);
+
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                // --- Patient ---
+                PatientDTO patient = new PatientDTO();
+                patient.setPatientID(patientId);
+                patient.setFirstName(rs.getString("PatientFirstName"));
+                patient.setLastName(rs.getString("PatientLastName"));
+
+                // --- Staff (Doctor) ---
+                StaffDTO staff = new StaffDTO();
+                staff.setFirstName(rs.getString("DoctorFirstName"));
+                staff.setLastName(rs.getString("DoctorLastName"));
+
+                // --- Doctor ---
+                DoctorDTO doctor = new DoctorDTO();
+                doctor.setStaffID(staff);
+
+                // --- Appointment ---
+                AppointmentDTO appointment = new AppointmentDTO();
+                appointment.setPatientID(patient);
+                appointment.setDoctorID(doctor);
+
+                // --- Medical Record ---
+                MedicalRecordDTO medicalRecord = new MedicalRecordDTO();
+                medicalRecord.setAppointmentID(appointment);
+
+                // --- Specialty ---
+                SpecialtyDTO specialty = new SpecialtyDTO();
+                specialty.setSpecialtyID(rs.getInt("SpecialtyID"));
+                specialty.setSpecialtyName(rs.getString("SpecialtyName"));
+                specialty.setPrice(rs.getDouble("ConsultationFee"));
+
+                // --- Invoice ---
+                InvoiceDTO invoice = new InvoiceDTO();
+                invoice.setInvoiceID(rs.getInt("InvoiceID"));
+                invoice.setMedicalRecordID(medicalRecord);
+                invoice.setSpecialtyID(specialty);
+                invoice.setPaymentType(rs.getString("PaymentType"));
+                invoice.setInvoiceStatus(rs.getString("InvoiceStatus"));
+                invoice.setDateCreate(rs.getTimestamp("DateCreate"));
+                invoice.setDatePay(rs.getTimestamp("DatePay"));
+                invoice.setTotalFee(rs.getDouble("TotalAmount"));
+
+                invoices.add(invoice);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return invoices;
     }
 
 }

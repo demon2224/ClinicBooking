@@ -335,13 +335,10 @@ public class PrescriptionDAO extends DBContext {
     public List<PrescriptionItemDTO> getAllPrescriptionItemByPrescriptionID(int prescriptionID) {
 
         String query = "SELECT m.MedicineName, m.MedicineCode, m.MedicineType, m.Price, pti.Dosage, pti.Instruction\n"
-                + "FROM [dbo].[Prescription] p\n"
-                + "JOIN [dbo].[PrescriptionItem] pti\n"
-                + "ON pti.PrescriptionID = p.PrescriptionID\n"
+                + "FROM [dbo].[PrescriptionItem] pti\n"
                 + "JOIN [dbo].[Medicine] m\n"
                 + "ON m.MedicineID = pti.MedicineID\n"
-                + "WHERE p.Hidden = 0\n"
-                + "AND p.PrescriptionID = ?;";
+                + "WHERE pti.PrescriptionID = ?;";
         Object[] params = {prescriptionID};
         List<PrescriptionItemDTO> prescriptionItemList = new ArrayList<>();
         ResultSet rs = null;

@@ -41,8 +41,8 @@
                                class="${param.activePage == 'manage-medical-records' ? 'active' : ''}">Manage My Medical Records</a></li>
                         <li><a href="${pageContext.request.contextPath}/manage-my-prescriptions"
                                class="${param.activePage == 'manage-prescriptions' ? 'active' : ''}">Manage My Prescriptions</a></li>
-                        <li><a href="#"
-                               class="${param.activePage == 'invoices' ? 'active' : ''}">Manage My Invoices</a></li>
+                        <li><a href="${pageContext.request.contextPath}/manage-my-invoices"
+                               class="${param.activePage == 'manage-invoices' ? 'active' : ''}">Manage My Invoices</a></li>
                         <li><a href="${pageContext.request.contextPath}/manage-my-feedback"
                                class="${param.activePage == 'manage-feedback' ? 'active' : ''}">My Feedbacks</a></li>
                     </ul>
