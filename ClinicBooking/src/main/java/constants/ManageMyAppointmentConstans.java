@@ -13,8 +13,8 @@ public class ManageMyAppointmentConstans {
     
     // URL Patterns and Paths
     public static final String BASE_URL = "/manage-my-appointments";
-    public static final String DETAIL_PAGE_JSP = "/WEB-INF/MyAppointmentDetail.jsp";
-    public static final String LIST_PAGE_JSP = "/WEB-INF/ManageMyAppointment.jsp";
-    public static final String BOOK_APPOINTMENT_JSP = "/WEB-INF/BookAppointment.jsp";
+    public static final String DETAIL_PAGE_JSP = "/WEB-INF/patient/MyAppointmentDetail.jsp";
+    public static final String LIST_PAGE_JSP = "/WEB-INF/patient/ManageMyAppointment.jsp";
+    public static final String BOOK_APPOINTMENT_JSP = "/WEB-INF/patient/BookAppointment.jsp";
      
 }
