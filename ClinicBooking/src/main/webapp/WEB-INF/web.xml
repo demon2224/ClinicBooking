@@ -84,11 +84,11 @@
     </servlet>
     <servlet>
         <servlet-name>ManageMyAppointmentController</servlet-name>
-        <servlet-class>controller.ManageMyAppointmentController</servlet-class>
+        <servlet-class>controller.patient.ManageMyAppointmentController</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>ManageMyMedicalRecordController</servlet-name>
-        <servlet-class>controller.ManageMyMedicalRecordController</servlet-class>
+        <servlet-class>controller.patient.ManageMyMedicalRecordController</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>DoctorDashboardController</servlet-name>
