@@ -11,8 +11,8 @@ package constants;
 public class ManageMyFeedbackConstants {
 
     // JSP and URL constants
-    public static final String MANAGE_FEEDBACK_JSP = "/WEB-INF/ManageMyFeedback.jsp";
-    public static final String MY_FEEDBACK_DETAIL_JSP = "/WEB-INF/MyFeedbackDetail.jsp";
+    public static final String MANAGE_FEEDBACK_JSP = "/WEB-INF/patient/ManageMyFeedback.jsp";
+    public static final String MY_FEEDBACK_DETAIL_JSP = "/WEB-INF/patient/MyFeedbackDetail.jsp";
     public static final String MANAGE_FEEDBACK_URL = "/manage-my-feedback";
 
     // Validation constants

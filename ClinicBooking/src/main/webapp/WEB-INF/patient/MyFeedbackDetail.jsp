@@ -423,7 +423,7 @@
     </head>
     <body class="appointment-page">
         <!-- Include Header -->
-        <jsp:include page="includes/header.jsp" />
+        <jsp:include page="../includes/header.jsp" />
 
         <!-- Main Content -->
         <main class="appointment-main-content">

@@ -16,7 +16,7 @@
     </servlet>
     <servlet>
         <servlet-name>ManageMyFeedbackController</servlet-name>
-        <servlet-class>controller.ManageMyFeedbackController</servlet-class>
+        <servlet-class>controller.patient.ManageMyFeedbackController</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>ManageInvoiceController</servlet-name>
