@@ -25,12 +25,12 @@ CREATE TABLE Patient (
 	AccountPassword NVARCHAR(255),
 	DayCreated DATETIME DEFAULT GETDATE(),
 	Avatar NVARCHAR(255),
-	Bio TEXT,
+	Bio NVARCHAR(550),
 	FirstName NVARCHAR(255),
 	LastName NVARCHAR(255),
 	DOB DATE,
 	Gender BIT DEFAULT 0,
-	UserAddress TEXT,
+	UserAddress NVARCHAR(255),
 	PhoneNumber NVARCHAR(15) UNIQUE,
 	Email NVARCHAR(50),
 	[Hidden] BIT DEFAULT 0
@@ -38,18 +38,18 @@ CREATE TABLE Patient (
 
 CREATE TABLE Staff (
 	StaffID INT PRIMARY KEY IDENTITY(1,1),
-	JobStatus VARCHAR(50) DEFAULT 'Available' CHECK (JobStatus IN ('Unavailable', 'Available', 'Retired')) NOT NULL,
-	[Role] VARCHAR(50) CHECK ([Role] IN ('Receptionist', 'Pharmacist', 'Doctor', 'Admin')) NOT NULL,
+	JobStatus NVARCHAR(50) DEFAULT 'Available' CHECK (JobStatus IN ('Unavailable', 'Available', 'Retired')) NOT NULL,
+	[Role] NVARCHAR(50) CHECK ([Role] IN ('Receptionist', 'Pharmacist', 'Doctor', 'Admin')) NOT NULL,
 	AccountName NVARCHAR(255) UNIQUE,
 	AccountPassword NVARCHAR(255),
 	DayCreated DATETIME DEFAULT GETDATE(),
 	Avatar NVARCHAR(255),
-	Bio TEXT,
+	Bio NVARCHAR(550),
 	FirstName NVARCHAR(255),
 	LastName NVARCHAR(255),
 	DOB DATE,
 	Gender BIT DEFAULT 0,
-	UserAddress TEXT,
+	UserAddress NVARCHAR(255),
 	PhoneNumber NVARCHAR(15) UNIQUE,
 	Email NVARCHAR(50),
 	[Hidden] BIT DEFAULT 0
@@ -88,7 +88,7 @@ CREATE TABLE DoctorReview (
 	DoctorReviewID INT PRIMARY KEY IDENTITY(1,1),
 	PatientID INT FOREIGN KEY REFERENCES Patient (PatientID) NOT NULL,
 	DoctorID INT FOREIGN KEY REFERENCES Doctor(DoctorID) NOT NULL,
-	Content TEXT,
+	Content NVARCHAR(255),
 	RateScore INT,
 	DateCreate DATETIME DEFAULT GETDATE(),
 	[Hidden] BIT DEFAULT 0
@@ -102,7 +102,7 @@ CREATE TABLE Appointment (
 	DateCreate DATETIME DEFAULT GETDATE(),
 	DateBegin DATETIME,
 	DateEnd DATETIME,
-	Note TEXT,
+	Note NVARCHAR(550),
 	[Hidden] BIT DEFAULT 0
 );
 
@@ -111,7 +111,7 @@ CREATE TABLE Prescription (
 	AppointmentID INT FOREIGN KEY REFERENCES Appointment(AppointmentID) NOT NULL,
 	PrescriptionStatus NVARCHAR(50) DEFAULT 'Pending' CHECK (PrescriptionStatus IN ('Pending', 'Delivered', 'Canceled')) NOT NULL,
 	DateCreate DATETIME DEFAULT GETDATE(),
-	Note TEXT,
+	Note NVARCHAR(550),
 	[Hidden] BIT DEFAULT 0
 );
 
@@ -132,16 +132,16 @@ CREATE TABLE PrescriptionItem (
 	MedicineID INT FOREIGN KEY REFERENCES Medicine(MedicineID),
 	PRIMARY KEY (PrescriptionID, MedicineID),
 	Dosage INT NOT NULL CHECK(Dosage > 0),
-	Instruction TEXT NOT NULL
+	Instruction NVARCHAR(255) NOT NULL
 );
 
 CREATE TABLE MedicalRecord (
 	MedicalRecordID INT PRIMARY KEY IDENTITY(1,1),
 	AppointmentID INT FOREIGN KEY REFERENCES Appointment(AppointmentID) NOT NULL,
 	PrescriptionID INT FOREIGN KEY REFERENCES Prescription(PrescriptionID),
-	Symptoms TEXT,
-	Diagnosis TEXT,
-	Note TEXT,
+	Symptoms NVARCHAR(255),
+	Diagnosis NVARCHAR(255),
+	Note NVARCHAR(550),
 	DateCreate DATETIME DEFAULT GETDATE()
 );
 
