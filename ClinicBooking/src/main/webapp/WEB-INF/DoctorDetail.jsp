@@ -17,772 +17,7 @@
               href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
         <!-- Custom CSS -->
-        <link href="${pageContext.request.contextPath}/assests/css/main.css" rel="stylesheet"
-              type="text/css" />
-        <style>
-            body {
-                margin: 0;
-                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-                padding-top: 80px;
-                background-color: #f8f9fa;
-                line-height: 1.6;
-            }
-
-            h1 {
-                color: #2c3e50;
-                font-weight: 600;
-                margin: 2rem 0 1rem 0;
-                text-align: center;
-                font-size: 2rem;
-            }
-
-            .container {
-                max-width: 1200px;
-                margin: 0 auto;
-                padding: 2rem;
-            }
-
-            .doctor-profile-card {
-                background: white;
-                border-radius: 16px;
-                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-                margin-bottom: 2rem;
-                overflow: hidden;
-            }
-
-            .doctor-header {
-                padding: 2rem;
-                display: grid;
-                grid-template-columns: 1fr 300px;
-                gap: 2rem;
-                align-items: start;
-                position: relative;
-            }
-
-            .doctor-main-info {
-                display: flex;
-                gap: 1.5rem;
-                align-items: flex-start;
-            }
-
-            .doctor-side-info {
-                background: #f8f9fa;
-                border-radius: 12px;
-                padding: 1.5rem;
-                border: 1px solid #e9ecef;
-            }
-
-            .side-info-item {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                padding: 0.8rem 0;
-                border-bottom: 1px solid #e9ecef;
-            }
-
-            .side-info-item:last-child {
-                border-bottom: none;
-            }
-
-            .side-info-label {
-                color: #6c757d;
-                font-size: 0.9rem;
-                display: flex;
-                align-items: center;
-                gap: 0.5rem;
-            }
-
-            .side-info-value {
-                font-weight: 600;
-                color: #2c3e50;
-            }
-
-            .side-info-value.status-available {
-                color: #28a745;
-            }
-
-            .rating-display {
-                display: flex;
-                align-items: center;
-                gap: 0.5rem;
-            }
-
-            .stars {
-                color: #ffc107;
-            }
-
-            .doctor-avatar {
-                width: 160px;
-                height: 160px;
-                border-radius: 50%;
-                object-fit: cover;
-                border: 4px solid #e9ecef;
-                flex-shrink: 0;
-            }
-
-            .doctor-info {
-                flex: 1;
-            }
-
-            .doctor-name {
-                font-size: 2rem;
-                font-weight: 700;
-                color: #2c3e50;
-                margin: 0 0 0.5rem 0;
-                display: flex;
-                align-items: center;
-                gap: 1rem;
-            }
-
-            .availability-badge {
-                background: #28a745;
-                color: white;
-                padding: 0.3rem 0.8rem;
-                border-radius: 20px;
-                font-size: 0.8rem;
-                font-weight: 600;
-                text-transform: uppercase;
-            }
-
-            .doctor-specialty {
-                font-size: 1.1rem;
-                color: #6c757d;
-                margin-bottom: 0.5rem;
-            }
-
-            .doctor-credentials {
-                color: #495057;
-                margin-bottom: 1rem;
-            }
-
-            .doctor-languages {
-                color: #6c757d;
-                font-size: 0.95rem;
-                margin-bottom: 1rem;
-            }
-
-            .contact-info {
-                display: flex;
-                gap: 2rem;
-                margin-bottom: 1rem;
-            }
-
-            .contact-item {
-                display: flex;
-                align-items: center;
-                gap: 0.5rem;
-                color: #495057;
-            }
-
-            .contact-item i {
-                color: #175cdd;
-                width: 18px;
-            }
-
-            .rating-section {
-                display: flex;
-                align-items: center;
-                gap: 1rem;
-                margin-bottom: 1rem;
-            }
-
-            .rating-stars {
-                display: flex;
-                align-items: center;
-                gap: 0.2rem;
-            }
-
-            .star {
-                color: #ffc107;
-                font-size: 1.2rem;
-            }
-
-            .rating-score {
-                font-size: 1.1rem;
-                font-weight: 600;
-                color: #2c3e50;
-            }
-
-            .rating-count {
-                color: #6c757d;
-                font-size: 0.9rem;
-            }
-
-            .recommendation-badge {
-                background: #d4edda;
-                color: #155724;
-                padding: 0.3rem 0.8rem;
-                border-radius: 20px;
-                font-size: 0.85rem;
-                font-weight: 600;
-            }
-
-            .doctor-actions {
-                display: flex;
-                gap: 1rem;
-                margin-top: 1.5rem;
-            }
-
-            .btn-action {
-                padding: 0.8rem 2rem;
-                border: none;
-                border-radius: 8px;
-                font-weight: 600;
-                text-decoration: none;
-                display: inline-flex;
-                align-items: center;
-                gap: 0.5rem;
-                cursor: pointer;
-                transition: all 0.3s ease;
-                font-size: 0.95rem;
-            }
-
-            .btn-primary {
-                background: #175cdd;
-                color: white;
-            }
-
-            .btn-primary:hover {
-                background: #1449c0;
-                transform: translateY(-2px);
-            }
-
-            .btn-outline {
-                background: white;
-                color: #175cdd;
-                border: 2px solid #175cdd;
-            }
-
-            .btn-outline:hover {
-                background: #175cdd;
-                color: white;
-            }
-
-            .btn-light {
-                background: #f8f9fa;
-                color: #495057;
-                border: 1px solid #dee2e6;
-            }
-
-            .btn-light:hover {
-                background: #e9ecef;
-            }
-
-            .doctor-stats {
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-                gap: 1.5rem;
-                margin-bottom: 2rem;
-            }
-
-            .stat-card {
-                background: white;
-                border-radius: 12px;
-                padding: 1.5rem;
-                text-align: center;
-                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-                border-left: 4px solid #175cdd;
-                transition: transform 0.3s ease, box-shadow 0.3s ease;
-            }
-
-            .stat-card:hover {
-                transform: translateY(-5px);
-                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-            }
-
-            .stat-icon {
-                font-size: 2rem;
-                color: #175cdd;
-                margin-bottom: 0.5rem;
-            }
-
-            .stat-value {
-                font-size: 1.5rem;
-                font-weight: 700;
-                color: #2c3e50;
-                margin-bottom: 0.3rem;
-            }
-
-            .stat-label {
-                color: #6c757d;
-                font-size: 0.9rem;
-            }
-
-            .degree-item {
-                display: flex;
-                align-items: center;
-                padding: 1rem;
-                margin-bottom: 1rem;
-                background: #f8f9fa;
-                border-radius: 8px;
-                border-left: 4px solid #28a745;
-                transition: background-color 0.3s ease;
-            }
-
-            .degree-item:hover {
-                background: #e9ecef;
-            }
-
-            .degree-item:last-child {
-                margin-bottom: 0;
-            }
-
-            .degree-icon {
-                font-size: 1.5rem;
-                color: #28a745;
-                margin-right: 1rem;
-                width: 30px;
-                text-align: center;
-            }
-
-            .degree-content {
-                flex: 1;
-            }
-
-            .degree-title {
-                font-size: 1.1rem;
-                font-weight: 600;
-                color: #2c3e50;
-                margin: 0 0 0.3rem 0;
-            }
-
-            .degree-details {
-                color: #6c757d;
-                font-size: 0.9rem;
-                margin: 0;
-            }
-
-            .qualifications-left {
-                margin: 1.5rem 0;
-            }
-
-            .qualifications-title {
-                color: #2c3e50;
-                font-size: 1.1rem;
-                margin-bottom: 1rem;
-                display: flex;
-                align-items: center;
-                gap: 0.5rem;
-            }
-
-            .qualifications-title i {
-                color: #175cdd;
-            }
-
-            .qualification-item {
-                display: flex;
-                align-items: center;
-                padding: 0.5rem 0;
-                border-bottom: 1px solid #f1f3f4;
-            }
-
-            .qualification-icon {
-                margin-right: 0.8rem;
-                color: #28a745;
-            }
-
-            .qualification-content {
-                flex: 1;
-            }
-
-            .qualification-name {
-                font-weight: 600;
-                color: #2c3e50;
-                font-size: 0.95rem;
-                margin-bottom: 0.2rem;
-            }
-
-            .qualification-details {
-                color: #6c757d;
-                font-size: 0.85rem;
-            }
-
-            .qualification-details i {
-                margin-right: 0.3rem;
-            }
-
-            /* Doctor Reviews Section */
-            .reviews-section {
-                background: white;
-                border-radius: 12px;
-                padding: 2rem;
-                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-                margin-bottom: 2rem;
-            }
-
-            .reviews-header {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                margin-bottom: 1.5rem;
-                padding-bottom: 1rem;
-                border-bottom: 2px solid #f1f3f4;
-            }
-
-            .reviews-title {
-                font-size: 1.4rem;
-                font-weight: 700;
-                color: #2c3e50;
-                margin: 0;
-                display: flex;
-                align-items: center;
-                gap: 0.5rem;
-            }
-
-            .reviews-title i {
-                color: #175cdd;
-            }
-
-            .reviews-count {
-                background: #175cdd;
-                color: white;
-                padding: 0.3rem 0.8rem;
-                border-radius: 20px;
-                font-size: 0.9rem;
-                font-weight: 600;
-            }
-
-            .review-item {
-                border-bottom: 1px solid #e9ecef;
-                padding: 1.5rem 0;
-                transition: background-color 0.3s ease;
-            }
-
-            .review-item:hover {
-                background-color: #f8f9fa;
-                margin: 0 -1rem;
-                padding: 1.5rem 1rem;
-                border-radius: 8px;
-            }
-
-            .review-item:last-child {
-                border-bottom: none;
-            }
-
-            .reviewer-info {
-                display: flex;
-                align-items: center;
-                gap: 1rem;
-                margin-bottom: 0.8rem;
-            }
-
-            .reviewer-avatar {
-                width: 45px;
-                height: 45px;
-                border-radius: 50%;
-                background: #175cdd;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                color: white;
-                font-weight: 600;
-                font-size: 1.1rem;
-                flex-shrink: 0;
-                position: relative;
-                left: 10px;
-            }
-
-            .reviewer-details {
-                flex: 1;
-            }
-
-            .reviewer-name {
-                font-size: 1rem;
-                font-weight: 600;
-                color: #2c3e50;
-                margin: 0 0 0.2rem 0;
-            }
-
-            .review-meta {
-                display: flex;
-                align-items: center;
-                gap: 1rem;
-                font-size: 0.85rem;
-                color: #6c757d;
-            }
-
-            .review-rating {
-                display: flex;
-                align-items: center;
-                gap: 0.3rem;
-            }
-
-            .rating-stars {
-                display: flex;
-                gap: 0.1rem;
-            }
-
-            .rating-star {
-                color: #ffc107;
-                font-size: 0.9rem;
-            }
-
-            .rating-star.empty {
-                color: #dee2e6;
-            }
-
-            .rating-score {
-                font-weight: 600;
-                color: #2c3e50;
-            }
-
-            .review-content {
-                color: #495057;
-                line-height: 1.6;
-                margin-top: 0.8rem;
-                font-size: 0.95rem;
-                position: relative;
-                left: 10px;
-            }
-
-            .no-reviews {
-                text-align: center;
-                color: #6c757d;
-                font-style: italic;
-                padding: 2rem;
-            }
-
-            /* About Doctor Section */
-            .about-section {
-                background: white;
-                border-radius: 12px;
-                padding: 2rem;
-                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-                margin-bottom: 2rem;
-            }
-
-            .about-header {
-                display: flex;
-                align-items: center;
-                gap: 0.5rem;
-                margin-bottom: 1.5rem;
-                padding-bottom: 1rem;
-                border-bottom: 2px solid #f1f3f4;
-            }
-
-            .about-title {
-                font-size: 1.4rem;
-                font-weight: 700;
-                color: #2c3e50;
-                margin: 0;
-            }
-
-            .about-title i {
-                color: #175cdd;
-            }
-
-            .about-content {
-                color: #495057;
-                line-height: 1.7;
-                font-size: 0.95rem;
-                text-align: justify;
-            }
-
-            .no-bio {
-                text-align: center;
-                color: #6c757d;
-                font-style: italic;
-                padding: 1.5rem;
-            }
-
-            /* Book Button Style - Match DoctorList */
-            .btn-book {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                gap: 0.5rem;
-                padding: 0.8rem 1.5rem;
-                border: 2px solid #175cdd;
-                background-color: #175cdd;
-                color: white;
-                text-decoration: none;
-                border-radius: 8px;
-                font-size: 0.9rem;
-                font-weight: 600;
-                transition: all 0.2s ease;
-                cursor: pointer;
-                width: 100%;
-                box-sizing: border-box;
-            }
-
-            .btn-book:hover {
-                background-color: #135bb8;
-                border-color: #135bb8;
-                color: white;
-                text-decoration: none;
-            }
-
-            .btn-book i {
-                font-size: 1rem;
-            }
-
-            .about-section {
-                background: white;
-                border-radius: 12px;
-                padding: 2rem;
-                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-                margin-bottom: 2rem;
-            }
-
-            .section-title {
-                font-size: 1.4rem;
-                font-weight: 700;
-                color: #2c3e50;
-                margin-bottom: 1rem;
-                display: flex;
-                align-items: center;
-                gap: 0.5rem;
-            }
-
-            .section-title i {
-                color: #175cdd;
-            }
-
-            .bio-text {
-                color: #495057;
-                line-height: 1.7;
-            }
-
-            .reviews-section {
-                background: white;
-                border-radius: 12px;
-                padding: 2rem;
-                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-            }
-
-            .reviews-header {
-                display: flex;
-                justify-content: between;
-                align-items: center;
-                margin-bottom: 1.5rem;
-            }
-
-            .review-item {
-                border-bottom: 1px solid #e9ecef;
-                padding: 1.5rem 0;
-            }
-
-            .review-item:last-child {
-                border-bottom: none;
-            }
-
-            .reviewer-info {
-                display: flex;
-                align-items: center;
-                gap: 1rem;
-                margin-bottom: 0.8rem;
-            }
-
-            .reviewer-avatar {
-                width: 40px;
-                height: 40px;
-                border-radius: 50%;
-                background: #175cdd;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                color: white;
-                font-weight: 600;
-            }
-
-            .reviewer-details h4 {
-                margin: 0;
-                font-size: 1rem;
-                font-weight: 600;
-                color: #2c3e50;
-            }
-
-            .review-meta {
-                display: flex;
-                align-items: center;
-                gap: 1rem;
-                font-size: 0.85rem;
-                color: #6c757d;
-            }
-
-            .review-rating {
-                display: flex;
-                gap: 0.1rem;
-            }
-
-            .review-content {
-                color: #495057;
-                margin-bottom: 0.8rem;
-            }
-
-            .review-recommendation {
-                display: inline-flex;
-                align-items: center;
-                gap: 0.3rem;
-                background: #d4edda;
-                color: #155724;
-                padding: 0.2rem 0.6rem;
-                border-radius: 15px;
-                font-size: 0.8rem;
-                font-weight: 600;
-            }
-
-            @media (max-width: 768px) {
-                .container {
-                    padding: 1rem;
-                }
-
-                .doctor-header {
-                    grid-template-columns: 1fr;
-                    gap: 1.5rem;
-                    padding: 1.5rem;
-                }
-
-                .doctor-main-info {
-                    flex-direction: column;
-                    text-align: center;
-                }
-
-                .doctor-avatar {
-                    width: 120px;
-                    height: 120px;
-                    margin: 0 auto;
-                }
-
-                .doctor-name {
-                    font-size: 1.5rem;
-                    justify-content: center;
-                }
-
-                .contact-info {
-                    flex-direction: column;
-                    gap: 0.8rem;
-                }
-
-                .doctor-actions {
-                    flex-direction: column;
-                }
-
-                .doctor-side-info {
-                    order: -1;
-                }
-
-                .degree-item {
-                    flex-direction: column;
-                    text-align: center;
-                }
-
-                .degree-icon {
-                    margin-right: 0;
-                    margin-bottom: 0.5rem;
-                }
-
-                .qualification-item {
-                    flex-direction: column;
-                    text-align: center;
-                }
-
-                .qualification-icon {
-                    margin-right: 0;
-                    margin-bottom: 0.5rem;
-                }
-            }
-        </style>
+        <link href="${pageContext.request.contextPath}/assests/css/main.css?v=${System.currentTimeMillis()}" rel="stylesheet" type="text/css" />
     </head>
 
     <body>
@@ -791,55 +26,55 @@
             <jsp:param name="activePage" value="doctors" />
         </jsp:include>
 
-        <div class="container">
+        <div class="doctor-detail-container">
             <div class="appointment-page-header">
                 <h1><i class="fas fa-user-md"></i> Doctor Detail </h1>
             </div>
             <!-- Doctor Profile Card -->
-            <div class="doctor-profile-card">
-                <div class="doctor-header">
+            <div class="doctor-detail-card">
+                <div class="doctor-detail-header">
                     <!-- Main Doctor Info (Left Side) -->
-                    <div class="doctor-main-info">
+                    <div class="doctor-detail-main-info">
                         <img src="${pageContext.request.contextPath}/${doctor.staffID.avatar}"
-                             alt="Dr.${doctor.staffID.firstName} ${doctor.staffID.lastName}" class="doctor-avatar">
+                             alt="Dr.${doctor.staffID.firstName} ${doctor.staffID.lastName}" class="doctor-detail-avatar">
 
-                        <div class="doctor-info">
-                            <h1 class="doctor-name">
+                        <div class="doctor-detail-info">
+                            <h1 class="doctor-detail-name">
                                 Dr. ${doctor.staffID.firstName} ${doctor.staffID.lastName}
                             </h1>
                             <c:if test="${not empty doctor.specialtyID.specialtyName}">
-                                <p class="doctor-specialty">
+                                <p class="doctor-detail-specialty">
                                     <i class="fas fa-user-md"></i>
                                     ${doctor.specialtyID.specialtyName}
                                 </p>
                             </c:if>
-                            <div class="contact-info">
+                            <div class="doctor-detail-contact">
                                 <c:if test="${not empty doctor.staffID.phoneNumber}">
-                                    <div class="contact-item">
+                                    <div class="doctor-detail-contact-item">
                                         <i class="fas fa-phone"></i>
                                         <span>${doctor.staffID.phoneNumber}</span>
                                     </div>
                                 </c:if>
                                 <c:if test="${not empty doctor.staffID.email}">
-                                    <div class="contact-item">
+                                    <div class="doctor-detail-contact-item">
                                         <i class="fas fa-envelope"></i>
                                         <span>${doctor.staffID.email}</span>
                                     </div>
                                 </c:if>
                             </div>
                             <c:if test="${not empty degrees}">
-                                <div class="qualifications-left">
-                                    <h4 class="qualifications-title">
+                                <div class="doctor-detail-qualifications">
+                                    <h4 class="doctor-detail-qualifications-title">
                                         <i class="fas fa-graduation-cap"></i>
                                         Qualifications
                                     </h4>
                                     <c:forEach var="degree" items="${degrees}">
-                                        <div class="qualification-item">
-                                            <div class="qualification-icon">
+                                        <div class="doctor-detail-qualification-item">
+                                            <div class="doctor-detail-qualification-icon">
                                                 <i class="fas fa-certificate"></i>
                                             </div>
-                                            <div class="qualification-content">
-                                                <div class="qualification-name">
+                                            <div class="doctor-detail-qualification-content">
+                                                <div class="doctor-detail-qualification-name">
                                                     ${degree.degreeName}
                                                 </div>
                                             </div>
@@ -850,16 +85,16 @@
 
                         </div>
                     </div>
-                    <div class="doctor-side-info">
-                        <div class="side-info-item">
-                            <span class="side-info-label">
+                    <div class="doctor-detail-side-info">
+                        <div class="doctor-detail-side-item">
+                            <span class="doctor-detail-side-label">
                                 <i class="fas fa-star"></i>
                                 Rating
                             </span>
-                            <div class="rating-display">
+                            <div class="doctor-detail-rating-display">
                                 <c:choose>
                                     <c:when test="${averageRating > 0}">
-                                        <span class="stars">
+                                        <span class="doctor-detail-stars">
                                             <c:forEach begin="1" end="5" var="star">
                                                 <c:choose>
                                                     <c:when test="${star <= averageRating}">★</c:when>
@@ -868,7 +103,7 @@
                                                 </c:choose>
                                             </c:forEach>
                                         </span>
-                                        <span class="side-info-value">
+                                        <span class="doctor-detail-side-value">
                                             <c:choose>
                                                 <c:when test="${averageRating % 1 == 0}">
                                                     ${averageRating.intValue()}/5
@@ -880,29 +115,29 @@
                                         </span>
                                     </c:when>
                                     <c:otherwise>
-                                        <span class="side-info-value">No ratings</span>
+                                        <span class="doctor-detail-side-value">No ratings</span>
                                     </c:otherwise>
                                 </c:choose>
                             </div>
                         </div>
-                        <div class="side-info-item">
-                            <span class="side-info-label">
+                        <div class="doctor-detail-side-item">
+                            <span class="doctor-detail-side-label">
                                 <i class="fas fa-check-circle"></i>
                                 Status
                             </span>
-                            <span class="side-info-value">
+                            <span class="doctor-detail-side-value">
                                 ${doctor.staffID.jobStatus}
                             </span>
                         </div>
-                        <div class="side-info-item">
-                            <span class="side-info-label">
+                        <div class="doctor-detail-side-item">
+                            <span class="doctor-detail-side-label">
                                 <i class="fas fa-user-md"></i>
                                 Experience
                             </span>
-                            <span class="side-info-value">${doctor.yearExperience} years</span>
+                            <span class="doctor-detail-side-value">${doctor.yearExperience} years</span>
                         </div>
-                        <div class="doctor-actions">
-                            <a href="${pageContext.request.contextPath}/manage-my-appointments?action=bookAppointment&doctorId=${doctor.doctorID}" class="btn-book">
+                        <div class="doctor-detail-actions">
+                            <a href="${pageContext.request.contextPath}/manage-my-appointments?action=bookAppointment&doctorId=${doctor.doctorID}" class="doctor-detail-btn-book">
                                 <i class="fas fa-calendar-plus"></i>
                                 Book
                             </a>
@@ -910,22 +145,21 @@
                     </div>
                 </div>
             </div>
-            <div class="about-section">
-                <div class="about-header">
-                    <h3 class="about-title">
+            <div class="doctor-detail-about-section">
+                <div class="doctor-detail-about-header">
+                    <h3 class="doctor-detail-about-title">
                         <i class="fas fa-info-circle"></i>
                         About Dr. ${doctor.staffID.firstName} ${doctor.staffID.lastName}
                     </h3>
                 </div>
-                <div class="about-content">
+                <div class="doctor-detail-about-content">
                     <c:choose>
                         <c:when test="${not empty doctor.staffID.bio}">
                             ${doctor.staffID.bio}
                         </c:when>
                         <c:otherwise>
-                            <div class="no-bio">
-                                <i class="fas fa-user-md"
-                                   style="font-size: 1.5rem; color: #dee2e6; margin-bottom: 0.5rem;"></i>
+                            <div class="doctor-detail-no-bio">
+                                <i class="fas fa-user-md" style="font-size: 1.5rem; color: #dee2e6; margin-bottom: 0.5rem;"></i>
                                 <p>No biography information available for this doctor.</p>
                             </div>
                         </c:otherwise>

@@ -8,13 +8,13 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
-<div class="reviews-section">
-    <div class="reviews-header">
-        <h3 class="reviews-title">
+<div class="doctor-detail-reviews-section">
+    <div class="doctor-detail-reviews-header">
+        <h3 class="doctor-detail-reviews-title">
             <i class="fas fa-star"></i>
             Doctor Reviews
         </h3>
-        <span class="reviews-count">
+        <span class="doctor-detail-reviews-count">
             <c:choose>
                 <c:when test="${not empty doctorReviews}">
                     ${reviewCount} Reviews
@@ -28,22 +28,22 @@
     <c:choose>
         <c:when test="${not empty doctorReviews}">
             <c:forEach var="review" items="${doctorReviews}">
-                <div class="review-item">
-                    <div class="reviewer-info">
-                        <div class="reviewer-avatar">
+                <div class="doctor-detail-review-item">
+                    <div class="doctor-detail-reviewer-info">
+                        <div class="doctor-detail-reviewer-avatar">
                             ${fn:substring(review.patientID.firstName, 0, 1)}
                         </div>
-                        <div class="reviewer-details">
-                            <p class="reviewer-name">${review.patientID.firstName} ${review.patientID.lastName}</p>
-                            <div class="review-meta">
-                                <div class="review-rating">
-                                    <div class="rating-stars">
+                        <div class="doctor-detail-reviewer-details">
+                            <p class="doctor-detail-reviewer-name">${review.patientID.firstName} ${review.patientID.lastName}</p>
+                            <div class="doctor-detail-review-meta">
+                                <div class="doctor-detail-review-rating">
+                                    <div class="doctor-detail-rating-stars">
                                         <c:forEach begin="1" end="5" var="i">
                                             <i
-                                                class="fas fa-star rating-star ${i <= review.rateScore ? '' : 'empty'}"></i>
+                                                class="fas fa-star doctor-detail-rating-star ${i <= review.rateScore ? '' : 'empty'}"></i>
                                         </c:forEach>
                                     </div>
-                                    <span class="rating-score">
+                                    <span class="doctor-detail-rating-score">
                                         <c:choose>
                                             <c:when test="${review.rateScore % 1 == 0}">
                                                 ${review.rateScore.intValue()}/5
@@ -61,16 +61,15 @@
                             </div>
                         </div>
                     </div>
-                    <div class="review-content">
+                    <div class="doctor-detail-review-content">
                         ${review.content}
                     </div>
                 </div>
             </c:forEach>
         </c:when>
         <c:otherwise>
-            <div class="no-reviews">
-                <i class="fas fa-comments"
-                   style="font-size: 2rem; color: #dee2e6; margin-bottom: 1rem;"></i>
+            <div class="doctor-detail-no-reviews">
+                <i class="fas fa-comments"></i>
                 <p>No reviews available for this doctor yet.</p>
             </div>
         </c:otherwise>
