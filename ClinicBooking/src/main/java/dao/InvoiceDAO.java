@@ -113,11 +113,11 @@ public class InvoiceDAO extends DBContext {
                     prescription = new PrescriptionDTO();
                     prescription.setPrescriptionID(rs.getInt("PrescriptionID"));
                     prescription.setNote(rs.getString("PrescriptionNote"));
-                    
+
                     // Load prescription items automatically like in PrescriptionDAO.getPrescriptionById
                     PrescriptionDAO prescriptionDAO = new PrescriptionDAO();
                     prescription.setPrescriptionItemList(
-                        prescriptionDAO.getAllPrescriptionItemByPrescriptionID(rs.getInt("PrescriptionID"))
+                            prescriptionDAO.getAllPrescriptionItemByPrescriptionID(rs.getInt("PrescriptionID"))
                     );
                 }
 
@@ -136,7 +136,7 @@ public class InvoiceDAO extends DBContext {
 
         } catch (SQLException e) {
             e.printStackTrace();
-        }   
+        }
 
         return invoice;
     }
@@ -188,16 +188,16 @@ public class InvoiceDAO extends DBContext {
                 staff.setFirstName(rs.getString("DoctorFirstName"));
                 staff.setLastName(rs.getString("DoctorLastName"));
 
-                // Doctor 
+                // Doctor
                 DoctorDTO doctor = new DoctorDTO();
                 doctor.setStaffID(staff);
 
-                // Appointment 
+                // Appointment
                 AppointmentDTO appointment = new model.AppointmentDTO();
                 appointment.setPatientID(patient);
                 appointment.setDoctorID(doctor);
 
-                // MedicalRecord 
+                // MedicalRecord
                 MedicalRecordDTO medicalRecord = new MedicalRecordDTO();
                 medicalRecord.setAppointmentID(appointment);
 
@@ -316,7 +316,7 @@ public class InvoiceDAO extends DBContext {
         return invoices;
     }
 
-    // UPDATE 
+    // UPDATE
     public boolean updateInvoice(int invoiceId, String newStatus, String newPaymentType) {
         String sql = "UPDATE Invoice "
                 + "SET InvoiceStatus = ?, "
@@ -350,6 +350,7 @@ public class InvoiceDAO extends DBContext {
 
     /**
      * Get all invoices for a specific patient
+     *
      * @param patientId The patient ID
      * @return List of invoices for the patient
      */
@@ -381,10 +382,11 @@ public class InvoiceDAO extends DBContext {
                 + " s.SpecialtyID, s.SpecialtyName, s.Price, "
                 + " i.PaymentType, i.InvoiceStatus, i.DateCreate, i.DatePay "
                 + "ORDER BY i.DateCreate DESC";
+        ResultSet rs = null;
 
-        try ( Connection conn = getConnection();  PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, patientId);
-            ResultSet rs = ps.executeQuery();
+        try {
+            Object[] params = {patientId};
+            rs = executeSelectQuery(sql, params);
 
             while (rs.next()) {
                 // Patient
@@ -398,16 +400,16 @@ public class InvoiceDAO extends DBContext {
                 staff.setFirstName(rs.getString("DoctorFirstName"));
                 staff.setLastName(rs.getString("DoctorLastName"));
 
-                // Doctor 
+                // Doctor
                 DoctorDTO doctor = new DoctorDTO();
                 doctor.setStaffID(staff);
 
-                // Appointment 
+                // Appointment
                 AppointmentDTO appointment = new AppointmentDTO();
                 appointment.setPatientID(patient);
                 appointment.setDoctorID(doctor);
 
-                // MedicalRecord 
+                // MedicalRecord
                 MedicalRecordDTO medicalRecord = new MedicalRecordDTO();
                 medicalRecord.setAppointmentID(appointment);
 
@@ -432,6 +434,8 @@ public class InvoiceDAO extends DBContext {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            closeResources(rs);
         }
 
         return list;
@@ -439,6 +443,7 @@ public class InvoiceDAO extends DBContext {
 
     /**
      * Search invoices for a specific patient by doctor name or specialty
+     *
      * @param patientId The patient ID
      * @param searchQuery The search query
      * @return List of matching invoices for the patient
@@ -475,14 +480,11 @@ public class InvoiceDAO extends DBContext {
                 + " i.PaymentType, i.InvoiceStatus, i.DateCreate, i.DatePay "
                 + "ORDER BY i.DateCreate DESC";
 
-        String pattern = "%" + searchQuery.trim() + "%";
+        Object[] params = {"%" + searchQuery.trim() + "%"};
 
-        try ( Connection conn = getConnection();  PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, patientId);
-            ps.setString(2, pattern);
-            ps.setString(3, pattern);
-
-            ResultSet rs = ps.executeQuery();
+        ResultSet rs = null;
+        try {
+            rs = executeSelectQuery(sql, params);
 
             while (rs.next()) {
                 // --- Patient ---
@@ -530,6 +532,8 @@ public class InvoiceDAO extends DBContext {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            closeResources(rs);
         }
 
         return invoices;
