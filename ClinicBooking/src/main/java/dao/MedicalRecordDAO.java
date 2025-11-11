@@ -605,4 +605,23 @@ public class MedicalRecordDAO extends DBContext {
         return appointmentID;
     }
 
+    public boolean updateMedicalRecord(int medicalRecordID, String symptoms, String diagnosis, String note) {
+        String sql = "UPDATE MedicalRecord "
+                + "SET Symptoms = ?, Diagnosis = ?, Note = ? "
+                + "WHERE MedicalRecordID = ?";
+        Object[] params = {symptoms, diagnosis, note, medicalRecordID};
+        boolean isUpdated = false;
+
+        try {
+            int rows = executeQuery(sql, params);
+            if (rows > 0) {
+                isUpdated = true;
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(MedicalRecordDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return isUpdated;
+    }
+
 }
