@@ -62,7 +62,14 @@
                                         </div>
                                         <div class="info-content">
                                             <h4>Prescription Status</h4>
-                                            <p>${prescription.prescriptionStatus != null ? prescription.prescriptionStatus : 'Pending'}</p>
+                                            <p>
+                                                <span class="appointment-status
+                                                      <c:choose>
+                                                          <c:when test="${prescription.prescriptionStatus == 'Delivered'}">status-completed</c:when>
+                                                      </c:choose>">
+                                                    ${prescription.prescriptionStatus != null ? prescription.prescriptionStatus : 'Pending'}
+                                                </span>
+                                            </p>
                                         </div>
                                     </div>
                                 </div>
