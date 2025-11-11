@@ -12,6 +12,7 @@ import model.SpecialtyDTO;
 import model.DegreeDTO;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -24,6 +25,69 @@ import model.DoctorReviewDTO;
  * @author Nguyen Minh Khang - CE190728
  */
 public class DoctorDAO extends DBContext {
+
+    public DoctorDTO getDoctorByStaffID(int staffID) {
+
+        String query = "SELECT \n"
+                + "	st.StaffID, st.JobStatus, st.Role, st.AccountName, st.AccountPassword,\n"
+                + "	st.DayCreated, st.Avatar, st.Bio, st.FirstName, st.LastName,\n"
+                + "	st.DOB, st.Gender, st.UserAddress, st.PhoneNumber, st.Email,\n"
+                + "	st.Hidden, dt.DoctorID, dt.SpecialtyID, dt.YearExperience, sp.SpecialtyName,\n"
+                + "	sp.Price\n"
+                + "FROM [dbo].[Staff] st\n"
+                + "JOIN [dbo].[Doctor] dt\n"
+                + "ON dt.StaffID = st.StaffID\n"
+                + "JOIN [dbo].[Specialty] sp\n"
+                + "ON sp.SpecialtyID = dt.SpecialtyID\n"
+                + "WHERE dt.StaffID = ?;";
+
+        DoctorDTO doctor = null;
+        Object[] params = {staffID};
+        ResultSet rs = null;
+        try {
+            rs = executeSelectQuery(query, params);
+            
+            if (rs.next()) {
+                
+                StaffDTO staff = new StaffDTO();      
+                
+                staff.setStaffID(rs.getInt("StaffID"));
+                staff.setJobStatus(rs.getString("JobStatus"));
+                staff.setRole(rs.getString("Role"));
+                staff.setAccountName(rs.getString("AccountName"));
+                staff.setAccountPassword(rs.getString("AccountPassword"));
+                staff.setDaycreated(rs.getObject("DayCreated", Timestamp.class));
+                staff.setAvatar(rs.getString("Avatar"));
+                staff.setBio(rs.getString("Bio"));
+                staff.setFirstName(rs.getString("FirstName"));
+                staff.setLastName(rs.getString("LastName"));
+                staff.setDob(rs.getObject("DOB", Timestamp.class));
+                staff.setGender(rs.getBoolean("Gender"));
+                staff.setUserAddress(rs.getString("UserAddress"));
+                staff.setPhoneNumber(rs.getString("PhoneNumber"));
+                staff.setEmail(rs.getString("Email"));
+                staff.setHidden(rs.getBoolean("Hidden"));
+                
+                SpecialtyDTO specialty = new SpecialtyDTO();
+                specialty.setSpecialtyID(rs.getInt("SpecialtyID"));
+                specialty.setSpecialtyName(rs.getString("SpecialtyName"));
+                specialty.setPrice(rs.getInt("Price"));
+                
+                doctor = new DoctorDTO();
+                
+                doctor.setStaffID(staff);
+                doctor.setDoctorID(rs.getInt("DoctorID"));
+                doctor.setYearExperience(rs.getInt("YearExperience"));
+                
+                
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(DoctorDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            closeResources(rs);
+        }
+        return doctor;
+    }
 
     /**
      * Retrieves a specific doctor by their ID.
@@ -147,7 +211,8 @@ public class DoctorDAO extends DBContext {
      * Search doctors by name and specialty only.
      *
      * @param searchName The doctor's name to search for (can be partial match).
-     * @param specialtyName The specialty name to filter (null or empty for all).
+     * @param specialtyName The specialty name to filter (null or empty for
+     * all).
      * @return A list of DoctorDTO objects matching the search criteria.
      */
     public List<DoctorDTO> searchDoctors(String searchName, String specialtyName) {
@@ -227,10 +292,12 @@ public class DoctorDAO extends DBContext {
     }
 
     /**
-     * Builds and returns a DoctorDTO object from the current row of a ResultSet.
+     * Builds and returns a DoctorDTO object from the current row of a
+     * ResultSet.
      *
      * @param rs the ResultSet positioned at the current doctor record
-     * @return a fully populated DoctorDTO object created from the ResultSet data
+     * @return a fully populated DoctorDTO object created from the ResultSet
+     * data
      * @throws SQLException if any SQL access or column retrieval error occurs
      */
     private DoctorDTO createDoctorFromResultSet(ResultSet rs) throws SQLException {
@@ -266,8 +333,8 @@ public class DoctorDAO extends DBContext {
      * Retrieves all academic degrees earned by a specific doctor.
      *
      * @param doctorId the ID of the doctor whose degrees are being retrieved
-     * @return a list of DegreeDTO objects representing the doctor's degrees, or an empty
-     * list if none are found or an error occurs
+     * @return a list of DegreeDTO objects representing the doctor's degrees, or
+     * an empty list if none are found or an error occurs
      */
     public List<DegreeDTO> getDoctorDegrees(int doctorId) {
 
@@ -566,7 +633,8 @@ public class DoctorDAO extends DBContext {
      *
      * @param patientId The ID of the patient.
      * @param doctorId The ID of the doctor.
-     * @return true if the patient has already reviewed this doctor, false otherwise.
+     * @return true if the patient has already reviewed this doctor, false
+     * otherwise.
      */
     public boolean hasPatientReviewedDoctor(int patientId, int doctorId) {
         String sql = "SELECT COUNT(*) as ReviewCount FROM DoctorReview WHERE PatientID = ? AND DoctorID = ?";

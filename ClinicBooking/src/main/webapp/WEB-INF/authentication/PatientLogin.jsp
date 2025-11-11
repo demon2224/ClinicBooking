@@ -72,7 +72,7 @@
                             </div>
                         </form>
 
-                        <form action="${pageContext.request.contextPath}/patient-login" method="POST">
+                        <form action="${pageContext.request.contextPath}/register" method="GET">
                             <input type="hidden" name="action" value="register">
                             <div class="text-center mt-3">
                                 <button type="submit" class="btn btn-success w-100 rounded-pill">

@@ -84,7 +84,7 @@ public class DoctorDashboardController extends HttpServlet {
         HttpSession session = request.getSession();
         DoctorDTO doctor = (DoctorDTO) session.getAttribute("doctor");
         if (doctor == null) {
-            response.sendRedirect(request.getContextPath() + "/login");
+            response.sendRedirect(request.getContextPath() + "/staff-login");
             return;
         }
 

@@ -4,6 +4,7 @@
  */
 package controller.authentication;
 
+import dao.DoctorDAO;
 import dao.StaffDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -12,6 +13,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import model.DoctorDTO;
 import model.StaffDTO;
 import validate.LoginValidate;
 
@@ -120,6 +122,8 @@ public class StaffLoginController extends HttpServlet {
                 break;
 
             case "Doctor":
+                DoctorDTO doctor = (new DoctorDAO()).getDoctorByStaffID(staff.getStaffID());
+                session.setAttribute("doctor", doctor);
                 response.sendRedirect(request.getContextPath() + "/doctor-dashboard");
                 break;
 

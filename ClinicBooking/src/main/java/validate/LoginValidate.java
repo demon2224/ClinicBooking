@@ -12,7 +12,7 @@ public class LoginValidate {
     
     public static final int MIN_LENGTH_USERNAME = 8;
     public static final int MAX_LENGTH_USERNAME = 200;
-    public static final String USERNAME_REGEX = "^[a-zA-Z0-9]+$";
+    public static final String USERNAME_REGEX = "^[a-zA-Z0-9 ]+$";
     
     public static final int MIN_LENGTH_PASSWORD = 8;
     public static final int MAX_LENGTH_PASSWORD = 200;
