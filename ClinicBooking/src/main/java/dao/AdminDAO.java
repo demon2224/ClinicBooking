@@ -128,32 +128,24 @@ public class AdminDAO extends DBContext {
     }
 
     public boolean updateStaffAccount(int staffID, String accountName, String fullName, String role,
-            String phone, String dob, boolean gender, String address, boolean hidden) {
-        String sql = "UPDATE Staff SET AccountName=?, FirstName=?, LastName=?, Role=?, PhoneNumber=?, DOB=?, Gender=?, UserAddress=?, Hidden=? "
+            String phone, String jobStatus, String dob, boolean gender, String address, boolean hidden) {
+
+        String sql = "UPDATE Staff "
+                + "SET AccountName=?, FirstName=?, LastName=?, Role=?, PhoneNumber=?, JobStatus=?, DOB=?, Gender=?, UserAddress=?, Hidden=? "
                 + "WHERE StaffID=?";
+
         String[] nameParts = fullName.trim().split("\\s+", 2);
         String firstName = nameParts[0];
         String lastName = nameParts.length > 1 ? nameParts[1] : "";
 
-        Object[] params = {accountName, firstName, lastName, role, phone, dob, gender, address, hidden, staffID};
+        Object[] params = {
+            accountName, firstName, lastName, role, phone, jobStatus, dob, gender, address, hidden, staffID
+        };
+
         int rows = executeQuery(sql, params);
         closeResources(null);
         return rows > 0;
     }
-
-//    public int insertStaffAccount(String accountName, String fullName, String role,
-//            String phone, String dob, boolean gender, String address, boolean hidden) {
-//        String sql = "INSERT INTO Staff (AccountName, FirstName, LastName, Role, PhoneNumber, DOB, Gender, UserAddress, Hidden, DayCreated) "
-//                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, GETDATE())";
-//        String[] nameParts = fullName.trim().split("\\s+", 2);
-//        String firstName = nameParts[0];
-//        String lastName = nameParts.length > 1 ? nameParts[1] : "";
-//
-//        Object[] params = {accountName, firstName, lastName, role, phone, dob, gender, address, hidden};
-//        int generatedId = executeInsert(sql, params);
-//        closeResources(null);
-//        return generatedId;
-//    }
 
     public boolean deleteStaffAccount(int staffID) {
         String sql = "UPDATE Staff SET Hidden = 1 WHERE StaffID = ?";
@@ -161,6 +153,65 @@ public class AdminDAO extends DBContext {
         int rows = executeQuery(sql, params);
         closeResources(null);
         return rows > 0;
+    }
+
+    public int addStaffAccount(String accountName, String fullName, String role, String phone,
+            String jobStatus, String dob, boolean gender, String address, boolean hidden) {
+        int staffID = -1;
+        DBContext db = new DBContext();
+        ResultSet rs = null;
+
+        try {
+            // Phân tách tên
+            String[] parts = fullName.trim().split(" ", 2);
+            String firstName = parts.length > 1 ? parts[0] : fullName;
+            String lastName = parts.length > 1 ? parts[1] : "";
+
+            String insertSQL = "INSERT INTO "
+                    + "Staff (AccountName, Role, PhoneNumber, JobStatus, DOB, Gender, UserAddress, Hidden, FirstName, LastName) "
+                    + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?); "
+                    + "SELECT SCOPE_IDENTITY() AS NewStaffID; ";
+
+            Object[] params = {
+                accountName, role, phone, jobStatus, dob, gender, address, hidden, firstName, lastName
+            };
+
+            rs = db.executeSelectQuery(insertSQL, params);
+            if (rs != null && rs.next()) {
+                staffID = rs.getInt("NewStaffID");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            db.closeResources(rs);
+        }
+
+        return staffID;
+    }
+
+    public int countAllAccounts() {
+        String sql = "SELECT COUNT(*) AS total FROM Staff";
+        try ( ResultSet rs = executeSelectQuery(sql)) {
+            if (rs.next()) {
+                return rs.getInt("total");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public int countAccountsByStatus(boolean hidden) {
+        String sql = "SELECT COUNT(*) AS total FROM Staff WHERE Hidden = ?";
+        try ( ResultSet rs = executeSelectQuery(sql, new Object[]{hidden})) {
+            if (rs.next()) {
+                return rs.getInt("total");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0;
     }
 
 }
