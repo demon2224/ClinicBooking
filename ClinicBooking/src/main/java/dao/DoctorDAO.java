@@ -110,7 +110,7 @@ public class DoctorDAO extends DBContext {
         Object[] params = {doctorId};
         ResultSet rs = executeSelectQuery(sql, params);
         try {
-            if (rs != null && rs.next()) {
+            if (rs.next()) {
                 doctor = createDoctorFromResultSet(rs);
             }
         } catch (SQLException ex) {
@@ -141,7 +141,7 @@ public class DoctorDAO extends DBContext {
         ResultSet rs = executeSelectQuery(sql, params);
 
         try {
-            while (rs != null && rs.next()) {
+            while (rs.next()) {
                 DoctorDTO doctor = new DoctorDTO();
                 doctor.setDoctorID(rs.getInt("DoctorID"));
                 doctor.setYearExperience(rs.getInt("YearExperience"));
@@ -379,7 +379,7 @@ public class DoctorDAO extends DBContext {
         Object[] params = {doctorId};
         ResultSet rs = executeSelectQuery(sql, params);
         try {
-            while (rs != null && rs.next()) {
+            while (rs.next()) {
                 DoctorReviewDTO review = new DoctorReviewDTO();
                 review.setContent(rs.getString("Content"));
                 review.setRateScore(rs.getInt("RateScore"));
@@ -424,7 +424,7 @@ public class DoctorDAO extends DBContext {
         Object[] params = {patientId};
         ResultSet rs = executeSelectQuery(sql, params);
         try {
-            while (rs != null && rs.next()) {
+            while (rs.next()) {
                 DoctorReviewDTO review = new DoctorReviewDTO();
                 review.setDoctorReviewID(rs.getInt("DoctorReviewID"));
                 review.setContent(rs.getString("Content"));
@@ -469,7 +469,7 @@ public class DoctorDAO extends DBContext {
         Object[] params = {doctorId};
         ResultSet rs = executeSelectQuery(sql, params);
         try {
-            if (rs != null && rs.next()) {
+            if (rs.next()) {
                 averageRating = rs.getDouble("AverageRating");
                 // Round to 1 decimal place
                 averageRating = Math.round(averageRating * 10.0) / 10.0;
@@ -495,7 +495,7 @@ public class DoctorDAO extends DBContext {
         Object[] params = {doctorId};
         ResultSet rs = executeSelectQuery(sql, params);
         try {
-            if (rs != null && rs.next()) {
+            if (rs.next()) {
                 reviewCount = rs.getInt("ReviewCount");
             }
         } catch (SQLException ex) {
@@ -596,7 +596,7 @@ public class DoctorDAO extends DBContext {
         ResultSet rs = executeSelectQuery(sql, params);
 
         try {
-            if (rs != null && rs.next()) {
+            if (rs.next()) {
                 DoctorReviewDTO review = new DoctorReviewDTO();
                 review.setDoctorReviewID(rs.getInt("DoctorReviewID"));
                 review.setContent(rs.getString("Content"));
@@ -643,7 +643,7 @@ public class DoctorDAO extends DBContext {
         ResultSet rs = executeSelectQuery(sql, params);
 
         try {
-            if (rs != null && rs.next()) {
+            if (rs.next()) {
                 return rs.getInt("ReviewCount") > 0;
             }
         } catch (SQLException ex) {

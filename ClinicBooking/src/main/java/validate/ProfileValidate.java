@@ -21,7 +21,7 @@ public class ProfileValidate {
     private static final String EMAIL_REGEX = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
     private static final String PHONE_REGEX = "^(0|\\+84)[0-9]{9}$";
     private static final String NAME_REGEX = "^[a-zA-Z\\s]{2,50}$";
-    private static final String PASSWORD_REGEX = "^(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!])(?=\\S+$).{6,}$";
+    private static final String PASSWORD_REGEX = "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[@#$%^&+=!])(?=\\S+$).{8,}$";
     private static final String ADDRESS_REGEX = "^[a-zA-Z0-9\\s,.-]{5,200}$";
 
     /**
@@ -222,8 +222,8 @@ public class ProfileValidate {
             return errors;
         }
 
-        if (password.length() < 6) {
-            errors.add("Password must be at least 6 characters");
+        if (password.length() < 8) {
+            errors.add("Password must be at least 8 characters");
         }
 
         if (!password.matches(".*[A-Z].*")) {
@@ -234,8 +234,12 @@ public class ProfileValidate {
             errors.add("Password must contain at least 1 lowercase letter");
         }
 
+        if (!password.matches(".*[0-9].*")) {
+            errors.add("Password must contain at least 1 number");
+        }
+
         if (!password.matches(".*[@#$%^&+=!].*")) {
-            errors.add("Password must have at least 1 special character");
+            errors.add("Password must contain at least 1 special character");
         }
 
         if (password.contains(" ")) {

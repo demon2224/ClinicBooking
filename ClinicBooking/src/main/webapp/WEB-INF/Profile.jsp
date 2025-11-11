@@ -651,9 +651,10 @@
                             <div style="margin-top: 0.75rem; font-size: 0.75rem; color: #64748b;">
                                 <div>Password must contain:</div>
                                 <ul style="margin: 0.25rem 0 0 1.25rem; padding: 0;">
-                                    <li id="req-length">At least 6 characters</li>
+                                    <li id="req-length">At least 8 characters</li>
                                     <li id="req-upper">At least 1 uppercase letter</li>
                                     <li id="req-lower">At least 1 lowercase letter</li>
+                                    <li id="req-number">At least 1 number</li>
                                     <li id="req-special">At least 1 special character (@#$%^&+=!)</li>
                                 </ul>
                             </div>
@@ -718,6 +719,7 @@
                                 const reqLength = document.getElementById('req-length');
                                 const reqUpper = document.getElementById('req-upper');
                                 const reqLower = document.getElementById('req-lower');
+                                const reqNumber = document.getElementById('req-number');
                                 const reqSpecial = document.getElementById('req-special');
 
                                 newPasswordInput.addEventListener('input', function () {
@@ -725,15 +727,17 @@
                                     let strength = 0;
 
                                     // Check requirements
-                                    const hasLength = password.length >= 6;
+                                    const hasLength = password.length >= 8;
                                     const hasUpper = /[A-Z]/.test(password);
                                     const hasLower = /[a-z]/.test(password);
+                                    const hasNumber = /[0-9]/.test(password);
                                     const hasSpecial = /[@#$%^&+=!]/.test(password);
 
                                     // Update requirement indicators
                                     updateRequirement(reqLength, hasLength);
                                     updateRequirement(reqUpper, hasUpper);
                                     updateRequirement(reqLower, hasLower);
+                                    updateRequirement(reqNumber, hasNumber);
                                     updateRequirement(reqSpecial, hasSpecial);
 
                                     // Calculate strength
@@ -742,6 +746,8 @@
                                     if (hasUpper)
                                         strength++;
                                     if (hasLower)
+                                        strength++;
+                                    if (hasNumber)
                                         strength++;
                                     if (hasSpecial)
                                         strength++;
@@ -757,11 +763,11 @@
                                         strengthBarFill.classList.add('weak');
                                         strengthText.classList.add('weak');
                                         strengthText.textContent = 'Weak password';
-                                    } else if (strength === 3) {
+                                    } else if (strength === 3 || strength === 4) {
                                         strengthBarFill.classList.add('medium');
                                         strengthText.classList.add('medium');
                                         strengthText.textContent = 'Medium password';
-                                    } else {
+                                    } else if (strength === 5) {
                                         strengthBarFill.classList.add('strong');
                                         strengthText.classList.add('strong');
                                         strengthText.textContent = 'Strong password';
@@ -796,14 +802,17 @@
                                     }
 
                                     // Validate new password strength
-                                    if (newPassword.length < 6) {
-                                        errors.push('Password must be at least 6 characters');
+                                    if (newPassword.length < 8) {
+                                        errors.push('Password must be at least 8 characters');
                                     }
                                     if (!/[A-Z]/.test(newPassword)) {
                                         errors.push('Password must contain at least 1 uppercase letter');
                                     }
                                     if (!/[a-z]/.test(newPassword)) {
                                         errors.push('Password must contain at least 1 lowercase letter');
+                                    }
+                                    if (!/[0-9]/.test(newPassword)) {
+                                        errors.push('Password must contain at least 1 number');
                                     }
                                     if (!/[@#$%^&+=!]/.test(newPassword)) {
                                         errors.push('Password must contain at least 1 special character (@#$%^&+=!)');
