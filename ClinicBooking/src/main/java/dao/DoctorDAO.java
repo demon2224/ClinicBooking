@@ -654,4 +654,92 @@ public class DoctorDAO extends DBContext {
         return false;
     }
 
+    public boolean updateDoctorInfo(int staffID, int specialtyID, int yearExperience, double price, String[] degreeNames) {
+        ResultSet rs = null;
+        try {
+            // 1️⃣ Lấy DoctorID từ StaffID
+            String sqlGetDoctor = "SELECT DoctorID FROM Doctor WHERE StaffID = ?";
+            rs = executeSelectQuery(sqlGetDoctor, new Object[]{staffID});
+            int doctorID = -1;
+            if (rs != null && rs.next()) {
+                doctorID = rs.getInt("DoctorID");
+            }
+            closeResources(rs);
+
+            if (doctorID == -1) {
+                System.out.println("❌ Không tìm thấy DoctorID cho StaffID = " + staffID);
+                return false;
+            }
+
+            // 2️⃣ Update bảng Doctor
+            String sqlDoctor = "UPDATE Doctor SET SpecialtyID = ?, YearExperience = ? WHERE DoctorID = ?";
+            Object[] doctorParams = {specialtyID, yearExperience, doctorID};
+            executeQuery(sqlDoctor, doctorParams);
+
+            // 3️⃣ Update bảng Specialty (giá khám)
+            String sqlPrice = "UPDATE Specialty SET Price = ? WHERE SpecialtyID = ?";
+            Object[] priceParams = {price, specialtyID};
+            executeQuery(sqlPrice, priceParams);
+
+            // 4️⃣ Xóa các bằng cấp cũ
+            String sqlDelete = "DELETE FROM Degree WHERE DoctorID = ?";
+            executeQuery(sqlDelete, new Object[]{doctorID});
+
+            // 5️⃣ Thêm bằng cấp mới (nếu có)
+            if (degreeNames != null && degreeNames.length > 0) {
+                String sqlInsert = "INSERT INTO Degree (DoctorID, DegreeName) VALUES (?, ?)";
+                for (String degree : degreeNames) {
+                    if (degree != null && !degree.trim().isEmpty()) {
+                        executeQuery(sqlInsert, new Object[]{doctorID, degree.trim()});
+                    }
+                }
+            }
+
+            closeResources(null);
+            return true;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            closeResources(rs);
+            return false;
+        }
+    }
+
+    public void addDoctorInfo(int staffID, int specialtyID, int yearExp, double price, String[] degreeNames) {
+        DBContext db = new DBContext();
+        ResultSet rs = null;
+
+        try {
+            String insertDoctor
+                    = "INSERT INTO Doctor (StaffID, SpecialtyID, YearExperience) "
+                    + "VALUES (?, ?, ?); "
+                    + "SELECT SCOPE_IDENTITY() AS DoctorID;";
+
+            rs = db.executeSelectQuery(insertDoctor, new Object[]{staffID, specialtyID, yearExp});
+
+            int doctorID = -1;
+            if (rs != null && rs.next()) {
+                doctorID = rs.getInt("DoctorID");
+            }
+
+            // 2️⃣ Cập nhật giá chuyên khoa (nếu thay đổi)
+            db.executeQuery("UPDATE Specialty SET Price = ? WHERE SpecialtyID = ?", new Object[]{price, specialtyID});
+
+            // 3️⃣ Thêm bằng cấp
+            if (degreeNames != null && doctorID > 0) {
+                String sqlInsert = "INSERT INTO Degree (DegreeName, DoctorID) VALUES (?, ?)";
+                for (String degree : degreeNames) {
+                    if (degree != null && !degree.trim().isEmpty()) {
+                        db.executeQuery(sqlInsert, new Object[]{degree.trim(), doctorID});
+                    }
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            db.closeResources(rs);
+        }
+    }
+
 }
