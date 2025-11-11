@@ -1,6 +1,6 @@
 /*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+     * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+     * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package dao;
 
@@ -31,10 +31,9 @@ public class InvoiceDAO extends DBContext {
 
         String sql = "SELECT "
                 + " i.InvoiceID, "
-                + " p.PatientID, p.FirstName AS PatientFirstName, p.LastName AS PatientLastName, "
+                + " p.FirstName AS PatientFirstName, p.LastName AS PatientLastName, "
                 + " p.DOB, p.Gender, p.UserAddress, p.PhoneNumber, p.Email, "
-                + " d.DoctorID, ds.FirstName AS DoctorFirstName, ds.LastName AS DoctorLastName, "
-                + " ds.Email as DoctorEmail, d.YearExperience, "
+                + " ds.FirstName AS DoctorFirstName, ds.LastName AS DoctorLastName, "
                 + " s.SpecialtyID, s.SpecialtyName, ISNULL(s.Price,0) AS ConsultationFee, "
                 + " ISNULL(s.Price,0) + ISNULL(( "
                 + "     SELECT SUM(pi.Dosage * m.Price) "
@@ -43,9 +42,8 @@ public class InvoiceDAO extends DBContext {
                 + "     WHERE pi.PrescriptionID = pre.PrescriptionID "
                 + " ),0) AS TotalFee, "
                 + " i.PaymentType, i.InvoiceStatus, i.DateCreate, i.DatePay, "
-                + " pre.PrescriptionID, pre.Note AS PrescriptionNote, "
-                + " mr.MedicalRecordID, mr.Symptoms, mr.Diagnosis, mr.Note AS MedicalNote, "
-                + " a.AppointmentID "
+                + " pre.Note AS PrescriptionNote, "
+                + " mr.Symptoms, mr.Diagnosis, mr.Note AS MedicalNote "
                 + "FROM Invoice i "
                 + "JOIN MedicalRecord mr ON i.MedicalRecordID = mr.MedicalRecordID "
                 + "JOIN Appointment a ON mr.AppointmentID = a.AppointmentID "
@@ -72,13 +70,11 @@ public class InvoiceDAO extends DBContext {
                         rs.getString("PhoneNumber"),
                         rs.getString("Email")
                 );
-                patient.setPatientID(rs.getInt("PatientID"));
 
                 // Staff (Doctor)
                 StaffDTO staff = new StaffDTO();
                 staff.setFirstName(rs.getString("DoctorFirstName"));
                 staff.setLastName(rs.getString("DoctorLastName"));
-                staff.setEmail(rs.getString("DoctorEmail"));
 
                 // Specialty
                 SpecialtyDTO specialty = new SpecialtyDTO();
@@ -88,20 +84,16 @@ public class InvoiceDAO extends DBContext {
 
                 // Doctor
                 DoctorDTO doctor = new DoctorDTO();
-                doctor.setDoctorID(rs.getInt("DoctorID"));
                 doctor.setStaffID(staff);
                 doctor.setSpecialtyID(specialty);
-                doctor.setYearExperience(rs.getInt("YearExperience"));
 
                 // Appointment
                 AppointmentDTO appointment = new AppointmentDTO();
-                appointment.setAppointmentID(rs.getInt("AppointmentID"));
                 appointment.setPatientID(patient);
                 appointment.setDoctorID(doctor);
 
                 // MedicalRecord
                 MedicalRecordDTO medicalRecord = new MedicalRecordDTO();
-                medicalRecord.setMedicalRecordID(rs.getInt("MedicalRecordID"));
                 medicalRecord.setAppointmentID(appointment);
                 medicalRecord.setSymptoms(rs.getString("Symptoms"));
                 medicalRecord.setDiagnosis(rs.getString("Diagnosis"));
@@ -537,6 +529,35 @@ public class InvoiceDAO extends DBContext {
         }
 
         return invoices;
+    }
+
+    public double sumRevenueToday() {
+        String sql
+                = "SELECT ISNULL(SUM(sub.Total), 0) AS revenue "
+                + "FROM ( "
+                + "    SELECT DISTINCT i.InvoiceID, "
+                + "        ISNULL(s.Price, 0) + ISNULL(SUM(pi.Dosage * m.Price), 0) AS Total "
+                + "    FROM Invoice i "
+                + "    JOIN MedicalRecord mr ON i.MedicalRecordID = mr.MedicalRecordID "
+                + "    JOIN Appointment a ON mr.AppointmentID = a.AppointmentID "
+                + "    JOIN Doctor d ON a.DoctorID = d.DoctorID "
+                + "    LEFT JOIN Specialty s ON d.SpecialtyID = s.SpecialtyID "
+                + "    LEFT JOIN Prescription pre ON i.PrescriptionID = pre.PrescriptionID "
+                + "    LEFT JOIN PrescriptionItem pi ON pre.PrescriptionID = pi.PrescriptionID "
+                + "    LEFT JOIN Medicine m ON pi.MedicineID = m.MedicineID "
+                + "    WHERE i.InvoiceStatus = 'Paid' "
+                + "      AND i.DatePay >= CAST(GETDATE() AS DATE) "
+                + "      AND i.DatePay < DATEADD(DAY, 1, CAST(GETDATE() AS DATE)) "
+                + "    GROUP BY i.InvoiceID, s.Price "
+                + ") sub;";
+        try ( ResultSet rs = executeSelectQuery(sql)) {
+            if (rs != null && rs.next()) {
+                return rs.getDouble("revenue");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0;
     }
 
 }

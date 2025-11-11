@@ -4,11 +4,6 @@
     Author     : Ngo Quoc Hung - CE191184
 --%>
 
-<%-- 
-    Document   : AdminManageAccountList
-    Created on : Nov 6, 2025, 7:07:00 PM
-    Author     : Ngo Quoc Hung - CE191184
---%>
 
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
@@ -110,8 +105,48 @@
                 </div>
             </nav>
 
-            
+            <!-- Dashboard statistic cards -->
+            <div class="container mt-4">
+                <div class="row g-4">
+                    <!-- All Staff -->
+                    <div class="col-md-4">
+                        <div class="card shadow-sm border-0 text-center">
+                            <div class="card-body">
+                                <i class="fa-solid fa-users fa-2x text-primary mb-2"></i>
+                                <h5 class="card-title">All Staff Accounts</h5>
+                                <h2 class="fw-bold text-dark">${totalAccounts}</h2>
+                                <p class="text-muted mb-0">Total registered staff</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Active Accounts -->
+                    <div class="col-md-4">
+                        <div class="card shadow-sm border-0 text-center">
+                            <div class="card-body">
+                                <i class="fa-solid fa-user-check fa-2x text-success mb-2"></i>
+                                <h5 class="card-title">Active Accounts</h5>
+                                <h2 class="fw-bold text-success">${activeAccounts}</h2>
+                                <p class="text-muted mb-0">Currently available</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Inactive Accounts -->
+                    <div class="col-md-4">
+                        <div class="card shadow-sm border-0 text-center">
+                            <div class="card-body">
+                                <i class="fa-solid fa-user-slash fa-2x text-danger mb-2"></i>
+                                <h5 class="card-title">Inactive Accounts</h5>
+                                <h2 class="fw-bold text-danger">${inactiveAccounts}</h2>
+                                <p class="text-muted mb-0">Hidden or disabled</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
+
     </body>
 </html>
 

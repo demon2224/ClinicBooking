@@ -1127,4 +1127,37 @@ public class AppointmentDAO extends DBContext {
         return false;
     }
 
+    public int countAppointmentsToday() {
+        String sql = "SELECT COUNT(*) AS total "
+            + "FROM Appointment "
+            + "WHERE AppointmentStatus IN ('Pending', 'Approved', 'Completed') "
+            + "AND DateBegin >= CAST(GETDATE() AS DATE) "
+            + "AND DateBegin < DATEADD(DAY, 1, CAST(GETDATE() AS DATE)) ";
+        try ( ResultSet rs = executeSelectQuery(sql)) {
+            if (rs != null && rs.next()) {
+                return rs.getInt("total");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    // ✅ 2️⃣ - Đếm số appointment đã hoàn thành trong hôm nay
+    public int countCompletedAppointmentsToday() {
+        String sql = " SELECT COUNT(*) AS total "
+            + "FROM Appointment "
+            + "WHERE AppointmentStatus = 'Completed' "
+            + "AND DateEnd >= CAST(GETDATE() AS DATE) "
+            + "AND DateEnd < DATEADD(DAY, 1, CAST(GETDATE() AS DATE)) ";
+        try ( ResultSet rs = executeSelectQuery(sql)) {
+            if (rs != null && rs.next()) {
+                return rs.getInt("total");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
 }

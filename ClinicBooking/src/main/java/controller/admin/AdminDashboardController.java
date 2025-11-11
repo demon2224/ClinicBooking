@@ -4,6 +4,10 @@
  */
 package controller.admin;
 
+import dao.AdminDAO;
+import dao.AppointmentDAO;
+import dao.DoctorDAO;
+import dao.PatientDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -16,6 +20,13 @@ import jakarta.servlet.http.HttpServletResponse;
  * @author Ngo Quoc Hung - CE191184
  */
 public class AdminDashboardController extends HttpServlet {
+
+    private AdminDAO adminDAO;
+
+    @Override
+    public void init() throws ServletException {
+        adminDAO = new AdminDAO();
+    }
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -55,9 +66,19 @@ public class AdminDashboardController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+
+        AdminDAO dao = new AdminDAO();
+        int totalAccounts = dao.countAllAccounts();
+        int activeAccounts = dao.countAccountsByStatus(false);  // Hidden = 0
+        int inactiveAccounts = dao.countAccountsByStatus(true); // Hidden = 1
+
+        request.setAttribute("totalAccounts", totalAccounts);
+        request.setAttribute("activeAccounts", activeAccounts);
+        request.setAttribute("inactiveAccounts", inactiveAccounts);
+
+
         request.getRequestDispatcher("/WEB-INF/admin/AdminDashboard.jsp")
                 .forward(request, response);
-
     }
 
     /**
