@@ -2,7 +2,6 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-
 package controller.patient;
 
 import dao.InvoiceDAO;
@@ -35,7 +34,7 @@ public class ManageMyInvoiceController extends HttpServlet {
         invoiceDAO = new InvoiceDAO();
         patientDAO = new PatientDAO();
         doctorDAO = new DoctorDAO();
-    } 
+    }
 
     /**
      * Handles GET requests - Display invoices list or invoice detail
@@ -46,11 +45,11 @@ public class ManageMyInvoiceController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         // Check if user is logged in as patient
         HttpSession session = request.getSession();
         PatientDTO patient = (PatientDTO) session.getAttribute("patient");
-        
+
         if (patient == null) {
             session.setAttribute("errorMessage", ManageMyInvoiceConstants.ERROR_SESSION_EXPIRED);
             response.sendRedirect(request.getContextPath() + "/authentication");
@@ -75,7 +74,7 @@ public class ManageMyInvoiceController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         // For future enhancements like invoice payment processing
         response.sendRedirect(request.getContextPath() + ManageMyInvoiceConstants.BASE_URL);
     }
@@ -83,15 +82,15 @@ public class ManageMyInvoiceController extends HttpServlet {
     /**
      * Handle invoice detail view
      */
-    private void handleInvoiceDetail(HttpServletRequest request, HttpServletResponse response, 
-                                   String invoiceIdParam, int patientId)
+    private void handleInvoiceDetail(HttpServletRequest request, HttpServletResponse response,
+            String invoiceIdParam, int patientId)
             throws ServletException, IOException {
 
         try {
             int invoiceId = Integer.parseInt(invoiceIdParam);
 
             // Get invoice details
-            InvoiceDTO invoice = invoiceDAO.getInvoiceDetail(invoiceId);
+            InvoiceDTO invoice = invoiceDAO.getInvoiceById(invoiceId);
 
             // Check if invoice exists
             if (invoice == null) {
@@ -101,11 +100,11 @@ public class ManageMyInvoiceController extends HttpServlet {
             }
 
             // Verify patient ownership through medical record -> appointment -> patient
-            if (invoice.getMedicalRecordID() == null || 
-                invoice.getMedicalRecordID().getAppointmentID() == null ||
-                invoice.getMedicalRecordID().getAppointmentID().getPatientID() == null ||
-                invoice.getMedicalRecordID().getAppointmentID().getPatientID().getPatientID() != patientId) {
-                
+            if (invoice.getMedicalRecordID() == null
+                    || invoice.getMedicalRecordID().getAppointmentID() == null
+                    || invoice.getMedicalRecordID().getAppointmentID().getPatientID() == null
+                    || invoice.getMedicalRecordID().getAppointmentID().getPatientID().getPatientID() != patientId) {
+
                 request.getSession().setAttribute("errorMessage", ManageMyInvoiceConstants.ERROR_UNAUTHORIZED_ACCESS);
                 response.sendRedirect(request.getContextPath() + ManageMyInvoiceConstants.BASE_URL);
                 return;
@@ -144,11 +143,11 @@ public class ManageMyInvoiceController extends HttpServlet {
             String searchQuery = request.getParameter(ManageMyInvoiceConstants.PARAM_SEARCH);
             List<InvoiceDTO> invoiceList;
 
-            // Apply search - Need to implement search method for patient invoices in InvoiceDAO
+            // Apply search - Use existing DAO methods
             if (searchQuery != null && !searchQuery.trim().isEmpty()) {
-                invoiceList = getPatientInvoicesWithSearch(patientId, searchQuery);
+                invoiceList = invoiceDAO.searchInvoicesByPatientId(patientId, searchQuery);
             } else {
-                invoiceList = getPatientInvoices(patientId);
+                invoiceList = invoiceDAO.getInvoicesByPatientId(patientId);
             }
 
             // Set attributes for JSP
@@ -162,20 +161,6 @@ public class ManageMyInvoiceController extends HttpServlet {
             request.getSession().setAttribute("errorMessage", ManageMyInvoiceConstants.ERROR_GENERAL);
             request.getRequestDispatcher(ManageMyInvoiceConstants.LIST_PAGE_JSP).forward(request, response);
         }
-    }
-    
-    /**
-     * Get invoices for a specific patient
-     */
-    private List<InvoiceDTO> getPatientInvoices(int patientId) {
-        return invoiceDAO.getInvoicesByPatientId(patientId);
-    }
-    
-    /**
-     * Search invoices for a specific patient
-     */
-    private List<InvoiceDTO> getPatientInvoicesWithSearch(int patientId, String searchQuery) {
-        return invoiceDAO.searchInvoicesByPatientId(patientId, searchQuery);
     }
 
     @Override
