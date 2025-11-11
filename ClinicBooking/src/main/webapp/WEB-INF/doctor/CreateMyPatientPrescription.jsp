@@ -68,7 +68,7 @@
                 <h2><i class="fa-solid fa-prescription me-2"></i>Create Prescription</h2>
             </div>
 
-            <form action="${pageContext.request.contextPath}/manage-my-patient-prescription?action=insert" 
+            <form action="${pageContext.request.contextPath}/manage-my-patient-prescription?action=create" 
                   method="post" class="needs-validation" novalidate>
 
                 <input type="hidden" name="medicalRecordID" value="${medicalRecordID}" />
@@ -95,7 +95,7 @@
                                             <option value="">-- Select Medicine --</option>
                                             <c:forEach var="m" items="${medicineList}">
                                                 <option value="${m.medicineID}">
-                                                    ${m.medicineName} (${m.medicineType}) - ${m.price}
+                                                    ${m.medicineName} — ${m.medicineType} | Stock: ${m.quantity} | $${m.price}
                                                 </option>
                                             </c:forEach>
                                         </select>
@@ -123,7 +123,7 @@
                     </div>
                     <div class="card-body">
                         <div class="mb-3">
-                            <label class="form-label required">Note</label>
+                            <label class="form-label">Note</label>
                             <textarea name="note" class="form-control" rows="3"
                                       placeholder="Enter prescription note..." required></textarea>
                             <div class="invalid-feedback">Please enter the note.</div>
@@ -152,7 +152,32 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        ${error}
+                        <c:if test="${not empty medicineError}">
+                            ${medicineError}<br>
+                        </c:if>
+                        <c:if test="${not empty dosageError}">
+                            ${dosageError}<br>
+                        </c:if>
+                        <c:if test="${not empty intructionError}">
+                            ${intructionError}
+                        </c:if>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Bootstrap another Error Modal -->
+        <div class="modal fade" id="errorModalNull" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header bg-danger text-white">
+                        <h5 class="modal-title"><i class="fa-solid fa-circle-exclamation me-2"></i>Error</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        ${errorNull}
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -167,6 +192,19 @@
                     var myModal = new bootstrap.Modal(document.getElementById('errorModal'));
                     myModal.show();
                 };
+                <c:remove var="error" scope="session" />
+                <c:remove var="medicineError" scope="session" />
+                <c:remove var="dosageError" scope="session" />
+                <c:remove var="intructionError" scope="session" />
+            </script>
+        </c:if>
+        <c:if test="${not empty errorNull}">
+            <script>
+                window.onload = function () {
+                    var myModal = new bootstrap.Modal(document.getElementById('errorModalNull'));
+                    myModal.show();
+                };
+                <c:remove var="errorNull" scope="session" />
             </script>
         </c:if>
 

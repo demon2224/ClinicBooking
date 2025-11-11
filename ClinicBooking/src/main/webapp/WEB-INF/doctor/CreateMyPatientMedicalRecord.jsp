@@ -122,28 +122,25 @@
                 <!-- Medical Record Form -->
                 <div class="card">
                     <div class="card-header">
-                        <i class="fa-solid fa-stethoscope me-2"></i>Medical Record Details
+                        <i class="fa-solid fa-stethoscope me-2"></i>Medical Record
                     </div>
                     <div class="card-body">
                         <div class="mb-3">
                             <label class="form-label required">Symptoms</label>
                             <textarea name="symptoms" class="form-control" rows="3"
                                       placeholder="Enter symptoms..." required></textarea>
-                            <div class="invalid-feedback">Please enter the symptoms.</div>
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label required">Diagnosis</label>
                             <textarea name="diagnosis" class="form-control" rows="3"
                                       placeholder="Enter diagnosis..." required></textarea>
-                            <div class="invalid-feedback">Please enter the diagnosis.</div>
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label required">Doctor's Note</label>
                             <textarea name="note" class="form-control" rows="3"
                                       placeholder="Enter doctor's notes..." required></textarea>
-                            <div class="invalid-feedback">Please enter the doctor’s note.</div>
                         </div>
                     </div>
                 </div>
@@ -154,24 +151,24 @@
                         <i class="fa-solid fa-check"></i> Save Medical Record
                     </button>
                 </div>
-
-                <!-- Bootstrap Error Modal -->
-                <div class="modal fade" id="errorModal" tabindex="-1" aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header bg-danger text-white">
-                                <h5 class="modal-title"><i class="fa-solid fa-circle-exclamation me-2"></i>Error</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                ${error}
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            </div>
+            </form>
+            <!-- Bootstrap Error Modal -->
+            <div class="modal fade" id="errorModal" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header bg-danger text-white">
+                            <h5 class="modal-title"><i class="fa-solid fa-circle-exclamation me-2"></i>Error</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            ${error}
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                         </div>
                     </div>
                 </div>
+            </div>
         </div>
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

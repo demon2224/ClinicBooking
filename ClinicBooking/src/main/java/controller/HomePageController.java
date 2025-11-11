@@ -42,20 +42,26 @@ public class HomePageController extends HttpServlet {
 //            session.setAttribute("doctor", doctor);
 //        }
 
+//        request.getRequestDispatcher("/WEB-INF/HomePage.jsp").forward(request, response);
+        HttpSession session = request.getSession();
+        DoctorDTO doctor = ((new DoctorDAO()).getDoctorById(1));
+        if ((session != null) && (doctor != null)) {
+            session.setAttribute("doctor", doctor);
+        }
+        request.getRequestDispatcher("/WEB-INF/doctor/DoctorDashboard.jsp").forward(request, response);
         // Since Patient table doesn't have RoleID, redirect to patient homepage
         // Remove role-based redirects as patients don't have roles
         // Forward to Homepage.jsp
-//        request.getRequestDispatcher("/WEB-INF/doctor/DoctorDashboard.jsp").forward(request, response);
-//        request.getRequestDispatcher("/WEB-INF/HomePage.jsp").forward(request, response);
-        // Using for test patient login.
-        HttpSession session = request.getSession();
-        PatientDTO patient = (PatientDTO) session.getAttribute("patient");
 
-        if (patient != null) {
-            request.getRequestDispatcher("/WEB-INF/HomePage.jsp").forward(request, response);
-        } else {
-            response.sendRedirect(request.getContextPath() + "/patient-login");
-        }
+        // Using for test patient login.
+//        HttpSession session = request.getSession();
+//        PatientDTO patient = (PatientDTO) session.getAttribute("patient");
+//
+//        if (patient != null) {
+//            request.getRequestDispatcher("/WEB-INF/HomePage.jsp").forward(request, response);
+//        } else {
+//            response.sendRedirect(request.getContextPath() + "/patient-login");
+//        }
 //
 //        // Using for test staff login.
 //        response.sendRedirect(request.getContextPath() + "/staff-login");

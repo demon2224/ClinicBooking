@@ -155,6 +155,21 @@
                                            class="btn btn-sm btn-info text-white">
                                             <i class="fa-solid fa-eye"></i> View Detail
                                         </a>
+                                        <a href="${pageContext.request.contextPath}/manage-my-patient-prescription?action=edit&prescriptionID=${prescription.prescriptionID}"
+                                           class="btn btn-sm btn-warning text-white">
+                                            <i class="fa-solid fa-wrench"></i> Edit
+                                        </a>
+                                        <c:if test="${prescription.prescriptionStatus eq 'Pending'}">
+                                            <a href="${pageContext.request.contextPath}/manage-my-patient-prescription?action=delete&prescriptionID=${prescription.prescriptionID}"
+                                               class="btn btn-sm btn-danger text-white user-select-none">
+                                                <i class="fa-solid fa-trash"></i> Delete
+                                            </a>
+                                        </c:if>
+                                        <c:if test="${prescription.prescriptionStatus eq 'Delivered'}">
+                                            <a href="#" class="btn btn-sm btn-secondary text-white disabled" tabindex="-1" aria-disabled="true">
+                                                <i class="fa-solid fa-trash"></i> Delete
+                                            </a>
+                                        </c:if>
                                     </td>
                                 </tr>
                             </c:forEach>
@@ -171,5 +186,35 @@
                 </div>
             </div>
         </div>
-    </body>
+        <!-- Bootstrap Error Modal -->
+        <div class="modal fade" id="errorModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header bg-danger text-white">
+                        <h5 class="modal-title"><i class="fa-solid fa-circle-exclamation me-2"></i>Error</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        ${sessionScope.error}
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <c:if test="${not empty sessionScope.error}">
+        <script>
+            window.onload = function () {
+                var myModal = new bootstrap.Modal(document.getElementById('errorModal'));
+                myModal.show();
+            };
+            <c:remove var="error" scope="session" />
+        </script>
+    </c:if>
+</body>
 </html>
