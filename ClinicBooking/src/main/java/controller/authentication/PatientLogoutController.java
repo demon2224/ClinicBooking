@@ -81,7 +81,7 @@ public class PatientLogoutController extends HttpServlet {
             throws ServletException, IOException {
 //        processRequest(request, response);
 
-        response.sendRedirect(request.getContextPath() + "/patient-login");
+        response.sendRedirect(request.getContextPath() + "/patient-logout");
     }
 
     /**

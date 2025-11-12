@@ -11,7 +11,6 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import model.PatientDTO;
 import model.StaffDTO;
 
 /**
@@ -82,7 +81,7 @@ public class StaffLogoutController extends HttpServlet {
             throws ServletException, IOException {
 //        processRequest(request, response);
 
-        response.sendRedirect(request.getContextPath() + "/staff-login");
+        response.sendRedirect(request.getContextPath() + "/staff-logout");
     }
 
     /**
