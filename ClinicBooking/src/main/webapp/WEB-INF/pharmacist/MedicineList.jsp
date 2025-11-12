@@ -77,7 +77,7 @@
             <div class="container-fluid mt-4">
                 <div class="card shadow-sm">
                     <div class="card-header bg-white d-flex justify-content-between align-items-center flex-wrap gap-2">
-                        <h5 class="mb-0 fw-bold text-primary">Medicine List</h5>
+                        <h5 class="mb-0">Medicine List</h5>
                         <a href="${pageContext.request.contextPath}/manage-medicine?action=create" class="btn btn-success">
                             <i class="fa-solid fa-plus me-1"></i> Add New
                         </a>
