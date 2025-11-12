@@ -11,7 +11,7 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8">
-        <title>Doctor Dashboard</title>
+        <title>Pharmacist - Medicine Management</title>
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assests/css/bootstrap.min.css">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assests/css/all.min.css" />
         <style>
@@ -38,29 +38,15 @@
                 margin-left: 260px;
                 padding: 25px;
             }
-            .card {
-                border-radius: 10px;
-            }
-            .table img {
-                border-radius: 50%;
-                width: 40px;
-                height: 40px;
-            }
-            .status-toggle {
-                width: 40px;
-                height: 20px;
-            }
             .navbar {
                 background: white;
                 border-bottom: 1px solid #dee2e6;
             }
-
-            #Logout{
+            #Logout {
                 color: red;
                 border-color: red;
-
             }
-            #Logout:hover{
+            #Logout:hover {
                 background-color: red;
                 color: white;
             }
@@ -70,42 +56,40 @@
         <!-- Sidebar -->
         <%@include file="../includes/PharmacistDashboardSidebar.jsp" %>
 
-        <!-- Main content -->
         <div class="main-content">
+
             <nav class="navbar navbar-light">
                 <div class="container-fluid">
-                    <form class="d-flex w-50" action="${pageContext.request.contextPath}/manage-medicine" method="GET">
-                        <input type="hidden" name="action" value="search">
-                        <input class="form-control me-2" type="search" placeholder="Search here" name="search" value="${param.search}">
+                    <form class="d-flex w-50" method="get" action="${pageContext.request.contextPath}/manage-medicine">
+                        <input class="form-control me-2" type="search" name="action" placeholder="Search medicine..." value="search">
                         <button class="btn btn-outline-primary" type="submit">
                             <i class="fa-solid fa-magnifying-glass"></i>
                         </button>
                     </form>
                     <div>
-                        <button class="btn btn-submit" id="Logout" type="submit">Logout</button>
+                        <form action="${pageContext.request.contextPath}/staff-logout">
+                            <button  id="Logout" class="btn btn-submit" type="submit">Logout</button>
+                        </form>
                     </div>
                 </div>
             </nav>
 
             <div class="container-fluid mt-4">
-                <div class="card mb-4">
-                    <div class="card-header bg-white">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <h5 class="mb-0">Medicine List</h5>
-                            <div>
-                                <a href="${pageContext.request.contextPath}/manage-medicine?action=create" class="btn btn-success">
-                                    <i class="fas fa-plus"></i> Add Medicine
-                                </a>
-                            </div>
-                        </div>
+                <div class="card shadow-sm">
+                    <div class="card-header bg-white d-flex justify-content-between align-items-center flex-wrap gap-2">
+                        <h5 class="mb-0 fw-bold text-primary">Medicine List</h5>
+                        <a href="${pageContext.request.contextPath}/manage-medicine?action=create" class="btn btn-success">
+                            <i class="fa-solid fa-plus me-1"></i> Add New
+                        </a>
                     </div>
-                    <div class="card-body">
-                        <table class="table align-middle">
-                            <thead>
+
+                    <div class="table-responsive">
+                        <table class="table table-hover table-bordered align-middle text-center mb-0">
+                            <thead class="table-primary">
                                 <tr>
                                     <th>#</th>
                                     <th>Type</th>
-                                    <th class="col-1">Status</th>
+                                    <th>Status</th>
                                     <th>Name</th>
                                     <th>Code</th>
                                     <th>Quantity</th>
@@ -114,51 +98,69 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <c:forEach items="${requestScope.medicineList}" var="med" varStatus="item">
+                                <c:forEach var="med" items="${requestScope.medicineList}" varStatus="item">
                                     <tr style="<c:if test='${med.isHidden}'>opacity: 0.5;</c:if>">
-                                            <td>
-                                            <c:out value="${item.count}"/>
-                                        </td>
+                                        <td>${item.count}</td>
+                                        <td>${med.medicineType}</td>
                                         <td>
-                                            <c:out value="${med.medicineType}"/>
+                                            <c:choose>
+                                                <c:when test="${med.medicineStatus}">
+                                                    <span class="badge bg-success">Available</span>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <span class="badge bg-danger">Unavailable</span>
+                                                </c:otherwise>
+                                            </c:choose>
                                         </td>
-                                        <c:choose>
-                                            <c:when test="${med.medicineStatus}">
-                                                <td>
-                                                    <span class="badge bg-success text-white">Available</span>
-                                                </td>
-                                            </c:when>
-                                            <c:otherwise>
-                                                <td>
-                                                    <span class="badge bg-danger text-white">Unavailable</span>
-                                                </td>
-                                            </c:otherwise>
-                                        </c:choose>
+                                        <td>${med.medicineName}</td>
+                                        <td>${med.medicineCode}</td>
+                                        <td>${med.quantity}</td>
+                                        <td><fmt:formatNumber value="${med.price}" type="currency" currencySymbol="$" /></td>
+
                                         <td>
-                                            <c:out value="${med.medicineName}"/>
-                                        </td>
-                                        <td>
-                                            <c:out value="${med.medicineCode}"/>
-                                        </td>
-                                        <td>
-                                            <c:out value="${med.quantity}" />
-                                        </td>
-                                        <td>
-                                            <fmt:formatNumber value="${med.price}" type="currency" currencySymbol="$" />
-                                        </td>
-                                        <td>
-                                            <c:if test="${not med.isHidden}">
-                                                <div class="d-flex gap-2">
-                                                    <a class="btn btn-submit bg-warning text-white" href="${pageContext.request.contextPath}/manage-medicine?action=detail&medicineID=${med.medicineID}">View Detail</a>
-                                                    <a class="btn btn-submit bg-primary text-white" href="${pageContext.request.contextPath}/manage-medicine?action=import&medicineID=${med.medicineID}">Import</a>
-                                                    <a class="btn btn-submit bg-primary text-white" href="${pageContext.request.contextPath}/manage-medicine?action=edit&medicineID=${med.medicineID}">Edit</a>
-                                                    <form method="post" action="${pageContext.request.contextPath}/manage-medicine">
-                                                        <input type="hidden" name="action" value="delete">
-                                                        <input type="hidden" name="medicineID" value="${med.medicineID}">
-                                                        <button class="btn btn-submit bg-danger text-white">Delete</button>
-                                                    </form>
+                                            <div class="d-flex flex-wrap justify-content-center gap-2">
+                                                <a class="btn btn-primary btn-sm text-white fw-semibold" 
+                                                   href="${pageContext.request.contextPath}/manage-medicine?action=detail&medicineID=${med.medicineID}">
+                                                    <i class="fa-solid fa-eye me-1"></i> View Detail
+                                                </a>
+
+                                                <a class="btn btn-warning btn-sm text-white fw-semibold" 
+                                                   href="${pageContext.request.contextPath}/manage-medicine?action=import&medicineID=${med.medicineID}">
+                                                    <i class="fa-solid fa-truck-ramp-box me-1"></i> Import
+                                                </a>
+
+                                                <a class="btn btn-info btn-sm text-white fw-semibold" 
+                                                   href="${pageContext.request.contextPath}/manage-medicine?action=edit&medicineID=${med.medicineID}">
+                                                    <i class="fa-solid fa-pen-to-square me-1"></i> Edit
+                                                </a>
+
+                                                <button type="button" class="btn btn-danger btn-sm fw-semibold"
+                                                        data-bs-toggle="modal" data-bs-target="#deleteModal${med.medicineID}">
+                                                    <i class="fa-solid fa-trash me-1"></i> Delete
+                                                </button>
+                                            </div>
+
+                                            <div class="modal fade" id="deleteModal${med.medicineID}" tabindex="-1" aria-hidden="true">
+                                                <div class="modal-dialog modal-dialog-centered">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title">Confirm Delete</h5>
+                                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            Are you sure you want to proceed?
+                                                        </div>
+                                                        <div class="modal-footer d-flex justify-content-end">
+                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                            <form method="post" action="${pageContext.request.contextPath}/manage-medicine" class="d-inline">
+                                                                <input type="hidden" name="action" value="delete">
+                                                                <input type="hidden" name="medicineID" value="${med.medicineID}">
+                                                                <button type="submit" class="btn btn-danger">Yes</button>
+                                                            </form>
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                            </c:if>
+                                            </div>
                                         </td>
                                     </tr>
                                 </c:forEach>
@@ -168,5 +170,7 @@
                 </div>
             </div>
         </div>
+
+        <script src="${pageContext.request.contextPath}/assests/js/bootstrap.bundle.min.js"></script>
     </body>
 </html>
