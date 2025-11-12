@@ -587,7 +587,8 @@ public class InvoiceDAO extends DBContext {
                 + " i.PaymentType, i.InvoiceStatus, i.DateCreate, i.DatePay "
                 + "ORDER BY i.DateCreate DESC";
 
-        Object[] params = {"%" + searchQuery.trim() + "%"};
+        String searchPattern = "%" + searchQuery.trim() + "%";
+        Object[] params = {patientId, searchPattern, searchPattern};
 
         ResultSet rs = null;
         try {
