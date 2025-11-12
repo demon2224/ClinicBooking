@@ -6,101 +6,103 @@
 
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <!DOCTYPE html>
 <html lang="vi">
     <head>
         <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Login - Clinic Booking</title>
-        <link rel="stylesheet" href="${pageContext.request.contextPath}/assests/css/bootstrap.min.css">
-        <link rel="stylesheet" href="${pageContext.request.contextPath}/assests/css/all.min.css" />
-        <style>
-            body {
-                background-color: #cfe9ff; /* xanh biển nhạt */
-            }
-            .login-page-container {
-                min-height: 100vh;
-            }
-            .image-side {
-                background: url('${pageContext.request.contextPath}/assets/img/CBS_Back') no-repeat center center;
-                background-size: cover;
-            }
-        </style>
+        <link href="${pageContext.request.contextPath}/assests/css/bootstrap.min.css" rel="stylesheet">
+        <link href="${pageContext.request.contextPath}/assests/css/all.min.css" rel="stylesheet">
     </head>
-    <body>
+    <body class="bg-info-subtle d-flex justify-content-center align-items-center vh-100">
 
-        <div class="container-fluid login-page-container d-flex align-items-center justify-content-center">
-            <div class="row w-100 shadow-lg bg-white rounded-4 overflow-hidden" style="max-width: 1000px;">
-                <div class="col-md-6 d-none d-md-block image-side">
-                </div>
+        <div class="card shadow-lg border-0 w-100" style="max-width: 400px;">
+            <div class="card-body p-4">
+                <h3 class="text-center mb-4 fw-bold text-primary">Patient Login</h3>
 
-                <div class="col-md-6 d-flex align-items-center p-4 p-md-5">
-                    <div class="w-100">
-                        <h2 class="text-center mb-4 fw-bold">Patient Login</h2>
+                <form action="${pageContext.request.contextPath}/patient-login" method="POST">
 
-                        <form action="${pageContext.request.contextPath}/patient-login" method="POST">
-                            <input type="hidden" name="action" value="login">
-
-                            <div class="mb-3">
-                                <label for="patient-username" class="form-label">Username</label>
-                                <input type="text" class="form-control" id="patient-username" name="patient-username" required>
+                    <div class="mb-3">
+                        <label for="patient-username" class="form-label">Username</label>
+                        <input type="text" class="form-control" id="patient-username" name="patient-username" required>
+                        <c:if test="${not empty requestScope.patientUsernameErrorMsg}">
+                            <div class="text-danger small mt-1">
+                                <i class="fa-solid fa-circle-exclamation me-1"></i>
+                                <c:out value="${requestScope.patientUsernameErrorMsg}" />
                             </div>
-
-                            <div class="mb-3 position-relative">
-                                <label for="patient-password" class="form-label">Password</label>
-                                <div class="input-group">
-                                    <input type="password" class="form-control" id="patient-password" name="patient-password" required>
-                                    <button class="btn btn-outline-secondary" type="button" id="togglePassword">
-                                        <i class="fas fa-eye"></i> Show
-                                    </button>
-                                </div>
-                            </div>
-
-                            <div class="mb-3 form-check">
-                                <input type="checkbox" class="form-check-input" id="patient-remember-me">
-                                <label class="form-check-label" for="patient-remember-me">Remember me</label>
-                            </div>
-
-                            <button type="submit" class="btn btn-success w-100 rounded-pill">Login</button>
-                        </form>
-
-                        <form action="${pageContext.request.contextPath}/patient-login" method="POST">
-                            <input type="hidden" name="action" value="forgot-password">
-                            <div class="text-center mt-3">
-                                <button type="submit" class="btn btn-success w-100 rounded-pill">Forgot password?</button>
-                            </div>
-                        </form>
-
-                        <form action="${pageContext.request.contextPath}/register" method="GET">
-                            <input type="hidden" name="action" value="register">
-                            <div class="text-center mt-3">
-                                <button type="submit" class="btn btn-success w-100 rounded-pill">
-                                    Register
-                                </button>
-                            </div>
-                        </form>
-
+                        </c:if>
                     </div>
-                </div>
+
+                    <div class="mb-3">
+                        <label for="patient-password" class="form-label">Password</label>
+                        <div class="input-group">
+                            <input type="password" class="form-control" id="patient-password" name="patient-password" required>
+                            <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                        <c:if test="${not empty requestScope.patientPasswordErrorMsg}">
+                            <div class="text-danger small mt-1">
+                                <i class="fa-solid fa-circle-exclamation me-1"></i>
+                                <c:out value="${requestScope.patientPasswordErrorMsg}" />
+                            </div>
+                        </c:if>
+                    </div>
+
+                    <button type="submit" class="btn btn-success w-100 rounded-pill">Login</button>
+                </form>
+
+                <form action="${pageContext.request.contextPath}/patient-login" method="POST" class="mt-3">
+                    <input type="hidden" name="action" value="forgot-password">
+                    <button type="submit" class="btn btn-outline-primary w-100 rounded-pill">Forgot password?</button>
+                </form>
+
+                <form action="${pageContext.request.contextPath}/register" method="GET" class="mt-3">
+                    <button type="submit" class="btn btn-outline-success w-100 rounded-pill">Register</button>
+                </form>
             </div>
         </div>
 
-        <script src="${pageContext.request.contextPath}/assests/js/bootstrap.bundle.min.js"></script> 
+        <c:if test="${not empty requestScope.loginErrorMsg}">
+            <div class="modal fade" id="loginErrorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content border-danger">
+                        <div class="modal-header bg-danger text-white">
+                            <h5 class="modal-title" id="errorModalLabel">
+                                <i class="fa-solid fa-circle-exclamation me-2"></i>Login Failed
+                            </h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body text-center">
+                            <c:out value="${requestScope.loginErrorMsg}" />
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger w-100" data-bs-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    var errorModal = new bootstrap.Modal(document.getElementById('loginErrorModal'));
+                    errorModal.show();
+                });
+            </script>
+        </c:if>
+
+        <script src="${pageContext.request.contextPath}/assests/js/bootstrap.bundle.min.js"></script>
         <script>
-            // Toggle show/hide password
             const togglePassword = document.getElementById("togglePassword");
             const passwordField = document.getElementById("patient-password");
 
             togglePassword.addEventListener("click", function () {
                 const type = passwordField.getAttribute("type") === "password" ? "text" : "password";
                 passwordField.setAttribute("type", type);
-
-                if (type === "text") {
-                    this.innerHTML = '<i class="fas fa-eye-slash"></i> Hide';
-                } else {
-                    this.innerHTML = '<i class="fas fa-eye"></i> Show';
-                }
+                this.innerHTML = type === "text"
+                    ? '<i class="fas fa-eye-slash"></i>'
+                    : '<i class="fas fa-eye"></i>';
             });
         </script>
     </body>

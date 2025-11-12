@@ -86,25 +86,28 @@ public class StaffLoginController extends HttpServlet {
             throws ServletException, IOException {
 //        processRequest(request, response);
 
-        removeSessionMsg(request);
-        String action = request.getParameter("action");
+        String staffUsernameParam = request.getParameter("staff-username");
+        String staffPasswordParam = request.getParameter("staff-password");
 
-        try {
-            switch (action) {
+        boolean isValidPatientUsername = isValidStaffUsername(request, staffUsernameParam);
+        boolean isValidPatientPassword = isValidStaffPassword(request, staffPasswordParam);
 
-                // If the user is patient.
-                case "login":
-                    staffLogin(request, response);
-                    break;
+        if (!isValidPatientUsername
+                || !isValidPatientPassword) {
+           request.getRequestDispatcher("/WEB-INF/authentication/StaffLogin.jsp").forward(request, response);
 
-                // If the user is not above then send redirect them to login view.
-                default:
-                    handleInvalidRequest(request, response);
-                    break;
+        } else {
+            StaffDTO staff = staffDAO.getStaffByUsernameAndPassword(staffUsernameParam.trim(), staffPasswordParam.trim());
+            boolean isExistAccount = staff != null;
+
+            if (isExistAccount) {
+                HttpSession session = request.getSession();
+                session.setAttribute("staff", staff);;
+                redirectToDashboard(request, response);
+            } else {
+                request.getSession().setAttribute("loginErrorMsg", "Logic failed");
+                request.getRequestDispatcher("/WEB-INF/authentication/StaffLogin.jsp").forward(request, response);
             }
-        } catch (IOException | NullPointerException e) {
-            // If an exception occur then show the user the medicine list.
-            handleInvalidRequest(request, response);
         }
     }
 
@@ -136,76 +139,23 @@ public class StaffLoginController extends HttpServlet {
         }
     }
 
-    private void staffLogin(HttpServletRequest request, HttpServletResponse response) throws IOException {
-
-        String staffUsernameParam = request.getParameter("staff-username");
-        String staffPasswordParam = request.getParameter("staff-password");
-
-        boolean isValidPatientUsername = isValidStaffUsername(request, staffUsernameParam);
-        boolean isValidPatientPassword = isValidStaffPassword(request, staffPasswordParam);
-
-        if (!isValidPatientUsername
-                || !isValidPatientPassword) {
-            response.sendRedirect(request.getContextPath() + "/staff-login");
-
-        } else {
-            StaffDTO staff = staffDAO.getStaffByUsernameAndPassword(staffUsernameParam.trim(), staffPasswordParam.trim());
-            boolean isExistAccount = staff != null;
-
-            if (isExistAccount) {
-                HttpSession session = request.getSession();
-                session.setAttribute("staff", staff);
-                request.getSession().setAttribute("loginSuccessMsg", "Login successfully!");
-                redirectToDashboard(request, response);
-            } else {
-                request.getSession().setAttribute("loginErrorMsg", "Logic failed");
-                response.sendRedirect(request.getContextPath() + "/staff-login");
-            }
-        }
-    }
-
     private boolean isValidStaffPassword(HttpServletRequest request, String staffPasswordParam) {
-        if (LoginValidate.isEmpty(staffPasswordParam)) {
-            request.getSession().setAttribute("staffPasswordErrorMsg", "Password can't be empty.");
-            return false;
-        } else if (!LoginValidate.isValidPasswordLength(staffPasswordParam.trim())) {
-            request.getSession().setAttribute("staffPasswordErrorMsg", "Password length must be range in 8 to 200.");
-            return false;
-        } else if (!LoginValidate.isValidPassword(staffPasswordParam.trim())) {
-            request.getSession().setAttribute("patientPasswordErrorMsg", "Password must be contain 1 special character and 1 uppercase character.");
+
+        if (staffPasswordParam == null || staffPasswordParam.isBlank()) {
+            request.setAttribute("staffPasswordErrorMsg", "Password cant't be empty.");
             return false;
         } else {
             return true;
         }
     }
 
-    private boolean isValidStaffUsername(HttpServletRequest request, String patientUsernameParam) {
-        if (LoginValidate.isEmpty(patientUsernameParam)) {
-            request.getSession().setAttribute("staffUsernameErrorMsg", "Username can't be empty.");
-            return false;
-        } else if (!LoginValidate.isValidUsernameLength(patientUsernameParam.trim())) {
-            request.getSession().setAttribute("staffUsernameErrorMsg", "Username length must be range in 8 to 200.");
-            return false;
-        } else if (!LoginValidate.isValidUsername(patientUsernameParam.trim())) {
-            request.getSession().setAttribute("staffUsernameErrorMsg", "Username only can contain letter and number.");
+    private boolean isValidStaffUsername(HttpServletRequest request, String staffUsernameParam) {
+
+        if (staffUsernameParam == null || staffUsernameParam.isBlank()) {
+            request.setAttribute("staffUsernameErrorMsg", "Username can't be empty.");
             return false;
         } else {
             return true;
-        }
-    }
-
-    private void handleInvalidRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        response.sendRedirect(request.getContextPath() + "/staff-login");
-    }
-
-    private void removeSessionMsg(HttpServletRequest request) {
-
-        String[] keys = {
-            "staffUsernameErrorMsg", "staffPasswordErrorMsg", "loginSuccessMsg", "loginErrorMsg"
-        };
-
-        for (String key : keys) {
-            request.getSession().removeAttribute(key);
         }
     }
 

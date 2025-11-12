@@ -26,6 +26,8 @@ public class MedicineInfomationValidate {
     public static final int INTACTIVE_MEDICINE_STATUS = 0;
     
     public static final String[] MEDICINE_TYPE_LIST = {"Tablet", "Capsule", "Syrup", "Ointment", "Drops"};
+    
+    public static final int MIN_IMPORT_STOCK_QUANTITY = 0;
 
     /**
      * Check the input is null or empty.
@@ -177,6 +179,15 @@ public class MedicineInfomationValidate {
         try {
             int statusValue = Integer.parseInt(activeStatus);
             return statusValue == ACTIVE_MEDICINE_STATUS || statusValue == INTACTIVE_MEDICINE_STATUS;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+    
+    public static boolean isValidImportStockQuantity(String input) {
+        try {
+            int quantity = Integer.parseInt(input);
+            return quantity > MIN_IMPORT_STOCK_QUANTITY;
         } catch (NumberFormatException e) {
             return false;
         }

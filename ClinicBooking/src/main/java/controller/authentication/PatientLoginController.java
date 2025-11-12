@@ -13,7 +13,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import model.PatientDTO;
-import validate.LoginValidate;
 
 /**
  *
@@ -68,7 +67,6 @@ public class PatientLoginController extends HttpServlet {
             throws ServletException, IOException {
 //        processRequest(request, response);
 
-        removeSessionMsg(request);
         request.getRequestDispatcher("/WEB-INF/authentication/PatientLogin.jsp").forward(request, response);
     }
 
@@ -85,30 +83,6 @@ public class PatientLoginController extends HttpServlet {
             throws ServletException, IOException {
 //        processRequest(request, response);
 
-        removeSessionMsg(request);
-        String action = request.getParameter("action");
-
-        try {
-            switch (action) {
-
-                // If the action is login.
-                case "login":
-                    patientLogin(request, response);
-                    break;
-
-                // If the user is not above then send redirect them to login view.
-                default:
-                    handleInvalidRequest(request, response);
-                    break;
-            }
-        } catch (IOException | NullPointerException e) {
-            // If an exception occur then show the user the medicine list.
-            handleInvalidRequest(request, response);
-        }
-    }
-
-    private void patientLogin(HttpServletRequest request, HttpServletResponse response) throws IOException {
-
         String patientUsernameParam = request.getParameter("patient-username");
         String patientPasswordParam = request.getParameter("patient-password");
 
@@ -117,7 +91,7 @@ public class PatientLoginController extends HttpServlet {
 
         if (!isValidPatientUsername
                 || !isValidPatientPassword) {
-            response.sendRedirect(request.getContextPath() + "/patient-login");
+            request.getRequestDispatcher("/WEB-INF/authentication/PatientLogin.jsp").forward(request, response);
 
         } else {
             PatientDTO patient = patientDAO.getPatientByUsernameAndPassword(patientUsernameParam, patientPasswordParam);
@@ -126,24 +100,18 @@ public class PatientLoginController extends HttpServlet {
             if (isExistAccount) {
                 HttpSession session = request.getSession();
                 session.setAttribute("patient", patient);
-                request.getSession().setAttribute("loginSuccessMsg", "Login successfully!");
                 response.sendRedirect(request.getContextPath() + "/home");
             } else {
-                request.getSession().setAttribute("loginErrorMsg", "Wrong password or username!");
-                response.sendRedirect(request.getContextPath() + "/patient-login");
+                request.setAttribute("loginErrorMsg", "Wrong password or username!");
+                request.getRequestDispatcher("/WEB-INF/authentication/PatientLogin.jsp").forward(request, response);
             }
         }
     }
 
     private boolean isValidPatientPassword(HttpServletRequest request, String patientPasswordParam) {
-        if (LoginValidate.isEmpty(patientPasswordParam)) {
-            request.getSession().setAttribute("patientPasswordErrorMsg", "Password can't be empty.");
-            return false;
-        } else if (!LoginValidate.isValidPasswordLength(patientPasswordParam)) {
-            request.getSession().setAttribute("patientPasswordErrorMsg", "Password length must be range in 8 to 200.");
-            return false;
-        } else if (!LoginValidate.isValidPassword(patientPasswordParam)) {
-            request.getSession().setAttribute("patientPasswordErrorMsg", "Password must be contain 1 special character and 1 uppercase character.");
+
+        if (patientPasswordParam == null || patientPasswordParam.isBlank()) {
+            request.setAttribute("patientPasswordErrorMsg", "Password cant't be empty.");
             return false;
         } else {
             return true;
@@ -151,32 +119,12 @@ public class PatientLoginController extends HttpServlet {
     }
 
     private boolean isValidPatientUsername(HttpServletRequest request, String patientUsernameParam) {
-        if (LoginValidate.isEmpty(patientUsernameParam)) {
-            request.getSession().setAttribute("patientUsernameErrorMsg", "Username can't be empty.");
-            return false;
-        } else if (!LoginValidate.isValidUsernameLength(patientUsernameParam)) {
-            request.getSession().setAttribute("patientUsernameErrorMsg", "Username length must be range in 8 to 200.");
-            return false;
-        } else if (!LoginValidate.isValidUsername(patientUsernameParam)) {
-            request.getSession().setAttribute("patientUsernameErrorMsg", "Username only can contain letter and number.");
+
+        if (patientUsernameParam == null || patientUsernameParam.isBlank()) {
+            request.setAttribute("patientUsernameErrorMsg", "Username can't be empty.");
             return false;
         } else {
             return true;
-        }
-    }
-
-    private void handleInvalidRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        response.sendRedirect(request.getContextPath() + "/patient-login");
-    }
-
-    private void removeSessionMsg(HttpServletRequest request) {
-
-        String[] keys = {
-            "patientUsernameErrorMsg", "patientPasswordErrorMsg", "loginSuccessMsg", "loginErrorMsg"
-        };
-
-        for (String key : keys) {
-            request.getSession().removeAttribute(key);
         }
     }
 
