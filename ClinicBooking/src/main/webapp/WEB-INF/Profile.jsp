@@ -81,83 +81,83 @@
                         <!-- Left Section - Avatar & Actions -->
                         <div class="profile-left">
                             <div class="profile-avatar-section">
-                            <c:choose>
-                                <c:when test="${not empty patient.avatar}">
-                                    <img src="${pageContext.request.contextPath}/${patient.avatar}"
-                                         alt="Profile Avatar"
-                                         class="profile-avatar"
-                                         id="profileAvatar"
-                                         onerror="this.src='${pageContext.request.contextPath}/assests/img/0.png'">
-                                </c:when>
-                                <c:otherwise>
-                                    <img src="${pageContext.request.contextPath}/assests/img/0.png"
-                                         alt="Profile Avatar"
-                                         class="profile-avatar"
-                                         id="profileAvatar">
-                                </c:otherwise>
-                            </c:choose>
+                                <c:choose>
+                                    <c:when test="${not empty patient.avatar}">
+                                        <img src="${pageContext.request.contextPath}/${patient.avatar}"
+                                             alt="Profile Avatar"
+                                             class="profile-avatar"
+                                             id="profileAvatar"
+                                             onerror="this.src='${pageContext.request.contextPath}/assests/img/0.png'">
+                                    </c:when>
+                                    <c:otherwise>
+                                        <img src="${pageContext.request.contextPath}/assests/img/0.png"
+                                             alt="Profile Avatar"
+                                             class="profile-avatar"
+                                             id="profileAvatar">
+                                    </c:otherwise>
+                                </c:choose>
 
-                            <div class="profile-name">${patient.firstName} ${patient.lastName}</div>
-                            <button type="button" class="change-password-btn" id="changePasswordBtn">
-                                <i class="fas fa-key"></i> Change Password
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Right Section - Profile Information -->
-                    <div class="profile-right">
-                        <h2 class="profile-section-title">Profile Information:</h2>
-
-                        <div class="profile-info-grid">
-                            <div class="profile-field">
-                                <label class="profile-label">Username:</label>
-                                <span class="profile-value">${patient.accountName}</span>
-                            </div>
-                            <div class="profile-field">
-                                <label class="profile-label">First name:</label>
-                                <span class="profile-value">${patient.firstName}</span>
-                            </div>
-
-                            <div class="profile-field">
-                                <label class="profile-label">Last name:</label>
-                                <span class="profile-value">${patient.lastName}</span>
-                            </div>
-
-                            <div class="profile-field">
-                                <label class="profile-label">Phone number:</label>
-                                <span class="profile-value">${patient.phoneNumber}</span>
-                            </div>
-
-                            <div class="profile-field">
-                                <label class="profile-label">Email:</label>
-                                <span class="profile-value">${patient.email}</span>
-                            </div>
-
-                            <div class="profile-field full-width">
-                                <label class="profile-label">Address:</label>
-                                <span class="profile-value">${patient.userAddress}</span>
-                            </div>
-
-                            <div class="profile-field">
-                                <label class="profile-label">DOB:</label>
-                                <span class="profile-value"><fmt:formatDate value="${patient.dob}" pattern="yyyy-MM-dd"/></span>
-                            </div>
-
-                            <div class="profile-field">
-                                <label class="profile-label">Sex:</label>
-                                <span class="profile-value">${patient.gender ? 'Male' : 'Female'}</span>
+                                <div class="profile-name">${patient.firstName} ${patient.lastName}</div>
+                                <button type="button" class="change-password-btn" id="changePasswordBtn">
+                                    <i class="fas fa-key"></i> Change Password
+                                </button>
                             </div>
                         </div>
 
-                        <!-- Actions -->
-                        <div class="profile-actions">
-                            <a href="${pageContext.request.contextPath}/profile?action=edit" class="btn-edit-profile">
-                                <i class="fas fa-edit"></i> Edit
-                            </a>
+                        <!-- Right Section - Profile Information -->
+                        <div class="profile-right">
+                            <h2 class="profile-section-title">Profile Information:</h2>
+
+                            <div class="profile-info-grid">
+                                <div class="profile-field">
+                                    <label class="profile-label">Username:</label>
+                                    <span class="profile-value">${patient.accountName}</span>
+                                </div>
+                                <div class="profile-field">
+                                    <label class="profile-label">First name:</label>
+                                    <span class="profile-value">${patient.firstName}</span>
+                                </div>
+
+                                <div class="profile-field">
+                                    <label class="profile-label">Last name:</label>
+                                    <span class="profile-value">${patient.lastName}</span>
+                                </div>
+
+                                <div class="profile-field">
+                                    <label class="profile-label">Phone number:</label>
+                                    <span class="profile-value">${patient.phoneNumber}</span>
+                                </div>
+
+                                <div class="profile-field full-width">
+                                    <label class="profile-label">Email:</label>
+                                    <span class="profile-value">${patient.email}</span>
+                                </div>
+
+                                <div class="profile-field full-width">
+                                    <label class="profile-label">Address:</label>
+                                    <span class="profile-value">${patient.userAddress}</span>
+                                </div>
+
+                                <div class="profile-field">
+                                    <label class="profile-label">Date of birth:</label>
+                                    <span class="profile-value"><fmt:formatDate value="${patient.dob}" pattern="yyyy-MM-dd"/></span>
+                                </div>
+
+                                <div class="profile-field">
+                                    <label class="profile-label">Sex:</label>
+                                    <span class="profile-value">${patient.gender ? 'Male' : 'Female'}</span>
+                                </div>
+                            </div>
+
+                            <!-- Actions -->
+                            <div class="profile-actions">
+                                <a href="${pageContext.request.contextPath}/profile?action=edit" class="btn-edit-profile">
+                                    <i class="fas fa-edit"></i> Edit
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
         </main>
 
         <!-- Change Password Modal -->
@@ -244,222 +244,222 @@
         <!-- Custom Modal JS - no Bootstrap dependency -->
 
         <script>
-                                // Modal Controls
-                                const modal = document.getElementById('changePasswordModal');
-                                const openModalBtn = document.getElementById('changePasswordBtn');
-                                const closeModalBtn = document.getElementById('closeModalBtn');
-                                const cancelBtn = document.getElementById('cancelBtn');
+            // Modal Controls
+            const modal = document.getElementById('changePasswordModal');
+            const openModalBtn = document.getElementById('changePasswordBtn');
+            const closeModalBtn = document.getElementById('closeModalBtn');
+            const cancelBtn = document.getElementById('cancelBtn');
 
-                                openModalBtn.addEventListener('click', () => {
-                                    modal.classList.add('active');
-                                });
+            openModalBtn.addEventListener('click', () => {
+                modal.classList.add('active');
+            });
 
-                                closeModalBtn.addEventListener('click', () => {
-                                    modal.classList.remove('active');
-                                    resetForm();
-                                });
+            closeModalBtn.addEventListener('click', () => {
+                modal.classList.remove('active');
+                resetForm();
+            });
 
-                                cancelBtn.addEventListener('click', () => {
-                                    modal.classList.remove('active');
-                                    resetForm();
-                                });
+            cancelBtn.addEventListener('click', () => {
+                modal.classList.remove('active');
+                resetForm();
+            });
 
-                                // Close modal when clicking outside
-                                modal.addEventListener('click', (e) => {
-                                    if (e.target === modal) {
-                                        modal.classList.remove('active');
-                                        resetForm();
-                                    }
-                                });
+            // Close modal when clicking outside
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.classList.remove('active');
+                    resetForm();
+                }
+            });
 
-                                // Password Strength Checker
-                                const newPasswordInput = document.getElementById('newPassword');
-                                const strengthBarFill = document.getElementById('strengthBarFill');
-                                const strengthText = document.getElementById('strengthText');
-                                const reqLength = document.getElementById('req-length');
-                                const reqUpper = document.getElementById('req-upper');
-                                const reqLower = document.getElementById('req-lower');
-                                const reqNumber = document.getElementById('req-number');
-                                const reqSpecial = document.getElementById('req-special');
+            // Password Strength Checker
+            const newPasswordInput = document.getElementById('newPassword');
+            const strengthBarFill = document.getElementById('strengthBarFill');
+            const strengthText = document.getElementById('strengthText');
+            const reqLength = document.getElementById('req-length');
+            const reqUpper = document.getElementById('req-upper');
+            const reqLower = document.getElementById('req-lower');
+            const reqNumber = document.getElementById('req-number');
+            const reqSpecial = document.getElementById('req-special');
 
-                                newPasswordInput.addEventListener('input', function () {
-                                    const password = this.value;
-                                    let strength = 0;
+            newPasswordInput.addEventListener('input', function () {
+                const password = this.value;
+                let strength = 0;
 
-                                    // Check requirements
-                                    const hasLength = password.length >= 8;
-                                    const hasUpper = /[A-Z]/.test(password);
-                                    const hasLower = /[a-z]/.test(password);
-                                    const hasNumber = /[0-9]/.test(password);
-                                    const hasSpecial = /[@#$%^&+=!]/.test(password);
+                // Check requirements
+                const hasLength = password.length >= 8;
+                const hasUpper = /[A-Z]/.test(password);
+                const hasLower = /[a-z]/.test(password);
+                const hasNumber = /[0-9]/.test(password);
+                const hasSpecial = /[@#$%^&+=!]/.test(password);
 
-                                    // Update requirement indicators
-                                    updateRequirement(reqLength, hasLength);
-                                    updateRequirement(reqUpper, hasUpper);
-                                    updateRequirement(reqLower, hasLower);
-                                    updateRequirement(reqNumber, hasNumber);
-                                    updateRequirement(reqSpecial, hasSpecial);
+                // Update requirement indicators
+                updateRequirement(reqLength, hasLength);
+                updateRequirement(reqUpper, hasUpper);
+                updateRequirement(reqLower, hasLower);
+                updateRequirement(reqNumber, hasNumber);
+                updateRequirement(reqSpecial, hasSpecial);
 
-                                    // Calculate strength
-                                    if (hasLength)
-                                        strength++;
-                                    if (hasUpper)
-                                        strength++;
-                                    if (hasLower)
-                                        strength++;
-                                    if (hasNumber)
-                                        strength++;
-                                    if (hasSpecial)
-                                        strength++;
+                // Calculate strength
+                if (hasLength)
+                    strength++;
+                if (hasUpper)
+                    strength++;
+                if (hasLower)
+                    strength++;
+                if (hasNumber)
+                    strength++;
+                if (hasSpecial)
+                    strength++;
 
-                                    // Update strength bar
-                                    strengthBarFill.className = 'strength-bar-fill';
-                                    strengthText.className = 'strength-text';
+                // Update strength bar
+                strengthBarFill.className = 'strength-bar-fill';
+                strengthText.className = 'strength-text';
 
-                                    if (password.length === 0) {
-                                        strengthBarFill.style.width = '0%';
-                                        strengthText.textContent = '';
-                                    } else if (strength <= 2) {
-                                        strengthBarFill.classList.add('weak');
-                                        strengthText.classList.add('weak');
-                                        strengthText.textContent = 'Weak password';
-                                    } else if (strength === 3 || strength === 4) {
-                                        strengthBarFill.classList.add('medium');
-                                        strengthText.classList.add('medium');
-                                        strengthText.textContent = 'Medium password';
-                                    } else if (strength === 5) {
-                                        strengthBarFill.classList.add('strong');
-                                        strengthText.classList.add('strong');
-                                        strengthText.textContent = 'Strong password';
-                                    }
-                                });
+                if (password.length === 0) {
+                    strengthBarFill.style.width = '0%';
+                    strengthText.textContent = '';
+                } else if (strength <= 2) {
+                    strengthBarFill.classList.add('weak');
+                    strengthText.classList.add('weak');
+                    strengthText.textContent = 'Weak password';
+                } else if (strength === 3 || strength === 4) {
+                    strengthBarFill.classList.add('medium');
+                    strengthText.classList.add('medium');
+                    strengthText.textContent = 'Medium password';
+                } else if (strength === 5) {
+                    strengthBarFill.classList.add('strong');
+                    strengthText.classList.add('strong');
+                    strengthText.textContent = 'Strong password';
+                }
+            });
 
-                                function updateRequirement(element, isMet) {
-                                    if (isMet) {
-                                        element.style.color = '#10b981';
-                                        element.innerHTML = '<i class="fas fa-check"></i> ' + element.textContent.replace('✓ ', '').replace('✗ ', '');
-                                    } else {
-                                        element.style.color = '#ef4444';
-                                        element.innerHTML = '<i class="fas fa-times"></i> ' + element.textContent.replace('✓ ', '').replace('✗ ', '');
-                                    }
-                                }
+            function updateRequirement(element, isMet) {
+                if (isMet) {
+                    element.style.color = '#10b981';
+                    element.innerHTML = '<i class="fas fa-check"></i> ' + element.textContent.replace('✓ ', '').replace('✗ ', '');
+                } else {
+                    element.style.color = '#ef4444';
+                    element.innerHTML = '<i class="fas fa-times"></i> ' + element.textContent.replace('✓ ', '').replace('✗ ', '');
+                }
+            }
 
-                                // Form Validation
-                                const form = document.getElementById('changePasswordForm');
-                                const errorContainer = document.getElementById('errorContainer');
-                                const confirmPasswordInput = document.getElementById('confirmPassword');
-                                const submitBtn = document.getElementById('submitBtn');
+            // Form Validation
+            const form = document.getElementById('changePasswordForm');
+            const errorContainer = document.getElementById('errorContainer');
+            const confirmPasswordInput = document.getElementById('confirmPassword');
+            const submitBtn = document.getElementById('submitBtn');
 
-                                form.addEventListener('submit', function (e) {
-                                    const errors = [];
-                                    const currentPassword = document.getElementById('currentPassword').value;
-                                    const newPassword = newPasswordInput.value;
-                                    const confirmPassword = confirmPasswordInput.value;
+            form.addEventListener('submit', function (e) {
+                const errors = [];
+                const currentPassword = document.getElementById('currentPassword').value;
+                const newPassword = newPasswordInput.value;
+                const confirmPassword = confirmPasswordInput.value;
 
-                                    // Validate current password
-                                    if (!currentPassword) {
-                                        errors.push('Current password is required');
-                                    }
+                // Validate current password
+                if (!currentPassword) {
+                    errors.push('Current password is required');
+                }
 
-                                    // Validate new password strength
-                                    if (newPassword.length < 8) {
-                                        errors.push('Password must be at least 8 characters');
-                                    }
-                                    if (!/[A-Z]/.test(newPassword)) {
-                                        errors.push('Password must contain at least 1 uppercase letter');
-                                    }
-                                    if (!/[a-z]/.test(newPassword)) {
-                                        errors.push('Password must contain at least 1 lowercase letter');
-                                    }
-                                    if (!/[0-9]/.test(newPassword)) {
-                                        errors.push('Password must contain at least 1 number');
-                                    }
-                                    if (!/[@#$%^&+=!]/.test(newPassword)) {
-                                        errors.push('Password must contain at least 1 special character (@#$%^&+=!)');
-                                    }
-                                    if (/\s/.test(newPassword)) {
-                                        errors.push('Password must not contain spaces');
-                                    }
+                // Validate new password strength
+                if (newPassword.length < 8) {
+                    errors.push('Password must be at least 8 characters');
+                }
+                if (!/[A-Z]/.test(newPassword)) {
+                    errors.push('Password must contain at least 1 uppercase letter');
+                }
+                if (!/[a-z]/.test(newPassword)) {
+                    errors.push('Password must contain at least 1 lowercase letter');
+                }
+                if (!/[0-9]/.test(newPassword)) {
+                    errors.push('Password must contain at least 1 number');
+                }
+                if (!/[@#$%^&+=!]/.test(newPassword)) {
+                    errors.push('Password must contain at least 1 special character (@#$%^&+=!)');
+                }
+                if (/\s/.test(newPassword)) {
+                    errors.push('Password must not contain spaces');
+                }
 
-                                    // Validate password match
-                                    if (newPassword !== confirmPassword) {
-                                        errors.push('New password and confirmation do not match');
-                                    }
+                // Validate password match
+                if (newPassword !== confirmPassword) {
+                    errors.push('New password and confirmation do not match');
+                }
 
-                                    // Validate new password different from current
-                                    if (currentPassword === newPassword) {
-                                        errors.push('New password must be different from current password');
-                                    }
+                // Validate new password different from current
+                if (currentPassword === newPassword) {
+                    errors.push('New password must be different from current password');
+                }
 
-                                    if (errors.length > 0) {
-                                        e.preventDefault();
-                                        displayErrors(errors);
-                                    } else {
-                                        errorContainer.classList.add('hidden');
-                                    }
-                                });
+                if (errors.length > 0) {
+                    e.preventDefault();
+                    displayErrors(errors);
+                } else {
+                    errorContainer.classList.add('hidden');
+                }
+            });
 
-                                function displayErrors(errors) {
-                                    errorContainer.innerHTML = errors.map(error =>
-                                            `<div class="error-message"><i class="fas fa-exclamation-circle"></i> ${error}</div>`
-                                    ).join('');
-                                    errorContainer.classList.remove('hidden');
-                                }
+            function displayErrors(errors) {
+                errorContainer.innerHTML = errors.map(error =>
+                        `<div class="error-message"><i class="fas fa-exclamation-circle"></i> ${error}</div>`
+                ).join('');
+                errorContainer.classList.remove('hidden');
+            }
 
-                                function resetForm() {
-                                    form.reset();
-                                    errorContainer.classList.add('hidden');
-                                    strengthBarFill.style.width = '0%';
-                                    strengthText.textContent = '';
+            function resetForm() {
+                form.reset();
+                errorContainer.classList.add('hidden');
+                strengthBarFill.style.width = '0%';
+                strengthText.textContent = '';
 
-                                    // Reset requirement colors
-                                    [reqLength, reqUpper, reqLower, reqSpecial].forEach(el => {
-                                        el.style.color = '#64748b';
-                                        el.innerHTML = el.textContent.replace('✓ ', '').replace('✗ ', '');
-                                    });
-                                }
+                // Reset requirement colors
+                [reqLength, reqUpper, reqLower, reqSpecial].forEach(el => {
+                    el.style.color = '#64748b';
+                    el.innerHTML = el.textContent.replace('✓ ', '').replace('✗ ', '');
+                });
+            }
 
-                                // Avatar upload preview
-                                document.getElementById('avatarUpload').addEventListener('change', function (e) {
-                                    const file = e.target.files[0];
-                                    if (file) {
-                                        const reader = new FileReader();
-                                        reader.onload = function (e) {
-                                            document.getElementById('profileAvatar').src = e.target.result;
-                                        };
-                                        reader.readAsDataURL(file);
-                                    }
-                                });
+            // Avatar upload preview
+            document.getElementById('avatarUpload').addEventListener('change', function (e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        document.getElementById('profileAvatar').src = e.target.result;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
 
-                                // Close modals
-                                function closeMessageModal() {
-                                    const modal = document.getElementById('messageModal');
-                                    if (modal) {
-                                        modal.classList.remove('active');
-                                    }
-                                }
+            // Close modals
+            function closeMessageModal() {
+                const modal = document.getElementById('messageModal');
+                if (modal) {
+                    modal.classList.remove('active');
+                }
+            }
 
-                                function closePasswordErrorModal() {
-                                    const modal = document.getElementById('passwordErrorModal');
-                                    if (modal) {
-                                        modal.classList.remove('active');
-                                    }
-                                    // Open change password modal after closing error
-                                    document.getElementById('changePasswordModal').classList.add('active');
-                                }
+            function closePasswordErrorModal() {
+                const modal = document.getElementById('passwordErrorModal');
+                if (modal) {
+                    modal.classList.remove('active');
+                }
+                // Open change password modal after closing error
+                document.getElementById('changePasswordModal').classList.add('active');
+            }
 
-                                // Auto-show modals on page load
-                                window.addEventListener('DOMContentLoaded', function () {
-                                    const messageModal = document.getElementById('messageModal');
-                                    if (messageModal) {
-                                        messageModal.classList.add('active');
-                                    }
+            // Auto-show modals on page load
+            window.addEventListener('DOMContentLoaded', function () {
+                const messageModal = document.getElementById('messageModal');
+                if (messageModal) {
+                    messageModal.classList.add('active');
+                }
 
-                                    const passwordErrorModal = document.getElementById('passwordErrorModal');
-                                    if (passwordErrorModal) {
-                                        passwordErrorModal.classList.add('active');
-                                    }
-                                });
+                const passwordErrorModal = document.getElementById('passwordErrorModal');
+                if (passwordErrorModal) {
+                    passwordErrorModal.classList.add('active');
+                }
+            });
         </script>
     </body>
 </html>

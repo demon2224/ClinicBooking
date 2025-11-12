@@ -10122,12 +10122,13 @@ body.appointment-page {
 .change-password-btn {
     width: 100%;
     margin-top: 1rem;
-    padding: 0.75rem;
+    padding: 0.75rem 1rem;
     background: linear-gradient(135deg, #175CDD, #1450C4);
     color: white;
     border: none;
     border-radius: 0.5rem;
     font-weight: 600;
+    font-size: 0.9375rem;
     cursor: pointer;
     transition: all 0.3s ease;
     display: inline-flex;
@@ -10135,6 +10136,7 @@ body.appointment-page {
     justify-content: center;
     gap: 0.5rem;
     box-shadow: 0 2px 4px rgba(23, 92, 221, 0.2);
+    box-sizing: border-box;
 }
 
 .change-password-btn:hover {
@@ -10163,10 +10165,13 @@ body.appointment-page {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 1.5rem;
+    row-gap: 0.5rem;
 }
 
 .profile-field {
-    margin-bottom: 1rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    flex-direction: column;
 }
 
 .profile-field.full-width {
@@ -10185,6 +10190,7 @@ body.appointment-page {
 
 .profile-value {
     display: block;
+    width: 100%;
     padding: 0.75rem 1rem;
     background: #f8fafc;
     border: 1px solid #e2e8f0;
@@ -10193,6 +10199,8 @@ body.appointment-page {
     font-size: 0.95rem;
     font-weight: 500;
     transition: all 0.2s ease;
+    box-sizing: border-box;
+    min-height: 44px;
 }
 
 .profile-value:hover {
@@ -10200,27 +10208,73 @@ body.appointment-page {
     background: #f0f9ff;
 }
 
+/* Editable profile inputs */
+input.profile-value, 
+select.profile-value,
+textarea.profile-value {
+    width: 100%;
+    border: 1px solid #e2e8f0;
+    outline: none;
+    box-sizing: border-box;
+}
+
+input.profile-value:not(:disabled):not([readonly]), 
+select.profile-value:not(:disabled),
+textarea.profile-value:not(:disabled) {
+    background: white !important;
+    cursor: text;
+}
+
+select.profile-value:not(:disabled) {
+    cursor: pointer !important;
+}
+
+input.profile-value:focus, 
+select.profile-value:focus,
+textarea.profile-value:focus {
+    border-color: #175CDD;
+    background: #f0f9ff !important;
+    box-shadow: 0 0 0 3px rgba(23, 92, 221, 0.1);
+}
+
+input.profile-value:disabled,
+input.profile-value[readonly],
+select.profile-value:disabled,
+textarea.profile-value:disabled {
+    background: #f8fafc !important;
+    cursor: not-allowed !important;
+    color: #64748b;
+    border: none;
+}
+
 .profile-actions {
     margin-top: 2rem;
     padding-top: 2rem;
     border-top: 2px solid #e2e8f0;
     text-align: right;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 1rem;
 }
 
 .btn-edit-profile {
-    padding: 0.75rem 2rem;
-    background: linear-gradient(135deg, #175CDD, #1450C4);
+    padding: 0.25rem 2rem;
+    background: linear-gradient(120deg, #175CDD, #1450C4);
     color: white;
     border: none;
     border-radius: 0.5rem;
     font-weight: 600;
+    font-size: 0.9375rem;
     cursor: pointer;
     transition: all 0.3s ease;
     text-decoration: none;
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 0.5rem;
     box-shadow: 0 2px 4px rgba(23, 92, 221, 0.2);
+    min-height: 44px;
 }
 
 .btn-edit-profile:hover {
@@ -10229,6 +10283,58 @@ body.appointment-page {
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(23, 92, 221, 0.3);
     text-decoration: none;
+}
+
+/* Edit Profile Cancel Button */
+.btn-cancel-profile {
+    padding: 0.75rem 2rem;
+    background: #f1f5f9;
+    color: #64748b;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    font-size: 0.9375rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    min-height: 44px;
+    box-sizing: border-box;
+}
+
+.btn-cancel-profile:hover {
+    background: #e2e8f0;
+    color: #475569;
+    text-decoration: none;
+    transform: translateY(-1px);
+}
+
+.btn-save-profile {
+    padding: 0.875rem 2.5rem;
+    background: linear-gradient(120deg, #175CDD, #1450C4);
+    color: white;
+    border: none;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    box-shadow: 0 2px 4px rgba(23, 92, 221, 0.2);
+    min-height: 44px;
+    box-sizing: border-box;
+}
+
+.btn-save-profile:hover {
+    background: linear-gradient(135deg, #1450C4, #0f46b8);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(23, 92, 221, 0.3);
 }
 
 /* Profile Modal Styles */
