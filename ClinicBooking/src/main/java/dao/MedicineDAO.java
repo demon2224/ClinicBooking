@@ -297,9 +297,25 @@ public class MedicineDAO extends DBContext {
 
         return medicineCode;
     }
-    
+
     public boolean isAbleToChangeMedicineCode(int medicineID, String medicineCodeParam) {
-        return !getMedicineCodeByMedicineID(medicineID).equals(medicineCodeParam.trim()) &&
-                isExistMedicineCode(medicineCodeParam.trim());
+        return !getMedicineCodeByMedicineID(medicineID).equals(medicineCodeParam.trim())
+                && isExistMedicineCode(medicineCodeParam.trim());
+    }
+
+    public String getMedicineNameByID(int medicineID) {
+        String sql = "SELECT MedicineName FROM Medicine WHERE MedicineID = ?";
+        Object[] params = {medicineID};
+        ResultSet rs = executeSelectQuery(sql, params);
+        try {
+            if (rs.next()) {
+                return rs.getString("MedicineName");
+            }
+        } catch (SQLException e) {
+            Logger.getLogger(PrescriptionDAO.class.getName()).log(Level.SEVERE, null, e);
+        } finally {
+            closeResources(rs);
+        }
+        return "Unknown medicine";
     }
 }

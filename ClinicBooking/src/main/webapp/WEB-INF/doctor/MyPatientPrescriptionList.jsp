@@ -149,28 +149,53 @@
                                             ${prescription.prescriptionStatus}
                                         </span>
                                     </td>
-
                                     <td>
                                         <a href="${pageContext.request.contextPath}/manage-my-patient-prescription?action=detail&prescriptionID=${prescription.prescriptionID}"
                                            class="btn btn-sm btn-info text-white">
                                             <i class="fa-solid fa-eye"></i> View Detail
                                         </a>
-                                        <a href="${pageContext.request.contextPath}/manage-my-patient-prescription?action=edit&prescriptionID=${prescription.prescriptionID}"
-                                           class="btn btn-sm btn-warning text-white">
-                                            <i class="fa-solid fa-wrench"></i> Edit
-                                        </a>
+                                        <c:choose>
+                                            <c:when test="${prescription.prescriptionStatus eq 'Pending' and prescription.hidden eq false}">
+                                                <a href="${pageContext.request.contextPath}/manage-my-patient-prescription?action=edit&prescriptionID=${prescription.prescriptionID}"
+                                                   class="btn btn-sm btn-warning text-white">
+                                                    <i class="fa-solid fa-wrench"></i> Edit
+                                                </a>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <button type="button" class="btn btn-sm btn-secondary text-white disabled" tabindex="-1" aria-disabled="true">
+                                                    <i class="fa-solid fa-wrench"></i> Edit
+                                                </button>
+                                            </c:otherwise>
+                                        </c:choose>
                                         <c:if test="${prescription.prescriptionStatus eq 'Pending'}">
-                                            <a href="${pageContext.request.contextPath}/manage-my-patient-prescription?action=delete&prescriptionID=${prescription.prescriptionID}"
-                                               class="btn btn-sm btn-danger text-white user-select-none">
-                                                <i class="fa-solid fa-trash"></i> Delete
-                                            </a>
+                                            <c:choose>
+                                                <c:when test="${prescription.hidden eq false}">
+                                                    <button type="button"
+                                                            class="btn btn-sm btn-danger text-white user-select-none"
+                                                            data-bs-toggle="modal"
+                                                            data-bs-target="#confirmDeleteModal"
+                                                            data-href="${pageContext.request.contextPath}/manage-my-patient-prescription?action=delete&prescriptionID=${prescription.prescriptionID}">
+                                                        <i class="fa-solid fa-trash"></i> Delete
+                                                    </button>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <button type="button"
+                                                            class="btn btn-sm btn-success text-white user-select-none"
+                                                            data-bs-toggle="modal"
+                                                            data-bs-target="#confirmRestoreModal"
+                                                            data-href="${pageContext.request.contextPath}/manage-my-patient-prescription?action=delete&prescriptionID=${prescription.prescriptionID}">
+                                                        <i class="fa-solid fa-rotate-left"></i> Restore
+                                                    </button>
+                                                </c:otherwise>
+                                            </c:choose>
                                         </c:if>
                                         <c:if test="${prescription.prescriptionStatus eq 'Delivered'}">
-                                            <a href="#" class="btn btn-sm btn-secondary text-white disabled" tabindex="-1" aria-disabled="true">
+                                            <button type="button" class="btn btn-sm btn-secondary text-white disabled" tabindex="-1" aria-disabled="true">
                                                 <i class="fa-solid fa-trash"></i> Delete
-                                            </a>
+                                            </button>
                                         </c:if>
                                     </td>
+
                                 </tr>
                             </c:forEach>
 
@@ -183,6 +208,23 @@
                             </c:if>
                         </tbody>
                     </table>
+                </div>
+            </div>
+        </div>
+        <!-- Bootstrap Success Modal -->
+        <div class="modal fade" id="successModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header bg-success text-white">
+                        <h5 class="modal-title"><i class="fa-solid fa-circle-check me-2"></i>Success</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        ${sessionScope.message}
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -204,17 +246,113 @@
             </div>
         </div>
     </div>
-
+    <!-- Bootstrap Confirm Delete Modal -->
+    <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-danger">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title"><i class="fa-solid fa-triangle-exclamation me-2"></i>Confirm Deletion</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <p class="mb-3 fs-5">Are you sure you want to delete this prescription?</p>
+                    <p class="text-muted"><i class="fa-solid fa-circle-info me-2"></i>This action cannot be undone.</p>
+                </div>
+                <div class="modal-footer justify-content-center">
+                    <a href="#" id="confirmDeleteBtn" class="btn btn-danger px-4">
+                        <i class="fa-solid fa-trash me-1"></i> Delete
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Bootstrap Confirm Restore Modal -->
+    <div class="modal fade" id="confirmRestoreModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-warning">
+                <div class="modal-header bg-warning text-white">
+                    <h5 class="modal-title"><i class="fa-solid fa-triangle-exclamation me-2"></i>Confirm Restore</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <p class="mb-3 fs-5">Are you sure you want to restore this prescription?</p>
+                </div>
+                <div class="modal-footer justify-content-center">
+                    <a href="#" id="confirmRestoreBtn" class="btn btn-danger px-4">
+                        <i class="fa-solid fa-trash me-1"></i> Restore
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Bootstrap notice Modal -->
+    <div class="modal fade" id="success" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title"><i class="fa-solid fa-circle-exclamation me-2"></i>Successfully</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    ${sessionScope.message}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <c:if test="${not empty sessionScope.message}">
+        <script>
+            window.onload = function () {
+                var myModal = new bootstrap.Modal(document.getElementById('success'));
+                myModal.show();
+            };
+        </script>
+        <c:remove var="message" scope="session" />
+    </c:if>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var confirmModal = document.getElementById('confirmDeleteModal');
+            var confirmButton = document.getElementById('confirmDeleteBtn');
 
+            confirmModal.addEventListener('show.bs.modal', function (event) {
+                var button = event.relatedTarget;
+                var href = button.getAttribute('data-href');
+                confirmButton.setAttribute('href', href);
+            });
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var confirmModal = document.getElementById('confirmRestoreModal');
+            var confirmButton = document.getElementById('confirmRestoreBtn');
+
+            confirmModal.addEventListener('show.bs.modal', function (event) {
+                var button = event.relatedTarget;
+                var href = button.getAttribute('data-href');
+                confirmButton.setAttribute('href', href);
+            });
+        });
+    </script>
+    <c:if test="${not empty sessionScope.message}">
+        <script>
+            window.onload = function () {
+                var myModal = new bootstrap.Modal(document.getElementById('successModal'));
+                successModal.show();
+            };
+        </script>
+        <c:remove var="message" scope="session" />
+    </c:if>
     <c:if test="${not empty sessionScope.error}">
         <script>
             window.onload = function () {
                 var myModal = new bootstrap.Modal(document.getElementById('errorModal'));
                 myModal.show();
             };
-            <c:remove var="error" scope="session" />
         </script>
+        <c:remove var="error" scope="session" />
     </c:if>
 </body>
 </html>

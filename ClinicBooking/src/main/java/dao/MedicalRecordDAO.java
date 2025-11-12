@@ -624,4 +624,14 @@ public class MedicalRecordDAO extends DBContext {
         return isUpdated;
     }
 
+    public boolean updatePrescriptionIDForMedicalRecordID(int prescriptionID, int appointmentID) {
+        String sql = "UPDATE MedicalRecord set PrescriptionID = ? where AppointmentID = ?";
+        Object[] params = {prescriptionID, appointmentID};
+        try {
+            int effectedRow = executeQuery(sql, params);
+            return effectedRow != 0;
+        } catch (Exception e) {
+            return false;
+        }
+    }
 }

@@ -204,8 +204,8 @@
                     var myModal = new bootstrap.Modal(document.getElementById('success'));
                     myModal.show();
                 };
-                <c:remove var="message" scope="session" />
             </script>
+            <c:remove var="message" scope="session" />
         </c:if>
     </body>
 </html>

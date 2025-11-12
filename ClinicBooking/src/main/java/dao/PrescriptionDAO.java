@@ -444,15 +444,15 @@ public class PrescriptionDAO extends DBContext {
 
     public List<PrescriptionDTO> getPrescriptionListByDoctorID(int doctorID) {
         List<PrescriptionDTO> list = new ArrayList<>();
-        String sql = "SELECT p.PrescriptionID, p.Note AS PrescriptionNote, p.DateCreate AS PrescriptionDateCreate, "
-                + "p.PrescriptionStatus, "
-                + "a.AppointmentID, a.Note AS AppointmentNote, a.DateBegin, a.DateEnd, a.AppointmentStatus, "
-                + "pa.PatientID, pa.FirstName, pa.LastName, pa.Email, pa.DOB, pa.Gender, pa.UserAddress, pa.PhoneNumber "
-                + "FROM Prescription p "
-                + "JOIN Appointment a ON p.AppointmentID = a.AppointmentID "
-                + "JOIN Patient pa ON pa.PatientID = a.PatientID "
-                + "WHERE a.DoctorID = ? "
-                + "ORDER BY p.DateCreate DESC";
+        String sql = "SELECT p.PrescriptionID, p.Note AS PrescriptionNote, p.DateCreate AS PrescriptionDateCreate, \n"
+                + "                p.PrescriptionStatus, p.[Hidden],\n"
+                + "                a.AppointmentID, a.Note AS AppointmentNote, a.DateBegin, a.DateEnd, a.AppointmentStatus, \n"
+                + "                pa.PatientID, pa.FirstName, pa.LastName, pa.Email, pa.DOB, pa.Gender, pa.UserAddress, pa.PhoneNumber \n"
+                + "                FROM Prescription p \n"
+                + "                JOIN Appointment a ON p.AppointmentID = a.AppointmentID \n"
+                + "                JOIN Patient pa ON pa.PatientID = a.PatientID \n"
+                + "                WHERE a.DoctorID = ?\n"
+                + "                ORDER BY p.DateCreate DESC";
         Object[] params = {doctorID};
         ResultSet rs = executeSelectQuery(sql, params);
 
@@ -487,6 +487,7 @@ public class PrescriptionDAO extends DBContext {
                 prescription.setNote(rs.getString("PrescriptionNote"));
                 prescription.setDateCreate(rs.getTimestamp("PrescriptionDateCreate"));
                 prescription.setPrescriptionStatus(rs.getString("PrescriptionStatus"));
+                prescription.setHidden(rs.getBoolean("Hidden"));
 
                 list.add(prescription);
             }
@@ -502,7 +503,7 @@ public class PrescriptionDAO extends DBContext {
     public List<PrescriptionDTO> searchPrescriptionListByPatientName(int doctorID, String keyword) {
         List<PrescriptionDTO> list = new ArrayList<>();
         String sql = "SELECT p.PrescriptionID, p.Note AS PrescriptionNote, p.DateCreate AS PrescriptionDateCreate, "
-                + "p.PrescriptionStatus, "
+                + "p.PrescriptionStatus, p.Hidden,"
                 + "a.AppointmentID, a.Note AS AppointmentNote, a.DateBegin, a.DateEnd, a.AppointmentStatus, "
                 + "pa.PatientID, pa.FirstName, pa.LastName, pa.Email, pa.DOB, pa.Gender, pa.UserAddress, pa.PhoneNumber "
                 + "FROM Prescription p "
@@ -542,6 +543,7 @@ public class PrescriptionDAO extends DBContext {
                 prescription.setNote(rs.getString("PrescriptionNote"));
                 prescription.setDateCreate(rs.getTimestamp("PrescriptionDateCreate"));
                 prescription.setPrescriptionStatus(rs.getString("PrescriptionStatus"));
+                prescription.setHidden(rs.getBoolean("Hidden"));
 
                 list.add(prescription);
             }
@@ -598,7 +600,7 @@ public class PrescriptionDAO extends DBContext {
     }
 
     public PrescriptionDTO getPrescriptionDetailByDoctorIDAndPrescriptionID(int doctorID, int prescriptionID) {
-        String sql = "SELECT p.PrescriptionID, p.PrescriptionStatus, p.DateCreate, p.Note AS PrescriptionNote, "
+        String sql = "SELECT p.PrescriptionID, p.PrescriptionStatus, p.DateCreate, p.Note AS PrescriptionNote, p.[Hidden], "
                 + "st.FirstName AS DoctorFirstName, st.LastName AS DoctorLastName, "
                 + "pt.FirstName AS PatientFirstName, pt.LastName AS PatientLastName, "
                 + "pt.Email, pt.PhoneNumber, pt.Gender, pt.DOB, pt.UserAddress "
@@ -637,6 +639,60 @@ public class PrescriptionDAO extends DBContext {
                 prescription.setDateCreate(rs.getTimestamp("DateCreate"));
                 prescription.setAppointmentID(appointment);
                 prescription.setNote(rs.getString("PrescriptionNote"));
+                prescription.setHidden(rs.getBoolean("Hidden"));
+
+                // Load items
+                prescription.setPrescriptionItemList(getPrescriptionItemListByPrescriptionID(prescriptionID));
+            }
+        } catch (SQLException e) {
+            Logger.getLogger(PrescriptionDAO.class.getName()).log(Level.SEVERE, null, e);
+        } finally {
+            closeResources(rs);
+        }
+        return prescription;
+    }
+
+    public PrescriptionDTO getPrescriptionDetailByDoctorIDAndPrescriptionIDToEdit(int doctorID, int prescriptionID) {
+        String sql = "SELECT p.PrescriptionID, p.PrescriptionStatus, p.DateCreate, p.Note AS PrescriptionNote, p.[Hidden], "
+                + "st.FirstName AS DoctorFirstName, st.LastName AS DoctorLastName, "
+                + "pt.FirstName AS PatientFirstName, pt.LastName AS PatientLastName, "
+                + "pt.Email, pt.PhoneNumber, pt.Gender, pt.DOB, pt.UserAddress "
+                + "FROM Prescription p "
+                + "JOIN Appointment a ON p.AppointmentID = a.AppointmentID "
+                + "JOIN Doctor d ON d.DoctorID = a.DoctorID "
+                + "JOIN Staff st ON st.StaffID = d.StaffID "
+                + "JOIN Patient pt ON pt.PatientID = a.PatientID "
+                + "WHERE a.DoctorID = ? AND p.PrescriptionID = ? and p.PrescriptionStatus = 'Pending'";
+
+        Object[] params = {doctorID, prescriptionID};
+        PrescriptionDTO prescription = null;
+        ResultSet rs = null;
+
+        try {
+            rs = executeSelectQuery(sql, params);
+            if (rs.next()) {
+                // Patient info
+                PatientDTO patient = new PatientDTO();
+                patient.setFirstName(rs.getString("PatientFirstName"));
+                patient.setLastName(rs.getString("PatientLastName"));
+                patient.setEmail(rs.getString("Email"));
+                patient.setPhoneNumber(rs.getString("PhoneNumber"));
+                patient.setGender(rs.getBoolean("Gender"));
+                patient.setDob(rs.getTimestamp("DOB"));
+                patient.setUserAddress(rs.getString("UserAddress"));
+
+                // Appointment
+                AppointmentDTO appointment = new AppointmentDTO();
+                appointment.setPatientID(patient);
+
+                // Prescription
+                prescription = new PrescriptionDTO();
+                prescription.setPrescriptionID(rs.getInt("PrescriptionID"));
+                prescription.setPrescriptionStatus(rs.getString("PrescriptionStatus"));
+                prescription.setDateCreate(rs.getTimestamp("DateCreate"));
+                prescription.setAppointmentID(appointment);
+                prescription.setNote(rs.getString("PrescriptionNote"));
+                prescription.setHidden(rs.getBoolean("Hidden"));
 
                 // Load items
                 prescription.setPrescriptionItemList(getPrescriptionItemListByPrescriptionID(prescriptionID));
@@ -810,19 +866,22 @@ public class PrescriptionDAO extends DBContext {
     }
 
     public boolean createPrescription(int appointmentID, String note) {
-        String sql = "INSERT INTO Prescription (AppointmentID, Note, DateCreate, PrescriptionStatus, Hidden)\n"
+        String sql = "INSERT INTO Prescription (appointmentID, Note, DateCreate, PrescriptionStatus, Hidden)\n"
                 + "VALUES (?, ?, GETDATE(), 'Pending', 0)";
         Object[] params = {appointmentID, note};
-
-        int effectedRow = executeQuery(sql, params);
-
-        return effectedRow != 0;
+        try {
+            int effectedRow = executeQuery(sql, params);
+            return effectedRow != 0;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     public boolean addItemToPrescription(int prescriptionID, int medicineID, int dosage, String instruction) {
         String sql = " INSERT INTO PrescriptionItem (PrescriptionID, MedicineID, Dosage, Instruction)\n"
-                + "        VALUES (?, ?, ?, ?)";
-        Object[] params = {prescriptionID, medicineID, dosage, instruction};
+                + "        VALUES (?, ?, ?, ?)"
+                + "UPDATE Medicine SET Quantity = Quantity - ? WHERE MedicineID = ?";
+        Object[] params = {prescriptionID, medicineID, dosage, instruction, dosage, medicineID};
         return executeQuery(sql, params) > 0;
     }
 
@@ -857,6 +916,140 @@ public class PrescriptionDAO extends DBContext {
         int effectedRow = executeQuery(query, params);
 
         return effectedRow != 0;
+    }
+
+    public boolean doctorDeletePrescription(int prescriptionID) {
+        String sql = "UPDATE Prescription set Hidden = 1 where PrescriptionID = ?";
+        Object[] params = {prescriptionID};
+
+        int result = executeQuery(sql, params);
+        return result != 0;
+    }
+
+    public boolean doctorUnDeletePrescription(int prescriptionID) {
+        String sql = "UPDATE Prescription set Hidden = 0 where PrescriptionID = ?";
+        Object[] params = {prescriptionID};
+
+        int result = executeQuery(sql, params);
+        return result != 0;
+    }
+
+    public boolean isHiddenPrescription(int prescriptionID) {
+        String sql = "Select p.PrescriptionID\n"
+                + "From prescription p\n"
+                + "Where p.PrescriptionID = ? and p.Hidden = 1";
+        Object[] params = {prescriptionID};
+        ResultSet rs = executeSelectQuery(sql, params);
+        boolean isHiddenPrescription = false;
+        try {
+            isHiddenPrescription = rs.next();
+        } catch (SQLException ex) {
+            Logger.getLogger(MedicalRecordDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            closeResources(rs);
+        }
+        return isHiddenPrescription;
+    }
+
+    public boolean deleteAllItemsByPrescriptionID(int prescriptionID) {
+        restoreMedicinesItems(prescriptionID);
+        String sql = "DELETE FROM PrescriptionItem WHERE PrescriptionID = ?";
+        Object[] params = {prescriptionID};
+        return executeQuery(sql, params) > 0;
+    }
+
+    public boolean updatePrescriptionNote(int prescriptionID, String note) {
+        String sql = "UPDATE Prescription SET Note = ? WHERE PrescriptionID = ?";
+        Object[] params = {note, prescriptionID};
+        return executeQuery(sql, params) > 0;
+    }
+
+    public boolean restoreMedicinesItems(int prescriptionID) {
+        // lấy danh sách item trong đơn thuốc.
+        List<PrescriptionItemDTO> itemList = getPrescriptionItemsByPrescriptionID(prescriptionID);
+
+        if (itemList == null || itemList.isEmpty()) {
+            return false; // Không có item nào để phục hồi
+        }
+
+        boolean success = true;
+
+        try {
+            // Cập nhật số lượng thuốc trong kho
+            for (PrescriptionItemDTO item : itemList) {
+                int medicineID = item.getMedicineID().getMedicineID(); // lấy từng thuốc trong danh sách ra
+                int dosage = item.getDosage(); // lấy liều lượng của từng thuốc để phục hồi
+
+                // Phục hồi thuốc
+                String updateMedicineSql = "UPDATE Medicine SET Quantity = Quantity + ? WHERE MedicineID = ?";
+                Object[] updateParams = {dosage, medicineID};
+
+                int updated = executeQuery(updateMedicineSql, updateParams);
+                if (updated == 0) { // Medicine ID không tồn tại hoặc lỗi
+                    success = false;
+                }
+            }
+        } catch (Exception e) {
+            success = false;
+        }
+        return success;
+    }
+
+    public List<PrescriptionItemDTO> getPrescriptionItemsByPrescriptionID(int prescriptionID) {
+        List<PrescriptionItemDTO> itemList = new ArrayList<>();
+
+        String sql = "SELECT pi.Dosage, pi.Instruction, "
+                + "m.MedicineID, m.MedicineName, m.MedicineType, m.Price, m.MedicineCode "
+                + "FROM PrescriptionItem pi "
+                + "JOIN Medicine m ON pi.MedicineID = m.MedicineID "
+                + "WHERE pi.PrescriptionID = ?";
+
+        Object[] params = {prescriptionID};
+        ResultSet rs = null;
+
+        try {
+            rs = executeSelectQuery(sql, params);
+
+            while (rs != null && rs.next()) {
+                // Medicine info
+                MedicineDTO medicine = new MedicineDTO();
+                medicine.setMedicineID(rs.getInt("MedicineID"));
+                medicine.setMedicineName(rs.getString("MedicineName"));
+                medicine.setMedicineType(rs.getString("MedicineType"));
+                medicine.setMedicineCode(rs.getString("MedicineCode"));
+                medicine.setPrice(rs.getDouble("Price"));
+
+                //  Prescription Item info
+                PrescriptionItemDTO item = new PrescriptionItemDTO();
+                item.setMedicineID(medicine);
+                item.setDosage(rs.getInt("Dosage"));
+                item.setInstruction(rs.getString("Instruction"));
+
+                itemList.add(item);
+            }
+
+        } catch (SQLException e) {
+            Logger.getLogger(PrescriptionDAO.class.getName()).log(Level.SEVERE, null, e);
+        } finally {
+            closeResources(rs);
+        }
+
+        return itemList;
+    }
+
+    public boolean isMedicineAlreadyInPrescription(int prescriptionID, int medicineID) {
+        String sql = "SELECT 1 FROM PrescriptionItem WHERE PrescriptionID = ? AND MedicineID = ?";
+        Object[] params = {prescriptionID, medicineID};
+        ResultSet rs = executeSelectQuery(sql, params);
+
+        try {
+            return rs != null && rs.next();
+        } catch (SQLException e) {
+            Logger.getLogger(PrescriptionDAO.class.getName()).log(Level.SEVERE, null, e);
+            return false;
+        } finally {
+            closeResources(rs);
+        }
     }
 
 }

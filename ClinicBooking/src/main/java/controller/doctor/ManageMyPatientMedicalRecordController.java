@@ -229,6 +229,7 @@ public class ManageMyPatientMedicalRecordController extends HttpServlet {
             boolean success = medicalRecordDAO.createMedicalRecord(appointmentID, symptoms.trim(), diagnosis.trim(), note.trim());
 
             if (success) {
+                request.getSession().setAttribute("message", "Create new medical record successfully.");
                 response.sendRedirect(request.getContextPath() + "/manage-my-patient-medical-record");
             } else {
                 AppointmentDTO appointment = appointmentDAO.getPatientAppointmentDetailOfDoctorByID(appointmentID, doctorID);

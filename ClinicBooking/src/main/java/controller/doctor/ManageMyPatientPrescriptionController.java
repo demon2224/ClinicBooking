@@ -93,7 +93,14 @@ public class ManageMyPatientPrescriptionController extends HttpServlet {
                     showPrescriptionDetail(request, response, doctorID);
                     break;
                 case "create":
-                    showCreateForm(request, response, doctorID);
+                    showCreateForm(request, response);
+                    break;
+                case "edit":
+                    int prescriptionID = Integer.parseInt(request.getParameter("prescriptionID"));
+                    showEditPrescription(request, response, doctorID, prescriptionID);
+                    break;
+                case "delete":
+                    deletePrescription(request, response, doctorID);
                     break;
                 default:
                     showPrescriptionList(request, response, doctorID);
@@ -149,7 +156,7 @@ public class ManageMyPatientPrescriptionController extends HttpServlet {
     private boolean isValidInstruction(HttpServletRequest request, String instruction) {
         if (CreatePrescriptionValidate.isEmpty(instruction)) {
             // Hướng dẫn trống.
-            request.getSession().setAttribute("intructionError", "Chỉ dẫn không thể để trống!");
+            request.getSession().setAttribute("intructionError", "Instruction cannot be empty!");
             return false;
         } else {
             return true;
@@ -159,15 +166,15 @@ public class ManageMyPatientPrescriptionController extends HttpServlet {
     private boolean isValidDosage(HttpServletRequest request, String dosage, String medicineID) {
         if (CreatePrescriptionValidate.isEmpty(dosage)) {
             // Liều lượng trống.
-            request.getSession().setAttribute("dosageError", "Liều lượng không thể để trống!");
+            request.getSession().setAttribute("dosageError", "Dosage cannot be empty!");
             return false;
         } else if (!CreatePrescriptionValidate.isValidDosage(dosage)) {
             // Check có phải là số không.
-            request.getSession().setAttribute("dosageError", "Liều lượng phải là số!");
+            request.getSession().setAttribute("dosageError", "Dosage must be a numeric value!");
             return false;
         } else if (!CreatePrescriptionValidate.isValidDosageNumber(Integer.parseInt(dosage), medicineDAO.getQuantityMedicineByMedicineID(Integer.parseInt(medicineID)))) {
             // Check liều lượng có quá số lượng trong kho còn không.
-            request.getSession().setAttribute("dosageError", "Liều lượng không hợp lệ!");
+            request.getSession().setAttribute("dosageError", "Invalid dosage: exceeds available stock!");
             return false;
         } else {
             return true;
@@ -177,14 +184,14 @@ public class ManageMyPatientPrescriptionController extends HttpServlet {
     private boolean isValidMedicineID(HttpServletRequest request, String medicineID) {
         if (CreatePrescriptionValidate.isEmpty(medicineID)) {
             // Thuốc trống.
-            request.getSession().setAttribute("medicineError", "Thuốc không thể để trống!");
+            request.getSession().setAttribute("medicineError", "Medicine cannot be empty!");
             return false;
         } else if (!CreatePrescriptionValidate.isValidMedicineID(medicineID)) {
             // Thuốc không tồn tại
-            request.getSession().setAttribute("medicineError", "Thuốc hợp lệ!");
+            request.getSession().setAttribute("medicineError", "Invalid medicine ID format!");
             return false;
         } else if (!medicineDAO.isExistMedicineID(Integer.parseInt(medicineID))) {
-            request.getSession().setAttribute("medicineError", "Thuốc không tồn tại!");
+            request.getSession().setAttribute("medicineError", "Medicine does not exist!");
             return false;
         } else {
             return true;
@@ -200,7 +207,7 @@ public class ManageMyPatientPrescriptionController extends HttpServlet {
      * @throws ServletException
      * @throws IOException
      */
-    private void showCreateForm(HttpServletRequest request, HttpServletResponse response, int doctorID)
+    private void showCreateForm(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         int medicalRecordID = Integer.parseInt(request.getParameter("medicalRecordID"));
@@ -249,7 +256,7 @@ public class ManageMyPatientPrescriptionController extends HttpServlet {
 
             // Tạo đơn thuốc mà không có thuốc thì báo lỗi quay lại trang tạo đơn thuốc.
             if (!validMedicineInput) {
-                request.getSession().setAttribute("errorNull", "Vui lòng thêm ít nhất một loại thuốc trước khi lưu đơn!");
+                request.getSession().setAttribute("errorNull", "Please add at least one medicine before saving the prescription!");
                 response.sendRedirect(request.getContextPath()
                         + "/manage-my-patient-prescription?action=create&medicalRecordID=" + medicalRecordID);
                 return;
@@ -257,10 +264,11 @@ public class ManageMyPatientPrescriptionController extends HttpServlet {
 
             // Nếu có thuốc thì bắt đầu tạo đơn thuốc để chứa thuốc.
             boolean createPrescriptionResult = prescriptionDAO.createPrescription(appointmentID, note);
-
             // sau khi tạo thì add thuốc vào đơn.
             if (createPrescriptionResult) {
                 int prescriptionID = prescriptionDAO.getPrescriptionIDByAppointmentID(appointmentID);
+                // Update PrescriptionID moi nhat cho MedicalRecordID de lay invoice
+                medicalRecordDAO.updatePrescriptionIDForMedicalRecordID(prescriptionID, appointmentID);
                 // kiểm tra valid cho từng thuốc.
                 boolean currentState = true;
 
@@ -282,11 +290,19 @@ public class ManageMyPatientPrescriptionController extends HttpServlet {
                         int medicineID = Integer.parseInt(medicineIDs[i]);
                         int dosage = Integer.parseInt(dosages[i]);
                         String instruction = instructions[i];
+                        //dup
+                        if (prescriptionDAO.isMedicineAlreadyInPrescription(prescriptionID, medicineID)) {
+                            request.getSession().setAttribute("error",
+                                    "Medicine '" + medicineDAO.getMedicineNameByID(medicineID) + "' is already in the prescription!");
+                            response.sendRedirect(request.getContextPath()
+                                    + "/manage-my-patient-prescription?action=create&medicalRecordID=" + medicalRecordID);
+                            return;
+                        }
 
                         prescriptionDAO.addItemToPrescription(prescriptionID, medicineID, dosage, instruction);
                     }
 
-                    request.setAttribute("message", "Đơn thuốc đã tạo thành công.");
+                    request.setAttribute("message", "Prescription created successfully.");
                     //Sau khi tạo xong thì chuyển đến trang chi tiết đơn
                     response.sendRedirect(request.getContextPath() + "/manage-my-patient-prescription");
                 } else {
@@ -298,13 +314,157 @@ public class ManageMyPatientPrescriptionController extends HttpServlet {
                 }
             } else {
                 // Nếu không thể tạo đơn thuốc
-                request.getSession().setAttribute("error", "Không thể tạo đơn thuốc, vui lòng thử lại!");
+                request.getSession().setAttribute("error", "Unable to create prescription. Please try again!");
                 response.sendRedirect(request.getContextPath() + "/manage-my-patient-medical-record");
             }
 
         } catch (Exception e) {
-            request.getSession().setAttribute("error", "Đã xảy ra lỗi trong quá trình tạo đơn thuốc!");
+            request.getSession().setAttribute("error", "An error occurred while creating the prescription!");
             response.sendRedirect(request.getContextPath() + "/manage-my-patient-medical-record");
+        }
+    }
+
+    private void deletePrescription(HttpServletRequest request, HttpServletResponse response, int doctorID)
+            throws ServletException, IOException {
+        try {
+            // Lấy prescriptionID từ request
+            int prescriptionID = Integer.parseInt(request.getParameter("prescriptionID"));
+
+            // Xác nhận rằng đơn thuốc thuộc về bác sĩ hiện tại
+            PrescriptionDTO prescription = prescriptionDAO.getPrescriptionDetailByDoctorIDAndPrescriptionID(doctorID, prescriptionID);
+
+            if (prescription == null) {
+                // Không tìm thấy đơn thuốc hoặc không thuộc quyền bác sĩ này
+                request.getSession().setAttribute("error", "The prescription does not exist.");
+                response.sendRedirect(request.getContextPath() + "/manage-my-patient-prescription");
+                return;
+            }
+            boolean isHidden = prescriptionDAO.isHiddenPrescription(prescriptionID);
+            log(isHidden + "    Hidden");
+            // Xóa đơn thuốc (DAO sẽ đảm bảo xóa cả prescription item trước)
+            if (!isHidden) {
+                boolean isDeleted = prescriptionDAO.doctorDeletePrescription(prescriptionID);
+
+                if (isDeleted) {
+                    // Thông báo thành công
+                    log("That Bai");
+                    request.getSession().setAttribute("message", "Prescription deleted successfully.");
+                } else {
+                    // Thông báo thất bại
+                    request.getSession().setAttribute("error", "Failed to delete prescription. Please try again later.");
+                }
+
+                // Quay lại danh sách đơn thuốc
+                response.sendRedirect(request.getContextPath() + "/manage-my-patient-prescription");
+            } else {
+                boolean isRestore = prescriptionDAO.doctorUnDeletePrescription(prescriptionID);
+
+                if (isRestore) {
+                    // Thông báo thành công
+                    log("Thanh Cong");
+                    request.getSession().setAttribute("message", "Prescription has been restored successfully.");
+                } else {
+                    // Thông báo thất bại
+                    request.getSession().setAttribute("error", "Failed to delete prescription. Please try again later.");
+                }
+
+                // Quay lại danh sách đơn thuốc
+                response.sendRedirect(request.getContextPath() + "/manage-my-patient-prescription");
+            }
+        } catch (NumberFormatException e) {
+            // Lỗi khi ID không hợp lệ
+            request.getSession().setAttribute("error", "Invalid prescription ID.");
+            response.sendRedirect(request.getContextPath() + "/manage-my-patient-prescription");
+        } catch (Exception e) {
+            // Lỗi tổng quát
+            request.getSession().setAttribute("error", "An unexpected error occurred while deleting the prescription.");
+            response.sendRedirect(request.getContextPath() + "/manage-my-patient-prescription");
+        }
+    }
+
+    public void showEditPrescription(HttpServletRequest request, HttpServletResponse response, int doctorID, int prescriptionID)
+            throws ServletException, IOException {
+        try {
+            // Lấy thông tin chi tiết để edit
+            PrescriptionDTO prescription = prescriptionDAO.getPrescriptionDetailByDoctorIDAndPrescriptionIDToEdit(doctorID, prescriptionID);
+            if (prescription != null) {
+                // Lấy thuốc để edit
+                List<MedicineDTO> medicineList = new MedicineDAO().getAllMedicines();
+                // Hiển thị danh sách thuố cũ
+                List<PrescriptionItemDTO> itemList = prescriptionDAO.getPrescriptionItemListByPrescriptionID(prescriptionID);
+                request.setAttribute("itemList", itemList);
+                request.setAttribute("medicineList", medicineList);
+                request.setAttribute("prescription", prescription);
+                request.getRequestDispatcher("/WEB-INF/doctor/EditMyPatientPrescription.jsp").forward(request, response);
+            } else {
+                response.sendRedirect(request.getContextPath() + "/manage-my-patient-prescription");
+            }
+        } catch (Exception e) {
+            response.sendRedirect(request.getContextPath() + "/manage-my-patient-prescription");
+        }
+    }
+
+    public void editPrescriptionInPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        try {
+            int prescriptionID = Integer.parseInt(request.getParameter("prescriptionID"));
+            String note = request.getParameter("note");
+            String[] medicineIDs = request.getParameterValues("medicineID");
+            String[] dosages = request.getParameterValues("dosage");
+            String[] instructions = request.getParameterValues("instruction");
+
+            boolean currentState = true;
+
+            // Kiểm tra dữ liệu từng thuốc hợp lệ (dosage, instruction)
+            for (int i = 0; i < medicineIDs.length; i++) {
+                currentState = addPrescriptionInput(request, medicineIDs[i], dosages[i], instructions[i]);
+                if (!currentState) {
+                    break;
+                }
+            }
+            if (currentState) {
+                //  Xóa các item cũ & phục hồi số lượng thuốc
+                prescriptionDAO.deleteAllItemsByPrescriptionID(prescriptionID);
+
+                //  Thêm lại các thuốc mới (đảm bảo không trùng)
+                for (int i = 0; i < medicineIDs.length; i++) {
+                    String medicineIDStr = medicineIDs[i];
+                    if (medicineIDStr == null || medicineIDStr.trim().isEmpty()) {
+                        continue;
+                    }
+
+                    int medicineID = Integer.parseInt(medicineIDStr);
+                    int dosage = Integer.parseInt(dosages[i]);
+                    String instruction = instructions[i];
+
+                    // Kiểm tra trùng trong đơn
+                    if (prescriptionDAO.isMedicineAlreadyInPrescription(prescriptionID, medicineID)) {
+                        String medicineName = medicineDAO.getMedicineNameByID(medicineID);
+                        request.getSession().setAttribute("error",
+                                "Medicine '" + medicineName + "' already exists in this prescription!");
+                        response.sendRedirect(request.getContextPath() + "/manage-my-patient-prescription?action=edit&prescriptionID=" + prescriptionID);
+                        return;
+                    }
+
+                    // Thêm thuốc vào đơn
+                    prescriptionDAO.addItemToPrescription(prescriptionID, medicineID, dosage, instruction);
+                }
+
+                // Cập nhật ghi chú đơn thuốc
+                prescriptionDAO.updatePrescriptionNote(prescriptionID, note);
+
+                //  Thông báo thành công
+                request.getSession().setAttribute("message", "Prescription updated successfully.");
+                response.sendRedirect(request.getContextPath() + "/manage-my-patient-prescription");
+            } else {
+                // lỗi khi không chọn thuốc
+                prescriptionDAO.deletePrescription(prescriptionID);
+                request.getSession().setAttribute("error", true);
+                response.sendRedirect(request.getContextPath() + "/manage-my-patient-prescription?action=edit&prescriptionID=" + prescriptionID);
+            }
+        } catch (Exception e) {
+            request.getSession().setAttribute("error", "Failed to update prescription.");
+            response.sendRedirect(request.getContextPath() + "/manage-my-patient-prescription");
         }
     }
 
@@ -325,6 +485,9 @@ public class ManageMyPatientPrescriptionController extends HttpServlet {
             switch (action) {
                 case "create":
                     createPrescriptionInPost(request, response);
+                    break;
+                case "edit":
+                    editPrescriptionInPost(request, response);
                     break;
                 default:
                     response.sendRedirect(request.getContextPath() + "/manage-my-patient-prescription");

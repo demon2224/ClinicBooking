@@ -181,42 +181,51 @@
             </div>
 
             <!-- Prescription Section -->
-            
-              <c:if test="${ requestScope.isExist}">
-                     <div class="card">
-                        <div class="card-header">
-                            <i class="fa-solid fa-prescription-bottle-medical me-2"></i>Prescription Information
-                        </div>
-                        <div class="card-body p-4">
-                            <table class="table table-bordered mb-0">
-                                <tr><th>Date Create</th><td><fmt:formatDate value="${list[0].prescriptionID.dateCreate}" pattern="yyyy/MM/dd" /></td></tr>                   
-                                <tr>
-                                    <th>Medicines</th>
-                                    <td>
-                                        <c:forEach items="${list}" var="item" varStatus="loop">
-                                            <strong>${loop.count}. Name:</strong> ${item.medicineID.medicineName} <br>
-                                            <strong>Dosage:</strong> ${item.dosage} <br>
-                                            <strong>Instruction:</strong> ${item.instruction} <br><br>
-                                        </c:forEach>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th>Status</th>
-                                    <td>
-                                        <span class="badge
-                                              <c:choose>
-                                                  <c:when test="${list[0].prescriptionID.prescriptionStatus eq 'Pending'}">bg-warning text-dark</c:when>
-                                                  <c:otherwise>bg-success</c:otherwise>
-                                              </c:choose>">
-                                            ${list[0].prescriptionID.prescriptionStatus}
-                                        </span>
-                                    </td>
-                                </tr>
-                                <tr><th>Prescription Note</th><td>${list[0].prescriptionID.note}</td></tr>                         
-                            </table>
-                        </div>
-                    </div>
-                </c:if>         
+
+
+            <div class="card">
+                <div class="card-header">
+                    <i class="fa-solid fa-prescription-bottle-medical me-2"></i>Prescription Information
+                </div>
+                <div class="card-body p-4">
+                    <table class="table table-bordered mb-0">       
+                        <c:if test="${ requestScope.isExist}">
+                            <tr><th>Date Create</th><td><fmt:formatDate value="${list[0].prescriptionID.dateCreate}" pattern="yyyy/MM/dd" /></td></tr>                   
+                            <tr>
+                                <th>Medicines</th>
+                                <td>
+                                    <c:forEach items="${list}" var="item" varStatus="loop">
+                                        <strong>${loop.count}. Name:</strong> ${item.medicineID.medicineName} <br>
+                                        <strong>Dosage:</strong> ${item.dosage} <br>
+                                        <strong>Instruction:</strong> ${item.instruction} <br><br>
+                                    </c:forEach>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Status</th>
+                                <td>
+                                    <span class="badge
+                                          <c:choose>
+                                              <c:when test="${list[0].prescriptionID.prescriptionStatus eq 'Pending'}">bg-warning text-dark</c:when>
+                                              <c:otherwise>bg-success</c:otherwise>
+                                          </c:choose>">
+                                        ${list[0].prescriptionID.prescriptionStatus}
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr><th>Prescription Note</th><td>${list[0].prescriptionID.note}</td></tr>  
+                            <tr>
+                            </c:if>  
+                            <c:if test="${!requestScope.isExist}">
+                                <td colspan="7" class="text-center text-muted py-4">
+                                    <i class="fa-solid fa-circle-info me-2"></i>No medicines.
+                                </td>
+                            </c:if>  
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
         </div>
     </body>
 </html>
