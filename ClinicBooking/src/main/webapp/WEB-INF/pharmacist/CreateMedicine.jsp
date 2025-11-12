@@ -11,7 +11,7 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8">
-        <title>Doctor Dashboard</title>
+        <title>Pharmacist Dashboard - Create Medicine</title>
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assests/css/bootstrap.min.css">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assests/css/all.min.css" />
         <style>
@@ -41,26 +41,15 @@
             .card {
                 border-radius: 10px;
             }
-            .table img {
-                border-radius: 50%;
-                width: 40px;
-                height: 40px;
-            }
-            .status-toggle {
-                width: 40px;
-                height: 20px;
-            }
             .navbar {
                 background: white;
                 border-bottom: 1px solid #dee2e6;
             }
-
-            #Logout{
+            #Logout {
                 color: red;
                 border-color: red;
-
             }
-            #Logout:hover{
+            #Logout:hover {
                 background-color: red;
                 color: white;
             }
@@ -72,21 +61,19 @@
         </style>
     </head>
     <body>
-        <!-- Sidebar -->
         <%@include file="../includes/PharmacistDashboardSidebar.jsp" %>
-
-        <!-- Main content -->
+        
         <div class="main-content">
             <nav class="navbar navbar-light">
-                <div class="container-fluid">
-                    <div class="container-fluid d-flex justify-content-end">
-                        <button class="btn btn-submit" id="Logout" type="submit">Logout</button>
-                    </div>
+                <div class="container-fluid d-flex justify-content-end">
+                    <form action="${pageContext.request.contextPath}/staff-logout">
+                        <button id="Logout" class="btn btn-submit" type="submit">Logout</button>
+                    </form>
                 </div>
             </nav>
 
             <div class="container-fluid mt-4">
-                <div class="card">
+                <div class="card shadow-sm">
                     <div class="card-header bg-white">
                         <h5 class="mb-0">Create New Medicine</h5>
                     </div>
@@ -95,69 +82,74 @@
                             <input type="hidden" name="action" value="create">
 
                             <div class="row mb-3">
-                                <div class="col-md-6">
+                                <div class="col-lg-6 col-md-12 mb-3 mb-lg-0">
                                     <label class="form-label required">Medicine Name</label>
                                     <input type="text" class="form-control" name="medicineName" required>
-                                    <div class="text-danger">
-                                        <c:if test="${not empty sessionScope.medicineNameErrorMsg}">                   
-                                            <c:out value="${sessionScope.medicineNameErrorMsg}"/>
-                                        </c:if>
-                                    </div>
+                                    <c:if test="${not empty requestScope.medicineNameErrorMsg}">
+                                        <div class="text-danger small mt-1">
+                                            <i class="fa-solid fa-circle-exclamation me-1"></i>
+                                            <c:out value="${requestScope.medicineNameErrorMsg}" />
+                                        </div>
+                                    </c:if>
                                 </div>
-                                <div class="col-md-6">
+
+                                <div class="col-lg-6 col-md-12">
                                     <label class="form-label required">Medicine Code</label>
                                     <input type="text" class="form-control" name="medicineCode" required>
-                                    <div class="text-danger">
-                                        <c:if test="${not empty sessionScope.medicineCodeErrorMsg}">                   
-                                            <c:out value="${sessionScope.medicineCodeErrorMsg}"/>
-                                        </c:if>
-                                    </div>
+                                    <c:if test="${not empty requestScope.medicineCodeErrorMsg}">
+                                        <div class="text-danger small mt-1">
+                                            <i class="fa-solid fa-circle-exclamation me-1"></i>
+                                            <c:out value="${requestScope.medicineCodeErrorMsg}" />
+                                        </div>
+                                    </c:if>
                                 </div>
                             </div>
 
                             <div class="row mb-3">
-                                <div class="col-md-6">
+                                <div class="col-lg-6 col-md-12 mb-3 mb-lg-0">
                                     <label class="form-label required">Medicine Type</label>
                                     <select class="form-select" name="medicineType" required>
                                         <c:forEach items="${requestScope.medicineTypeList}" var="type">
-                                            <option value="${type}">
-                                                <c:out value="${type}"/>
-                                            </option>
+                                            <option value="${type}"><c:out value="${type}"/></option>
                                         </c:forEach>
                                     </select>
-                                    <div class="text-danger">
-                                        <c:if test="${not empty sessionScope.medicineTypeErrorsMsg}">                   
-                                            <c:out value="${sessionScope.medicineTypeErrorsMsg}"/>
-                                        </c:if>
-                                    </div>
+                                    <c:if test="${not empty requestScope.medicineTypeErrorMsg}">
+                                        <div class="text-danger small mt-1">
+                                            <i class="fa-solid fa-circle-exclamation me-1"></i>
+                                            <c:out value="${requestScope.medicineTypeErrorMsg}" />
+                                        </div>
+                                    </c:if>
                                 </div>
-                                <div class="col-md-6">
+
+                                <div class="col-lg-6 col-md-12">
                                     <label class="form-label required">Price ($)</label>
                                     <input type="number" class="form-control" name="price" min="0" step="0.01" required>
-                                    <div class="text-danger">
-                                        <c:if test="${not empty sessionScope.medicinePriceErrorsMsg}">                   
-                                            <c:out value="${sessionScope.medicinePriceErrorsMsg}"/>
-                                        </c:if>
-                                    </div>
+                                    <c:if test="${not empty requestScope.medicinePriceErrorMsg}">
+                                        <div class="text-danger small mt-1">
+                                            <i class="fa-solid fa-circle-exclamation me-1"></i>
+                                            <c:out value="${requestScope.medicinePriceErrorMsg}" />
+                                        </div>
+                                    </c:if>
                                 </div>
                             </div>
 
                             <div class="row mb-3">
-                                <div class="col-md-6">
+                                <div class="col-lg-6 col-md-12">
                                     <label class="form-label required">Status</label>
-                                    <select class="form-select" name="medicineStatus">
+                                    <select class="form-select" name="medicineStatus" required>
                                         <option value="1">Available</option>
                                         <option value="0">Unavailable</option>
                                     </select>
-                                    <div class="text-danger">
-                                        <c:if test="${not empty sessionScope.medicineStatusErrorsMsg}">                   
-                                            <c:out value="${sessionScope.medicineStatusErrorsMsg}"/>
-                                        </c:if>
-                                    </div>
+                                    <c:if test="${not empty requestScope.medicineStatusErrorMsg}">
+                                        <div class="text-danger small mt-1">
+                                            <i class="fa-solid fa-circle-exclamation me-1"></i>
+                                            <c:out value="${requestScope.medicineStatusErrorMsg}" />
+                                        </div>
+                                    </c:if>
                                 </div>
                             </div>
 
-                            <div class="d-flex justify-content-center mt-3">
+                            <div class="d-flex justify-content-center mt-4">
                                 <button type="submit" class="btn btn-success px-5 py-2 fw-bold" style="border-radius: 30px;">
                                     Create
                                 </button>
@@ -167,5 +159,8 @@
                 </div>
             </div>
         </div>
+
+        <script src="${pageContext.request.contextPath}/assests/js/bootstrap.bundle.min.js"></script>
     </body>
 </html>
+

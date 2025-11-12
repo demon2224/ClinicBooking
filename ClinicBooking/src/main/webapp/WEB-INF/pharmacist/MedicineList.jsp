@@ -53,7 +53,6 @@
         </style>
     </head>
     <body>
-        <!-- Sidebar -->
         <%@include file="../includes/PharmacistDashboardSidebar.jsp" %>
 
         <div class="main-content">
@@ -61,7 +60,7 @@
             <nav class="navbar navbar-light">
                 <div class="container-fluid">
                     <form class="d-flex w-50" method="get" action="${pageContext.request.contextPath}/manage-medicine">
-                        <input class="form-control me-2" type="search" name="action" placeholder="Search medicine..." value="search">
+                        <input class="form-control me-2" type="search" name="action" placeholder="Search medicine...">
                         <button class="btn btn-outline-primary" type="submit">
                             <i class="fa-solid fa-magnifying-glass"></i>
                         </button>
