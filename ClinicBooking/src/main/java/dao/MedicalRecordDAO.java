@@ -634,4 +634,93 @@ public class MedicalRecordDAO extends DBContext {
             return false;
         }
     }
+
+    public int countDistinctPatientsByDoctor(int doctorID) {
+        String sql = "SELECT COUNT(DISTINCT a.PatientID) AS Total "
+                + "FROM MedicalRecord m "
+                + "JOIN Appointment a ON a.AppointmentID = m.AppointmentID "
+                + "WHERE a.DoctorID = ?";
+        Object[] params = {doctorID};
+        ResultSet rs = executeSelectQuery(sql, params);
+
+        try {
+            if (rs.next()) {
+                return rs.getInt("Total");
+            }
+        } catch (SQLException e) {
+            Logger.getLogger(MedicalRecordDAO.class.getName()).log(Level.SEVERE, null, e);
+        } finally {
+            closeResources(rs);
+        }
+
+        return 0;
+    }
+
+    public List<MedicalRecordDTO> getRecentMedicalRecordsByDoctorID(int doctorID) {
+        List<MedicalRecordDTO> list = new ArrayList<>();
+        String sql = "SELECT TOP 5 m.MedicalRecordID, m.Symptoms, m.Diagnosis, m.Note, m.DateCreate, "
+                + "p.FirstName, p.LastName, a.DateBegin "
+                + "FROM MedicalRecord m "
+                + "JOIN Appointment a ON a.AppointmentID = m.AppointmentID "
+                + "JOIN Patient p ON p.PatientID = a.PatientID "
+                + "WHERE a.DoctorID = ? "
+                + "ORDER BY m.DateCreate DESC";
+        Object[] params = {doctorID};
+        ResultSet rs = executeSelectQuery(sql, params);
+
+        try {
+            while (rs.next()) {
+                // Patient
+                PatientDTO patient = new PatientDTO();
+                patient.setFirstName(rs.getString("FirstName"));
+                patient.setLastName(rs.getString("LastName"));
+
+                // Appointment
+                AppointmentDTO appointment = new AppointmentDTO();
+                appointment.setDateBegin(rs.getTimestamp("DateBegin"));
+                appointment.setPatientID(patient);
+
+                // Medical Record
+                MedicalRecordDTO record = new MedicalRecordDTO();
+                record.setMedicalRecordID(rs.getInt("MedicalRecordID"));
+                record.setSymptoms(rs.getString("Symptoms"));
+                record.setDiagnosis(rs.getString("Diagnosis"));
+                record.setNote(rs.getString("Note"));
+                record.setDateCreate(rs.getTimestamp("DateCreate"));
+                record.setAppointmentID(appointment);
+
+                list.add(record);
+            }
+        } catch (SQLException e) {
+            Logger.getLogger(MedicalRecordDAO.class.getName()).log(Level.SEVERE, null, e);
+        } finally {
+            closeResources(rs);
+        }
+
+        return list;
+    }
+
+    public List<String> getTopDiagnosesByDoctorID(int doctorID) {
+        List<String> diagnoses = new ArrayList<>();
+        String sql = "SELECT TOP 5 m.Diagnosis, COUNT(*) AS Frequency "
+                + "FROM MedicalRecord m "
+                + "JOIN Appointment a ON a.AppointmentID = m.AppointmentID "
+                + "WHERE a.DoctorID = ? AND m.Diagnosis IS NOT NULL AND m.Diagnosis <> '' "
+                + "GROUP BY m.Diagnosis "
+                + "ORDER BY Frequency DESC";
+        Object[] params = {doctorID};
+        ResultSet rs = executeSelectQuery(sql, params);
+
+        try {
+            while (rs.next()) {
+                diagnoses.add(rs.getString("Diagnosis"));
+            }
+        } catch (SQLException e) {
+            Logger.getLogger(MedicalRecordDAO.class.getName()).log(Level.SEVERE, null, e);
+        } finally {
+            closeResources(rs);
+        }
+
+        return diagnoses;
+    }
 }

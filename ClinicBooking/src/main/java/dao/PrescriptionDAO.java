@@ -1052,4 +1052,88 @@ public class PrescriptionDAO extends DBContext {
         }
     }
 
+    public List<PrescriptionDTO> getRecentPrescriptionsByDoctorID(int doctorID) {
+        List<PrescriptionDTO> prescriptions = new ArrayList<>();
+        String sql = "SELECT TOP 5 p.PrescriptionID, p.DateCreate, p.PrescriptionStatus, "
+                + "p.Note, pa.FirstName, pa.LastName, a.DateBegin "
+                + "FROM Prescription p "
+                + "JOIN Appointment a ON a.AppointmentID = p.AppointmentID "
+                + "JOIN Patient pa ON pa.PatientID = a.PatientID "
+                + "WHERE a.DoctorID = ? "
+                + "ORDER BY p.DateCreate DESC";
+
+        Object[] params = {doctorID};
+        ResultSet rs = executeSelectQuery(sql, params);
+
+        try {
+            while (rs.next()) {
+                // Patient
+                PatientDTO patient = new PatientDTO();
+                patient.setFirstName(rs.getString("FirstName"));
+                patient.setLastName(rs.getString("LastName"));
+
+                // Appointment
+                AppointmentDTO appointment = new AppointmentDTO();
+                appointment.setDateBegin(rs.getTimestamp("DateBegin"));
+                appointment.setPatientID(patient);
+
+                // Prescription
+                PrescriptionDTO prescription = new PrescriptionDTO();
+                prescription.setPrescriptionID(rs.getInt("PrescriptionID"));
+                prescription.setDateCreate(rs.getTimestamp("DateCreate"));
+                prescription.setPrescriptionStatus(rs.getString("PrescriptionStatus"));
+                prescription.setNote(rs.getString("Note"));
+                prescription.setAppointmentID(appointment);
+
+                prescriptions.add(prescription);
+            }
+        } catch (SQLException e) {
+            Logger.getLogger(PrescriptionDAO.class.getName()).log(Level.SEVERE, null, e);
+        } finally {
+            closeResources(rs);
+        }
+
+        return prescriptions;
+    }
+
+    public int countPendingPrescriptionsByDoctor(int doctorID) {
+        String sql = "SELECT COUNT(*) AS Total FROM Prescription p "
+                + "JOIN Appointment a ON a.AppointmentID = p.AppointmentID "
+                + "WHERE a.DoctorID = ? AND p.PrescriptionStatus = 'Pending'";
+        Object[] params = {doctorID};
+        ResultSet rs = executeSelectQuery(sql, params);
+
+        try {
+            if (rs.next()) {
+                return rs.getInt("Total");
+            }
+        } catch (SQLException e) {
+            Logger.getLogger(PrescriptionDAO.class.getName()).log(Level.SEVERE, null, e);
+        } finally {
+            closeResources(rs);
+        }
+
+        return 0;
+    }
+
+    public int countDeliveredPrescriptionsByDoctor(int doctorID) {
+        String sql = "SELECT COUNT(*) AS Total FROM Prescription p "
+                + "JOIN Appointment a ON a.AppointmentID = p.AppointmentID "
+                + "WHERE a.DoctorID = ? AND p.PrescriptionStatus = 'Delivered'";
+        Object[] params = {doctorID};
+        ResultSet rs = executeSelectQuery(sql, params);
+
+        try {
+            if (rs.next()) {
+                return rs.getInt("Total");
+            }
+        } catch (SQLException e) {
+            Logger.getLogger(PrescriptionDAO.class.getName()).log(Level.SEVERE, null, e);
+        } finally {
+            closeResources(rs);
+        }
+
+        return 0;
+    }
+
 }

@@ -80,36 +80,47 @@ public class DoctorDashboardController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-//        processRequest(request, response);
-        HttpSession session = request.getSession();
-        DoctorDTO doctor = (DoctorDTO) session.getAttribute("doctor");
+        HttpSession session = request.getSession(false);
+        DoctorDTO doctor = (DoctorDTO) (session != null ? session.getAttribute("doctor") : null);
+
         if (doctor == null) {
             response.sendRedirect(request.getContextPath() + "/staff-login");
             return;
         }
 
-        int doctorID = doctor.getDoctorID();
+        try {
+            int doctorID = doctor.getDoctorID();
 
-        // 🔹 Dữ liệu chi tiết
-        List<AppointmentDTO> myPatientAppointmentList = appointmentDAO.getPatientAppointmentOfDoctorByID(doctorID);
-        List<MedicalRecordDTO> myPatientMedicalRecordList = medicalRecordDAO.getPatientMedicalRecordListByDoctorID(doctorID);
-        List<PrescriptionDTO> myPatientPrescriptionList = prescriptionDAO.getPatientPrescriptionListByDoctorID(doctorID);
+            int todayAppointmentCount = appointmentDAO.countTodayAppointmentsByDoctor(doctorID);
+            int totalMedicalRecordCount = medicalRecordDAO.countMedicalRecordsByDoctor(doctorID);
+            int totalPrescriptionCount = prescriptionDAO.countPrescriptionsByDoctor(doctorID);
+            int patientCount = medicalRecordDAO.countDistinctPatientsByDoctor(doctorID);
+            int pendingPrescriptions = prescriptionDAO.countPendingPrescriptionsByDoctor(doctorID);
+            int deliveredPrescriptions = prescriptionDAO.countDeliveredPrescriptionsByDoctor(doctorID);
 
-        // 🔹 Thống kê
-        int todayAppointmentCount = appointmentDAO.countTodayAppointmentsByDoctor(doctorID);
-        int totalMedicalRecordCount = medicalRecordDAO.countMedicalRecordsByDoctor(doctorID);
-        int totalPrescriptionCount = prescriptionDAO.countPrescriptionsByDoctor(doctorID);
+            List<AppointmentDTO> upcomingAppointments = appointmentDAO.getUpcomingAppointmentsByDoctorID(doctorID);
+            List<PrescriptionDTO> recentPrescriptions = prescriptionDAO.getRecentPrescriptionsByDoctorID(doctorID);
+            List<MedicalRecordDTO> recentRecords = medicalRecordDAO.getRecentMedicalRecordsByDoctorID(doctorID);
+            List<String> topDiagnoses = medicalRecordDAO.getTopDiagnosesByDoctorID(doctorID);
 
-        // 🔹 Gửi sang JSP
-        request.setAttribute("myPatientAppointmentList", myPatientAppointmentList);
-        request.setAttribute("myPatientMedicalRecordList", myPatientMedicalRecordList);
-        request.setAttribute("myPatientPrescriptionList", myPatientPrescriptionList);
+            request.setAttribute("doctorName", doctor.getStaffID().getFirstName());
+            request.setAttribute("todayAppointments", todayAppointmentCount);
+            request.setAttribute("totalMedicalRecords", totalMedicalRecordCount);
+            request.setAttribute("totalPrescriptions", totalPrescriptionCount);
+            request.setAttribute("pendingPrescriptions", pendingPrescriptions);
+            request.setAttribute("deliveredPrescriptions", deliveredPrescriptions);
+            request.setAttribute("patientCount", patientCount);
+            request.setAttribute("upcomingAppointments", upcomingAppointments);
+            request.setAttribute("recentPrescriptions", recentPrescriptions);
+            request.setAttribute("recentRecords", recentRecords);
+            request.setAttribute("topDiagnoses", topDiagnoses);
 
-        request.setAttribute("todayAppointmentCount", todayAppointmentCount);
-        request.setAttribute("totalMedicalRecordCount", totalMedicalRecordCount);
-        request.setAttribute("totalPrescriptionCount", totalPrescriptionCount);
+            request.getRequestDispatcher("/WEB-INF/doctor/DoctorDashboard.jsp").forward(request, response);
 
-        request.getRequestDispatcher("/WEB-INF/doctor/DoctorDashboard.jsp").forward(request, response);
+        } catch (Exception e) {
+            request.getSession().setAttribute("error", "An unexpected error occurred while loading your dashboard.");
+            response.sendRedirect(request.getContextPath() + "/error.jsp");
+        }
     }
 
     /**

@@ -16,7 +16,8 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
         <style>
             body {
-                background-color: #f8f9fa;
+                background-color: #f4f7fb;
+                font-family: "Poppins", sans-serif;
             }
             .sidebar {
                 width: 240px;
@@ -32,55 +33,258 @@
                 padding: 12px 20px;
             }
             .sidebar a:hover {
-                background-color: #00D0F1;
+                background-color: #00BFE7;
             }
             .main-content {
                 margin-left: 260px;
                 padding: 25px;
             }
-            .navbar {
-                background: white;
-                border-bottom: 1px solid #dee2e6;
+            .card {
+                border: none;
+                border-radius: 12px;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.08);
             }
-            #Logout {
+            .card-header {
+                background-color: #1B5A90;
+                color: white;
+                border-top-left-radius: 12px;
+                border-top-right-radius: 12px;
+            }
+            .dashboard-card {
+                transition: transform 0.2s ease, box-shadow 0.2s ease;
+            }
+            .dashboard-card:hover {
+                transform: translateY(-4px);
+                box-shadow: 0 6px 14px rgba(0,0,0,0.15);
+            }
+            .stat-icon {
+                font-size: 2.3rem;
+                color: #1B5A90;
+            }
+            .stat-value {
+                font-size: 1.8rem;
+                font-weight: 600;
+            }
+            .logout-btn {
                 color: red;
                 border-color: red;
             }
-            #Logout:hover {
+            .logout-btn:hover {
                 background-color: red;
                 color: white;
-            }
-            .badge {
-                font-size: 0.85rem;
-                padding: 6px 10px;
-                border-radius: 8px;
-            }
-            .table th {
-                color: #1B5A90;
-            }
-            .card {
-                border-radius: 10px;
-                box-shadow: 0 2px 5px rgba(0,0,0,0.08);
             }
         </style>
     </head>
     <body>
         <%@include file="../includes/DoctorDashboardSidebar.jsp" %>
 
-        <!-- Main Content -->
         <div class="main-content">
-
             <!-- Navbar -->
             <nav class="navbar navbar-light justify-content-between mb-4">
                 <h3 class="fw-bold text-primary mb-0">
                     <i class="fa-solid fa-user-doctor me-2"></i>Doctor Dashboard
                 </h3>
-                <a href="${pageContext.request.contextPath}/logout" class="btn btn-outline-danger" id="Logout">
+                <a href="${pageContext.request.contextPath}/logout" class="btn btn-outline-danger logout-btn">
                     <i class="fa-solid fa-right-from-bracket"></i> Logout
                 </a>
             </nav>
-                    <span style="display: flex; align-content: center; justify-content: center; font-size: 100px;">Place Holder...</span>
-        </div>
 
-    </body>
-</html>
+            <!-- Welcome Section -->
+            <div class="alert alert-primary shadow-sm" role="alert">
+                <i class="fa-solid fa-stethoscope me-2"></i>
+                Welcome back, <strong>${sessionScope.doctorName}</strong>!  
+                Here’s an overview of your current medical activities.
+            </div>
+
+            <!-- Summary Statistics -->
+            <div class="row g-4 mb-4">
+                <div class="col-md-3">
+                    <div class="card dashboard-card text-center p-3">
+                        <i class="fa-solid fa-calendar-check stat-icon mb-2"></i>
+                        <div class="stat-value">${todayAppointments}</div>
+                        <p class="mb-0 text-muted">Appointments Today</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card dashboard-card text-center p-3">
+                        <i class="fa-solid fa-prescription-bottle-medical stat-icon mb-2"></i>
+                        <div class="stat-value">${pendingPrescriptions}</div>
+                        <p class="mb-0 text-muted">Pending Prescriptions</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card dashboard-card text-center p-3">
+                        <i class="fa-solid fa-users stat-icon mb-2"></i>
+                        <div class="stat-value">${patientCount}</div>
+                        <p class="mb-0 text-muted">Active Patients</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card dashboard-card text-center p-3">
+                        <i class="fa-solid fa-file-medical stat-icon mb-2"></i>
+                        <div class="stat-value">${totalMedicalRecords}</div>
+                        <p class="mb-0 text-muted">Medical Records</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Upcoming Appointments Table -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <i class="fa-solid fa-calendar-days me-2"></i>Upcoming Appointments
+                </div>
+                <div class="card-body">
+                    <c:if test="${empty upcomingAppointments}">
+                        <p class="text-muted text-center mb-0">No upcoming appointments.</p>
+                    </c:if>
+                    <c:if test="${not empty upcomingAppointments}">
+                        <table class="table table-hover align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Patient</th>
+                                    <th>Date</th>
+                                    <th>Time</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <c:forEach var="app" items="${upcomingAppointments}">
+                                    <tr>
+                                        <td>${app.patientName}</td>
+                                        <td><fmt:formatDate value="${app.dateBegin}" pattern="dd MMM yyyy"/></td>
+                                        <td><fmt:formatDate value="${app.dateBegin}" pattern="HH:mm"/></td>
+                                        <td>
+                                            <span class="badge
+                                                  <c:choose>
+                                                      <c:when test="${app.appointmentStatus eq 'Pending'}">bg-warning text-dark</c:when>
+                                                      <c:when test="${app.appointmentStatus eq 'Approved'}">bg-primary</c:when>
+                                                      <c:when test="${app.appointmentStatus eq 'Completed'}">bg-success</c:when>
+                                                      <c:when test="${app.appointmentStatus eq 'Canceled'}">bg-danger</c:when>
+                                                      <c:otherwise>bg-secondary</c:otherwise>
+                                                  </c:choose>">
+                                                ${app.appointmentStatus}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <a href="${pageContext.request.contextPath}/manage-my-patient-appointment?action=detail&appointmentID=${app.appointmentID}"
+                                               class="btn btn-sm btn-outline-primary">
+                                                <i class="fa-solid fa-eye"></i> View
+                                            </a>
+                                        </td>
+                                    </tr>
+                                </c:forEach>
+                            </tbody>
+                        </table>
+                    </c:if>
+                </div>
+            </div>
+
+            <!-- Recent Prescriptions -->
+            <div class="card">
+                <div class="card-header">
+                    <i class="fa-solid fa-prescription me-2"></i>Recent Prescriptions
+                </div>
+                <div class="card-body">
+                    <c:if test="${empty recentPrescriptions}">
+                        <p class="text-muted text-center mb-0">No recent prescriptions.</p>
+                    </c:if>
+                    <c:if test="${not empty recentPrescriptions}">
+                        <table class="table table-striped align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Patient</th>
+                                    <th>Date</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <c:forEach var="pres" items="${recentPrescriptions}" varStatus="i">
+                                    <tr>
+                                        <td>${i.count}</td>
+                                        <td>${pres.appointmentID.patientID.firstName} ${pres.appointmentID.patientID.lastName}</td>
+                                        <td><fmt:formatDate value="${pres.dateCreate}" pattern="dd MMM yyyy HH:mm"/></td>
+                                        <td>
+                                            <span class="badge
+                                                  ${pres.prescriptionStatus eq 'Pending' ? 'bg-warning text-dark' : 
+                                                    pres.prescriptionStatus eq 'Delivered' ? 'bg-success' : 
+                                                    'bg-secondary'}">
+                                                      ${pres.prescriptionStatus}
+                                                  </span>
+                                            </td>
+                                            <td>
+                                                <a href="${pageContext.request.contextPath}/manage-my-patient-prescription?action=detail&prescriptionID=${pres.prescriptionID}"
+                                                   class="btn btn-sm btn-outline-primary">
+                                                    <i class="fa-solid fa-eye"></i> View
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    </c:forEach>
+                                </tbody>
+                            </table>
+                        </c:if>
+                    </div>
+                </div>
+                <!-- Recent Medical Records -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <i class="fa-solid fa-notes-medical me-2"></i>Recent Medical Records
+                    </div>
+                    <div class="card-body">
+                        <c:if test="${empty recentRecords}">
+                            <p class="text-muted text-center mb-0">No recent medical records.</p>
+                        </c:if>
+                        <c:if test="${not empty recentRecords}">
+                            <table class="table table-striped align-middle">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Patient</th>
+                                        <th>Diagnosis</th>
+                                        <th>Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <c:forEach var="record" items="${recentRecords}" varStatus="i">
+                                        <tr>
+                                            <td>${i.count}</td>
+                                            <td>${record.appointmentID.patientID.firstName} ${record.appointmentID.patientID.lastName}</td>
+                                            <td>${record.diagnosis}</td>
+                                            <td><fmt:formatDate value="${record.dateCreate}" pattern="dd MMM yyyy HH:mm"/></td>
+                                        </tr>
+                                    </c:forEach>
+                                </tbody>
+                            </table>
+                        </c:if>
+                    </div>
+                </div>
+
+                <!-- Top Diagnoses -->
+                <div class="card mb-5">
+                    <div class="card-header">
+                        <i class="fa-solid fa-heart-pulse me-2"></i>Top Diagnoses (Most Common Conditions)
+                    </div>
+                    <div class="card-body">
+                        <c:if test="${empty topDiagnoses}">
+                            <p class="text-muted text-center mb-0">No diagnosis data available.</p>
+                        </c:if>
+                        <c:if test="${not empty topDiagnoses}">
+                            <ul class="list-group list-group-flush">
+                                <c:forEach var="diag" items="${topDiagnoses}">
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        ${diag}
+                                        <span class="badge bg-primary rounded-pill"><i class="fa-solid fa-check"></i></span>
+                                    </li>
+                                </c:forEach>
+                            </ul>
+                        </c:if>
+                    </div>
+                </div>
+
+            </div>
+
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        </body>
+    </html>
