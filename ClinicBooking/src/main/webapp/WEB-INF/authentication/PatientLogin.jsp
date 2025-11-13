@@ -53,8 +53,7 @@
                     <button type="submit" class="btn btn-success w-100 rounded-pill">Login</button>
                 </form>
 
-                <form action="${pageContext.request.contextPath}/patient-login" method="POST" class="mt-3">
-                    <input type="hidden" name="action" value="forgot-password">
+                <form action="${pageContext.request.contextPath}/forgot-password" method="GET" class="mt-3">
                     <button type="submit" class="btn btn-outline-primary w-100 rounded-pill">Forgot password?</button>
                 </form>
 
