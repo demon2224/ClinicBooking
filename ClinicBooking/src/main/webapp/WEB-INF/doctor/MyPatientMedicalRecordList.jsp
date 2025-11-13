@@ -81,7 +81,7 @@
 
         <!-- Main Content -->
         <div class="main-content">
-            <nav class="navbar navbar-light justify-content-between px-3 py-2 border-bottom">
+            <nav class="navbar navbar-light justify-content-between px-3 py-2 border-bottom shadow-sm">
                 <h3 class="fw-bold text-primary mb-0 d-flex align-items-center">
                     <i class="fa-solid fa-file-medical me-2"></i>
                     Manage My Patient Medical Records

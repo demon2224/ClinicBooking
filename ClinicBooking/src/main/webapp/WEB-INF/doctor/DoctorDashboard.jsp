@@ -73,6 +73,11 @@
                 background-color: red;
                 color: white;
             }
+            .navbar {
+                background: white;
+                border-bottom: 1px solid #dee2e6;
+                padding: 12px 24px;
+            }
         </style>
     </head>
     <body>
@@ -80,7 +85,7 @@
 
         <div class="main-content">
             <!-- Navbar -->
-            <nav class="navbar navbar-light justify-content-between mb-4">
+            <nav class="navbar navbar-light justify-content-between mb-4 px-3 py-2 border-bottom shadow-sm">
                 <h3 class="fw-bold text-primary mb-0">
                     <i class="fa-solid fa-user-doctor me-2"></i>Doctor Dashboard
                 </h3>
@@ -228,7 +233,7 @@
                     </div>
                 </div>
                 <!-- Recent Medical Records -->
-                <div class="card mb-4">
+                <div class="card mb-4 mt-3">
                     <div class="card-header">
                         <i class="fa-solid fa-notes-medical me-2"></i>Recent Medical Records
                     </div>
