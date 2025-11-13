@@ -46,11 +46,11 @@ public class DoctorDAO extends DBContext {
         ResultSet rs = null;
         try {
             rs = executeSelectQuery(query, params);
-            
+
             if (rs.next()) {
-                
-                StaffDTO staff = new StaffDTO();      
-                
+
+                StaffDTO staff = new StaffDTO();
+
                 staff.setStaffID(rs.getInt("StaffID"));
                 staff.setJobStatus(rs.getString("JobStatus"));
                 staff.setRole(rs.getString("Role"));
@@ -67,19 +67,19 @@ public class DoctorDAO extends DBContext {
                 staff.setPhoneNumber(rs.getString("PhoneNumber"));
                 staff.setEmail(rs.getString("Email"));
                 staff.setHidden(rs.getBoolean("Hidden"));
-                
+
                 SpecialtyDTO specialty = new SpecialtyDTO();
                 specialty.setSpecialtyID(rs.getInt("SpecialtyID"));
                 specialty.setSpecialtyName(rs.getString("SpecialtyName"));
                 specialty.setPrice(rs.getInt("Price"));
-                
+
                 doctor = new DoctorDTO();
-                
+
                 doctor.setStaffID(staff);
                 doctor.setDoctorID(rs.getInt("DoctorID"));
                 doctor.setYearExperience(rs.getInt("YearExperience"));
-                
-                
+                doctor.setSpecialtyID(specialty);
+
             }
         } catch (SQLException ex) {
             Logger.getLogger(DoctorDAO.class.getName()).log(Level.SEVERE, null, ex);
@@ -741,5 +741,28 @@ public class DoctorDAO extends DBContext {
             db.closeResources(rs);
         }
     }
+
+    public List<SpecialtyDTO> getAllSpecialtiesWithPrice() {
+        List<SpecialtyDTO> list = new ArrayList<>();
+        String sql = "SELECT SpecialtyID, SpecialtyName, Price FROM Specialty ORDER BY SpecialtyName";
+        ResultSet rs = null;
+        try {
+            rs = executeSelectQuery(sql, new Object[]{});
+            while (rs != null && rs.next()) {
+                SpecialtyDTO sp = new SpecialtyDTO();
+                sp.setSpecialtyID(rs.getInt("SpecialtyID"));
+                sp.setSpecialtyName(rs.getString("SpecialtyName"));
+                sp.setPrice(rs.getDouble("Price"));
+                list.add(sp);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            closeResources(rs);
+        }
+        return list;
+    }
+    
+    
 
 }

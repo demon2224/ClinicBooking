@@ -4,190 +4,302 @@
  */
 package controller.admin;
 
-import dao.AdminDAO;
 import dao.DoctorDAO;
+import dao.StaffDAO;
 import java.io.IOException;
+import java.util.List;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import model.DegreeDTO;
-import model.DoctorDTO;
-import model.StaffDTO;
+import model.*;
 
-/**
- *
- * @author Ngo Quoc Hung - CE191184
- */
 public class AdminManageAccountController extends HttpServlet {
 
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+    protected void doGet(HttpServletRequest req, HttpServletResponse res)
             throws ServletException, IOException {
 
-        AdminDAO adminDAO = new AdminDAO();
+        StaffDAO staffDAO = new StaffDAO();
         DoctorDAO doctorDAO = new DoctorDAO();
+        String action = req.getParameter("action");
+        String id = req.getParameter("id");
 
-        String action = request.getParameter("action");
-        String idParam = request.getParameter("id");
+        clearSessionErrors(req);
+
+        try {
+            if ("add".equalsIgnoreCase(action)) {
+                showAddPage(req, res, doctorDAO);
+                return;
+            }
+
+            if ("edit".equalsIgnoreCase(action)) {
+                showEditPage(req, res, staffDAO, doctorDAO, id);
+                return;
+            }
+
+            if ("view".equalsIgnoreCase(action)) {
+                showDetailPage(req, res, staffDAO, doctorDAO, id);
+                return;
+            }
+
+            // Default: Show all
+            String search = req.getParameter("searchQuery");
+            List<StaffDTO> list = (search != null && !search.trim().isEmpty())
+                    ? staffDAO.searchStaffAccounts(search.trim())
+                    : staffDAO.getAllStaffAccounts();
+            req.setAttribute("staffList", list);
+            req.setAttribute("searchQuery", search);
+            req.getRequestDispatcher("/WEB-INF/admin/AdminManageAccountList.jsp").forward(req, res);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            res.sendError(500, "Unexpected error occurred.");
+        }
+    }
+
+    private void showAddPage(HttpServletRequest req, HttpServletResponse res, DoctorDAO dao)
+            throws ServletException, IOException {
+        req.setAttribute("specialties", dao.getAllSpecialtiesWithPrice());
+        req.setAttribute("staff", new StaffDTO());
+        req.getRequestDispatcher("/WEB-INF/admin/AddAccount.jsp").forward(req, res);
+    }
+
+    private void showEditPage(HttpServletRequest req, HttpServletResponse res,
+            StaffDAO staffDAO, DoctorDAO doctorDAO, String id)
+            throws ServletException, IOException {
+        int staffID = parseIntSafe(id);
+        StaffDTO staff = staffDAO.getStaffById(staffID);
+        if (staff == null) {
+            res.sendRedirect(req.getContextPath() + "/admin-manage-account");
+            return;
+        }
+
+        req.setAttribute("staff", staff);
+        req.setAttribute("specialties", doctorDAO.getAllSpecialtiesWithPrice());
+
+        if ("Doctor".equalsIgnoreCase(staff.getRole())) {
+            prepareDoctorData(req, doctorDAO, staffID);
+        }
+
+        req.getRequestDispatcher("/WEB-INF/admin/EditAccount.jsp").forward(req, res);
+    }
+
+    private void showDetailPage(HttpServletRequest req, HttpServletResponse res,
+            StaffDAO staffDAO, DoctorDAO doctorDAO, String id)
+            throws ServletException, IOException {
+        int staffID = parseIntSafe(id);
+        StaffDTO staff = staffDAO.getStaffById(staffID);
+        if (staff == null) {
+            res.sendRedirect(req.getContextPath() + "/admin-manage-account");
+            return;
+        }
+
+        req.setAttribute("staff", staff);
+
+        if ("Doctor".equalsIgnoreCase(staff.getRole())) {
+            prepareDoctorData(req, doctorDAO, staffID);
+        }
+
+        req.getRequestDispatcher("/WEB-INF/admin/AccountDetail.jsp").forward(req, res);
+    }
+
+    // 🔹 Gom logic Doctor chung cho Edit & Detail
+    private void prepareDoctorData(HttpServletRequest req, DoctorDAO doctorDAO, int staffID) {
+        DoctorDTO doctor = doctorDAO.getDoctorByStaffID(staffID);
+        List<DegreeDTO> degrees = doctorDAO.getDoctorDegrees(
+                doctor != null ? doctor.getDoctorID() : 0);
+        List<SpecialtyDTO> specialties = doctorDAO.getAllSpecialtiesWithPrice();
+
+
+        if (doctor != null) {
+            SpecialtyDTO doctorSpec = doctor.getSpecialtyID(); 
+
+            if (doctorSpec != null) {
+                for (SpecialtyDTO sp : specialties) {
+                    if (sp.getSpecialtyID() == doctorSpec.getSpecialtyID()) {
+                        doctor.setSpecialtyID(sp);
+                        break;
+                    }
+                }
+            } else {
+                doctor.setSpecialtyID(new SpecialtyDTO());
+            }
+        }
+
+        req.setAttribute("doctor", doctor);
+        req.setAttribute("degrees", degrees);
+    }
+
+    // ==================== POST ====================
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse res)
+            throws ServletException, IOException {
+        StaffDAO staffDAO = new StaffDAO();
+        DoctorDAO doctorDAO = new DoctorDAO();
+        String action = req.getParameter("action");
+
+        try {
+            if ("delete".equalsIgnoreCase(action)) {
+                int staffID = parseIntSafe(req.getParameter("staffID"));
+                staffDAO.deleteStaffAccount(staffID);
+                res.sendRedirect(req.getContextPath() + "/admin-manage-account");
+                return;
+            }
+
+            if ("add".equalsIgnoreCase(action) || "update".equalsIgnoreCase(action)) {
+                handleSave(req, res, staffDAO, doctorDAO, action);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            res.sendError(500, "Error processing account creation/update.");
+        }
+    }
+
+    private void handleSave(HttpServletRequest req, HttpServletResponse res,
+            StaffDAO staffDAO, DoctorDAO doctorDAO, String action)
+            throws ServletException, IOException {
+        boolean hasError = validateForm(req, action);
+        if (hasError) {
+            if ("add".equalsIgnoreCase(action)) {
+                res.sendRedirect(req.getContextPath() + "/admin-manage-account?action=add");
+            } else {
+                res.sendRedirect(req.getContextPath() + "/admin-manage-account?action=edit&id=" + req.getParameter("staffID"));
+            }
+            return;
+        }
+
+        // Lấy data
+        int staffID = parseIntSafe(req.getParameter("staffID"));
+        String account = req.getParameter("accountName");
+        String password = req.getParameter("accountPassword");
+        String fullName = req.getParameter("fullName");
+        String role = req.getParameter("role");
+        String phone = req.getParameter("phoneNumber");
+        String job = req.getParameter("jobStatus");
+        String dob = req.getParameter("dob");
+        boolean gender = Boolean.parseBoolean(req.getParameter("gender"));
+        String address = req.getParameter("userAddress");
+        boolean hidden = "1".equals(req.getParameter("hidden"));
+
+        if ("update".equalsIgnoreCase(action)) {
+            staffDAO.updateStaffAccount(staffID, account, fullName, role, phone, job, dob, gender, address, hidden);
+        } else {
+            staffID = staffDAO.addStaffAccount(account, password, fullName, role, phone, job, dob, gender, address, hidden);
+        }
+
+        if ("Doctor".equalsIgnoreCase(role)) {
+            updateDoctorData(req, doctorDAO, staffID);
+        }
+
+        res.sendRedirect(req.getContextPath() + "/admin-manage-account");
+    }
+
+    private void updateDoctorData(HttpServletRequest req, DoctorDAO dao, int staffID) {
+        int specialtyID = parseIntSafe(req.getParameter("specialtyID"));
+        int exp = parseIntSafe(req.getParameter("yearExperience"));
+        double price = parseDoubleSafe(req.getParameter("price"));
+        String[] degrees = req.getParameterValues("degreeNames");
+
+        if (staffID > 0) {
+            if (dao.getDoctorByStaffID(staffID) != null) {
+                dao.updateDoctorInfo(staffID, specialtyID, exp, price, degrees);
+            } else {
+                dao.addDoctorInfo(staffID, specialtyID, exp, price, degrees);
+            }
+        }
+    }
+    // ==================== Validation ====================
+
+    private boolean validateForm(HttpServletRequest request, String action) {
+        clearSessionErrors(request);
+        boolean hasError = false;
+
+        if (validate.AdminValidate.isEmpty(request.getParameter("accountName"))) {
+            request.getSession().setAttribute("usernameErrorMsg", "Username cannot be empty.");
+            hasError = true;
+        }
 
         if ("add".equalsIgnoreCase(action)) {
-            List<String[]> specialties = doctorDAO.getAllSpecialties();
-
-            // 🔹 Thêm map lưu SpecialtyID → Price
-            Map<String, Double> specialtyPrices = new HashMap<>();
-            String sql = "SELECT SpecialtyID, Price FROM Specialty";
-            ResultSet rs = doctorDAO.executeSelectQuery(sql);
-            try {
-                while (rs != null && rs.next()) {
-                    specialtyPrices.put(String.valueOf(rs.getInt("SpecialtyID")), rs.getDouble("Price"));
-                }
-            } catch (SQLException ex) {
-                Logger.getLogger(AdminManageAccountController.class.getName()).log(Level.SEVERE, null, ex);
+            String password = request.getParameter("accountPassword");
+            if (validate.AdminValidate.isEmpty(password)) {
+                request.getSession().setAttribute("passwordErrorMsg", "Password cannot be empty.");
+                hasError = true;
             }
-            doctorDAO.closeResources(rs);
-
-            request.setAttribute("specialties", specialties);
-            request.setAttribute("specialtyPrices", specialtyPrices);
-
-            request.getRequestDispatcher("/WEB-INF/admin/AddAccount.jsp").forward(request, response);
-            return;
         }
 
-        if ("edit".equalsIgnoreCase(action) && idParam != null) {
-            int staffID = Integer.parseInt(idParam);
-            StaffDTO staff = adminDAO.getStaffById(staffID);
-            request.setAttribute("staff", staff);
+        if (validate.AdminValidate.isEmpty(request.getParameter("fullName"))) {
+            request.getSession().setAttribute("fullNameErrorMsg", "Full name cannot be empty.");
+            hasError = true;
+        }
 
-            if ("Doctor".equalsIgnoreCase(staff.getRole())) {
-                DoctorDTO doctor = doctorDAO.getDoctorById(staffID);
-                List<DegreeDTO> degrees = doctorDAO.getDoctorDegrees(doctor.getDoctorID());
-                request.setAttribute("doctor", doctor);
-                request.setAttribute("degrees", degrees);
-                request.setAttribute("specialties", doctorDAO.getAllSpecialties());
+        if (validate.AdminValidate.isEmpty(request.getParameter("phoneNumber"))) {
+            request.getSession().setAttribute("phoneErrorMsg", "Phone number cannot be empty.");
+            hasError = true;
+        }
+
+        if (validate.AdminValidate.isEmpty(request.getParameter("userAddress"))) {
+            request.getSession().setAttribute("addressErrorMsg", "Address cannot be empty.");
+            hasError = true;
+        }
+
+        if (validate.AdminValidate.isEmpty(request.getParameter("dob"))) {
+            request.getSession().setAttribute("dobErrorMsg", "Date of birth cannot be empty.");
+            hasError = true;
+        }
+
+        String role = request.getParameter("role");
+        if (validate.AdminValidate.isEmpty(role)) {
+            request.getSession().setAttribute("roleErrorMsg", "Please select role.");
+            hasError = true;
+        }
+
+        if ("Doctor".equalsIgnoreCase(role)) {
+            String specialtyID = request.getParameter("specialtyID");
+            String yearExp = request.getParameter("yearExperience");
+            String price = request.getParameter("price");
+
+            if (validate.AdminValidate.isEmpty(specialtyID)) {
+                request.getSession().setAttribute("specialtyErrorMsg", "Please select a specialty.");
+                hasError = true;
             }
-
-            request.getRequestDispatcher("/WEB-INF/admin/EditAccount.jsp").forward(request, response);
-            return;
-        }
-
-        if (idParam != null) {
-            int staffID = Integer.parseInt(idParam);
-            StaffDTO staff = adminDAO.getStaffById(staffID);
-            request.setAttribute("staff", staff);
-
-            if ("Doctor".equalsIgnoreCase(staff.getRole())) {
-                DoctorDTO doctor = doctorDAO.getDoctorById(staffID);
-                List<DegreeDTO> degrees = doctorDAO.getDoctorDegrees(doctor.getDoctorID());
-                request.setAttribute("doctor", doctor);
-                request.setAttribute("degrees", degrees);
+            if (validate.AdminValidate.isEmpty(yearExp)) {
+                request.getSession().setAttribute("experienceErrorMsg", "Experience cannot be empty.");
+                hasError = true;
             }
-
-            request.getRequestDispatcher("/WEB-INF/admin/AccountDetail.jsp").forward(request, response);
-            return;
+            if (validate.AdminValidate.isEmpty(price)) {
+                request.getSession().setAttribute("priceErrorMsg", "Price cannot be empty.");
+                hasError = true;
+            }
         }
 
-        String searchQuery = request.getParameter("searchQuery");
-        List<StaffDTO> staffList;
-
-        if (searchQuery != null && !searchQuery.trim().isEmpty()) {
-            staffList = adminDAO.searchStaffAccounts(searchQuery.trim());
-        } else {
-            staffList = adminDAO.getAllStaffAccounts();
-        }
-
-        request.setAttribute("staffList", staffList);
-        request.setAttribute("searchQuery", searchQuery);
-        request.getRequestDispatcher("/WEB-INF/admin/AdminManageAccountList.jsp").forward(request, response);
+        return hasError;
     }
 
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-
-        String action = request.getParameter("action");
-        AdminDAO dao = new AdminDAO();
-        DoctorDAO doctorDAO = new DoctorDAO();
-
-        if ("delete".equalsIgnoreCase(action)) {
-            int staffID = Integer.parseInt(request.getParameter("staffID"));
-            dao.deleteStaffAccount(staffID);
-
-        } else if ("update".equalsIgnoreCase(action)) {
-            int staffID = Integer.parseInt(request.getParameter("staffID"));
-            String accountName = request.getParameter("accountName");
-            String fullName = request.getParameter("fullName");
-            String role = request.getParameter("role");
-            String phone = request.getParameter("phoneNumber");
-            String dob = request.getParameter("dob");
-            String jobStatus = request.getParameter("jobStatus");
-            boolean gender = Boolean.parseBoolean(request.getParameter("gender"));
-            String address = request.getParameter("userAddress");
-            boolean hidden = "1".equals(request.getParameter("hidden"));
-
-            dao.updateStaffAccount(staffID, accountName, fullName, role, phone, jobStatus, dob, gender, address, hidden);
-
-            if ("Doctor".equalsIgnoreCase(role)) {
-                int specialtyID = Integer.parseInt(request.getParameter("specialtyID"));
-                int yearExp = Integer.parseInt(request.getParameter("yearExperience"));
-                double price = Double.parseDouble(request.getParameter("price"));
-                String[] degreeNames = request.getParameterValues("degreeNames");
-                doctorDAO.updateDoctorInfo(staffID, specialtyID, yearExp, price, degreeNames);
-            }
-
-        } else if ("add".equalsIgnoreCase(action)) {
-            String accountName = request.getParameter("accountName");
-            String fullName = request.getParameter("fullName");
-            String role = request.getParameter("role");
-            String phone = request.getParameter("phoneNumber");
-            String dob = request.getParameter("dob");
-            String jobStatus = request.getParameter("jobStatus");
-            boolean gender = Boolean.parseBoolean(request.getParameter("gender"));
-            String address = request.getParameter("userAddress");
-            boolean hidden = "1".equals(request.getParameter("hidden"));
-
-            int newStaffID = dao.addStaffAccount(accountName, fullName, role, phone, jobStatus, dob, gender, address, hidden);
-
-            // Thêm thông tin Doctor (nếu vai trò là bác sĩ)
-            if ("Doctor".equalsIgnoreCase(role)) {
-                int specialtyID = Integer.parseInt(request.getParameter("specialtyID"));
-                int yearExp = Integer.parseInt(request.getParameter("yearExperience"));
-                String priceStr = request.getParameter("price");
-                double price = 0;
-                if (priceStr != null && !priceStr.trim().isEmpty()) {
-                    price = Double.parseDouble(priceStr);
-                }
-
-                String[] degreeNames = request.getParameterValues("degreeNames");
-
-                doctorDAO.addDoctorInfo(newStaffID, specialtyID, yearExp, price, degreeNames);
-            }
+    // ==================== Utils ====================
+    private int parseIntSafe(String v) {
+        try {
+            return (v != null && !v.isBlank()) ? Integer.parseInt(v) : 0;
+        } catch (NumberFormatException e) {
+            return 0;
         }
-
-        List<StaffDTO> staffList = dao.getAllStaffAccounts();
-        request.setAttribute("staffList", staffList);
-        request.getRequestDispatcher("/WEB-INF/admin/AdminManageAccountList.jsp").forward(request, response);
     }
 
-    @Override
-    public String getServletInfo() {
-        return "Controller for Admin to manage Staff/Doctor accounts.";
+    private double parseDoubleSafe(String v) {
+        try {
+            return (v != null && !v.isBlank()) ? Double.parseDouble(v) : 0;
+        } catch (NumberFormatException e) {
+            return 0;
+        }
     }
 
+    private void clearSessionErrors(HttpServletRequest req) {
+        String[] keys = {"usernameErrorMsg", "passwordErrorMsg", "fullNameErrorMsg",
+            "roleErrorMsg", "phoneErrorMsg", "dobErrorMsg", "addressErrorMsg",
+            "specialtyErrorMsg", "experienceErrorMsg", "priceErrorMsg"};
+        for (String k : keys) {
+            req.getSession().removeAttribute(k);
+        }
+    }
 }

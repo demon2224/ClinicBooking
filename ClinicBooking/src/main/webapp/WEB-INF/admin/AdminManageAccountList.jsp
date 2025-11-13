@@ -15,6 +15,7 @@
         <title>Admin Manage Account</title>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
         <style>
             body {
                 background-color: #f8f9fa;
@@ -39,31 +40,44 @@
                 margin-left: 260px;
                 padding: 25px;
             }
-            .card {
-                border-radius: 10px;
-            }
-            .table img {
-                border-radius: 50%;
-                width: 40px;
-                height: 40px;
-            }
-            .status-toggle {
-                width: 40px;
-                height: 20px;
-            }
             .navbar {
                 background: white;
                 border-bottom: 1px solid #dee2e6;
+                padding: 12px 24px;
+            }
+            .card {
+                border-radius: 10px;
+                box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+            }
+            .card-header {
+                background-color: #1B5A90;
+                color: white;
+                font-weight: bold;
+                border-top-left-radius: 10px;
+                border-top-right-radius: 10px;
+            }
+            .table th {
+                background-color: #f1f3f5;
+                font-weight: 600;
+                vertical-align: middle;
+            }
+            .table td {
+                vertical-align: middle;
             }
             #Logout {
                 color: red;
                 border-color: red;
+                transition: all 0.3s ease;
             }
             #Logout:hover {
                 background-color: red;
                 color: white;
             }
-            /* === Role badge colors === */
+            .badge-role {
+                font-size: 0.85rem;
+                padding: 6px 10px;
+                border-radius: 8px;
+            }
             .badge-doctor {
                 background-color: #007bff;
             }
@@ -84,104 +98,145 @@
         <div class="sidebar">
             <h4 class="text-center mt-3 mb-4">CLINIC</h4>
             <a href="${pageContext.request.contextPath}/admin-dashboard"><i class="fa-solid fa-gauge me-2"></i>Dashboard</a>
-            <a href="${pageContext.request.contextPath}/admin-manage-account"><i class="fa-solid fa-calendar-days me-2"></i>Manage Account</a>
+            <a href="${pageContext.request.contextPath}/admin-manage-account"><i class="fa-solid fa-users me-2"></i>Manage Account</a>
         </div>
 
-        <!-- Main content -->
+        <!-- Main Content -->
         <div class="main-content">
-            <nav class="navbar navbar-light">
-                <div class="container-fluid">
-                    <form class="d-flex w-50" method="get" action="admin-manage-account">
-                        <input class="form-control me-2" type="search" name="searchQuery" placeholder="Search here"
-                               value="${param.searchQuery}">
-                        <button type="submit" class="btn btn-outline-primary" id="searchBtn">
-                            <i class="fa-solid fa-magnifying-glass"></i>
-                        </button>
-                    </form>
-                    <div>
-                        <button class="btn btn-submit" id="Logout" type="submit">Logout</button>
-                    </div>
-                </div>
+            <nav class="navbar navbar-light justify-content-between px-3 py-2 border-bottom shadow-sm">
+                <h3 class="fw-bold text-primary mb-0 d-flex align-items-center">
+                    <i class="fa-solid fa-users me-2"></i>
+                    Manage Accounts
+                </h3>
+                <form class="d-flex align-items-center" method="get" action="${pageContext.request.contextPath}/admin-manage-account">
+                    <input class="form-control me-2" type="text" name="searchQuery" placeholder="Search by username or name..." value="${param.searchQuery}">
+                    <button class="btn btn-outline-primary me-3 d-flex align-items-center" type="submit">
+                        <i class="fa-solid fa-magnifying-glass me-2"></i>Search
+                    </button>
+                    <a href="${pageContext.request.contextPath}/logout"
+                       class="btn btn-outline-danger d-flex align-items-center" id="Logout">
+                        <i class="fa-solid fa-right-from-bracket me-2"></i>Logout
+                    </a>
+                </form>
             </nav>
 
-            <div class="container-fluid mt-4">
-                <!-- Appointment List -->
-                <div class="card mb-4">
-                    <div class="card-header bg-white d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0">Account List</h5>   
-                        <!-- Add Account button -->
-                        <a href="#" class="btn btn-primary">
-                            <i class="fa-solid fa-plus me-1"></i> Add
-                        </a>
-                    </div>
-                    <div class="table-responsive">
-                        <table class="table table-hover table-bordered align-middle text-center">
-                            <thead class="table-primary">
+            <!-- Account List -->
+            <div class="card mt-4">
+                <div class="card-header">
+                    <i class="fa-solid fa-list me-2"></i>Account List
+                    <a href="${pageContext.request.contextPath}/admin-manage-account?action=add"
+                       class="btn btn-light btn-sm float-end text-primary fw-bold">
+                        <i class="fa-solid fa-plus me-1"></i> Add
+                    </a>
+                </div>
+
+                <div class="card-body p-4">
+                    <table class="table table-hover align-middle text-center">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Username</th>
+                                <th>Full Name</th>
+                                <th>Role</th>
+                                <th>Phone</th>
+                                <th>Date Created</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <c:forEach var="s" items="${staffList}" varStatus="loop">
                                 <tr>
-                                    <th>#</th>
-                                    <th>Username</th>
-                                    <th>Full Name</th>
-                                    <th>Role</th>
-                                    <th>Phone</th>
-                                    <th>Date Created</th>
-                                    <th>Status</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <c:forEach var="s" items="${staffList}" varStatus="loop">
-                                    <tr>
-                                        <td>${loop.index + 1}</td>
-                                        <td>${s.accountName}</td>
-                                        <td>${s.firstName}
-                                            ${s.lastName}
-                                        </td>
-                                        <td>
-                                            <span class="badge
-                                                  <c:choose>
-                                                      <c:when test="${s.role eq 'Doctor'}">badge-doctor</c:when>
-                                                      <c:when test="${s.role eq 'Pharmacist'}">badge-pharmacist</c:when>
-                                                      <c:when test="${s.role eq 'Admin'}">badge-admin</c:when>
-                                                      <c:when test="${s.role eq 'Receptionist'}">badge-receptionist</c:when>
-                                                      <c:otherwise>bg-secondary</c:otherwise>
-                                                  </c:choose>">
-                                                ${s.role}
-                                            </span>
-                                        </td>
-                                        <td>${s.phoneNumber}</td>
-                                        <td><fmt:formatDate value="${s.daycreated}" pattern="yyyy-MM-dd HH:mm" /></td>
-                                        <td>
-                                            <span class="badge ${s.hidden ? 'bg-danger' : 'bg-success'}">
-                                                ${s.hidden ? 'Inactive' : 'Active'}
-                                            </span>
-                                        </td>
-                                        <td>
-                                            <a href="admin-manage-account?id=${s.staffID}" class="btn btn-sm btn-info text-white">
-                                                <i class="fa-solid fa-eye"></i> View Detail
+                                    <td>${loop.count}</td>
+                                    <td>${s.accountName}</td>
+                                    <td>${s.firstName} ${s.lastName}</td>
+                                    <td>
+                                        <span class="badge
+                                              <c:choose>
+                                                  <c:when test="${s.role eq 'Doctor'}">badge-doctor</c:when>
+                                                  <c:when test="${s.role eq 'Pharmacist'}">badge-pharmacist</c:when>
+                                                  <c:when test="${s.role eq 'Admin'}">badge-admin</c:when>
+                                                  <c:when test="${s.role eq 'Receptionist'}">badge-receptionist</c:when>
+                                                  <c:otherwise>bg-secondary</c:otherwise>
+                                              </c:choose>">
+                                            ${s.role}
+                                        </span>
+                                    </td>
+
+                                    <td>${s.phoneNumber}</td>
+                                    <td><fmt:formatDate value="${s.daycreated}" pattern="yyyy/MM/dd"/></td>
+                                    <td>
+                                        <span class="badge ${s.hidden ? 'bg-danger' : 'bg-success'}">
+                                            ${s.hidden ? 'Inactive' : 'Active'}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex justify-content-center gap-2">
+                                            <a href="admin-manage-account?action=view&id=${s.staffID}" class="btn btn-sm btn-info text-white">
+                                                <i class="fa-solid fa-eye"></i> View Detai
                                             </a>
-                                            <a href="admin-manage-account?action=edit&id=${s.staffID}" class="btn btn-sm btn-primary">
+                                            <a href="admin-manage-account?action=edit&id=${s.staffID}" class="btn btn-sm btn-warning text-white">
                                                 <i class="fa-solid fa-pen"></i> Edit
                                             </a>
-                                            <!-- Delete form -->
-                                            <form action="admin-manage-account" method="post" style="display:inline;">
-                                                <input type="hidden" name="action" value="delete">
-                                                <input type="hidden" name="staffID" value="${s.staffID}">
-                                                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?');">
-                                                    <i class="fa-solid fa-trash"></i> Delete
-                                                </button>
-                                            </form>
-                                        </td>
-                                    </tr>
-                                </c:forEach>
+                                            <button type="button" class="btn btn-sm btn-danger text-white"
+                                                    data-bs-toggle="modal" data-bs-target="#confirmDeleteModal"
+                                                    data-id="${s.staffID}">
+                                                <i class="fa-solid fa-trash"></i> Delete
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </c:forEach>
 
-
-                            </tbody>
-                        </table>
-                    </div>
-                </div>          
+                            <c:if test="${empty staffList}">
+                                <tr>
+                                    <td colspan="8" class="text-center text-muted py-4">
+                                        <i class="fa-solid fa-circle-info me-2"></i>No accounts found.
+                                    </td>
+                                </tr>
+                            </c:if>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
+
+        <!-- Confirm Delete Modal -->
+        <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content border-danger">
+                    <div class="modal-header bg-danger text-white">
+                        <h5 class="modal-title"><i class="fa-solid fa-triangle-exclamation me-2"></i>Confirm Deletion</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body text-center fs-5">
+                        Are you sure you want to delete this account? This action cannot be undone.
+                    </div>
+                    <div class="modal-footer justify-content-center">
+                        <form id="deleteForm" method="post" action="admin-manage-account">
+                            <input type="hidden" name="action" value="delete">
+                            <input type="hidden" name="staffID" id="deleteStaffID">
+                            <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-danger px-4">Delete</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                var modal = document.getElementById('confirmDeleteModal');
+                modal.addEventListener('show.bs.modal', function (event) {
+                    var button = event.relatedTarget;
+                    var staffID = button.getAttribute('data-id');
+                    document.getElementById('deleteStaffID').value = staffID;
+                });
+            });
+        </script>
     </body>
 </html>
+
 
 
