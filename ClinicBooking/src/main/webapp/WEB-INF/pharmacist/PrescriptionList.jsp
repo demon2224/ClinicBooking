@@ -7,17 +7,21 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+
 <!DOCTYPE html>
 <html lang="en">
     <head>
         <meta charset="UTF-8">
-        <title>Doctor Dashboard</title>
+        <title>Pharmacist - Prescription List</title>
+
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assests/css/bootstrap.min.css">
-        <link rel="stylesheet" href="${pageContext.request.contextPath}/assests/css/all.min.css" />
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/assests/css/all.min.css"/>
+
         <style>
             body {
                 background-color: #f8f9fa;
             }
+
             .sidebar {
                 width: 240px;
                 height: 100vh;
@@ -25,6 +29,7 @@
                 color: white;
                 position: fixed;
             }
+
             .sidebar a {
                 display: block;
                 color: white;
@@ -34,148 +39,235 @@
             .sidebar a:hover {
                 background-color: #00D0F1;
             }
+
             .main-content {
                 margin-left: 260px;
                 padding: 25px;
             }
-            .card {
-                border-radius: 10px;
-            }
-            .table img {
-                border-radius: 50%;
-                width: 40px;
-                height: 40px;
-            }
-            .status-toggle {
-                width: 40px;
-                height: 20px;
-            }
+
             .navbar {
                 background: white;
                 border-bottom: 1px solid #dee2e6;
+                padding: 12px 24px;
             }
 
-            #Logout{
+            #Logout {
                 color: red;
                 border-color: red;
-
             }
-            #Logout:hover{
+            #Logout:hover {
                 background-color: red;
                 color: white;
             }
+
+            .card {
+                border-radius: 10px;
+                box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+            }
+
+            .card-header {
+                background-color: #1B5A90;
+                color: white;
+                font-weight: bold;
+                font-size: 1.1rem;
+                border-top-left-radius: 10px;
+                border-top-right-radius: 10px;
+            }
+
+            .badge {
+                font-size: 0.85rem;
+                padding: 6px 10px;
+                border-radius: 8px;
+            }
+
+            .table th {
+                background-color: #f1f3f5;
+                font-weight: 600;
+            }
         </style>
     </head>
+
     <body>
-        <!-- Sidebar -->
+
         <%@include file="../includes/PharmacistDashboardSidebar.jsp" %>
 
-        <!-- Main content -->
         <div class="main-content">
-            <nav class="navbar navbar-light">
-                <div class="container-fluid">
-                    <form class="d-flex w-50" method="get" action="${pageContext.request.contextPath}/pharmacist-manage-prescription">
-                        <input type="hidden" name="action" value="search">
-                        <input class="form-control me-2" type="search" name="search" placeholder="Search here" value="${param.search}">
-                        <button class="btn btn-outline-primary" type="submit">
-                            <i class="fa-solid fa-magnifying-glass"></i>
-                        </button>
-                    </form>
-                    <div>
-                        <button class="btn btn-submit" id="Logout" type="submit">Logout</button>
-                    </div>
-                </div>
+
+            <nav class="navbar navbar-light shadow-sm">
+                <h3 class="fw-bold text-primary d-flex align-items-center mb-0">
+                    <i class="fa-solid fa-prescription-bottle-medical me-2"></i>
+                    Prescription Management
+                </h3>
+
+                <form class="d-flex w-50" method="get" action="${pageContext.request.contextPath}/pharmacist-manage-prescription">
+                    <input type="hidden" name="action" value="search">
+                    <input class="form-control me-2" type="search" name="search" placeholder="Search here..." value="${param.search}">
+                    <button class="btn btn-outline-primary" type="submit">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </button>
+                </form>
+
+                <a href="${pageContext.request.contextPath}/staff-logout"
+                   class="btn btn-outline-danger d-flex align-items-center" id="Logout">
+                    <i class="fa-solid fa-right-from-bracket me-2"></i> Logout
+                </a>
             </nav>
 
-            <div class="container-fluid mt-4">
-                <!-- Appointment List -->
-                <div class="card mb-4">
-                    <div class="card-header bg-white d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0">Prescription List</h5>
-                    </div>
-                    <div class="table-responsive">
-                        <table class="table table-hover table-bordered align-middle text-center">
-                            <thead class="table-primary">
+            <div class="card mt-4">
+                <div class="card-header">
+                    <i class="fa-solid fa-list me-2"></i> Prescription List
+                </div>
+
+                <div class="card-body p-4">
+                    <table class="table table-hover align-middle text-center">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Doctor</th>
+                                <th>Patient</th>
+                                <th>Status</th>
+                                <th>Date Created</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            <c:if test="${empty requestScope.prescriptionList}">
                                 <tr>
-                                    <th>#</th>
-                                    <th>Doctor</th>
-                                    <th>Patient</th>
-                                    <th>Status</th>
-                                    <th>Day Create</th>
-                                    <th>Action</th>
+                                    <td colspan="6" class="text-muted py-4">
+                                        <i class="fa-solid fa-circle-info me-2"></i>No prescription found.
+                                    </td>
                                 </tr>
-                            </thead>
-                            <tbody>
-                                <c:forEach var="prescription" items="${requestScope.prescriptionList}" varStatus="item">
-                                    <tr>
-                                        <td>
-                                            <c:out value="${item.count}"/>
-                                        </td>
-                                        <td>
-                                            <c:out value="${prescription.appointmentID.doctorID.staffID.fullName}"/>
-                                        </td>
-                                        <td>
-                                            <c:out value="${prescription.appointmentID.patientID.fullName}"/>
-                                        </td>
-                                        <td>
+                            </c:if>
+
+                            <c:forEach var="prescription" items="${requestScope.prescriptionList}" varStatus="item">
+                                <tr>
+                                    <td><c:out value="${item.count}"/></td>
+                                    <td><c:out value="${prescription.appointmentID.doctorID.staffID.fullName}"/></td>
+                                    <td><c:out value="${prescription.appointmentID.patientID.fullName}"/></td>
+
+                                    <td>
+                                        <span class="badge
+                                              <c:choose>
+                                                  <c:when test="${prescription.prescriptionStatus == 'Pending'}">bg-warning text-dark</c:when>
+                                                  <c:when test="${prescription.prescriptionStatus == 'Delivered'}">bg-success text-white</c:when>
+                                                  <c:otherwise>bg-danger text-white</c:otherwise>
+                                              </c:choose>">
+                                            <c:out value="${prescription.prescriptionStatus}"/>
+                                        </span>
+                                    </td>
+
+                                    <td><c:out value="${prescription.dateCreateFormatDate}"/></td>
+
+                                    <td>
+                                        <div class="d-flex justify-content-center align-items-center gap-2">
+
+                                            <a href="${pageContext.request.contextPath}/pharmacist-manage-prescription?action=detail&prescriptionID=${prescription.prescriptionID}"
+                                               class="btn btn-info text-white btn-sm action-btn">
+                                                <i class="fa-solid fa-eye"></i> View
+                                            </a>
+
                                             <c:choose>
                                                 <c:when test="${prescription.prescriptionStatus == 'Pending'}">
-                                                    <span class="badge bg-warning text-dark">Pending</span>
+                                                    <button type="button"
+                                                            class="btn btn-success btn-sm action-btn"
+                                                            data-bs-toggle="modal"
+                                                            data-bs-target="#deliverModal"
+                                                            onclick="setDeliverID('${prescription.prescriptionID}')">
+                                                        <i class="fa-solid fa-truck"></i> Deliver
+                                                    </button>
                                                 </c:when>
-                                                <c:when test="${prescription.prescriptionStatus == 'Delivered'}">
-                                                    <span class="badge bg-success text-white">Delivered</span>
-                                                </c:when>
-                                                <c:when test="${prescription.prescriptionStatus == 'Canceled'}">
-                                                    <span class="badge bg-danger text-white">Canceled</span>
-                                                </c:when>
+                                                <c:otherwise>
+                                                    <button class="btn btn-secondary btn-sm action-btn" disabled>
+                                                        <i class="fa-solid fa-truck"></i> Deliver
+                                                    </button>
+                                                </c:otherwise>
                                             </c:choose>
-                                        </td>
-                                        <td>
-                                            <c:out value="${prescription.dateCreateFormatDate}"/>
-                                        </td>
-                                        <td class="text-center">
-                                            <div class="d-flex justify-content-center align-items-center gap-2">
 
-                                                <!-- Nút Detail (luôn có) -->
-                                                <a href="${pageContext.request.contextPath}/pharmacist-manage-prescription?action=detail&prescriptionID=${prescription.prescriptionID}"
-                                                   class="btn btn-primary">Detail</a>
+                                            <c:choose>
+                                                <c:when test="${prescription.prescriptionStatus == 'Pending'}">
+                                                    <button type="button"
+                                                            class="btn btn-danger btn-sm action-btn"
+                                                            data-bs-toggle="modal"
+                                                            data-bs-target="#cancelModal"
+                                                            onclick="setCancelID('${prescription.prescriptionID}')">
+                                                        <i class="fa-solid fa-ban"></i> Cancel
+                                                    </button>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <button class="btn btn-secondary btn-sm action-btn" disabled>
+                                                        <i class="fa-solid fa-ban"></i> Cancel
+                                                    </button>
+                                                </c:otherwise>
+                                            </c:choose>
 
-                                                <!-- Nút Deliver -->
-                                                <c:choose>
-                                                    <c:when test="${prescription.prescriptionStatus == 'Pending'}">
-                                                        <form method="post" action="${pageContext.request.contextPath}/pharmacist-manage-prescription">
-                                                            <input type="hidden" name="action" value="deliver">
-                                                            <input type="hidden" name="prescriptionID" value="${prescription.prescriptionID}">
-                                                            <button type="submit" class="btn btn-success">Deliver</button>
-                                                        </form>
-                                                    </c:when>
-                                                    <c:otherwise>
-                                                        <button class="btn btn-success invisible">Deliver</button>
-                                                    </c:otherwise>
-                                                </c:choose>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </c:forEach>
 
-                                                <!-- Nút Cancel -->
-                                                <c:choose>
-                                                    <c:when test="${prescription.prescriptionStatus == 'Pending'}">
-                                                        <form method="post" action="${pageContext.request.contextPath}/pharmacist-manage-prescription">
-                                                            <input type="hidden" name="action" value="cancel">
-                                                            <input type="hidden" name="prescriptionID" value="${prescription.prescriptionID}">
-                                                            <button type="submit" class="btn btn-danger">Cancel</button>
-                                                        </form>
-                                                    </c:when>
-                                                    <c:otherwise>
-                                                        <button class="btn btn-danger invisible">Cancel</button>
-                                                    </c:otherwise>
-                                                </c:choose>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                </c:forEach>
-                            </tbody>
-                        </table>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="modal fade" id="deliverModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content border-success">
+                    <div class="modal-header bg-success text-white">
+                        <h5 class="modal-title"><i class="fa-solid fa-truck me-2"></i>Confirm Deliver</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                     </div>
+                    <div class="modal-body text-center fs-5">
+                        Are you sure you want to <b>Deliver</b> this prescription?
+                    </div>
+                    <form method="post" action="${pageContext.request.contextPath}/pharmacist-manage-prescription">
+                        <input type="hidden" name="action" value="deliver">
+                        <input type="hidden" id="deliverID" name="prescriptionID">
+
+                        <div class="modal-footer justify-content-center">
+                            <button type="submit" class="btn btn-success px-4">Confirm</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
+
+        <div class="modal fade" id="cancelModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content border-danger">
+                    <div class="modal-header bg-danger text-white">
+                        <h5 class="modal-title"><i class="fa-solid fa-ban me-2"></i>Confirm Cancel</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body text-center fs-5">
+                        Are you sure you want to <b>Cancel</b> this prescription?
+                    </div>
+                    <form method="post" action="${pageContext.request.contextPath}/pharmacist-manage-prescription">
+                        <input type="hidden" name="action" value="cancel">
+                        <input type="hidden" id="cancelID" name="prescriptionID">
+
+                        <div class="modal-footer justify-content-center">
+                            <button type="submit" class="btn btn-danger px-4">Confirm</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            function setDeliverID(id) {
+                document.getElementById("deliverID").value = id;
+            }
+            function setCancelID(id) {
+                document.getElementById("cancelID").value = id;
+            }
+        </script>
+
+        <script src="${pageContext.request.contextPath}/assests/js/bootstrap.bundle.min.js"></script>
+
     </body>
 </html>
