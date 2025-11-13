@@ -76,26 +76,24 @@ public class PrescriptionDAO extends DBContext {
         Object[] params = {doctorID, medicalRecordID};
         ResultSet rs = executeSelectQuery(sql, params);
         try {
-            if (rs != null) {
-                while (rs.next()) {
-                    // Prescription
-                    PrescriptionDTO prescription = new PrescriptionDTO();
-                    prescription.setDateCreate(rs.getTimestamp("PrescriptionDateCreate"));
-                    prescription.setPrescriptionStatus(rs.getString("PrescriptionStatus"));
-                    prescription.setNote(rs.getString("PrescriptionNote"));
-                    prescription.setPrescriptionID(rs.getInt("PrescriptionID"));
-                    // Medicine
-                    MedicineDTO medicine = new MedicineDTO();
-                    medicine.setMedicineName(rs.getString("MedicineName"));
-                    // Prescription Item
-                    PrescriptionItemDTO prescriptionItem = new PrescriptionItemDTO();
-                    prescriptionItem.setMedicineID(medicine);
-                    prescriptionItem.setPrescriptionID(prescription);
-                    prescriptionItem.setDosage(rs.getInt("Dosage"));
-                    prescriptionItem.setInstruction(rs.getString("Instruction"));
-                    // Add to list
-                    prescriptionItemList.add(prescriptionItem);
-                }
+            while (rs.next()) {
+                // Prescription
+                PrescriptionDTO prescription = new PrescriptionDTO();
+                prescription.setDateCreate(rs.getTimestamp("PrescriptionDateCreate"));
+                prescription.setPrescriptionStatus(rs.getString("PrescriptionStatus"));
+                prescription.setNote(rs.getString("PrescriptionNote"));
+                prescription.setPrescriptionID(rs.getInt("PrescriptionID"));
+                // Medicine
+                MedicineDTO medicine = new MedicineDTO();
+                medicine.setMedicineName(rs.getString("MedicineName"));
+                // Prescription Item
+                PrescriptionItemDTO prescriptionItem = new PrescriptionItemDTO();
+                prescriptionItem.setMedicineID(medicine);
+                prescriptionItem.setPrescriptionID(prescription);
+                prescriptionItem.setDosage(rs.getInt("Dosage"));
+                prescriptionItem.setInstruction(rs.getString("Instruction"));
+                // Add to list
+                prescriptionItemList.add(prescriptionItem);
             }
         } catch (SQLException ex) {
             Logger.getLogger(DoctorDAO.class.getName()).log(Level.SEVERE, null, ex);
@@ -458,7 +456,7 @@ public class PrescriptionDAO extends DBContext {
 
         try {
 
-            while (rs != null && rs.next()) {
+            while (rs.next()) {
                 // 🧩 Patient
                 PatientDTO patient = new PatientDTO(
                         rs.getString("FirstName"),
@@ -784,7 +782,8 @@ public class PrescriptionDAO extends DBContext {
     }
 
     /**
-     * Search prescriptions for a specific patient by doctor name or medicine name
+     * Search prescriptions for a specific patient by doctor name or medicine
+     * name
      *
      * @param patientId The patient ID
      * @param searchQuery The search query
@@ -1168,6 +1167,31 @@ public class PrescriptionDAO extends DBContext {
             closeResources(rs);
         }
         return countPreStatus;
+    }
+
+    public int getDosageMedicineByPrescriptionID(int medicineID, int prescriptionID) {
+
+        String query = "SELECT pe.Dosage\n"
+                + "FROM Medicine m\n"
+                + "join PrescriptionItem pe on pe.MedicineID = m.MedicineID\n"
+                + " WHERE m.MedicineID = ? and pe.PrescriptionID = ?\n"
+                + " And Hidden = 0";
+        Object[] params = {medicineID, prescriptionID};
+        ResultSet rs = null;
+        int dosage = 0;
+
+        try {
+            rs = executeSelectQuery(query, params);
+            if (rs.next()) {
+                dosage = rs.getInt("Dosage");
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(PrescriptionDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            closeResources(rs);
+        }
+
+        return dosage;
     }
 
 }

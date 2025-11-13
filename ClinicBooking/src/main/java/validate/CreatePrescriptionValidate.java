@@ -20,6 +20,11 @@ public class CreatePrescriptionValidate {
         return dosage > 0 && dosage <= maxQuantity;
     }
 
+    public static boolean isValidDosageForEdit(int newDosage, int currentStock, int oldDosage) {
+        int maxAvailable = currentStock + oldDosage;
+        return newDosage > 0 && newDosage <= maxAvailable;
+    }
+
     public static boolean isValidDosage(String input) {
         try {
             int dosage = Integer.parseInt(input);

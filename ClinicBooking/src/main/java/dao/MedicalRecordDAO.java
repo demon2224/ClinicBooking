@@ -210,34 +210,32 @@ public class MedicalRecordDAO extends DBContext {
         Object[] params = {doctorID, medicalRecordID};
         ResultSet rs = executeSelectQuery(sql, params);
         try {
-            if (rs != null) {
-                while (rs.next()) {
-                    // Patient
-                    PatientDTO patient = new PatientDTO();
-                    patient.setFirstName(rs.getString("FirstName"));
-                    patient.setLastName(rs.getString("LastName"));
-                    patient.setDob(rs.getTimestamp("DOB"));
-                    patient.setGender(rs.getBoolean("Gender"));
-                    patient.setUserAddress(rs.getString("UserAddress"));
-                    patient.setEmail(rs.getString("Email"));
-                    patient.setPhoneNumber(rs.getString("PhoneNumber"));
-                    // Appointment
-                    AppointmentDTO appointment = new AppointmentDTO();
-                    appointment.setAppointmentID(rs.getInt("AppointmentID"));
-                    appointment.setPatientID(patient);
-                    appointment.setAppointmentStatus(rs.getString("AppointmentStatus"));
-                    appointment.setDateBegin(rs.getTimestamp("AppointmentDateBegin"));
-                    appointment.setDateEnd(rs.getTimestamp("AppointmentDateEnd"));
-                    appointment.setNote(rs.getString("AppointmentNote"));
-                    // Medical Record
-                    medicalRecordDetail = new MedicalRecordDTO();
-                    medicalRecordDetail.setMedicalRecordID(rs.getInt("MedicalRecordID"));
-                    medicalRecordDetail.setAppointmentID(appointment);
-                    medicalRecordDetail.setSymptoms(rs.getString("Symptoms"));
-                    medicalRecordDetail.setDiagnosis(rs.getString("Diagnosis"));
-                    medicalRecordDetail.setNote(rs.getString("MedicalRecordNote"));
-                    medicalRecordDetail.setDateCreate(rs.getTimestamp("MedicalRecordDateCreate"));
-                }
+            if (rs.next()) {
+                // Patient
+                PatientDTO patient = new PatientDTO();
+                patient.setFirstName(rs.getString("FirstName"));
+                patient.setLastName(rs.getString("LastName"));
+                patient.setDob(rs.getTimestamp("DOB"));
+                patient.setGender(rs.getBoolean("Gender"));
+                patient.setUserAddress(rs.getString("UserAddress"));
+                patient.setEmail(rs.getString("Email"));
+                patient.setPhoneNumber(rs.getString("PhoneNumber"));
+                // Appointment
+                AppointmentDTO appointment = new AppointmentDTO();
+                appointment.setAppointmentID(rs.getInt("AppointmentID"));
+                appointment.setPatientID(patient);
+                appointment.setAppointmentStatus(rs.getString("AppointmentStatus"));
+                appointment.setDateBegin(rs.getTimestamp("AppointmentDateBegin"));
+                appointment.setDateEnd(rs.getTimestamp("AppointmentDateEnd"));
+                appointment.setNote(rs.getString("AppointmentNote"));
+                // Medical Record
+                medicalRecordDetail = new MedicalRecordDTO();
+                medicalRecordDetail.setMedicalRecordID(rs.getInt("MedicalRecordID"));
+                medicalRecordDetail.setAppointmentID(appointment);
+                medicalRecordDetail.setSymptoms(rs.getString("Symptoms"));
+                medicalRecordDetail.setDiagnosis(rs.getString("Diagnosis"));
+                medicalRecordDetail.setNote(rs.getString("MedicalRecordNote"));
+                medicalRecordDetail.setDateCreate(rs.getTimestamp("MedicalRecordDateCreate"));
             }
         } catch (SQLException ex) {
             Logger.getLogger(DoctorDAO.class.getName()).log(Level.SEVERE, null, ex);

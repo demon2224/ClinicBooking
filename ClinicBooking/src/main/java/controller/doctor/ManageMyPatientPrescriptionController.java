@@ -150,6 +150,14 @@ public class ManageMyPatientPrescriptionController extends HttpServlet {
         return isValidMedicineID && isValidDosage && isValidInstruction;
     }
 
+    private boolean addPrescriptionInputEditVer(HttpServletRequest request, String medicineID, String dosage, String instruction, int prescriptionID) {
+        boolean isValidDosage = isValidDosageEditVer(request, dosage, medicineID, prescriptionID);
+        boolean isValidInstruction = isValidInstruction(request, instruction);
+        boolean isValidMedicineID = isValidMedicineID(request, medicineID);
+        log(isValidMedicineID + " " + isValidInstruction + " " + isValidDosage);
+        return isValidMedicineID && isValidDosage && isValidInstruction;
+    }
+
     private boolean isValidInstruction(HttpServletRequest request, String instruction) {
         if (CreatePrescriptionValidate.isEmpty(instruction)) {
             // Hướng dẫn trống.
@@ -174,6 +182,29 @@ public class ManageMyPatientPrescriptionController extends HttpServlet {
             return false;
         } else if (!CreatePrescriptionValidate.isValidDosageNumber(Integer.parseInt(dosage), medicineDAO.getQuantityMedicineByMedicineID(Integer.parseInt(medicineID)))) {
             // Check liều lượng có quá số lượng trong kho còn không.
+            log("dosage3");
+            request.getSession().setAttribute("dosageError", "Invalid dosage: exceeds available stock!");
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    private boolean isValidDosageEditVer(HttpServletRequest request, String dosage, String medicineID, int prescriptionID) {
+        if (CreatePrescriptionValidate.isEmpty(dosage)) {
+            // Liều lượng trống.
+            log("dosage1");
+            request.getSession().setAttribute("dosageError", "Dosage cannot be empty!");
+            return false;
+        } else if (!CreatePrescriptionValidate.isValidDosage(dosage)) {
+            // Check có phải là số không.
+            log("dosage2");
+            request.getSession().setAttribute("dosageError", "Dosage must be a numeric value!");
+            return false;
+        } else if (!CreatePrescriptionValidate.isValidDosageForEdit(Integer.parseInt(dosage),
+                medicineDAO.getQuantityMedicineByMedicineID(Integer.parseInt(medicineID)),
+                prescriptionDAO.getDosageMedicineByPrescriptionID(Integer.parseInt(medicineID), prescriptionID))) {
+            // Check số lương hiện tại trong đơn thuốc + số lượng trong kho có quá tổng số lượng cả 2 không để tránh đặt quá số lượng thuốc trong kho.
             log("dosage3");
             request.getSession().setAttribute("dosageError", "Invalid dosage: exceeds available stock!");
             return false;
@@ -411,6 +442,16 @@ public class ManageMyPatientPrescriptionController extends HttpServlet {
         }
     }
 
+    /**
+     *
+     *
+     * edit prescription
+     *
+     * @param request
+     * @param response
+     * @throws ServletException
+     * @throws IOException
+     */
     public void editPrescriptionInPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
@@ -424,7 +465,7 @@ public class ManageMyPatientPrescriptionController extends HttpServlet {
 
             // Kiểm tra dữ liệu từng thuốc hợp lệ (dosage, instruction)
             for (int i = 0; i < medicineIDs.length; i++) {
-                currentState = addPrescriptionInput(request, medicineIDs[i], dosages[i], instructions[i]);
+                currentState = addPrescriptionInputEditVer(request, medicineIDs[i], dosages[i], instructions[i], prescriptionID);
                 if (!currentState) {
                     break;
                 }
@@ -465,7 +506,6 @@ public class ManageMyPatientPrescriptionController extends HttpServlet {
                 response.sendRedirect(request.getContextPath() + "/manage-my-patient-prescription");
             } else {
                 // lỗi khi không chọn thuốc
-                prescriptionDAO.deletePrescription(prescriptionID);
                 request.getSession().setAttribute("error", true);
                 response.sendRedirect(request.getContextPath() + "/manage-my-patient-prescription?action=edit&prescriptionID=" + prescriptionID);
             }
