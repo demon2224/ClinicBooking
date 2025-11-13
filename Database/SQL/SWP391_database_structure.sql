@@ -199,3 +199,20 @@ BEGIN
 	ON m.MedicineID = i.MedicineID
     WHERE i.Quantity = 0; 
 END;
+
+GO
+CREATE TRIGGER TR_Invoice_UpdateMedicineStatus
+ON [dbo].[Invoice]
+AFTER UPDATE
+AS
+BEGIN
+	SET NOCOUNT ON; 
+	UPDATE ap
+	SET ap.AppointmentStatus = 'Completed'
+	FROM [dbo].[Appointment] ap
+	JOIN [dbo].[MedicalRecord] mr
+	ON mr.AppointmentID = ap.AppointmentID
+	JOIN inserted i
+	ON mr.MedicalRecordID = mr.MedicalRecordID
+	WHERE i.InvoiceStatus = 'Paid';
+END;
