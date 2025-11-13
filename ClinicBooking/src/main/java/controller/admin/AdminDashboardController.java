@@ -4,8 +4,9 @@
  */
 package controller.admin;
 
-import dao.AdminDAO;
+
 import dao.AppointmentDAO;
+import dao.StaffDAO;
 import dao.DoctorDAO;
 import dao.PatientDAO;
 import java.io.IOException;
@@ -21,11 +22,11 @@ import jakarta.servlet.http.HttpServletResponse;
  */
 public class AdminDashboardController extends HttpServlet {
 
-    private AdminDAO adminDAO;
+    private StaffDAO staffDAO;
 
     @Override
     public void init() throws ServletException {
-        adminDAO = new AdminDAO();
+        staffDAO = new StaffDAO();
     }
 
     /**
@@ -67,10 +68,9 @@ public class AdminDashboardController extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        AdminDAO dao = new AdminDAO();
-        int totalAccounts = dao.countAllAccounts();
-        int activeAccounts = dao.countAccountsByStatus(false);  // Hidden = 0
-        int inactiveAccounts = dao.countAccountsByStatus(true); // Hidden = 1
+        int totalAccounts = staffDAO.countAllAccounts();
+        int activeAccounts = staffDAO.countAccountsByStatus(false);  // Hidden = 0
+        int inactiveAccounts = staffDAO.countAccountsByStatus(true); // Hidden = 1
 
         request.setAttribute("totalAccounts", totalAccounts);
         request.setAttribute("activeAccounts", activeAccounts);
