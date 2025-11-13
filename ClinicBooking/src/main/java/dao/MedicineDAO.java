@@ -336,4 +336,59 @@ public class MedicineDAO extends DBContext {
         }
         return countLowStockMedicines;
     }
+
+    public int getTotalMedicines() {
+
+        String query = "SELECT COUNT(m.MedicineID) AS TotalMedicines\n"
+                + "FROM [dbo].[Medicine] m\n"
+                + "WHERE m.Hidden = 0;";
+        ResultSet rs = null;
+        int totalMedicines = 0;
+        try {
+            rs = executeSelectQuery(query);
+            if (rs.next()) {
+                totalMedicines = rs.getInt("TotalMedicines");
+            }
+        } catch (SQLException e) {
+            Logger.getLogger(MedicineDAO.class.getName()).log(Level.SEVERE, null, e);
+        } finally {
+            closeResources(rs);
+        }
+        return totalMedicines;
+    }
+
+    public List<MedicineDTO> getLowStockMedicinesList() {
+
+        String query = "SELECT m.MedicineID, m.MedicineType, m.MedicineStatus, m.MedicineName, m.MedicineCode, m.Quantity, m.Price, m.DateCreate, m.[Hidden]\n"
+                + "FROM [dbo].[Medicine] m\n"
+                + "WHERE m.Quantity <= 30\n"
+                + "AND m.Hidden = 0;";
+        ResultSet rs = null;
+        List<MedicineDTO> medicineList = new ArrayList<>();
+
+        try {
+            rs = executeSelectQuery(query);
+            while (rs.next()) {
+
+                MedicineDTO medicine = new MedicineDTO();
+                medicine.setMedicineID(rs.getInt("MedicineID"));
+                medicine.setMedicineType(rs.getString("MedicineType"));
+                medicine.setMedicineStatus(rs.getBoolean("MedicineStatus"));
+                medicine.setMedicineName(rs.getString("MedicineName"));
+                medicine.setMedicineCode(rs.getString("MedicineCode"));
+                medicine.setQuantity(rs.getInt("Quantity"));
+                medicine.setPrice(rs.getDouble("Price"));
+                medicine.setDateCreate(rs.getObject("DateCreate", Timestamp.class));
+                medicine.setIsHidden(rs.getBoolean("Hidden"));
+
+                medicineList.add(medicine);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(MedicineDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            closeResources(rs);
+        }
+
+        return medicineList;
+    }
 }

@@ -1194,4 +1194,101 @@ public class PrescriptionDAO extends DBContext {
         return dosage;
     }
 
+    public int getPendingPrecription() {
+
+        String query = "SELECT COUNT(p.PrescriptionID) AS TotalPendingPrescription\n"
+                + "FROM [dbo].[Prescription] p\n"
+                + "WHERE p.PrescriptionStatus = 'Pending';";
+        ResultSet rs = null;
+        int TotalPendingPrescription = 0;
+        try {
+            rs = executeSelectQuery(query);
+            if (rs.next()) {
+                TotalPendingPrescription = rs.getInt("TotalPendingPrescription");
+            }
+        } catch (SQLException e) {
+            Logger.getLogger(MedicineDAO.class.getName()).log(Level.SEVERE, null, e);
+        } finally {
+            closeResources(rs);
+        }
+        return TotalPendingPrescription;
+    }
+
+    public int getDeliverPrecriptionToday() {
+
+        String query = "SELECT COUNT(p.PrescriptionID) AS TotalDeliverPrescriptionToday\n"
+                + "FROM [dbo].[Prescription] p\n"
+                + "WHERE p.PrescriptionStatus = 'Deliver'\n"
+                + "AND CAST(p.DateCreate AS DATE) = GETDATE();";
+        ResultSet rs = null;
+        int TotalDeliverPrescriptionToday = 0;
+        try {
+            rs = executeSelectQuery(query);
+            if (rs.next()) {
+                TotalDeliverPrescriptionToday = rs.getInt("TotalDeliverPrescriptionToday");
+            }
+        } catch (SQLException e) {
+            Logger.getLogger(MedicineDAO.class.getName()).log(Level.SEVERE, null, e);
+        } finally {
+            closeResources(rs);
+        }
+        return TotalDeliverPrescriptionToday;
+    }
+
+    public List<PrescriptionDTO> getPendingPrecriptionList() {
+
+        String query = "SELECT p.PrescriptionID, p.PrescriptionStatus, p.DateCreate, st.FirstName as DoctorFirstName, st.LastName as DoctorLastName, pt.FirstName as PatientFirstName, pt.LastName as PatientLastName\n"
+                + "FROM [dbo].[Prescription] p\n"
+                + "JOIN [dbo].[Appointment] a\n"
+                + "ON a.AppointmentID = p.AppointmentID\n"
+                + "JOIN [dbo].[Doctor] dt\n"
+                + "ON dt.DoctorID = a.DoctorID\n"
+                + "JOIN [dbo].[Staff] st\n"
+                + "ON st.StaffID = dt.StaffID\n"
+                + "JOIN [dbo].[Patient] pt\n"
+                + "ON pt.PatientID = a.PatientID\n"
+                + "WHERE p.Hidden = 0\n"
+                + "AND p.PrescriptionStatus = 'Pending'\n"
+                + "ORDER BY DateCreate DESC;";
+        List<PrescriptionDTO> prescriptionList = new ArrayList<>();
+        ResultSet rs = null;
+
+        try {
+
+            rs = executeSelectQuery(query);
+            while (rs.next()) {
+
+                StaffDTO staff = new StaffDTO();
+                staff.setFirstName(rs.getString("DoctorFirstName"));
+                staff.setLastName(rs.getString("DoctorFirstName"));
+
+                PatientDTO patient = new PatientDTO();
+                patient.setFirstName(rs.getString("PatientFirstName"));
+                patient.setLastName(rs.getString("PatientLastName"));
+
+                DoctorDTO doctor = new DoctorDTO();
+                doctor.setStaffID(staff);
+
+                AppointmentDTO appointment = new AppointmentDTO();
+                appointment.setDoctorID(doctor);
+                appointment.setPatientID(patient);
+
+                PrescriptionDTO prescription = new PrescriptionDTO();
+                prescription.setPrescriptionID(rs.getInt("PrescriptionID"));
+                prescription.setPrescriptionStatus(rs.getString("PrescriptionStatus"));
+                prescription.setDateCreate(rs.getObject("DateCreate", Timestamp.class));
+                prescription.setAppointmentID(appointment);
+
+                prescriptionList.add(prescription);
+            }
+
+        } catch (SQLException ex) {
+            Logger.getLogger(PrescriptionDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            closeResources(rs);
+        }
+
+        return prescriptionList;
+    }
+
 }
