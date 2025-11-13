@@ -111,6 +111,14 @@
         <servlet-name>RegisterController</servlet-name>
         <servlet-class>controller.authentication.RegisterController</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>ClinicStatisticsController</servlet-name>
+        <servlet-class>controller.admin.ClinicStatisticsController</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>RevenueReportController</servlet-name>
+        <servlet-class>controller.admin.RevenueReportController</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>ReceptionistManageAppointmentController</servlet-name>
         <url-pattern>/receptionist-manage-appointment</url-pattern>
@@ -228,6 +236,14 @@
     <servlet-mapping>
         <servlet-name>RegisterController</servlet-name>
         <url-pattern>/register</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ClinicStatisticsController</servlet-name>
+        <url-pattern>/clinic-statistics</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>RevenueReportController</servlet-name>
+        <url-pattern>/revenue-report</url-pattern>
     </servlet-mapping>
     <welcome-file-list>
         <welcome-file>index.jsp</welcome-file>

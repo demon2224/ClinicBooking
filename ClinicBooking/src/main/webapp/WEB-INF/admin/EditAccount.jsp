@@ -1,4 +1,4 @@
-<%-- 
+<%--
     Document   : EditAccount
     Created on : Nov 7, 2025
     Author     : Ngo Quoc Hung - CE191184
@@ -15,31 +15,46 @@
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
         <style>
-            body { background-color: #f8f9fa; }
+            body {
+                background-color: #f8f9fa;
+            }
             .sidebar {
-                width: 240px; height: 100vh;
-                background-color: #1B5A90; color: white;
+                width: 240px;
+                height: 100vh;
+                background-color: #1B5A90;
+                color: white;
                 position: fixed;
             }
             .sidebar a {
-                display: block; color: white;
-                text-decoration: none; padding: 12px 20px;
+                display: block;
+                color: white;
+                text-decoration: none;
+                padding: 12px 20px;
             }
-            .sidebar a:hover { background-color: #00D0F1; }
-            .main-content { margin-left: 260px; padding: 25px; }
-            .section-title { margin-top: 30px; color: #1B5A90; font-weight: bold; }
-            th { width: 220px; background-color: #f1f1f1; }
-            .text-danger { font-size: 0.9rem; }
+            .sidebar a:hover {
+                background-color: #00D0F1;
+            }
+            .main-content {
+                margin-left: 260px;
+                padding: 25px;
+            }
+            .section-title {
+                margin-top: 30px;
+                color: #1B5A90;
+                font-weight: bold;
+            }
+            th {
+                width: 220px;
+                background-color: #f1f1f1;
+            }
+            .text-danger {
+                font-size: 0.9rem;
+            }
         </style>
     </head>
     <body>
         <!-- Sidebar -->
-        <div class="sidebar">
-            <h4 class="text-center mt-3 mb-4">CLINIC</h4>
-            <a href="${pageContext.request.contextPath}/admin-dashboard"><i class="fa-solid fa-gauge me-2"></i>Dashboard</a>
-            <a href="${pageContext.request.contextPath}/admin-manage-account"><i class="fa-solid fa-calendar-days me-2"></i>Manage Account</a>
-        </div>
-
+        <%@include file="../includes/AdminDashboardSidebar.jsp" %>
         <!-- Main Content -->
         <div class="main-content">
             <h2 class="mb-4"><i class="fa-solid fa-user-pen me-2"></i>Edit Account</h2>
@@ -54,7 +69,7 @@
                     <tr>
                         <th>Username</th>
                         <td>
-                            <input type="text" name="accountName" class="form-control" 
+                            <input type="text" name="accountName" class="form-control"
                                    value="${staff.accountName}" required/>
                             <div class="text-danger">
                                 <c:if test="${not empty sessionScope.usernameErrorMsg}">
@@ -69,7 +84,7 @@
                     <tr>
                         <th>Full Name</th>
                         <td>
-                            <input type="text" name="fullName" class="form-control" 
+                            <input type="text" name="fullName" class="form-control"
                                    value="${staff.fullName}" required/>
                             <div class="text-danger">
                                 <c:if test="${not empty sessionScope.fullNameErrorMsg}">
@@ -89,8 +104,8 @@
                                 <option value="Pharmacist" <c:if test="${staff.role eq 'Pharmacist'}">selected</c:if>>Pharmacist</option>
                                 <option value="Receptionist" <c:if test="${staff.role eq 'Receptionist'}">selected</c:if>>Receptionist</option>
                                 <option value="Admin" <c:if test="${staff.role eq 'Admin'}">selected</c:if>>Admin</option>
-                            </select>
-                            <div class="text-danger">
+                                </select>
+                                <div class="text-danger">
                                 <c:if test="${not empty sessionScope.roleErrorMsg}">
                                     <c:out value="${sessionScope.roleErrorMsg}"/>
                                     <c:remove var="roleErrorMsg" scope="session"/>
@@ -107,16 +122,16 @@
                                 <option value="Available" <c:if test="${staff.jobStatus eq 'Available'}">selected</c:if>>Available</option>
                                 <option value="Unavailable" <c:if test="${staff.jobStatus eq 'Unavailable'}">selected</c:if>>Unavailable</option>
                                 <option value="Retired" <c:if test="${staff.jobStatus eq 'Retired'}">selected</c:if>>Retired</option>
-                            </select>
-                        </td>
-                    </tr>
+                                </select>
+                            </td>
+                        </tr>
 
-                    <!-- Phone -->
-                    <tr>
-                        <th>Phone</th>
-                        <td>
-                            <input type="text" name="phoneNumber" class="form-control" 
-                                   value="${staff.phoneNumber}" required/>
+                        <!-- Phone -->
+                        <tr>
+                            <th>Phone</th>
+                            <td>
+                                <input type="text" name="phoneNumber" class="form-control"
+                                       value="${staff.phoneNumber}" required/>
                             <div class="text-danger">
                                 <c:if test="${not empty sessionScope.phoneErrorMsg}">
                                     <c:out value="${sessionScope.phoneErrorMsg}"/>
@@ -148,16 +163,16 @@
                             <select name="gender" class="form-select" required>
                                 <option value="true" <c:if test="${staff.gender}">selected</c:if>>Male</option>
                                 <option value="false" <c:if test="${!staff.gender}">selected</c:if>>Female</option>
-                            </select>
-                        </td>
-                    </tr>
+                                </select>
+                            </td>
+                        </tr>
 
-                    <!-- Address -->
-                    <tr>
-                        <th>Address</th>
-                        <td>
-                            <input type="text" name="userAddress" class="form-control" 
-                                   value="${staff.userAddress}" required/>
+                        <!-- Address -->
+                        <tr>
+                            <th>Address</th>
+                            <td>
+                                <input type="text" name="userAddress" class="form-control"
+                                       value="${staff.userAddress}" required/>
                             <div class="text-danger">
                                 <c:if test="${not empty sessionScope.addressErrorMsg}">
                                     <c:out value="${sessionScope.addressErrorMsg}"/>
@@ -174,12 +189,12 @@
                             <select name="hidden" class="form-select">
                                 <option value="0" <c:if test="${!staff.hidden}">selected</c:if>>Active</option>
                                 <option value="1" <c:if test="${staff.hidden}">selected</c:if>>Inactive</option>
-                            </select>
-                        </td>
-                    </tr>
-                </table>
+                                </select>
+                            </td>
+                        </tr>
+                    </table>
 
-                <!-- Doctor Section -->
+                    <!-- Doctor Section -->
                 <c:if test="${staff.role eq 'Doctor'}">
                     <h3 class="section-title">Doctor Information</h3>
                     <table class="table table-bordered">
@@ -189,10 +204,10 @@
                                 <select name="specialtyID" class="form-select" required>
                                     <c:forEach var="s" items="${specialties}">
                                         <option value="${s.specialtyID}"
-                                            <c:if test="${doctor != null && doctor.specialtyID != null 
-                                                         && doctor.specialtyID.specialtyID eq s.specialtyID}">
-                                                selected
-                                            </c:if>>
+                                                <c:if test="${doctor != null && doctor.specialtyID != null
+                                                              && doctor.specialtyID.specialtyID eq s.specialtyID}">
+                                                      selected
+                                                </c:if>>
                                             ${s.specialtyName}
                                         </option>
                                     </c:forEach>
@@ -223,7 +238,7 @@
                         <tr>
                             <th>Price</th>
                             <td>
-                                <input type="number" name="price" class="form-control" 
+                                <input type="number" name="price" class="form-control"
                                        value="${doctor.specialtyID.price}" min="0" required/>
                                 <div class="text-danger">
                                     <c:if test="${not empty sessionScope.priceErrorMsg}">
@@ -254,7 +269,7 @@
                     <button type="submit" class="btn btn-success me-2">
                         <i class="fa-solid fa-floppy-disk me-1"></i>Save Changes
                     </button>
-                    <a href="${pageContext.request.contextPath}/admin-manage-account" 
+                    <a href="${pageContext.request.contextPath}/admin-manage-account"
                        class="btn btn-secondary">
                         <i class="fa-solid fa-xmark me-1"></i>Cancel
                     </a>
@@ -268,7 +283,7 @@
         <script>
             $('#addDegreeBtn').click(function () {
                 $('<input type="text" name="degreeNames" class="form-control mb-1" placeholder="New Degree"/>')
-                    .insertBefore('#addDegreeBtn');
+                        .insertBefore('#addDegreeBtn');
             });
         </script>
     </body>

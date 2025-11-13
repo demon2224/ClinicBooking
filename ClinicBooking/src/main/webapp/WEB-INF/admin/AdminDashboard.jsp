@@ -96,7 +96,10 @@
                         </button>
                     </form>
                     <div>
-                        <button class="btn btn-submit" id="Logout" type="submit">Logout</button>
+                        <a href="${pageContext.request.contextPath}/staff-logout"
+                           class="btn btn-outline-danger d-flex align-items-center" id="Logout">
+                            <i class="fa-solid fa-right-from-bracket me-2"></i>Logout
+                        </a>
                     </div>
                 </div>
             </nav>
