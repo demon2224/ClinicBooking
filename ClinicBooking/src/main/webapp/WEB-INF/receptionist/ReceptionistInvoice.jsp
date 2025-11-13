@@ -12,9 +12,10 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8">
-        <title>Doctor Dashboard</title>
+        <title>Manage Invoice</title>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
         <style>
             body {
                 background-color: #f8f9fa;
@@ -39,29 +40,43 @@
                 margin-left: 260px;
                 padding: 25px;
             }
-            .card {
-                border-radius: 10px;
-            }
-            .table img {
-                border-radius: 50%;
-                width: 40px;
-                height: 40px;
-            }
-            .status-toggle {
-                width: 40px;
-                height: 20px;
-            }
             .navbar {
                 background: white;
                 border-bottom: 1px solid #dee2e6;
+                padding: 12px 24px;
+            }
+            .card {
+                border-radius: 10px;
+                box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+            }
+            .card-header {
+                background-color: #1B5A90;
+                color: white;
+                font-weight: bold;
+                border-top-left-radius: 10px;
+                border-top-right-radius: 10px;
+            }
+            .table th {
+                background-color: #f1f3f5;
+                font-weight: 600;
+                vertical-align: middle;
+            }
+            .table td {
+                vertical-align: middle;
             }
             #Logout {
                 color: red;
                 border-color: red;
+                transition: all 0.3s ease;
             }
             #Logout:hover {
                 background-color: red;
                 color: white;
+            }
+            .badge {
+                font-size: 0.85rem;
+                padding: 6px 10px;
+                border-radius: 8px;
             }
         </style>
     </head>
@@ -74,129 +89,135 @@
             <a href="${pageContext.request.contextPath}/manage-invoice"><i class="fa-solid fa-file-invoice-dollar me-2"></i>Manage Invoice</a>
         </div>
 
-        <!-- Main content -->
+        <!-- Main Content -->
         <div class="main-content">
-            <nav class="navbar navbar-light">
-                <div class="container-fluid">
-                    <form class="d-flex w-50" method="get" action="manage-invoice">
-                        <input class="form-control me-2" type="search" name="searchQuery" placeholder="Search here"
-                               value="${param.searchQuery}">
-                        <button type="submit" class="btn btn-outline-primary" id="searchBtn">
-                            <i class="fa-solid fa-magnifying-glass"></i>
-                        </button>
-                    </form>
-                    <div>
-                        <button class="btn btn-submit" id="Logout" type="submit">Logout</button>
-                    </div>
-                </div>
+            <nav class="navbar navbar-light justify-content-between px-3 py-2 border-bottom shadow-sm">
+                <h3 class="fw-bold text-primary mb-0 d-flex align-items-center">
+                    <i class="fa-solid fa-file-invoice-dollar me-2"></i>
+                    Manage Invoice
+                </h3>
+                <form class="d-flex align-items-center" method="get" action="manage-invoice">
+                    <input class="form-control me-2" type="search" name="searchQuery"
+                           placeholder="Search by patient or doctor name..." value="${param.searchQuery}">
+                    <button class="btn btn-outline-primary me-3 d-flex align-items-center" type="submit">
+                        <i class="fa-solid fa-magnifying-glass me-2"></i>
+                        <span>Search</span>
+                    </button>
+                    <a href="${pageContext.request.contextPath}/logout"
+                       class="btn btn-outline-danger d-flex align-items-center" id="Logout">
+                        <i class="fa-solid fa-right-from-bracket me-2"></i>
+                        <span>Logout</span>
+                    </a>
+                </form>
             </nav>
+
+            <!-- Success Alert -->
             <c:if test="${not empty sessionScope.successMessage}">
-                <div id="successAlert" class="alert alert-success alert-dismissible fade show" role="alert">
-                    ${sessionScope.successMessage}
+                <div id="successAlert" class="alert alert-success alert-dismissible fade show mt-3" role="alert">
+                    <i class="fa-solid fa-circle-check me-2"></i>${sessionScope.successMessage}
                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                 </div>
                 <c:remove var="successMessage" scope="session"/>
-                <script>
-                    // auto hide after 2 seccond
-                    setTimeout(function () {
-                        var alertEl = document.getElementById('successAlert');
-                        if (alertEl) {
-                            var bsAlert = bootstrap.Alert.getOrCreateInstance(alertEl);
-                            bsAlert.close();
-                        }
-                    }, 2000);
-                </script>
             </c:if>
 
-
-            <div class="container-fluid mt-4">
-                <!-- Appointment List -->
-                <div class="card mb-4">
-                    <div class="card-header bg-white d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0">Invoice List</h5>                      
-                    </div>
-                    <div class="table-responsive">
-                        <table class="table table-hover table-bordered align-middle text-center">
-                            <thead class="table-primary">
+            <!-- Invoice List -->
+            <div class="card mt-4">
+                <div class="card-header">
+                    <i class="fa-solid fa-list me-2"></i>Invoice List
+                </div>
+                <div class="card-body p-4">
+                    <table class="table table-hover align-middle text-center">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Patient Name</th>
+                                <th>Doctor Name</th>
+                                <th>Specialty</th>
+                                <th>Date Created</th>
+                                <th>Fee</th>
+                                <th>Payment Method</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <c:forEach var="inv" items="${invoices}" varStatus="loop">
                                 <tr>
-                                    <th>#</th>
-                                    <th>Patient Name</th>
-                                    <th>Doctor Name</th>
-                                    <th>Specialty</th>
-                                    <th>Fee</th>
-                                    <th>Payment Method</th>
-                                    <th>Status</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <c:forEach var="inv" items="${invoices}" varStatus="loop">
-                                    <tr>
-                                        <td>${loop.index + 1}</td>
-                                        <td>
-                                            ${inv.medicalRecordID.appointmentID.patientID.firstName}
-                                            ${inv.medicalRecordID.appointmentID.patientID.lastName}
-                                        </td>
-                                        <td>
-                                            ${inv.medicalRecordID.appointmentID.doctorID.staffID.firstName}
-                                            ${inv.medicalRecordID.appointmentID.doctorID.staffID.lastName}
-                                        </td>
-                                        <td>${inv.specialtyID.specialtyName}</td>
-                                        <td>
-                                            <fmt:formatNumber value="${inv.specialtyID.price}" type="currency" currencySymbol="$"/>
-                                        </td>
-                                        <td>${inv.paymentType}</td>
-                                        <td>
+                                    <td>${loop.count}</td>
+                                    <td>${inv.medicalRecordID.appointmentID.patientID.firstName} ${inv.medicalRecordID.appointmentID.patientID.lastName}</td>
+                                    <td>${inv.medicalRecordID.appointmentID.doctorID.staffID.firstName} ${inv.medicalRecordID.appointmentID.doctorID.staffID.lastName}</td>
+                                    <td>${inv.specialtyID.specialtyName}</td>
+                                    <td><fmt:formatDate value="${inv.dateCreate}" pattern="yyyy/MM/dd HH:mm"/></td>
+                                    <td><fmt:formatNumber value="${inv.specialtyID.price}" type="currency" currencySymbol="$"/></td>
+                                    <td>${inv.paymentType}</td>
+                                    <td>
+                                        <span class="badge
+                                              <c:choose>
+                                                  <c:when test="${inv.invoiceStatus eq 'Paid'}">bg-success</c:when>
+                                                  <c:when test="${inv.invoiceStatus eq 'Pending'}">bg-warning text-dark</c:when>
+                                                  <c:when test="${inv.invoiceStatus eq 'Canceled'}">bg-danger</c:when>
+                                                  <c:otherwise>bg-secondary</c:otherwise>
+                                              </c:choose>">
+                                            ${inv.invoiceStatus}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex justify-content-center gap-2">
+                                            <a href="manage-invoice?action=viewDetail&id=${inv.invoiceID}"
+                                               class="btn btn-sm btn-info text-white">
+                                                <i class="fa-solid fa-eye"></i> View
+                                            </a>
+
+  
                                             <c:choose>
-                                                <c:when test="${inv.invoiceStatus eq 'Paid'}">
-                                                    <span class="badge bg-success">${inv.invoiceStatus}</span>
-                                                </c:when>
                                                 <c:when test="${inv.invoiceStatus eq 'Pending'}">
-                                                    <span class="badge bg-warning text-dark">${inv.invoiceStatus}</span>
-                                                </c:when>
-                                                <c:when test="${inv.invoiceStatus eq 'Canceled'}">
-                                                    <span class="badge bg-danger">${inv.invoiceStatus}</span>
+                                                    <a href="manage-invoice?action=update&id=${inv.invoiceID}"
+                                                       class="btn btn-sm btn-success text-white">
+                                                        <i class="fa-solid fa-check"></i> Update
+                                                    </a>
                                                 </c:when>
                                                 <c:otherwise>
-                                                    <span class="badge bg-secondary">${inv.invoiceStatus}</span>
+                                                    <button class="btn btn-sm btn-success invisible">
+                                                        <i class="fa-solid fa-check"></i> Update
+                                                    </button>
                                                 </c:otherwise>
                                             </c:choose>
-                                        </td>
 
-                                        <!-- Action -->
-                                        <td class="text-center">
-                                            <div class="d-flex justify-content-center gap-2">
-                                                <a href="manage-invoice?action=viewDetail&id=${inv.invoiceID}"
-                                                   class="btn btn-sm btn-info text-white">
-                                                    <i class="fa-solid fa-eye"></i> View Detail
-                                                </a>
-
-                                                <a href="manage-invoice?action=update&id=${inv.invoiceID}" 
-                                                   class="btn btn-success btn-sm"
-                                                   style="visibility:${inv.invoiceStatus eq 'Pending' ? 'visible' : 'hidden'};">
-                                                    <i class="fa-solid fa-check"></i> Update
-                                                </a>
-
-
-                                                <form action="manage-invoice" method="post" style="display:inline;">
-                                                    <input type="hidden" name="invoiceId" value="${inv.invoiceID}">
-                                                    <input type="hidden" name="action" value="cancel">
-                                                    <button type="submit" class="btn btn-danger btn-sm"
-                                                            style="visibility:${inv.invoiceStatus eq 'Pending' ? 'visible' : 'hidden'};">
+  
+                                            <c:choose>
+                                                <c:when test="${inv.invoiceStatus eq 'Pending'}">
+                                                    <form action="manage-invoice" method="post" style="display:inline;">
+                                                        <input type="hidden" name="invoiceId" value="${inv.invoiceID}">
+                                                        <input type="hidden" name="action" value="cancel">
+                                                        <button type="submit" class="btn btn-sm btn-danger text-white">
+                                                            <i class="fa-solid fa-xmark"></i> Cancel
+                                                        </button>
+                                                    </form>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <button class="btn btn-sm btn-danger invisible">
                                                         <i class="fa-solid fa-xmark"></i> Cancel
                                                     </button>
-                                                </form>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                </c:forEach>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>          
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </c:forEach>
+
+                            <c:if test="${empty invoices}">
+                                <tr>
+                                    <td colspan="9" class="text-center text-muted py-4">
+                                        <i class="fa-solid fa-circle-info me-2"></i>No invoices found.
+                                    </td>
+                                </tr>
+                            </c:if>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     </body>
 </html>
-
-
