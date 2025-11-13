@@ -398,18 +398,14 @@
 
                 if (errors.length > 0) {
                     e.preventDefault();
-                    displayErrors(errors);
+                     errorContainer.innerHTML = errors.map(
+                        `<div class="error-message"><i class="fas fa-exclamation-circle"></i>` + ${errors} + `</div>`
+                ).join('');
                 } else {
                     errorContainer.classList.add('hidden');
                 }
             });
 
-            function displayErrors(errors) {
-                errorContainer.innerHTML = errors.map(error =>
-                        `<div class="error-message"><i class="fas fa-exclamation-circle"></i> ${error}</div>`
-                ).join('');
-                errorContainer.classList.remove('hidden');
-            }
 
             function resetForm() {
                 form.reset();

@@ -80,29 +80,26 @@ public class ManageMyPatientMedicalRecordController extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 //        processRequest(request, response);
-        int doctorID = ((DoctorDTO) request.getSession().getAttribute("doctor")).getDoctorID();
-
         String action = request.getParameter("action");
         try {
             switch (action) {
 
                 case "detail":
-                    showMyPatientMedicalRecordDetail(request, response, doctorID);
+                    showMyPatientMedicalRecordDetail(request, response);
                     break;
 
                 case "create":
-                    createNewMedicalRecord(request, response, doctorID);
+                    createNewMedicalRecord(request, response);
                     break;
                 case "edit":
-                    int medicalRecordID = Integer.parseInt(request.getParameter("medicalRecordID"));
-                    editMedicalRecord(request, response, doctorID, medicalRecordID);
+                    editMedicalRecord(request, response);
                     break;
                 default:
-                    showMyPatientMedicalRecordList(request, response, doctorID);
+                    showMyPatientMedicalRecordList(request, response);
                     break;
             }
         } catch (ServletException | IOException | NullPointerException e) {
-            showMyPatientMedicalRecordList(request, response, doctorID);
+            showMyPatientMedicalRecordList(request, response);
         }
     }
 
@@ -115,17 +112,22 @@ public class ManageMyPatientMedicalRecordController extends HttpServlet {
      * @throws ServletException
      * @throws IOException
      */
-    private void showMyPatientMedicalRecordList(HttpServletRequest request, HttpServletResponse response, int doctorID)
+    private void showMyPatientMedicalRecordList(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String keyword = request.getParameter("keyword");
-        List<MedicalRecordDTO> list;
-        if (keyword != null && !keyword.trim().isEmpty()) {
-            list = medicalRecordDAO.searchPatientMedicalRecordListByPatientName(doctorID, keyword);
-        } else {
-            list = medicalRecordDAO.getPatientMedicalRecordListByDoctorID(doctorID);
+        int doctorID = ((DoctorDTO) request.getSession().getAttribute("doctor")).getDoctorID();
+        try {
+            String keyword = request.getParameter("keyword");
+            List<MedicalRecordDTO> list;
+            if (keyword != null && !keyword.trim().isEmpty()) {
+                list = medicalRecordDAO.searchPatientMedicalRecordListByPatientName(doctorID, keyword);
+            } else {
+                list = medicalRecordDAO.getPatientMedicalRecordListByDoctorID(doctorID);
+            }
+            request.setAttribute("myPatientMedicalRecordList", list);
+            request.getRequestDispatcher("/WEB-INF/doctor/MyPatientMedicalRecordList.jsp").forward(request, response);
+        } catch (Exception e) {
+            response.sendRedirect(request.getContextPath() + "/manage-my-patient-medical-record");
         }
-        request.setAttribute("myPatientMedicalRecordList", list);
-        request.getRequestDispatcher("/WEB-INF/doctor/MyPatientMedicalRecordList.jsp").forward(request, response);
     }
 
     /**
@@ -137,21 +139,20 @@ public class ManageMyPatientMedicalRecordController extends HttpServlet {
      * @throws ServletException
      * @throws IOException
      */
-    private void showMyPatientMedicalRecordDetail(HttpServletRequest request, HttpServletResponse response, int doctorID)
+    private void showMyPatientMedicalRecordDetail(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
+            int doctorID = ((DoctorDTO) request.getSession().getAttribute("doctor")).getDoctorID();
             int medicalRecordID = Integer.parseInt(request.getParameter("medicalRecordID"));
             MedicalRecordDTO medicalRecord = medicalRecordDAO.getPatientMedicalRecordDetailByDoctorIDAndMedicalRecordID(doctorID, medicalRecordID);
             boolean isExist = prescriptionDAO.isExistPrescription(medicalRecordID);
             List<PrescriptionItemDTO> list;
             list = prescriptionDAO.getPrescriptionByDoctorIDAndMedicalRecordID(doctorID, medicalRecordID);
-            if (medicalRecord.getMedicalRecordID() == medicalRecordID) {
-                request.setAttribute("detail", medicalRecord);
-                request.setAttribute("isExist", isExist);
-                request.setAttribute("list", list);
-            }
+            request.setAttribute("detail", medicalRecord);
+            request.setAttribute("isExist", isExist);
+            request.setAttribute("list", list);
             request.getRequestDispatcher("/WEB-INF/doctor/MyPatientMedicalRecordDetail.jsp").forward(request, response);
-        } catch (Exception e) {
+        } catch (ServletException | IOException | NumberFormatException e) {
             response.sendRedirect(request.getContextPath() + "/manage-my-patient-medical-record");
         }
     }
@@ -165,9 +166,10 @@ public class ManageMyPatientMedicalRecordController extends HttpServlet {
      * @throws ServletException
      * @throws IOException
      */
-    private void createNewMedicalRecord(HttpServletRequest request, HttpServletResponse response, int doctorID)
+    private void createNewMedicalRecord(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
+            int doctorID = ((DoctorDTO) request.getSession().getAttribute("doctor")).getDoctorID();
             int appointmentID = Integer.parseInt(request.getParameter("appointmentID"));
             AppointmentDTO appointment = appointmentDAO.getPatientAppointmentDetailOfDoctorByID(appointmentID, doctorID);
 
@@ -194,22 +196,30 @@ public class ManageMyPatientMedicalRecordController extends HttpServlet {
         }
     }
 
-    public void editMedicalRecord(HttpServletRequest request, HttpServletResponse response, int doctorID, int medicalRecordID)
+    public void editMedicalRecord(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
+            int doctorID = ((DoctorDTO) request.getSession().getAttribute("doctor")).getDoctorID();
+            int medicalRecordID = Integer.parseInt(request.getParameter("medicalRecordID"));
             MedicalRecordDTO medicalRecord = medicalRecordDAO.getPatientMedicalRecordDetailByDoctorIDAndMedicalRecordID(doctorID, medicalRecordID);
-            if (medicalRecord.getMedicalRecordID() == medicalRecordID) {
-                request.setAttribute("detail", medicalRecord);
+            boolean isExist = medicalRecordDAO.isExistMedicalRecordByMedicalRecordID(medicalRecordID);
+            if (!isExist) {
+                response.sendRedirect(request.getContextPath() + "/manage-my-patient-medical-record");
+                return;
             }
+            request.setAttribute("detail", medicalRecord);
             request.getRequestDispatcher("/WEB-INF/doctor/EditMyPatientMedicalRecord.jsp").forward(request, response);
-        } catch (ServletException | IOException e) {
+        } catch (ServletException | IOException | NumberFormatException e) {
+            log("here");
             response.sendRedirect(request.getContextPath() + "/manage-my-patient-medical-record");
         }
     }
 
-    public void createMedicalRecordInPost(HttpServletRequest request, HttpServletResponse response, int doctorID)
+    public void createMedicalRecordInPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
+            int doctorID = ((DoctorDTO) request.getSession().getAttribute("doctor")).getDoctorID();
+
             int appointmentID = Integer.parseInt(request.getParameter("appointmentID"));
             String symptoms = request.getParameter("symptoms");
             String diagnosis = request.getParameter("diagnosis");
@@ -246,9 +256,11 @@ public class ManageMyPatientMedicalRecordController extends HttpServlet {
 
     }
 
-    public void editMedicalRecordInPost(HttpServletRequest request, HttpServletResponse response, int doctorID)
+    public void editMedicalRecordInPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
+            int doctorID = ((DoctorDTO) request.getSession().getAttribute("doctor")).getDoctorID();
+
             int medicalRecordID = Integer.parseInt(request.getParameter("medicalRecordID"));
             String symptoms = request.getParameter("symptoms");
             String diagnosis = request.getParameter("diagnosis");
@@ -293,15 +305,14 @@ public class ManageMyPatientMedicalRecordController extends HttpServlet {
             throws ServletException, IOException {
 //        processRequest(request, response);
 
-        int doctorID = ((DoctorDTO) request.getSession().getAttribute("doctor")).getDoctorID();
         String action = request.getParameter("action");
         try {
             switch (action) {
                 case "create":
-                    createMedicalRecordInPost(request, response, doctorID);
+                    createMedicalRecordInPost(request, response);
                     break;
                 case "edit":
-                    editMedicalRecordInPost(request, response, doctorID);
+                    editMedicalRecordInPost(request, response);
                     break;
                 default:
                     response.sendRedirect(request.getContextPath() + "/manage-my-patient-medical-record");

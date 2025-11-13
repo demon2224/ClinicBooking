@@ -51,6 +51,24 @@ public class MedicalRecordDAO extends DBContext {
         return isExistMedicalRecord;
     }
 
+    public boolean isExistMedicalRecordByMedicalRecordID(int medicalRecordID) {
+        String sql = "Select m.MedicalRecordID\n"
+                + "from MedicalRecord m\n"
+                + "JOIN Appointment a on a.AppointmentID = m.AppointmentID\n"
+                + "Where m.MedicalRecordID = ?";
+        Object[] params = {medicalRecordID};
+        ResultSet rs = executeSelectQuery(sql, params);
+        boolean isExistMedicalRecord = false;
+        try {
+            isExistMedicalRecord = rs.next();
+        } catch (SQLException ex) {
+            Logger.getLogger(MedicalRecordDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            closeResources(rs);
+        }
+        return isExistMedicalRecord;
+    }
+
     /**
      * Get patient medical record list by doctorID
      *
@@ -166,7 +184,7 @@ public class MedicalRecordDAO extends DBContext {
      * @return
      */
     public MedicalRecordDTO getPatientMedicalRecordDetailByDoctorIDAndMedicalRecordID(int doctorID, int medicalRecordID) {
-        MedicalRecordDTO medicalRecordDetail = new MedicalRecordDTO();
+        MedicalRecordDTO medicalRecordDetail = null;
         String sql = "Select m.MedicalRecordID,\n"
                 + "m.Symptoms,\n"
                 + "m.Diagnosis,\n"
@@ -212,6 +230,7 @@ public class MedicalRecordDAO extends DBContext {
                     appointment.setDateEnd(rs.getTimestamp("AppointmentDateEnd"));
                     appointment.setNote(rs.getString("AppointmentNote"));
                     // Medical Record
+                    medicalRecordDetail = new MedicalRecordDTO();
                     medicalRecordDetail.setMedicalRecordID(rs.getInt("MedicalRecordID"));
                     medicalRecordDetail.setAppointmentID(appointment);
                     medicalRecordDetail.setSymptoms(rs.getString("Symptoms"));

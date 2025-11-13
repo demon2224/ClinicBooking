@@ -132,11 +132,9 @@ public class ManageMyPatientAppointmentController extends HttpServlet {
             int appointmentID = Integer.parseInt(request.getParameter("appointmentID"));
             AppointmentDTO appointment = appointmentDAO.getPatientAppointmentDetailOfDoctorByID(appointmentID, doctorID);
             boolean isExist = medicalRecordDAO.isExistMedicalRecord(appointmentID);
-            if (appointment.getAppointmentID() == appointmentID) {
-                request.setAttribute("detail", appointment);
-                request.setAttribute("isExist", isExist);
-                request.getRequestDispatcher("/WEB-INF/doctor/MyPatientAppointmentDetail.jsp").forward(request, response);
-            }
+            request.setAttribute("detail", appointment);
+            request.setAttribute("isExist", isExist);
+            request.getRequestDispatcher("/WEB-INF/doctor/MyPatientAppointmentDetail.jsp").forward(request, response);
         } catch (Exception ex) {
             response.sendRedirect(request.getContextPath() + "/manage-my-patient-appointment");
         }

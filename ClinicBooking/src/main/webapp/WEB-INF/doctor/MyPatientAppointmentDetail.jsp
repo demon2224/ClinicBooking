@@ -78,88 +78,125 @@
 
         <!-- Main Content -->
         <div class="main-content">
-            <!-- Header -->
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h2 class="fw-bold text-primary">
-                    <i class="fa-solid fa-calendar-check me-2"></i>Appointment Detail
-                </h2>
-                 <!-- Create Medical Record Button -->
-            <c:if test="${not requestScope.isExist}">
-                <div class="text-center mt-4">
-                    <a href="${pageContext.request.contextPath}/manage-my-patient-medical-record?action=create&appointmentID=${detail.appointmentID}"
-                       class="btn btn-create-record">
-                        <i class="fa-solid fa-notes-medical me-2"></i>Create Medical Record
-                    </a>
+
+
+            <c:if test="${not empty detail}">
+                <!-- Header -->
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2 class="fw-bold text-primary">
+                        <i class="fa-solid fa-calendar-check me-2"></i>Appointment Detail
+                    </h2>
+                    <!-- Create Medical Record Button -->
+                    <c:if test="${not requestScope.isExist}">
+                        <div class="text-center mt-4">
+                            <a href="${pageContext.request.contextPath}/manage-my-patient-medical-record?action=create&appointmentID=${detail.appointmentID}"
+                               class="btn btn-create-record">
+                                <i class="fa-solid fa-notes-medical me-2"></i>Create Medical Record
+                            </a>
+                        </div>
+                    </c:if>
                 </div>
+                <!-- Appointment Information -->
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fa-solid fa-info-circle me-2"></i>Appointment Information
+                    </div>
+                    <div class="card-body p-4">
+                        <table class="table table-bordered mb-0">
+                            <tr>
+                                <th>Date Begin</th>
+                                <td><fmt:formatDate value="${detail.dateBegin}" pattern="yyyy/MM/dd HH:mm" /></td>
+                            </tr>
+                            <tr>
+                                <th>Date End</th>
+                                <td>
+                                    <c:choose>
+                                        <c:when test="${detail.appointmentStatus == 'Completed'}">
+                                            <fmt:formatDate value="${detail.dateEnd}" pattern="yyyy/MM/dd HH:mm"/>
+                                        </c:when>
+                                        <c:otherwise>None</c:otherwise>
+                                    </c:choose>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Status</th>
+                                <td>
+                                    <span class="badge
+                                          <c:choose>
+                                              <c:when test="${detail.appointmentStatus eq 'Pending'}">bg-warning text-dark</c:when>
+                                              <c:when test="${detail.appointmentStatus eq 'Approved'}">bg-primary</c:when>
+                                              <c:when test="${detail.appointmentStatus eq 'Completed'}">bg-success</c:when>
+                                              <c:when test="${detail.appointmentStatus eq 'Canceled'}">bg-danger</c:when>
+                                              <c:otherwise>bg-secondary</c:otherwise>
+                                          </c:choose>">
+                                        ${detail.appointmentStatus}
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr><th>Appointment Note</th><td>${detail.note}</td></tr>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Patient Information -->
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fa-solid fa-user me-2"></i>Patient Information
+                    </div>
+                    <div class="card-body p-4">
+                        <table class="table table-bordered mb-0">
+                            <tr><th>Patient Name</th><td>${detail.patientID.firstName} ${detail.patientID.lastName}</td></tr>
+                            <tr><th>Email</th><td>${detail.patientID.email}</td></tr>
+                            <tr><th>Phone</th><td>${detail.patientID.phoneNumber}</td></tr>
+                            <tr>
+                                <th>Gender</th>
+                                <td>
+                                    <c:choose>
+                                        <c:when test="${detail.patientID.gender}">Male</c:when>
+                                        <c:otherwise>Female</c:otherwise>
+                                    </c:choose>
+                                </td>
+                            </tr>
+                            <tr><th>Date of Birth</th><td><fmt:formatDate value="${detail.patientID.dob}" pattern="yyyy/MM/dd" /></td></tr>
+                            <tr><th>Address</th><td>${detail.patientID.userAddress}</td></tr>
+                        </table>
+                    </div>
+                </div>      
             </c:if>
-            </div>
+            <c:if test="${empty detail}">
+                <!-- Header -->
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2 class="fw-bold text-primary">
+                        <i class="fa-solid fa-calendar-check me-2"></i>Appointment Detail
+                    </h2>
+                </div>
+                <!-- Appointment Information -->
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fa-solid fa-info-circle me-2"></i>Appointment Information
+                    </div>
+                    <div class="card-body p-4">
+                        <table class="table table-bordered mb-0">
+                            <tr>
+                            <i class="fa-solid fa-circle-info me-2"></i> No Appointment.
+                            </tr>
+                        </table>
+                    </div>
+                </div>
 
-            <!-- Appointment Information -->
-            <div class="card">
-                <div class="card-header">
-                    <i class="fa-solid fa-info-circle me-2"></i>Appointment Information
-                </div>
-                <div class="card-body p-4">
-                    <table class="table table-bordered mb-0">
-                        <tr>
-                            <th>Date Begin</th>
-                            <td><fmt:formatDate value="${detail.dateBegin}" pattern="yyyy/MM/dd HH:mm" /></td>
-                        </tr>
-                        <tr>
-                            <th>Date End</th>
-                            <td>
-                                <c:choose>
-                                    <c:when test="${detail.appointmentStatus == 'Completed'}">
-                                        <fmt:formatDate value="${detail.dateEnd}" pattern="yyyy/MM/dd HH:mm"/>
-                                    </c:when>
-                                    <c:otherwise>None</c:otherwise>
-                                </c:choose>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>Status</th>
-                            <td>
-                                <span class="badge
-                                      <c:choose>
-                                          <c:when test="${detail.appointmentStatus eq 'Pending'}">bg-warning text-dark</c:when>
-                                          <c:when test="${detail.appointmentStatus eq 'Approved'}">bg-primary</c:when>
-                                          <c:when test="${detail.appointmentStatus eq 'Completed'}">bg-success</c:when>
-                                          <c:when test="${detail.appointmentStatus eq 'Canceled'}">bg-danger</c:when>
-                                          <c:otherwise>bg-secondary</c:otherwise>
-                                      </c:choose>">
-                                    ${detail.appointmentStatus}
-                                </span>
-                            </td>
-                        </tr>
-                        <tr><th>Appointment Note</th><td>${detail.note}</td></tr>
-                    </table>
-                </div>
-            </div>
-
-            <!-- Patient Information -->
-            <div class="card">
-                <div class="card-header">
-                    <i class="fa-solid fa-user me-2"></i>Patient Information
-                </div>
-                <div class="card-body p-4">
-                    <table class="table table-bordered mb-0">
-                        <tr><th>Patient Name</th><td>${detail.patientID.firstName} ${detail.patientID.lastName}</td></tr>
-                        <tr><th>Email</th><td>${detail.patientID.email}</td></tr>
-                        <tr><th>Phone</th><td>${detail.patientID.phoneNumber}</td></tr>
-                        <tr>
-                            <th>Gender</th>
-                            <td>
-                                <c:choose>
-                                    <c:when test="${detail.patientID.gender}">Male</c:when>
-                                    <c:otherwise>Female</c:otherwise>
-                                </c:choose>
-                            </td>
-                        </tr>
-                        <tr><th>Date of Birth</th><td><fmt:formatDate value="${detail.patientID.dob}" pattern="yyyy/MM/dd" /></td></tr>
-                        <tr><th>Address</th><td>${detail.patientID.userAddress}</td></tr>
-                    </table>
-                </div>
-            </div>         
+                <!-- Patient Information -->
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fa-solid fa-user me-2"></i>Patient Information
+                    </div>
+                    <div class="card-body p-4">
+                        <table class="table table-bordered mb-0">
+                            <tr>  <i class="fa-solid fa-circle-info me-2"></i> No Patient.
+                            </tr>
+                        </table>
+                    </div>
+                </div>      
+            </c:if>
         </div>
     </body>
 </html>

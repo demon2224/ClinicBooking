@@ -559,7 +559,7 @@ public class PrescriptionDAO extends DBContext {
     public List<PrescriptionItemDTO> getPrescriptionItemListByPrescriptionID(int prescriptionID) {
         List<PrescriptionItemDTO> itemList = new ArrayList<>();
         String sql = "SELECT pi.Dosage, pi.Instruction, "
-                + "m.MedicineID, m.MedicineName, m.MedicineType, m.Price "
+                + "m.MedicineID, m.MedicineCode, m.MedicineName, m.MedicineType, m.Price "
                 + "FROM PrescriptionItem pi "
                 + "JOIN Medicine m ON m.MedicineID = pi.MedicineID "
                 + "WHERE pi.PrescriptionID = ?";
@@ -573,6 +573,7 @@ public class PrescriptionDAO extends DBContext {
                 // Medicine
                 MedicineDTO medicine = new MedicineDTO();
                 medicine.setMedicineID(rs.getInt("MedicineID"));
+                medicine.setMedicineCode(rs.getString("MedicineCode"));
                 medicine.setMedicineName(rs.getString("MedicineName"));
                 medicine.setMedicineType(rs.getString("MedicineType"));
                 medicine.setPrice(rs.getDouble("Price"));

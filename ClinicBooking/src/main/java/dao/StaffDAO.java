@@ -72,7 +72,7 @@ public class StaffDAO extends DBContext {
                 staff.setGender(rs.getBoolean("Gender"));
                 staff.setUserAddress(rs.getString("UserAddress"));
                 staff.setPhoneNumber(rs.getString("PhoneNumber"));
-                staff.setEmail(rs.getString("Email"));;
+                staff.setEmail(rs.getString("Email"));
             }
         } catch (SQLException e) {
             e.printStackTrace();

@@ -6,7 +6,7 @@
 
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!DOCTYPE html>
 <html>
     <head>
@@ -105,14 +105,42 @@
                                         </td>
                                         <td><input type="number" name="dosage" class="form-control" min="1" value="${item.dosage}" required></td>
                                         <td>
-                                            <select name="instruction" class="form-select" required>
-                                                <option value="">-- Select instruction --</option>
-                                                <c:forEach var="m" items="${medicineList}">
-                                                    <option value="${item.instruction}">
-                                                        ${item.instruction}
-                                                    </option>
-                                                </c:forEach>
-                                            </select>                                         
+
+                                            <!-- CUSTOM MODE (default) -->
+                                            <div class="instruction-custom-wrapper d-flex align-items-center gap-2">
+
+                                                <input type="text"
+                                                       name="instruction"
+                                                       class="form-control instruction-input"
+                                                       value="${item.instruction}"
+                                                       placeholder="Enter instruction...">
+
+                                                <button type="button" class="btn btn-outline-primary btn-sm switch-to-select">
+                                                    <i class="fa-solid fa-check"></i>
+                                                </button>
+
+                                            </div>
+
+
+                                            <!-- SELECT MODE (hidden) -->
+                                            <div class="instruction-select-wrapper d-none d-flex align-items-center gap-2">
+
+                                                <select class="form-select instruction-select">
+                                                    <option value="">-- Select Instruction --</option>
+                                                    <c:forEach var="i" items="${instructionList}">
+                                                        <option value="${i}">${i}</option>
+                                                    </c:forEach>
+                                                </select>
+
+                                                <button type="button" class="btn btn-outline-secondary btn-sm switch-to-custom">
+                                                    <i class="fa-solid fa-pen"></i>
+                                                </button>
+
+                                            </div>
+
+
+                                        </td>
+
                                         <td>
                                             <button type="button" class="btn btn-danger btn-sm remove-row">
                                                 <i class="fa-solid fa-trash"></i>
@@ -248,45 +276,119 @@
         </c:if>
 
         <script>
-            $(document).ready(function () {
+            // SWITCH: Custom → Select
+            $(document).on("click", ".switch-to-select", function () {
+                let td = $(this).closest("td");
 
-                //  Thêm hàng mới, tránh trùng thuốc
+                let input = td.find(".instruction-input");
+                let inputValue = input.val();
+
+                let select = td.find(".instruction-select");
+
+                input.removeAttr("name");
+                select.attr("name", "instruction");
+
+                if (inputValue.trim() !== "") {
+                    select.val("custom");
+                } else {
+                    select.val("");
+                }
+
+                td.find(".instruction-custom-wrapper").addClass("d-none");
+                td.find(".instruction-select-wrapper").removeClass("d-none");
+            });
+
+            // SWITCH: Select → Custom
+            $(document).on("click", ".switch-to-custom", function () {
+                let td = $(this).closest("td");
+
+                let select = td.find(".instruction-select");
+                let selectedValue = select.val();
+
+                let input = td.find(".instruction-input");
+
+                select.removeAttr("name");
+                input.attr("name", "instruction");
+
+                if (selectedValue === "custom") {
+                    input.val("");
+                } else {
+                    input.val(selectedValue);
+                }
+
+                td.find(".instruction-select-wrapper").addClass("d-none");
+                td.find(".instruction-custom-wrapper").removeClass("d-none");
+            });
+
+
+            // DISABLE MEDICINE OPTIONS TO PREVENT DUPLICATES
+            function updateMedicineOptions() {
+                let selectedValues = $('select[name="medicineID"]').map(function () {
+                    return $(this).val();
+                }).get();
+
+                $('select[name="medicineID"]').each(function () {
+                    let current = $(this);
+
+                    current.find('option').each(function () {
+                        let val = $(this).val();
+
+                        if (val === "")
+                            return;
+
+                        if (current.val() === val) {
+                            $(this).prop("disabled", false);
+                        } else {
+                            $(this).prop("disabled", selectedValues.includes(val));
+                        }
+                    });
+                });
+            }
+
+            // Khi load trang → disable các thuốc trùng
+            $(document).ready(function () {
+                updateMedicineOptions();
+
+                // ADD ROW
                 $('#addRow').click(function () {
-                    let selectedValues = $('select[name="medicineID"]').map(function () {
-                        return $(this).val();
-                    }).get();
 
                     let newRow = $('.medicine-row:first').clone();
 
-                    // Reset input fields
                     newRow.find('input').val('');
 
-                    // Cập nhật select thuốc
-                    let newSelect = $('.medicine-row:first select[name="medicineID"]').clone();
-                    newSelect.find('option').each(function () {
-                        if (selectedValues.includes($(this).val())) {
-                            $(this).prop('disabled', true);
-                        } else {
-                            $(this).prop('disabled', false);
-                        }
-                    });
+                    newRow.find('.instruction-select-wrapper').addClass('d-none');
+                    newRow.find('.instruction-custom-wrapper').removeClass('d-none');
 
-                    newRow.find('select').replaceWith(newSelect);
+                    newRow.find('.instruction-select').removeAttr('name');
+                    newRow.find('.instruction-input').attr('name', 'instruction').val('');
+
+                    let medSelect = newRow.find('select[name="medicineID"]');
+                    medSelect.val('');
+
                     $('#medicineTable tbody').append(newRow);
+
+                    // 🔥 RẤT QUAN TRỌNG: cập nhật lại disable thuốc
+                    updateMedicineOptions();
                 });
 
-                //Xóa hàng (hoạt động với cả hàng cũ và mới)
+                // REMOVE ROW
                 $(document).on('click', '.remove-row', function () {
                     if ($('#medicineTable tbody tr').length > 1) {
                         $(this).closest('tr').fadeOut(200, function () {
                             $(this).remove();
+                            updateMedicineOptions(); // cập nhật lại khi xóa thuốc
                         });
                     } else {
-                        var warningModal = new bootstrap.Modal(document.getElementById('warningModal'));
-                        warningModal.show();
+                        new bootstrap.Modal(document.getElementById('warningModal')).show();
                     }
                 });
+
+                // CHANGE MEDICINE → cập nhật disable
+                $(document).on("change", 'select[name="medicineID"]', function () {
+                    updateMedicineOptions();
+                });
             });
+
         </script>
 
     </body>

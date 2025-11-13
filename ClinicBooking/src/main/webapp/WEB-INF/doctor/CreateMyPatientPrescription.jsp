@@ -68,7 +68,7 @@
                 <h2><i class="fa-solid fa-prescription me-2"></i>Create Prescription</h2>
             </div>
 
-            <form action="${pageContext.request.contextPath}/manage-my-patient-prescription?action=create" 
+            <form action="${pageContext.request.contextPath}/manage-my-patient-prescription?action=create&medicalRecord=${medicalRecordID}" 
                   method="post" class="needs-validation" novalidate>
 
                 <input type="hidden" name="medicalRecordID" value="${medicalRecordID}" />
@@ -101,7 +101,43 @@
                                         </select>
                                     </td>
                                     <td><input type="number" name="dosage" class="form-control" min="1" required></td>
-                                    <td><input type="text" name="instruction" class="form-control" placeholder="Usage..." required></td>
+
+                                    <td>
+
+                                        <!-- CUSTOM MODE (default) -->
+                                        <div class="instruction-custom-wrapper d-flex align-items-center gap-2">
+
+                                            <input type="text"
+                                                   name="instruction"
+                                                   class="form-control instruction-input"
+                                                   placeholder="Enter instruction...">
+
+                                            <button type="button" class="btn btn-outline-primary btn-sm switch-to-select">
+                                                <i class="fa-solid fa-check"></i>
+                                            </button>
+
+                                        </div>
+
+                                        <!-- SELECT MODE (hidden) -->
+                                        <div class="instruction-select-wrapper d-none d-flex align-items-center gap-2">
+
+                                            <select class="form-select instruction-select">
+                                                <option value="">-- Select Instruction --</option>
+                                                <c:forEach var="i" items="${instructionList}">
+                                                    <option value="${i}">${i}</option>
+                                                </c:forEach>
+                                            </select>
+
+                                            <button type="button" class="btn btn-outline-secondary btn-sm switch-to-custom">
+                                                <i class="fa-solid fa-pen"></i>
+                                            </button>
+
+                                        </div>
+
+
+                                    </td>
+
+
                                     <td>
                                         <button type="button" class="btn btn-danger btn-sm remove-row">
                                             <i class="fa-solid fa-trash"></i>
@@ -207,20 +243,111 @@
                 <c:remove var="errorNull" scope="session" />
             </script>
         </c:if>
-
         <script>
+
+            // DISABLE MEDICINE OPTIONS LIKE EDIT MODE
+            function updateMedicineOptions() {
+                let selectedValues = $('select[name="medicineID"]').map(function () {
+                    return $(this).val();
+                }).get();
+
+                $('select[name="medicineID"]').each(function () {
+                    let currentSelect = $(this);
+
+                    currentSelect.find('option').each(function () {
+                        let val = $(this).val();
+                        if (val === "")
+                            return; // skip default
+
+                        if (currentSelect.val() === val) {
+                            $(this).prop('disabled', false);
+                        } else {
+                            $(this).prop('disabled', selectedValues.includes(val));
+                        }
+                    });
+                });
+            }
+
+            // SWITCH Custom → Select
+            $(document).on("click", ".switch-to-select", function () {
+                let td = $(this).closest("td");
+
+                let input = td.find(".instruction-input");
+                let inputValue = input.val();
+                let select = td.find(".instruction-select");
+
+                input.removeAttr("name");
+                select.attr("name", "instruction");
+
+                if (inputValue.trim() !== "") {
+                    select.val("custom");
+                } else {
+                    select.val("");
+                }
+
+                td.find(".instruction-custom-wrapper").addClass("d-none");
+                td.find(".instruction-select-wrapper").removeClass("d-none");
+            });
+
+            // SWITCH Select → Custom
+            $(document).on("click", ".switch-to-custom", function () {
+                let td = $(this).closest("td");
+
+                let select = td.find(".instruction-select");
+                let selectedValue = select.val();
+                let input = td.find(".instruction-input");
+
+                select.removeAttr("name");
+                input.attr("name", "instruction");
+
+                if (selectedValue === "custom") {
+                    input.val("");
+                } else {
+                    input.val(selectedValue);
+                }
+
+                td.find(".instruction-select-wrapper").addClass("d-none");
+                td.find(".instruction-custom-wrapper").removeClass("d-none");
+            });
+
+
             $(document).ready(function () {
+
+                // Khi trang load → disable thuốc đã chọn
+                updateMedicineOptions();
+
+                // ADD ROW
                 $('#addRow').click(function () {
                     let newRow = $('.medicine-row:first').clone();
+
                     newRow.find('input').val('');
+                    newRow.find('select[name="medicineID"]').val('');
+
+                    newRow.find('.instruction-select-wrapper').addClass('d-none');
+                    newRow.find('.instruction-custom-wrapper').removeClass('d-none');
+
+                    newRow.find('.instruction-select').removeAttr('name');
+                    newRow.find('.instruction-input').attr('name', 'instruction').val('');
+
                     $('#medicineTable tbody').append(newRow);
+
+                    updateMedicineOptions(); // Quan trọng
                 });
+
+                // XÓA ROW
                 $(document).on('click', '.remove-row', function () {
                     if ($('#medicineTable tbody tr').length > 1) {
                         $(this).closest('tr').remove();
+                        updateMedicineOptions(); // cập nhật lại
                     }
+                });
+
+                // Khi đổi thuốc → cập nhật lại disable
+                $(document).on("change", 'select[name="medicineID"]', function () {
+                    updateMedicineOptions();
                 });
             });
         </script>
+
     </body>
 </html>

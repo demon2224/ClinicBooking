@@ -81,134 +81,186 @@
 
     <body>
         <%@include file="../includes/DoctorDashboardSidebar.jsp" %>
-
-        <!-- Main Content -->
-        <div class="main-content">
-            <!-- Header -->
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h2 class="fw-bold text-primary">
-                    <i class="fa-solid fa-prescription-bottle-medical me-2"></i>Prescription Detail
-                </h2>
-            </div>
-
-            <!-- Prescription Information -->
-            <div class="card">
-                <div class="card-header">
-                    <i class="fa-solid fa-file-prescription me-2"></i>Prescription Information
+        <c:if test="${not empty prescription}">
+            <!-- Main Content -->
+            <div class="main-content">
+                <!-- Header -->
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2 class="fw-bold text-primary">
+                        <i class="fa-solid fa-prescription-bottle-medical me-2"></i>Prescription Detail
+                    </h2>
                 </div>
-                <div class="card-body p-4">
-                    <table class="table table-bordered mb-0">
-                        <tr>
-                            <th>Date Created</th>
-                            <td><fmt:formatDate value="${prescription.dateCreate}" pattern="yyyy/MM/dd HH:mm" /></td>
-                        </tr>
-                        <tr>
-                            <th>Status</th>
-                            <td>
-                                <span class="badge
-                                      <c:choose>
-                                          <c:when test="${prescription.prescriptionStatus eq 'Pending'}">bg-warning text-dark</c:when>
-                                          <c:otherwise>bg-success</c:otherwise>
-                                      </c:choose>">
-                                    ${prescription.prescriptionStatus}
-                                </span>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>Prescription Note</th>
-                            <td>${prescription.note}</td>
-                        </tr>
-                    </table>
-                </div>
-            </div>
 
-            <!-- Patient Information -->
-            <div class="card">
-                <div class="card-header">
-                    <i class="fa-solid fa-user me-2"></i>Patient Information
-                </div>
-                <div class="card-body p-4">
-                    <table class="table table-bordered mb-0">
-                        <tr>
-                            <th>Patient Name</th>
-                            <td>${prescription.appointmentID.patientID.firstName} ${prescription.appointmentID.patientID.lastName}</td>
-                        </tr>
-                        <tr><th>Email</th><td>${prescription.appointmentID.patientID.email}</td></tr>
-                        <tr><th>Phone</th><td>${prescription.appointmentID.patientID.phoneNumber}</td></tr>
-                        <tr>
-                            <th>Gender</th>
-                            <td>
-                                <c:choose>
-                                    <c:when test="${prescription.appointmentID.patientID.gender}">Male</c:when>
-                                    <c:otherwise>Female</c:otherwise>
-                                </c:choose>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>Date of Birth</th>
-                            <td><fmt:formatDate value="${prescription.appointmentID.patientID.dob}" pattern="yyyy/MM/dd"/></td>
-                        </tr>
-                        <tr><th>Address</th><td>${prescription.appointmentID.patientID.userAddress}</td></tr>
-                    </table>
-                </div>
-            </div>
-
-
-
-            <!-- Medicine List -->
-            <div class="card">
-                <div class="card-header">
-                    <i class="fa-solid fa-pills me-2"></i>Medicine Information
-                </div>
-                <div class="card-body p-4">
-                    <table class="table table-striped table-bordered text-center align-middle">
-                        <thead>
+                <!-- Prescription Information -->
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fa-solid fa-file-prescription me-2"></i>Prescription Information
+                    </div>
+                    <div class="card-body p-4">
+                        <table class="table table-bordered mb-0">
                             <tr>
-                                <th>#</th>
-                                <th>Medicine Name</th>
-                                <th>Code</th>
-                                <th>Type</th>
-                                <th>Price (₫)</th>
-                                <th>Dosage</th>
-                                <th>Instruction</th>
-                                <th>Subtotal</th>
+                                <th>Date Created</th>
+                                <td><fmt:formatDate value="${prescription.dateCreate}" pattern="yyyy/MM/dd HH:mm" /></td>
                             </tr>
-                        </thead>
-                        <tbody>
-                            <c:forEach var="item" items="${requestScope.prescription.prescriptionItemList}" varStatus="no">
-                                <tr>
-                                    <td class="text-center"><c:out value="${no.count}"/></td>
-                                    <td><c:out value="${item.medicineID.medicineName}"/></td>
-                                    <td class="text-center"><c:out value="${item.medicineID.medicineCode}"/></td>
-                                    <td class="text-center"><c:out value="${item.medicineID.medicineType}"/></td>
-                                    <td class="text-end"><fmt:formatNumber value="${item.medicineID.price}" /></td>
-                                    <td class="text-center"><c:out value="${item.dosage}"/></td>
-                                    <td><c:out value="${item.instruction}"/></td>
-                                    <td class="text-end"><c:out value="${item.subTotal}"/></td>
-                                </tr>
-                            </c:forEach>
-
-                            <c:if test="${empty requestScope.prescription.prescriptionItemList}">
-                                <tr>
-                                    <td colspan="8" class="text-center text-muted py-4">
-                                        <i class="fa-solid fa-circle-info me-2"></i>No medicines found in this prescription.
-                                    </td>
-                                </tr>
-                            </c:if>
-                        </tbody>
-                        <tfoot>
                             <tr>
-                                <th colspan="7" class="text-end">Total:</th>
-                                <th class="text-end">
-                                    <c:out value="${prescription.totalValue}"/>
-                                </th>
+                                <th>Status</th>
+                                <td>
+                                    <span class="badge
+                                          <c:choose>
+                                              <c:when test="${prescription.prescriptionStatus eq 'Pending'}">bg-warning text-dark</c:when>
+                                              <c:otherwise>bg-success</c:otherwise>
+                                          </c:choose>">
+                                        ${prescription.prescriptionStatus}
+                                    </span>
+                                </td>
                             </tr>
-                        </tfoot>
-                    </table>
+                            <tr>
+                                <th>Prescription Note</th>
+                                <td>${prescription.note}</td>
+                            </tr>
+                        </table>
+                    </div>
                 </div>
+
+                <!-- Patient Information -->
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fa-solid fa-user me-2"></i>Patient Information
+                    </div>
+                    <div class="card-body p-4">
+                        <table class="table table-bordered mb-0">
+                            <tr>
+                                <th>Patient Name</th>
+                                <td>${prescription.appointmentID.patientID.firstName} ${prescription.appointmentID.patientID.lastName}</td>
+                            </tr>
+                            <tr><th>Email</th><td>${prescription.appointmentID.patientID.email}</td></tr>
+                            <tr><th>Phone</th><td>${prescription.appointmentID.patientID.phoneNumber}</td></tr>
+                            <tr>
+                                <th>Gender</th>
+                                <td>
+                                    <c:choose>
+                                        <c:when test="${prescription.appointmentID.patientID.gender}">Male</c:when>
+                                        <c:otherwise>Female</c:otherwise>
+                                    </c:choose>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Date of Birth</th>
+                                <td><fmt:formatDate value="${prescription.appointmentID.patientID.dob}" pattern="yyyy/MM/dd"/></td>
+                            </tr>
+                            <tr><th>Address</th><td>${prescription.appointmentID.patientID.userAddress}</td></tr>
+                        </table>
+                    </div>
+                </div>
+
+
+
+                <!-- Medicine List -->
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fa-solid fa-pills me-2"></i>Medicine Information
+                    </div>
+                    <div class="card-body p-4">
+                        <table class="table table-striped table-bordered text-center align-middle">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Medicine Name</th>
+                                    <th>Code</th>
+                                    <th>Type</th>
+                                    <th>Price (₫)</th>
+                                    <th>Dosage</th>
+                                    <th>Instruction</th>
+                                    <th>Subtotal</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <c:forEach var="item" items="${requestScope.prescription.prescriptionItemList}" varStatus="no">
+                                    <tr>
+                                        <td class="text-center"><c:out value="${no.count}"/></td>
+                                        <td><c:out value="${item.medicineID.medicineName}"/></td>
+                                        <td class="text-center"><c:out value="${item.medicineID.medicineCode}"/></td>
+                                        <td class="text-center"><c:out value="${item.medicineID.medicineType}"/></td>
+                                        <td class="text-end"><fmt:formatNumber value="${item.medicineID.price}" /></td>
+                                        <td class="text-center"><c:out value="${item.dosage}"/></td>
+                                        <td><c:out value="${item.instruction}"/></td>
+                                        <td class="text-end"><c:out value="${item.subTotal}"/></td>
+                                    </tr>
+                                </c:forEach>
+
+                                <c:if test="${empty requestScope.prescription.prescriptionItemList}">
+                                    <tr>
+                                        <td colspan="8" class="text-center text-muted py-4">
+                                            <i class="fa-solid fa-circle-info me-2"></i>No medicines found in this prescription.
+                                        </td>
+                                    </tr>
+                                </c:if>
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <th colspan="7" class="text-end">Total:</th>
+                                    <th class="text-end">
+                                        <c:out value="${prescription.totalValue}"/>
+                                    </th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+
+
             </div>
+        </c:if>
+        <c:if test="${empty prescription}">
+            <!-- Main Content -->
+            <div class="main-content">
+                <!-- Header -->
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2 class="fw-bold text-primary">
+                        <i class="fa-solid fa-prescription-bottle-medical me-2"></i>Prescription Detail
+                    </h2>
+                </div>
+
+                <!-- Prescription Information -->
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fa-solid fa-file-prescription me-2"></i>Prescription Information
+                    </div>
+                    <div class="card-body p-4">
+                        <table class="table table-bordered mb-0">
+                            <tr><i class="fa-solid fa-circle-info me-2"></i>No prescription.</tr> 
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Patient Information -->
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fa-solid fa-user me-2"></i>Patient Information
+                    </div>
+                    <div class="card-body p-4">
+                        <table class="table table-bordered mb-0">
+                            <tr><i class="fa-solid fa-circle-info me-2"></i>No patient.</tr> 
+                        </table>
+                    </div>
+                </div>
 
 
-        </div>
+
+                <!-- Medicine List -->
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fa-solid fa-pills me-2"></i>Medicine Information
+                    </div>
+                    <div class="card-body p-4">
+                        <table class="table table-striped table-bordered text-center align-middle">
+                            <tr><i class="fa-solid fa-circle-info me-2"></i>No medicines.</tr> 
+                        </table>
+                    </div>
+                </div>
+
+
+            </div>
+        </c:if>
     </body>
 </html>
