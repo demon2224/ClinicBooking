@@ -1,4 +1,4 @@
-<%-- 
+<%--
     Document   : MyPatientPrescriptionList
     Created on : 6 Nov. 2025, 5:19:35 pm
     Author     : Le Thien Tri - CE191249
@@ -100,7 +100,7 @@
                         <i class="fa-solid fa-magnifying-glass me-2"></i>
                         <span>Search</span>
                     </button>
-                    <a href="${pageContext.request.contextPath}/logout"
+                    <a href="${pageContext.request.contextPath}/staff-logout"
                        class="btn btn-outline-danger d-flex align-items-center" id="Logout">
                         <i class="fa-solid fa-right-from-bracket me-2"></i>
                         <span>Logout</span>

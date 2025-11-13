@@ -22,8 +22,7 @@ import model.PatientDTO;
 public class HomePageController extends HttpServlet {
 
     /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
+     * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
      *
      * @param request servlet request
      * @param response servlet response
@@ -43,16 +42,15 @@ public class HomePageController extends HttpServlet {
 //        }
 
 //        request.getRequestDispatcher("/WEB-INF/HomePage.jsp").forward(request, response);
-        HttpSession session = request.getSession();
-        DoctorDTO doctor = ((new DoctorDAO()).getDoctorById(1));
-        if ((session != null) && (doctor != null)) {
-            session.setAttribute("doctor", doctor);
-        }
-        request.getRequestDispatcher("/WEB-INF/doctor/DoctorDashboard.jsp").forward(request, response);
+//        HttpSession session = request.getSession();
+//        DoctorDTO doctor = ((new DoctorDAO()).getDoctorById(1));
+//        if ((session != null) && (doctor != null)) {
+//            session.setAttribute("doctor", doctor);
+//        }
+//        request.getRequestDispatcher("/WEB-INF/doctor/DoctorDashboard.jsp").forward(request, response);
         // Since Patient table doesn't have RoleID, redirect to patient homepage
         // Remove role-based redirects as patients don't have roles
         // Forward to Homepage.jsp
-
         // Using for test patient login.
 //        HttpSession session = request.getSession();
 //        PatientDTO patient = (PatientDTO) session.getAttribute("patient");
@@ -64,7 +62,7 @@ public class HomePageController extends HttpServlet {
 //        }
 //
 //        // Using for test staff login.
-//        response.sendRedirect(request.getContextPath() + "/staff-login");
+        response.sendRedirect(request.getContextPath() + "/staff-login");
     }
 
     /**

@@ -318,4 +318,21 @@ public class MedicineDAO extends DBContext {
         }
         return "Unknown medicine";
     }
+
+    public int getLowStockMedicines() {
+        int countLowStockMedicines = 0;
+        String sql = "SELECT COUNT(*) AS Total FROM Medicine WHERE Quantity <= 30";
+        ResultSet rs = null;
+        try {
+            rs = executeSelectQuery(sql);
+            if (rs.next()) {
+                countLowStockMedicines = rs.getInt("Total");
+            }
+        } catch (SQLException e) {
+            Logger.getLogger(MedicineDAO.class.getName()).log(Level.SEVERE, null, e);
+        } finally {
+            closeResources(rs);
+        }
+        return countLowStockMedicines;
+    }
 }

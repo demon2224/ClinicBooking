@@ -1,4 +1,4 @@
-<%-- 
+<%--
     Document   : PrescriptionList
     Created on : Nov 5, 2025, 8:35:37 AM
     Author     : Vu Minh Khang - CE191371
@@ -174,7 +174,7 @@
                             </tbody>
                         </table>
                     </div>
-                </div>          
+                </div>
             </div>
         </div>
     </body>

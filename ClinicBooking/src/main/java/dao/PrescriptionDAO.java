@@ -783,8 +783,7 @@ public class PrescriptionDAO extends DBContext {
     }
 
     /**
-     * Search prescriptions for a specific patient by doctor name or medicine
-     * name
+     * Search prescriptions for a specific patient by doctor name or medicine name
      *
      * @param patientId The patient ID
      * @param searchQuery The search query
@@ -1134,6 +1133,40 @@ public class PrescriptionDAO extends DBContext {
         }
 
         return 0;
+    }
+
+    public int getTotalPrescriptions() {
+        int countPrescription = 0;
+        String sql = "SELECT COUNT(*) AS Total FROM Prescription";
+        ResultSet rs = null;
+        try {
+            rs = executeSelectQuery(sql);
+            if (rs.next()) {
+                countPrescription = rs.getInt("Total");
+            }
+        } catch (SQLException e) {
+            Logger.getLogger(PrescriptionDAO.class.getName()).log(Level.SEVERE, null, e);
+        } finally {
+            closeResources(rs);
+        }
+        return countPrescription;
+    }
+
+    public int getPrescriptionsByStatus(String status) {
+        int countPreStatus = 0;
+        String sql = "SELECT COUNT(*) AS Total FROM Prescription WHERE PrescriptionStatus = ?";
+        ResultSet rs = null;
+        try {
+            rs = executeSelectQuery(sql, new Object[]{status});
+            if (rs.next()) {
+                countPreStatus = rs.getInt("Total");
+            }
+        } catch (SQLException e) {
+            Logger.getLogger(PrescriptionDAO.class.getName()).log(Level.SEVERE, null, e);
+        } finally {
+            closeResources(rs);
+        }
+        return countPreStatus;
     }
 
 }

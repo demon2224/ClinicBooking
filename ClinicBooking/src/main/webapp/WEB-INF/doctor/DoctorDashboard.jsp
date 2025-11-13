@@ -1,4 +1,4 @@
-<%-- 
+<%--
     Document   : DoctorDashboard
     Created on : 7 Oct. 2025, 2:18:25 pm
     Author     : Le Thien Tri - CE191249
@@ -84,7 +84,7 @@
                 <h3 class="fw-bold text-primary mb-0">
                     <i class="fa-solid fa-user-doctor me-2"></i>Doctor Dashboard
                 </h3>
-                <a href="${pageContext.request.contextPath}/logout" class="btn btn-outline-danger logout-btn">
+                <a href="${pageContext.request.contextPath}/staff-logout" class="btn btn-outline-danger logout-btn">
                     <i class="fa-solid fa-right-from-bracket"></i> Logout
                 </a>
             </nav>
@@ -92,7 +92,7 @@
             <!-- Welcome Section -->
             <div class="alert alert-primary shadow-sm" role="alert">
                 <i class="fa-solid fa-stethoscope me-2"></i>
-                Welcome back, <strong>${sessionScope.doctorName}</strong>!  
+                Welcome back, <strong>${sessionScope.doctorName}</strong>!
                 Here’s an overview of your current medical activities.
             </div>
 
@@ -208,8 +208,8 @@
                                         <td><fmt:formatDate value="${pres.dateCreate}" pattern="dd MMM yyyy HH:mm"/></td>
                                         <td>
                                             <span class="badge
-                                                  ${pres.prescriptionStatus eq 'Pending' ? 'bg-warning text-dark' : 
-                                                    pres.prescriptionStatus eq 'Delivered' ? 'bg-success' : 
+                                                  ${pres.prescriptionStatus eq 'Pending' ? 'bg-warning text-dark' :
+                                                    pres.prescriptionStatus eq 'Delivered' ? 'bg-success' :
                                                     'bg-secondary'}">
                                                       ${pres.prescriptionStatus}
                                                   </span>

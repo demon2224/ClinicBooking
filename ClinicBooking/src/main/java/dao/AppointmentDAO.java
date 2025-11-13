@@ -669,8 +669,8 @@ public class AppointmentDAO extends DBContext {
     }
 
     /**
-     * Cancel appointment by setting status to Canceled Only if current status
-     * is Pending or Approved
+     * Cancel appointment by setting status to Canceled Only if current status is Pending
+     * or Approved
      */
     public boolean cancelAppointment(int appointmentId) {
         String sql = "UPDATE Appointment"
@@ -684,9 +684,8 @@ public class AppointmentDAO extends DBContext {
     }
 
     /**
-     * Update appointment by setting status to Approved Only if current status
-     * is Pending and then setting to Completed Only if current status is
-     * Approved
+     * Update appointment by setting status to Approved Only if current status is Pending
+     * and then setting to Completed Only if current status is Approved
      */
     public boolean updateStatusAppointment(int appointmentId) {
         String sql = "UPDATE Appointment "
@@ -874,13 +873,12 @@ public class AppointmentDAO extends DBContext {
     }
 
     /**
-     * Check if doctor is available at the requested time (no conflicting
-     * appointments with status Pending, Approved, or Completed)
+     * Check if doctor is available at the requested time (no conflicting appointments
+     * with status Pending, Approved, or Completed)
      *
      * @param doctorId Doctor's ID
      * @param newAppointmentTime Requested appointment time
-     * @return true if doctor is available, false if doctor has conflicting
-     * appointment
+     * @return true if doctor is available, false if doctor has conflicting appointment
      */
     public boolean isDoctorAvailable(int doctorId, Timestamp newAppointmentTime) {
         // Check for appointments that overlap with the new appointment time
@@ -912,8 +910,7 @@ public class AppointmentDAO extends DBContext {
 
     /**
      * Check if the new appointment has valid 30-minute gap with doctor's other
-     * appointments Appointments must be at least 30 minutes apart for the same
-     * doctor
+     * appointments Appointments must be at least 30 minutes apart for the same doctor
      *
      * @param doctorId Doctor's ID
      * @param newAppointmentTime New appointment time
@@ -978,9 +975,8 @@ public class AppointmentDAO extends DBContext {
     }
 
     /**
-     * Get doctors from completed appointments for a patient within 24 hours
-     * Only returns doctors that the patient can review (completed within 24h
-     * and not yet reviewed)
+     * Get doctors from completed appointments for a patient within 24 hours Only returns
+     * doctors that the patient can review (completed within 24h and not yet reviewed)
      *
      * @param patientId The patient ID
      * @return List of doctors eligible for review
@@ -1050,8 +1046,8 @@ public class AppointmentDAO extends DBContext {
     }
 
     /**
-     * Check if a patient can review a specific doctor Patient must have a
-     * completed appointment within 24 hours and not yet reviewed
+     * Check if a patient can review a specific doctor Patient must have a completed
+     * appointment within 24 hours and not yet reviewed
      *
      * @param patientId The patient ID
      * @param doctorId The doctor ID
@@ -1200,4 +1196,37 @@ public class AppointmentDAO extends DBContext {
         return appointments;
     }
 
+    public int getTotalAppointments() {
+        int countAppointment = 0;
+        String sql = "SELECT COUNT(*) AS Total FROM Appointment";
+        ResultSet rs = null;
+        try {
+            rs = executeSelectQuery(sql);
+            if (rs.next()) {
+                countAppointment = rs.getInt("Total");
+            }
+        } catch (Exception e) {
+            Logger.getLogger(AppointmentDAO.class.getName()).log(Level.SEVERE, null, e);
+        } finally {
+            closeResources(rs);
+        }
+        return countAppointment;
+    }
+
+    public int getAppointmentsByStatus(String status) {
+        int countAppStatus = 0;
+        String sql = "SELECT COUNT(*) AS Total FROM Appointment WHERE AppointmentStatus = ?";
+        ResultSet rs = null;
+        try {
+            rs = executeSelectQuery(sql, new Object[]{status});
+            if (rs.next()) {
+                countAppStatus = rs.getInt("Total");
+            }
+        } catch (Exception e) {
+            Logger.getLogger(AppointmentDAO.class.getName()).log(Level.SEVERE, null, e);
+        } finally {
+            closeResources(rs);
+        }
+        return countAppStatus;
+    }
 }

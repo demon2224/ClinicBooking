@@ -10,6 +10,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import model.AppointmentDTO;
 import model.DoctorDTO;
 import model.InvoiceDTO;
@@ -664,6 +666,40 @@ public class InvoiceDAO extends DBContext {
             e.printStackTrace();
         }
         return 0;
+    }
+
+    public int getTotalInvoices() {
+        int countInvoice = 0;
+        String sql = "SELECT COUNT(*) AS Total FROM Invoice";
+        ResultSet rs = null;
+        try {
+            rs = executeSelectQuery(sql);
+            if (rs.next()) {
+                countInvoice = rs.getInt("Total");
+            }
+        } catch (Exception e) {
+            Logger.getLogger(InvoiceDAO.class.getName()).log(Level.SEVERE, null, e);
+        } finally {
+            closeResources(rs);
+        }
+        return countInvoice;
+    }
+
+    public int getInvoicesByStatus(String status) {
+        int countInvStatus = 0;
+        String sql = "SELECT COUNT(*) AS Total FROM Invoice WHERE InvoiceStatus = ?";
+        ResultSet rs = null;
+        try {
+            rs = executeSelectQuery(sql, new Object[]{status});
+            if (rs.next()) {
+                countInvStatus = rs.getInt("Total");
+            }
+        } catch (SQLException e) {
+            Logger.getLogger(InvoiceDAO.class.getName()).log(Level.SEVERE, null, e);
+        } finally {
+            closeResources(rs);
+        }
+        return countInvStatus;
     }
 
 }

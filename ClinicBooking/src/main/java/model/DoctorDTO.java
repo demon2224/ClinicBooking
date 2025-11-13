@@ -14,6 +14,7 @@ public class DoctorDTO {
     private StaffDTO staffID;
     private SpecialtyDTO specialtyID;
     private int yearExperience;
+    private int totalAppointments;
 
     public DoctorDTO() {
     }
@@ -55,6 +56,28 @@ public class DoctorDTO {
 
     public void setYearExperience(int yearExperience) {
         this.yearExperience = yearExperience;
+    }
+
+    public int getTotalAppointments() {
+        return totalAppointments;
+    }
+
+    public void setTotalAppointments(int totalAppointments) {
+        this.totalAppointments = totalAppointments;
+    }
+
+    public String getDoctorName() {
+        if (staffID != null) {
+            return staffID.getFirstName() + " " + staffID.getLastName();
+        }
+        return "";
+    }
+
+    public String getSpecialtyName() {
+        if (specialtyID != null) {
+            return specialtyID.getSpecialtyName();
+        }
+        return "";
     }
 
 }

@@ -1,4 +1,4 @@
-<%-- 
+<%--
     Document   : MyPatientMedicalRecord
     Created on : 11 Oct. 2025, 7:53:46 pm
     Author     : Le Thien Tri - CE191249
@@ -86,7 +86,7 @@
                     <i class="fa-solid fa-file-medical me-2"></i>
                     Manage My Patient Medical Records
                 </h3>
-                <form class="d-flex align-items-center" 
+                <form class="d-flex align-items-center"
                       action="${pageContext.request.contextPath}/manage-my-patient-medical-record" method="get">
                     <input class="form-control me-2" type="text" name="keyword"
                            placeholder="Search by patient name..." value="${param.keyword}">
@@ -94,7 +94,7 @@
                         <i class="fa-solid fa-magnifying-glass me-2"></i>
                         <span>Search</span>
                     </button>
-                    <a href="${pageContext.request.contextPath}/logout"
+                    <a href="${pageContext.request.contextPath}/staff-logout"
                        class="btn btn-outline-danger d-flex align-items-center" id="Logout">
                         <i class="fa-solid fa-right-from-bracket me-2"></i>
                         <span>Logout</span>

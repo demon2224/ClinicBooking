@@ -253,8 +253,7 @@ public class PatientDAO extends DBContext {
      * @param patientId Patient ID
      * @param currentPassword Current password (for verification)
      * @param newPassword New password (will be hashed)
-     * @return true if successful, false if current password incorrect or update
-     * failed
+     * @return true if successful, false if current password incorrect or update failed
      */
     public boolean updatePatientPassword(int patientId, String currentPassword, String newPassword) {
         // First verify current password
@@ -339,6 +338,23 @@ public class PatientDAO extends DBContext {
         }
 
         return isExist;
+    }
+
+    public int getTotalPatients() {
+        int countPatient = 0;
+        String sql = "SELECT COUNT(*) AS Total FROM Patient WHERE Hidden = 0";
+        ResultSet rs = null;
+        try {
+            rs = executeSelectQuery(sql);
+            if (rs.next()) {
+                countPatient = rs.getInt("Total");
+            }
+        } catch (SQLException e) {
+            Logger.getLogger(PatientDAO.class.getName()).log(Level.SEVERE, null, e);
+        } finally {
+            closeResources(rs);
+        }
+        return countPatient;
     }
 
 }

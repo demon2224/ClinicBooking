@@ -21,8 +21,7 @@ public class AppointmentDTO {
     private Timestamp dateEnd;
     private String note;
     private boolean hidden;
-    
-    
+    private int totalAppointments;
 
     public AppointmentDTO() {
     }
@@ -143,5 +142,12 @@ public class AppointmentDTO {
         return appointmentStatus;
     }
 
+    public int getTotalAppointments() {
+        return totalAppointments;
+    }
+
+    public void setTotalAppointments(int totalAppointments) {
+        this.totalAppointments = totalAppointments;
+    }
 
 }

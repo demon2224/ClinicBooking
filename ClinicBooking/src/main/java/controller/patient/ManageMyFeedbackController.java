@@ -122,8 +122,8 @@ public class ManageMyFeedbackController extends HttpServlet {
         }
 
         // Check for session messages and move to request attributes
-        String successMessage = (String) request.getSession().getAttribute("successMessage");
-        String errorMessage = (String) request.getSession().getAttribute("errorMessage");
+        String successMessage = (String) request.getAttribute("successMessage");
+        String errorMessage = (String) request.getAttribute("errorMessage");
 
         if (successMessage != null) {
             request.setAttribute("successMessage", successMessage);
@@ -132,7 +132,7 @@ public class ManageMyFeedbackController extends HttpServlet {
 
         if (errorMessage != null) {
             request.setAttribute("errorMessage", errorMessage);
-            request.getSession().removeAttribute("errorMessage");
+            request.removeAttribute("errorMessage");
         }
 
         request.setAttribute("myReviews", myReviews);
@@ -256,7 +256,7 @@ public class ManageMyFeedbackController extends HttpServlet {
 
             // Check if review can still be edited (within 24 hours)
             if (!appointmentDAO.canEditReview(reviewId, userID)) {
-                request.getSession().setAttribute("errorMessage", ManageMyFeedbackConstants.ERROR_CANNOT_EDIT_REVIEW);
+                request.setAttribute("errorMessage", ManageMyFeedbackConstants.ERROR_CANNOT_EDIT_REVIEW);
                 response.sendRedirect(request.getContextPath() + ManageMyFeedbackConstants.MANAGE_FEEDBACK_URL);
                 return;
             }
@@ -268,7 +268,7 @@ public class ManageMyFeedbackController extends HttpServlet {
                 request.getSession().setAttribute("successMessage", ManageMyFeedbackConstants.SUCCESS_FEEDBACK_UPDATE);
                 response.sendRedirect(request.getContextPath() + ManageMyFeedbackConstants.MANAGE_FEEDBACK_URL);
             } else {
-                request.getSession().setAttribute("errorMessage", ManageMyFeedbackConstants.ERROR_FAILED_UPDATE_REVIEW);
+                request.setAttribute("errorMessage", ManageMyFeedbackConstants.ERROR_FAILED_UPDATE_REVIEW);
                 response.sendRedirect(request.getContextPath() + ManageMyFeedbackConstants.MANAGE_FEEDBACK_URL);
             }
 
@@ -303,7 +303,7 @@ public class ManageMyFeedbackController extends HttpServlet {
             if (success) {
                 request.getSession().setAttribute("successMessage", ManageMyFeedbackConstants.SUCCESS_FEEDBACK_DELETE);
             } else {
-                request.getSession().setAttribute("errorMessage", ManageMyFeedbackConstants.ERROR_FAILED_DELETE_REVIEW);
+                request.setAttribute("errorMessage", ManageMyFeedbackConstants.ERROR_FAILED_DELETE_REVIEW);
             }
 
             response.sendRedirect(request.getContextPath() + ManageMyFeedbackConstants.MANAGE_FEEDBACK_URL);
@@ -328,7 +328,7 @@ public class ManageMyFeedbackController extends HttpServlet {
         FeedbackValidate.ValidationResult validation = FeedbackValidate.validateCreateFeedback(doctorIdParam, content,
                 ratingParam);
         if (!validation.isValid()) {
-            request.getSession().setAttribute("errorMessage", validation.getErrorMessage());
+            request.setAttribute("errorMessage", validation.getErrorMessage());
             response.sendRedirect(request.getContextPath() + ManageMyFeedbackConstants.MANAGE_FEEDBACK_URL);
             return;
         }
@@ -339,7 +339,7 @@ public class ManageMyFeedbackController extends HttpServlet {
 
             // Check if patient can review this doctor (must have completed appointment within 24h)
             if (!appointmentDAO.canPatientReviewDoctor(userID, doctorId)) {
-                request.getSession().setAttribute("errorMessage", ManageMyFeedbackConstants.ERROR_CANNOT_REVIEW_DOCTOR);
+                request.setAttribute("errorMessage", ManageMyFeedbackConstants.ERROR_CANNOT_REVIEW_DOCTOR);
                 response.sendRedirect(request.getContextPath() + ManageMyFeedbackConstants.MANAGE_FEEDBACK_URL);
                 return;
             }
@@ -351,12 +351,12 @@ public class ManageMyFeedbackController extends HttpServlet {
                 request.getSession().setAttribute("successMessage", ManageMyFeedbackConstants.SUCCESS_FEEDBACK_SUBMIT);
                 response.sendRedirect(request.getContextPath() + ManageMyFeedbackConstants.MANAGE_FEEDBACK_URL);
             } else {
-                request.getSession().setAttribute("errorMessage", ManageMyFeedbackConstants.ERROR_FAILED_SUBMIT_REVIEW);
+                request.setAttribute("errorMessage", ManageMyFeedbackConstants.ERROR_FAILED_SUBMIT_REVIEW);
                 response.sendRedirect(request.getContextPath() + ManageMyFeedbackConstants.MANAGE_FEEDBACK_URL);
             }
 
         } catch (NumberFormatException e) {
-            request.getSession().setAttribute("errorMessage", ManageMyFeedbackConstants.ERROR_INVALID_DOCTOR_ID);
+            request.setAttribute("errorMessage", ManageMyFeedbackConstants.ERROR_INVALID_DOCTOR_ID);
             response.sendRedirect(request.getContextPath() + ManageMyFeedbackConstants.MANAGE_FEEDBACK_URL);
         }
     }
