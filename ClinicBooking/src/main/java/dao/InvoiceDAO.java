@@ -215,18 +215,8 @@ public class InvoiceDAO extends DBContext {
                 medicalRecord.setNote(rs.getString("MedicalNote"));
 
                 // Prescription
-                PrescriptionDTO prescription = null;
-                if (rs.getObject("PrescriptionID") != null) {
-                    prescription = new PrescriptionDTO();
-                    prescription.setPrescriptionID(rs.getInt("PrescriptionID"));
-                    prescription.setNote(rs.getString("PrescriptionNote"));
-
-                    // Load prescription items automatically like in PrescriptionDAO.getPrescriptionById
-                    PrescriptionDAO prescriptionDAO = new PrescriptionDAO();
-                    prescription.setPrescriptionItemList(
-                            prescriptionDAO.getAllPrescriptionItemByPrescriptionID(rs.getInt("PrescriptionID"))
-                    );
-                }
+                PrescriptionDTO prescription = new PrescriptionDTO();
+                prescription.setNote(rs.getString("PrescriptionNote"));
 
                 // Invoice
                 invoice = new InvoiceDTO();
