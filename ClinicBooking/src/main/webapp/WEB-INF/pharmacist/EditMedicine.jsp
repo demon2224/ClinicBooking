@@ -3,172 +3,180 @@
     Created on : Oct 20, 2025, 9:52:48 AM
     Author     : Vu Minh Khang - CE191371
 --%>
-
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <title>Doctor Dashboard</title>
-        <link rel="stylesheet" href="${pageContext.request.contextPath}/assests/css/bootstrap.min.css">
-        <link rel="stylesheet" href="${pageContext.request.contextPath}/assests/css/all.min.css" />
-        <style>
-            body {
-                background-color: #f8f9fa;
-            }
-            .sidebar {
-                width: 240px;
-                height: 100vh;
-                background-color: #1B5A90;
-                color: white;
-                position: fixed;
-            }
-            .sidebar a {
-                display: block;
-                color: white;
-                text-decoration: none;
-                padding: 12px 20px;
-            }
-            .sidebar a:hover {
-                background-color: #00D0F1;
-            }
-            .main-content {
-                margin-left: 260px;
-                padding: 25px;
-            }
-            .card {
-                border-radius: 10px;
-            }
-            .table img {
-                border-radius: 50%;
-                width: 40px;
-                height: 40px;
-            }
-            .status-toggle {
-                width: 40px;
-                height: 20px;
-            }
-            .navbar {
-                background: white;
-                border-bottom: 1px solid #dee2e6;
-            }
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Medicine</title>
 
-            #Logout{
-                color: red;
-                border-color: red;
+    <!-- Bootstrap & FontAwesome -->
+    <link rel="stylesheet" 
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" 
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
-            }
-            #Logout:hover{
-                background-color: red;
-                color: white;
-            }
-            .required::after {
-                content: " *";
-                color: red;
-                font-weight: bold;
-            }
-        </style>
-    </head>
-    <body>
-        <!-- Sidebar -->
-        <%@include file="../includes/PharmacistDashboardSidebar.jsp" %>
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .main-content {
+            margin-left: 260px;
+            padding: 25px;
+        }
 
-        <!-- Main content -->
-        <div class="main-content">
-            <nav class="navbar navbar-light">
-                <div class="container-fluid">
-                    <div class="container-fluid d-flex justify-content-end">
-                        <button class="btn btn-submit" id="Logout" type="submit">Logout</button>
-                    </div>
-                </div>
-            </nav>
+        .card {
+            border-radius: 10px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+        }
 
-            <div class="container-fluid mt-4">
-                <div class="card">
-                    <div class="card-header bg-white">
-                        <h5 class="mb-0">Edit Medicine</h5>
-                    </div>
-                    <div class="card-body">
-                        <form action="${pageContext.request.contextPath}/manage-medicine" method="POST">
-                            <input type="hidden" name="action" value="edit">
-                            <input type="hidden" name="medicineID" value="${requestScope.medicine.medicineID}">
+        .card-header {
+            background-color: #1B5A90;
+            color: white;
+            font-weight: bold;
+        }
 
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <label class="form-label required">Medicine Name</label>
-                                    <input type="text" class="form-control" name="medicineName" value="${requestScope.medicine.medicineName}" required>
-                                    <div class="text-danger">
-                                        <c:if test="${not empty sessionScope.medicineNameErrorMsg}">                   
-                                            <c:out value="${sessionScope.medicineNameErrorMsg}"/>
-                                        </c:if>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label required">Medicine Code</label>
-                                    <input type="text" class="form-control" name="medicineCode" value="${requestScope.medicine.medicineCode}" required>
-                                    <div class="text-danger">
-                                        <c:if test="${not empty sessionScope.medicineCodeErrorMsg}">                   
-                                            <c:out value="${sessionScope.medicineCodeErrorMsg}"/>
-                                        </c:if>
-                                    </div>
-                                </div>
-                            </div>
+        .required::after {
+            content: " *";
+            color: red;
+        }
+    </style>
+</head>
 
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <label class="form-label required">Medicine Type</label>
-                                    <select class="form-select" name="medicineType" required>
-                                        <c:forEach items="${requestScope.medicineTypeList}" var="type">
-                                            <option value="${type}" 
-                                                    ${requestScope.medicine.medicineType eq type ? 'selected' : ''}>
-                                                <c:out value="${type}"/>
-                                            </option>
-                                        </c:forEach>
-                                    </select>
-                                    <div class="text-danger">
-                                        <c:if test="${not empty sessionScope.medicineTypeErrorMsg}">                   
-                                            <c:out value="${sessionScope.medicineTypeErrorMsg}"/>
-                                        </c:if>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label required">Price ($)</label>
-                                    <input type="number" class="form-control" name="price" min="0" step="0.01" value="${requestScope.medicine.price}" required>
-                                    <div class="text-danger">
-                                        <c:if test="${not empty sessionScope.medicinePriceErrorsMsg}">                   
-                                            <c:out value="${sessionScope.medicinePriceErrorsMsg}"/>
-                                        </c:if>
-                                    </div>
-                                </div>
-                            </div>
+<body>
 
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <label class="form-label required">Status</label>
-                                    <select class="form-select" name="medicineStatus">
-                                        <option value="1" ${medicine.medicineStatus ? 'selected' : ''}>Available</option>
-                                        <option value="0" ${!medicine.medicineStatus ? 'selected' : ''}>Unavailable</option>
-                                    </select>
-                                    <div class="text-danger">
-                                        <c:if test="${not empty sessionScope.medicineStatusErrorsMsg}">                   
-                                            <c:out value="${sessionScope.medicineStatusErrorsMsg}"/>
-                                        </c:if>
-                                    </div>
-                                </div>
-                            </div>
+<%@include file="../includes/PharmacistDashboardSidebar.jsp" %>
 
+<div class="main-content">
 
-                            <div class="d-flex justify-content-center mt-3">
-                                <button type="submit" class="btn btn-success px-5 py-2 fw-bold" style="border-radius: 30px;">
-                                    Edit
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
+    <!-- Page Title -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold text-primary">
+            <i class="fa-solid fa-pen-to-square me-2"></i>Edit Medicine
+        </h2>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <i class="fa-solid fa-file-pen me-2"></i>Medicine Information
         </div>
-    </body>
+
+        <div class="card-body p-4">
+
+            <form action="${pageContext.request.contextPath}/manage-medicine" method="POST">
+                <input type="hidden" name="action" value="edit">
+                <input type="hidden" name="medicineID" value="${medicine.medicineID}">
+
+                <!-- Row 1: Name / Code -->
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <label class="form-label required">Medicine Name</label>
+                        <input type="text" class="form-control" 
+                               name="medicineName" 
+                               value="${medicine.medicineName}" required>
+
+                        <c:if test="${not empty sessionScope.medicineNameErrorMsg}">
+                            <div class="text-danger small mt-1">
+                                <i class="fa-solid fa-circle-exclamation me-1"></i>
+                                <c:out value="${sessionScope.medicineNameErrorMsg}"/>
+                            </div>
+                        </c:if>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label required">Medicine Code</label>
+                        <input type="text" class="form-control" 
+                               name="medicineCode" 
+                               value="${medicine.medicineCode}" required>
+
+                        <c:if test="${not empty sessionScope.medicineCodeErrorMsg}">
+                            <div class="text-danger small mt-1">
+                                <i class="fa-solid fa-circle-exclamation me-1"></i>
+                                <c:out value="${sessionScope.medicineCodeErrorMsg}"/>
+                            </div>
+                        </c:if>
+                    </div>
+                </div>
+
+                <!-- Row 2: Type / Price -->
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <label class="form-label required">Medicine Type</label>
+
+                        <select class="form-select" name="medicineType" required>
+                            <c:forEach var="type" items="${medicineTypeList}">
+                                <option value="${type}" 
+                                    <c:if test="${medicine.medicineType eq type}">selected</c:if>>
+                                    <c:out value="${type}"/>
+                                </option>
+                            </c:forEach>
+                        </select>
+
+                        <c:if test="${not empty sessionScope.medicineTypeErrorMsg}">
+                            <div class="text-danger small mt-1">
+                                <i class="fa-solid fa-circle-exclamation me-1"></i>
+                                <c:out value="${sessionScope.medicineTypeErrorMsg}"/>
+                            </div>
+                        </c:if>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label required">Price ($)</label>
+
+                        <input type="number" step="0.01" min="0"
+                               class="form-control" 
+                               name="price" value="${medicine.price}" required>
+
+                        <c:if test="${not empty sessionScope.medicinePriceErrorsMsg}">
+                            <div class="text-danger small mt-1">
+                                <i class="fa-solid fa-circle-exclamation me-1"></i>
+                                <c:out value="${sessionScope.medicinePriceErrorsMsg}"/>
+                            </div>
+                        </c:if>
+                    </div>
+                </div>
+
+                <!-- Row 3: Status -->
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <label class="form-label required">Status</label>
+
+                        <select class="form-select" name="medicineStatus" required>
+                            <option value="1" <c:if test="${medicine.medicineStatus}">selected</c:if>>
+                                Available
+                            </option>
+                            <option value="0" <c:if test="${!medicine.medicineStatus}">selected</c:if>>
+                                Unavailable
+                            </option>
+                        </select>
+
+                        <c:if test="${not empty sessionScope.medicineStatusErrorsMsg}">
+                            <div class="text-danger small mt-1">
+                                <i class="fa-solid fa-circle-exclamation me-1"></i>
+                                <c:out value="${sessionScope.medicineStatusErrorsMsg}"/>
+                            </div>
+                        </c:if>
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="d-flex justify-content-center mt-4">
+                    <button class="btn btn-success px-5 py-2 fw-bold" 
+                            style="border-radius: 30px;">
+                        Update
+                    </button>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+
+</div>
+
+</body>
 </html>
+

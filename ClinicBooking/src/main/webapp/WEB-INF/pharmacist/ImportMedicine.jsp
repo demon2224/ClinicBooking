@@ -6,155 +6,131 @@
 
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+
 <!DOCTYPE html>
 <html lang="en">
     <head>
         <meta charset="UTF-8">
-        <title>Doctor Dashboard</title>
-        <link rel="stylesheet" href="${pageContext.request.contextPath}/assests/css/bootstrap.min.css">
-        <link rel="stylesheet" href="${pageContext.request.contextPath}/assests/css/all.min.css" />
+        <title>Import Medicine</title>
+
+        <!-- Bootstrap & FontAwesome -->
+        <link rel="stylesheet" 
+              href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+        <link rel="stylesheet" 
+              href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
         <style>
             body {
                 background-color: #f8f9fa;
-            }
-            .sidebar {
-                width: 240px;
-                height: 100vh;
-                background-color: #1B5A90;
-                color: white;
-                position: fixed;
-            }
-            .sidebar a {
-                display: block;
-                color: white;
-                text-decoration: none;
-                padding: 12px 20px;
-            }
-            .sidebar a:hover {
-                background-color: #00D0F1;
             }
             .main-content {
                 margin-left: 260px;
                 padding: 25px;
             }
+
             .card {
                 border-radius: 10px;
-            }
-            .table img {
-                border-radius: 50%;
-                width: 40px;
-                height: 40px;
-            }
-            .status-toggle {
-                width: 40px;
-                height: 20px;
-            }
-            .navbar {
-                background: white;
-                border-bottom: 1px solid #dee2e6;
+                box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+                margin-bottom: 30px;
             }
 
-            #Logout{
-                color: red;
-                border-color: red;
-
-            }
-            #Logout:hover{
-                background-color: red;
+            .card-header {
+                background-color: #1B5A90;
                 color: white;
-            }
-            .required::after {
-                content: " *";
-                color: red;
                 font-weight: bold;
+            }
+
+            th {
+                background-color: #f1f3f5;
+                width: 220px;
+                font-weight: 600;
             }
         </style>
     </head>
+
     <body>
-        <!-- Sidebar -->
+
         <%@include file="../includes/PharmacistDashboardSidebar.jsp" %>
 
-        <!-- Main content -->
         <div class="main-content">
-            <nav class="navbar navbar-light">
-                <div class="container-fluid">
-                    <div class="container-fluid d-flex justify-content-end">
-                        <button class="btn btn-submit" id="Logout" type="submit">Logout</button>
-                    </div>
-                </div>
-            </nav>
 
-            <div class="container-fluid mt-4">
+            <!-- Page Title -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="fw-bold text-primary">
+                    <i class="fa-solid fa-file-import me-2"></i>Import Medicine
+                </h2>
+            </div>
+
+            <!-- CASE: Medicine Not Found -->
+            <c:if test="${medicine.isHidden}">
+                <div class="alert alert-danger text-center fs-4 py-3">
+                    <i class="fa-solid fa-circle-exclamation me-2"></i>Medicine Not Found
+                </div>
+            </c:if>
+
+            <!-- CASE: Import Form -->
+            <c:if test="${!medicine.isHidden}">
+
                 <div class="card">
-                    <div class="card-header bg-white">
-                        <h5 class="mb-0">Edit Medicine</h5>
+                    <div class="card-header">
+                        <i class="fa-solid fa-info-circle me-2"></i>Medicine Information
                     </div>
-                    <div class="card-body">
+
+                    <div class="card-body p-4">
+
+                        <!-- Table Info Like Template -->
+                        <table class="table table-bordered mb-4">
+                            <tr>
+                                <th>Name</th>
+                                <td><c:out value="${medicine.medicineName}" /></td>
+                            </tr>
+
+                            <tr>
+                                <th>Code</th>
+                                <td><c:out value="${medicine.medicineCode}" /></td>
+                            </tr>
+
+                            <tr>
+                                <th>Type</th>
+                                <td><c:out value="${medicine.medicineType}" /></td>
+                            </tr>
+
+                            <tr>
+                                <th>Price</th>
+                                <td>$<c:out value="${medicine.price}" /></td>
+                            </tr>
+                        </table>
+
+                        <!-- IMPORT FORM -->
                         <form action="${pageContext.request.contextPath}/manage-medicine" method="POST">
                             <input type="hidden" name="action" value="import">
-                            <input type="hidden" name="medicineID" value="${requestScope.medicine.medicineID}">
+                            <input type="hidden" name="medicineID" value="${medicine.medicineID}">
 
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <div class="row">
-                                        <div class="col-md-3 bg-primary">
-                                            <label class="form-label text-light p-1 m-0">Medicine Name: </label>
-                                        </div>
-                                        <div class="col-md-9">
-                                            <c:out value="${requestScope.medicine.medicineName}"/>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="row">
-                                        <div class="col-md-3 bg-primary">
-                                            <label class="form-label text-light p-1 m-0">Medicine Code: </label>
-                                        </div>
-                                        <div class="col-md-9">
-                                            <c:out value="${requestScope.medicine.medicineCode}"/>
-                                        </div>
-                                    </div>
+                            <!-- Quantity -->
+                            <div class="row mb-4">
+                                <div class="col-md-4">
+                                    <label class="form-label fw-bold">Quantity</label>
+                                    <input type="number" name="quantity" class="form-control" min="1" required>
                                 </div>
                             </div>
 
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <div class="row">
-                                        <div class="col-md-3 bg-primary">
-                                            <label class="form-label text-light p-1 m-0">Medicine Type: </label>
-                                        </div>
-                                        <div class="col-md-9">
-                                            <c:out value="${requestScope.medicine.medicineType}"/>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="row">
-                                        <div class="col-md-3 bg-primary">
-                                            <label class="form-label text-light p-1 m-0">Price ($): </label>
-                                        </div>
-                                        <div class="col-md-9">
-                                            <c:out value="${requestScope.medicine.price}"/>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="row mb-3">
-                                <label class="form-label required">Quantity</label>
-                                <input type="number" name="quantity" required>
-                            </div>
-
-                            <div class="d-flex justify-content-center mt-3">
-                                <button type="submit" class="btn btn-success px-5 py-2 fw-bold" style="border-radius: 30px;">
+                            <!-- Import Button -->
+                            <div class="d-flex justify-content-center mt-4">
+                                <button type="submit" 
+                                        class="btn btn-success px-5 py-2 fw-bold" 
+                                        style="border-radius: 30px;">
                                     Import
                                 </button>
                             </div>
+
                         </form>
                     </div>
                 </div>
-            </div>
+
+            </c:if>
+
         </div>
+
     </body>
 </html>
+

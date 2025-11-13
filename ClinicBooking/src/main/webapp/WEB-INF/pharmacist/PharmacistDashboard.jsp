@@ -78,7 +78,9 @@
                         <button class="btn btn-outline-primary" type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
                     </form>
                     <div>
-                        <button class="btn btn-submit" id="Logout" type="submit">Logout</button>
+                        <form class="d-flex w-50" action="${pageContext.request.contextPath}/staff-logout">
+                            <button class="btn btn-submit" id="Logout" type="submit">Logout</button>
+                        </form>
                     </div>
                 </div>
             </nav>
