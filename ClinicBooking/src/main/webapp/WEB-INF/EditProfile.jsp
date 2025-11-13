@@ -81,40 +81,40 @@
             <!-- Profile Container -->
             <div class="appointments-section">
                 <div class="appointments-content">
-                    <div class="profile-layout">
-                        <!-- Left Section - Avatar & Actions -->
-                        <div class="profile-left">
-                            <div class="profile-avatar-section">
-                                <c:choose>
-                                    <c:when test="${not empty patient.avatar}">
-                                        <img src="${pageContext.request.contextPath}/${patient.avatar}"
-                                             alt="Profile Avatar"
-                                             class="profile-avatar"
-                                             id="profileAvatar"
-                                             onerror="this.src='${pageContext.request.contextPath}/assests/img/0.png'">
-                                    </c:when>
-                                    <c:otherwise>
-                                        <img src="${pageContext.request.contextPath}/assests/img/0.png"
-                                             alt="Profile Avatar"
-                                             class="profile-avatar"
-                                             id="profileAvatar">
-                                    </c:otherwise>
-                                </c:choose>
+                    <form method="post" action="${pageContext.request.contextPath}/profile" enctype="multipart/form-data">
+                        <input type="hidden" name="action" value="update">
+                        
+                        <div class="profile-layout">
+                            <!-- Left Section - Avatar & Actions -->
+                            <div class="profile-left">
+                                <div class="profile-avatar-section">
+                                    <c:choose>
+                                        <c:when test="${not empty patient.avatar}">
+                                            <img src="${pageContext.request.contextPath}/${patient.avatar}"
+                                                 alt="Profile Avatar"
+                                                 class="profile-avatar"
+                                                 id="profileAvatar"
+                                                 onerror="this.src='${pageContext.request.contextPath}/assests/img/0.png'">
+                                        </c:when>
+                                        <c:otherwise>
+                                            <img src="${pageContext.request.contextPath}/assests/img/0.png"
+                                                 alt="Profile Avatar"
+                                                 class="profile-avatar"
+                                                 id="profileAvatar">
+                                        </c:otherwise>
+                                    </c:choose>
 
-                                <div class="profile-name">${patient.firstName} ${patient.lastName}</div>
-                                <label for="avatarUpload" class="change-password-btn">
-                                    <i class="fas fa-camera"></i> Change Photo
-                                </label>
-                                <input type="file" id="avatarUpload" name="avatar" style="display: none;" accept="image/jpeg,image/png,image/gif">
+                                    <div class="profile-name">${patient.firstName} ${patient.lastName}</div>
+                                    <label for="avatarUpload" class="change-password-btn">
+                                        <i class="fas fa-camera"></i> Change Photo
+                                    </label>
+                                    <input type="file" id="avatarUpload" name="avatar" style="display: none;" accept="image/jpeg,image/png,image/gif">
+                                </div>
                             </div>
-                        </div>
 
-                        <!-- Right Section - Profile Information -->
-                        <div class="profile-right">
-                            <h2 class="profile-section-title">Profile Information:</h2>
-
-                            <form method="post" action="${pageContext.request.contextPath}/profile" enctype="multipart/form-data">
-                                <input type="hidden" name="action" value="update">
+                            <!-- Right Section - Profile Information -->
+                            <div class="profile-right">
+                                <h2 class="profile-section-title">Profile Information:</h2>
                                 
                                 <div class="profile-info-grid">
                                     <div class="profile-field">
@@ -170,9 +170,9 @@
                                         <i class="fas fa-save"></i> Save Changes
                                     </button>
                                 </div>
-                            </form>
+                            </div>
                         </div>
-                    </div>
+                    </form>
                 </div>
             </div>
         </main>

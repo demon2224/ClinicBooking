@@ -112,13 +112,6 @@ public class ProfileController extends HttpServlet {
             // Process avatar - set default if not exists
             AvatarHandler.processPatientAvatar(patient);
 
-            // Handle session messages
-            String successMessage = (String) session.getAttribute("successMessage");
-            if (successMessage != null) {
-                request.setAttribute("successMessage", successMessage);
-                session.removeAttribute("successMessage");
-            }
-
             request.setAttribute("patient", patient);
             request.getRequestDispatcher(ProfileConstants.URL_PROFILE_JSP).forward(request, response);
         } catch (Exception e) {

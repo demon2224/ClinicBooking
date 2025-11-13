@@ -8,6 +8,11 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <fmt:setLocale value="en_US" />
+<%-- Get and remove success message from session --%>
+<c:if test="${not empty sessionScope.successMessage}">
+    <c:set var="successMessage" value="${sessionScope.successMessage}"/>
+    <c:remove var="successMessage" scope="session"/>
+</c:if>
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -35,7 +40,7 @@
             </div>
 
             <!-- Success Modal -->
-            <c:if test="${not empty successMessage}">
+            <c:if test= "true">
                 <div id="messageModal" class="modal-overlay">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -45,7 +50,7 @@
                             <button type="button" class="modal-close" onclick="closeMessageModal()">&times;</button>
                         </div>
                         <div class="modal-body">
-                            <p>${successMessage}</p>
+                            <p>${sessionScope.successMessage}</p>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-success" onclick="closeMessageModal()">OK</button>
@@ -55,7 +60,7 @@
             </c:if>
 
             <!-- Error Modal for Password Change -->
-            <c:if test="${not empty passwordError}">
+            <c:if test="${not empty requestScope.passwordError}">
                 <div id="passwordErrorModal" class="modal-overlay">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -65,7 +70,7 @@
                             <button type="button" class="modal-close" onclick="closePasswordErrorModal()">&times;</button>
                         </div>
                         <div class="modal-body">
-                            <p>${passwordError}</p>
+                            <p class="error-messages"> ${requestScope.passwordError}</p>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-danger" onclick="closePasswordErrorModal()">Close</button>
