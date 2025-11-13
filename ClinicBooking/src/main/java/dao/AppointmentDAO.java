@@ -51,7 +51,7 @@ public class AppointmentDAO extends DBContext {
                 + "and a.AppointmentStatus = 'Approved'"
                 + "ORDER BY ABS(DATEDIFF(SECOND, a.DateBegin, GETDATE()))";
         // + "and CAST (a.DateBegin as DATE) = CAST (GETDATE() as DATE)";
-        Object[] params = {doctorID};
+        Object[] params = { doctorID };
         ResultSet rs = executeSelectQuery(sql, params);
         try {
             if (rs != null) {
@@ -107,7 +107,7 @@ public class AppointmentDAO extends DBContext {
                 + "                JOIN Patient p on p.PatientID = a.PatientID\n"
                 + "		   LEFT JOIN MedicalRecord m on m.AppointmentID = a.AppointmentID\n"
                 + "                Where d.DoctorID = ? and a.AppointmentID = ?";
-        Object[] params = {doctorID, appointmentID};
+        Object[] params = { doctorID, appointmentID };
         ResultSet rs = executeSelectQuery(sql, params);
         try {
             if (rs != null) {
@@ -156,9 +156,9 @@ public class AppointmentDAO extends DBContext {
                 + "AND (p.FirstName LIKE ? OR p.LastName LIKE ?)";
 
         Object[] params = {
-            doctorID,
-            "%" + keyword + "%",
-            "%" + keyword + "%"
+                doctorID,
+                "%" + keyword + "%",
+                "%" + keyword + "%"
         };
 
         ResultSet rs = executeSelectQuery(sql, params);
@@ -206,7 +206,7 @@ public class AppointmentDAO extends DBContext {
         ResultSet rs = null;
 
         try {
-            Object[] params = {patientId};
+            Object[] params = { patientId };
             rs = executeSelectQuery(sql, params);
 
             while (rs.next()) {
@@ -279,7 +279,7 @@ public class AppointmentDAO extends DBContext {
         ResultSet rs = null;
 
         try {
-            Object[] params = {appointmentId};
+            Object[] params = { appointmentId };
             rs = executeSelectQuery(sql, params);
             if (rs.next()) {
                 AppointmentDTO appointment = new AppointmentDTO();
@@ -355,7 +355,7 @@ public class AppointmentDAO extends DBContext {
 
         ResultSet rs = null;
         try {
-            Object[] params = {appointmentId};
+            Object[] params = { appointmentId };
             rs = executeSelectQuery(sql, params);
 
             if (rs.next()) {
@@ -443,7 +443,7 @@ public class AppointmentDAO extends DBContext {
                 + "ORDER BY a.DateBegin DESC";
 
         String pattern = "%" + searchQuery.trim() + "%";
-        Object[] params = {pattern, pattern, pattern};
+        Object[] params = { pattern, pattern, pattern };
 
         ResultSet rs = null;
 
@@ -512,7 +512,7 @@ public class AppointmentDAO extends DBContext {
      */
     public boolean cancelMyAppointment(int appointmentId) {
         String sql = "UPDATE Appointment SET AppointmentStatus = 'Canceled' WHERE AppointmentID = ?";
-        Object[] params = {appointmentId};
+        Object[] params = { appointmentId };
         int rowsAffected = executeQuery(sql, params);
         closeResources(null);
         return rowsAffected > 0;
@@ -536,7 +536,7 @@ public class AppointmentDAO extends DBContext {
                 + "ORDER BY a.DateBegin DESC";
         ResultSet rs = null;
         try {
-            Object[] params = {patientId, "%" + searchQuery + "%", "%" + searchQuery + "%"};
+            Object[] params = { patientId, "%" + searchQuery + "%", "%" + searchQuery + "%" };
             rs = executeSelectQuery(sql, params);
             while (rs.next()) {
                 AppointmentDTO appointment = new AppointmentDTO();
@@ -593,7 +593,7 @@ public class AppointmentDAO extends DBContext {
     public boolean addAppointment(String existingPatientIdStr, String fullName, String phone,
             boolean gender, int doctorId, LocalDateTime dateBegin, String note) {
 
-        try ( Connection conn = getConnection()) {
+        try (Connection conn = getConnection()) {
             conn.setAutoCommit(false);
 
             int patientId = 0;
@@ -602,9 +602,9 @@ public class AppointmentDAO extends DBContext {
                 patientId = Integer.parseInt(existingPatientIdStr);
             } else {
                 String sqlCheck = "SELECT PatientID FROM Patient WHERE PhoneNumber = ?";
-                try ( PreparedStatement psCheck = conn.prepareStatement(sqlCheck)) {
+                try (PreparedStatement psCheck = conn.prepareStatement(sqlCheck)) {
                     psCheck.setString(1, phone);
-                    try ( ResultSet rs = psCheck.executeQuery()) {
+                    try (ResultSet rs = psCheck.executeQuery()) {
                         if (rs.next()) {
                             patientId = rs.getInt("PatientID");
                         } else {
@@ -623,7 +623,7 @@ public class AppointmentDAO extends DBContext {
 
                             String sqlInsert = "INSERT INTO Patient (FirstName, LastName, PhoneNumber, Gender, Hidden) "
                                     + "VALUES (?, ?, ?, ?, 1)";
-                            try ( PreparedStatement psInsert = conn.prepareStatement(sqlInsert,
+                            try (PreparedStatement psInsert = conn.prepareStatement(sqlInsert,
                                     Statement.RETURN_GENERATED_KEYS)) {
                                 psInsert.setString(1, firstName);
                                 psInsert.setString(2, lastName);
@@ -631,7 +631,7 @@ public class AppointmentDAO extends DBContext {
                                 psInsert.setBoolean(4, gender);
                                 psInsert.executeUpdate();
 
-                                try ( ResultSet rsGen = psInsert.getGeneratedKeys()) {
+                                try (ResultSet rsGen = psInsert.getGeneratedKeys()) {
                                     if (rsGen.next()) {
                                         patientId = rsGen.getInt(1);
                                     }
@@ -646,7 +646,7 @@ public class AppointmentDAO extends DBContext {
             String sqlAppointment = "INSERT INTO Appointment "
                     + "(PatientID, DoctorID, AppointmentStatus, DateCreate, DateBegin, DateEnd, Note, Hidden) "
                     + "VALUES (?, ?, 'Approved', GETDATE(), ?, ?, ?, 1)";
-            try ( PreparedStatement psAppt = conn.prepareStatement(sqlAppointment)) {
+            try (PreparedStatement psAppt = conn.prepareStatement(sqlAppointment)) {
                 Timestamp tsBegin = Timestamp.valueOf(dateBegin);
                 Timestamp tsEnd = null;
 
@@ -669,7 +669,8 @@ public class AppointmentDAO extends DBContext {
     }
 
     /**
-     * Cancel appointment by setting status to Canceled Only if current status is Pending
+     * Cancel appointment by setting status to Canceled Only if current status is
+     * Pending
      * or Approved
      */
     public boolean cancelAppointment(int appointmentId) {
@@ -678,13 +679,14 @@ public class AppointmentDAO extends DBContext {
                 + " WHERE AppointmentID = ? AND "
                 + "(AppointmentStatus = 'Pending' OR AppointmentStatus = 'Approved')";
 
-        Object[] params = {appointmentId};
+        Object[] params = { appointmentId };
         int rowsAffected = executeQuery(sql, params);
         return rowsAffected > 0;
     }
 
     /**
-     * Update appointment by setting status to Approved Only if current status is Pending
+     * Update appointment by setting status to Approved Only if current status is
+     * Pending
      * and then setting to Completed Only if current status is Approved
      */
     public boolean updateStatusAppointment(int appointmentId) {
@@ -700,7 +702,7 @@ public class AppointmentDAO extends DBContext {
                 + "END "
                 + "WHERE AppointmentID = ?";
 
-        Object[] params = {appointmentId};
+        Object[] params = { appointmentId };
         int rowsAffected = executeQuery(sql, params);
         return rowsAffected > 0;
     }
@@ -812,11 +814,11 @@ public class AppointmentDAO extends DBContext {
                 + "VALUES (?, ?, ?, ?, NULL, ?)";
 
         Object[] params = {
-            patientId,
-            doctorId,
-            "Pending",
-            appointmentDateTime,
-            note
+                patientId,
+                doctorId,
+                "Pending",
+                appointmentDateTime,
+                note
         };
         boolean result = false;
 
@@ -845,7 +847,7 @@ public class AppointmentDAO extends DBContext {
 
         ResultSet rs = null;
         try {
-            Object[] params = {patientId};
+            Object[] params = { patientId };
             rs = executeSelectQuery(sql, params);
 
             while (rs.next()) {
@@ -873,12 +875,14 @@ public class AppointmentDAO extends DBContext {
     }
 
     /**
-     * Check if doctor is available at the requested time (no conflicting appointments
+     * Check if doctor is available at the requested time (no conflicting
+     * appointments
      * with status Pending, Approved, or Completed)
      *
-     * @param doctorId Doctor's ID
+     * @param doctorId           Doctor's ID
      * @param newAppointmentTime Requested appointment time
-     * @return true if doctor is available, false if doctor has conflicting appointment
+     * @return true if doctor is available, false if doctor has conflicting
+     *         appointment
      */
     public boolean isDoctorAvailable(int doctorId, Timestamp newAppointmentTime) {
         // Check for appointments that overlap with the new appointment time
@@ -890,7 +894,7 @@ public class AppointmentDAO extends DBContext {
 
         ResultSet rs = null;
         try {
-            Object[] params = {doctorId, newAppointmentTime};
+            Object[] params = { doctorId, newAppointmentTime };
             rs = executeSelectQuery(sql, params);
 
             // If any appointment found at the exact time, doctor is not available
@@ -910,9 +914,10 @@ public class AppointmentDAO extends DBContext {
 
     /**
      * Check if the new appointment has valid 30-minute gap with doctor's other
-     * appointments Appointments must be at least 30 minutes apart for the same doctor
+     * appointments Appointments must be at least 30 minutes apart for the same
+     * doctor
      *
-     * @param doctorId Doctor's ID
+     * @param doctorId           Doctor's ID
      * @param newAppointmentTime New appointment time
      * @return true if gap is valid, false if conflict found
      */
@@ -925,7 +930,7 @@ public class AppointmentDAO extends DBContext {
 
         ResultSet rs = null;
         try {
-            Object[] params = {doctorId, newAppointmentTime};
+            Object[] params = { doctorId, newAppointmentTime };
             rs = executeSelectQuery(sql, params);
 
             while (rs.next()) {
@@ -960,7 +965,7 @@ public class AppointmentDAO extends DBContext {
         String sql = "SELECT COUNT(*) AS Total FROM Appointment "
                 + "WHERE DoctorID = ? AND CAST(DateBegin AS DATE) = CAST(GETDATE() AS DATE) "
                 + "AND AppointmentStatus = 'Approved'";
-        Object[] params = {doctorId};
+        Object[] params = { doctorId };
         ResultSet rs = executeSelectQuery(sql, params);
         try {
             if (rs.next()) {
@@ -975,8 +980,10 @@ public class AppointmentDAO extends DBContext {
     }
 
     /**
-     * Get doctors from completed appointments for a patient within 24 hours Only returns
-     * doctors that the patient can review (completed within 24h and not yet reviewed)
+     * Get doctors from completed appointments for a patient within 24 hours Only
+     * returns
+     * doctors that the patient can review (completed within 24h and not yet
+     * reviewed)
      *
      * @param patientId The patient ID
      * @return List of doctors eligible for review
@@ -1013,7 +1020,7 @@ public class AppointmentDAO extends DBContext {
                 + ") "
                 + "ORDER BY a.DateEnd DESC";
 
-        Object[] params = {patientId};
+        Object[] params = { patientId };
         ResultSet rs = executeSelectQuery(sql, params);
 
         try {
@@ -1050,7 +1057,7 @@ public class AppointmentDAO extends DBContext {
      * appointment within 24 hours and not yet reviewed
      *
      * @param patientId The patient ID
-     * @param doctorId The doctor ID
+     * @param doctorId  The doctor ID
      * @return true if eligible, false otherwise
      */
     public boolean canPatientReviewDoctor(int patientId, int doctorId) {
@@ -1079,7 +1086,7 @@ public class AppointmentDAO extends DBContext {
                 + "    AND a3.DateEnd <= a.DateEnd "
                 + ")";
 
-        Object[] params = {patientId, doctorId};
+        Object[] params = { patientId, doctorId };
         ResultSet rs = executeSelectQuery(sql, params);
 
         try {
@@ -1098,7 +1105,7 @@ public class AppointmentDAO extends DBContext {
     /**
      * Check if a review can be edited (within 24 hours of creation)
      *
-     * @param reviewId The review ID
+     * @param reviewId  The review ID
      * @param patientId The patient ID (for security)
      * @return true if can edit, false otherwise
      */
@@ -1108,7 +1115,7 @@ public class AppointmentDAO extends DBContext {
                 + "AND PatientID = ? "
                 + "AND DATEDIFF(HOUR, DateCreate, GETDATE()) <= 24";
 
-        Object[] params = {reviewId, patientId};
+        Object[] params = { reviewId, patientId };
         ResultSet rs = executeSelectQuery(sql, params);
 
         try {
@@ -1130,7 +1137,7 @@ public class AppointmentDAO extends DBContext {
                 + "WHERE AppointmentStatus IN ('Pending', 'Approved', 'Completed') "
                 + "AND DateBegin >= CAST(GETDATE() AS DATE) "
                 + "AND DateBegin < DATEADD(DAY, 1, CAST(GETDATE() AS DATE)) ";
-        try ( ResultSet rs = executeSelectQuery(sql)) {
+        try (ResultSet rs = executeSelectQuery(sql)) {
             if (rs != null && rs.next()) {
                 return rs.getInt("total");
             }
@@ -1146,7 +1153,7 @@ public class AppointmentDAO extends DBContext {
                 + "WHERE AppointmentStatus = 'Completed' "
                 + "AND DateEnd >= CAST(GETDATE() AS DATE) "
                 + "AND DateEnd < DATEADD(DAY, 1, CAST(GETDATE() AS DATE)) ";
-        try ( ResultSet rs = executeSelectQuery(sql)) {
+        try (ResultSet rs = executeSelectQuery(sql)) {
             if (rs != null && rs.next()) {
                 return rs.getInt("total");
             }
@@ -1166,7 +1173,7 @@ public class AppointmentDAO extends DBContext {
                 + "AND a.AppointmentStatus = 'Approved' "
                 + "AND a.DateBegin > GETDATE() "
                 + "ORDER BY a.DateBegin ASC";
-        Object[] params = {doctorID};
+        Object[] params = { doctorID };
         ResultSet rs = executeSelectQuery(sql, params);
 
         try {
@@ -1218,7 +1225,7 @@ public class AppointmentDAO extends DBContext {
         String sql = "SELECT COUNT(*) AS Total FROM Appointment WHERE AppointmentStatus = ?";
         ResultSet rs = null;
         try {
-            rs = executeSelectQuery(sql, new Object[]{status});
+            rs = executeSelectQuery(sql, new Object[] { status });
             if (rs.next()) {
                 countAppStatus = rs.getInt("Total");
             }
@@ -1228,5 +1235,80 @@ public class AppointmentDAO extends DBContext {
             closeResources(rs);
         }
         return countAppStatus;
+    }
+
+    /**
+     * Retrieves the top doctors ranked by their total number of appointments.
+     * This method performs a SQL query that joins Doctor, Staff, Specialty, and
+     * Appointment tables
+     * to count appointments per doctor and returns the top N doctors.
+     * 
+     * @param limit The maximum number of top doctors to retrieve (e.g., 5 for top
+     *              5)
+     * @return A list of AppointmentDTO objects containing doctor information and
+     *         their total appointment count.
+     *         Each AppointmentDTO includes:
+     *         - DoctorDTO with full doctor information (including StaffDTO and
+     *         SpecialtyDTO)
+     *         - totalAppointments: the count of appointments for that doctor
+     *         Returns an empty list if no doctors are found or if an error occurs.
+     * @see AppointmentDTO
+     * @see DoctorDTO
+     * @see StaffDTO
+     * @see SpecialtyDTO
+     */
+    public List<AppointmentDTO> getTopDoctorsByAppointments(int limit) {
+        List<AppointmentDTO> appointments = new ArrayList<>();
+        String sql = "SELECT TOP (?) "
+                + "d.DoctorID, d.StaffID, d.SpecialtyID, d.YearExperience, "
+                + "s.FirstName, s.LastName, s.PhoneNumber, s.Email, s.Avatar, "
+                + "sp.SpecialtyName, sp.Price, "
+                + "COUNT(a.AppointmentID) AS TotalAppointments "
+                + "FROM Doctor d "
+                + "JOIN Staff s ON d.StaffID = s.StaffID "
+                + "JOIN Specialty sp ON d.SpecialtyID = sp.SpecialtyID "
+                + "LEFT JOIN Appointment a ON d.DoctorID = a.DoctorID "
+                + "WHERE s.Hidden = 0 "
+                + "GROUP BY d.DoctorID, d.StaffID, d.SpecialtyID, d.YearExperience, "
+                + "s.FirstName, s.LastName, s.PhoneNumber, s.Email, s.Avatar, "
+                + "sp.SpecialtyName, sp.Price "
+                + "ORDER BY TotalAppointments DESC";
+
+        ResultSet rs = null;
+        try {
+            rs = executeSelectQuery(sql, new Object[] { limit });
+            while (rs.next()) {
+
+                StaffDTO staff = new StaffDTO();
+                staff.setStaffID(rs.getInt("StaffID"));
+                staff.setFirstName(rs.getString("FirstName"));
+                staff.setLastName(rs.getString("LastName"));
+                staff.setPhoneNumber(rs.getString("PhoneNumber"));
+                staff.setEmail(rs.getString("Email"));
+                staff.setAvatar(rs.getString("Avatar"));
+
+                SpecialtyDTO specialty = new SpecialtyDTO();
+                specialty.setSpecialtyID(rs.getInt("SpecialtyID"));
+                specialty.setSpecialtyName(rs.getString("SpecialtyName"));
+                specialty.setPrice(rs.getDouble("Price"));
+
+                DoctorDTO doctor = new DoctorDTO();
+                doctor.setDoctorID(rs.getInt("DoctorID"));
+                doctor.setStaffID(staff);
+                doctor.setSpecialtyID(specialty);
+                doctor.setYearExperience(rs.getInt("YearExperience"));
+
+                AppointmentDTO appointment = new AppointmentDTO();
+                appointment.setDoctorID(doctor);
+                appointment.setTotalAppointments(rs.getInt("TotalAppointments"));
+
+                appointments.add(appointment);
+            }
+        } catch (SQLException e) {
+            Logger.getLogger(DoctorDAO.class.getName()).log(Level.SEVERE, null, e);
+        } finally {
+            closeResources(rs);
+        }
+        return appointments;
     }
 }

@@ -55,7 +55,7 @@ public class RevenueReportController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.getRequestDispatcher(AdminConstants.REVENUE_REPORT_URL).forward(request, response);
+        request.getRequestDispatcher(AdminConstants.REVENUE_REPORT_JSP).forward(request, response);
     }
 
     /**

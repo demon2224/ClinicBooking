@@ -11,7 +11,6 @@ import dao.InvoiceDAO;
 import dao.MedicineDAO;
 import dao.PatientDAO;
 import dao.PrescriptionDAO;
-import dao.StaffDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -20,7 +19,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.util.List;
-import model.DoctorDTO;
+import model.AppointmentDTO;
 
 /**
  *
@@ -28,7 +27,6 @@ import model.DoctorDTO;
  */
 public class ClinicStatisticsController extends HttpServlet {
 
-    private StaffDAO staffDAO;
     private DoctorDAO doctorDAO;
     private PatientDAO patientDAO;
     private AppointmentDAO appointmentDAO;
@@ -37,13 +35,13 @@ public class ClinicStatisticsController extends HttpServlet {
     private PrescriptionDAO prescriptionDAO;
 
     /**
-     * Initialize all the necessary DAO using in this controller.
+     * Initializes all necessary DAO instances for this controller. This method is called
+     * once when the servlet is first loaded.
      *
-     * @throws ServletException
+     * @throws ServletException if initialization fails
      */
     @Override
     public void init() throws ServletException {
-        staffDAO = new StaffDAO();
         doctorDAO = new DoctorDAO();
         patientDAO = new PatientDAO();
         appointmentDAO = new AppointmentDAO();
@@ -77,7 +75,8 @@ public class ClinicStatisticsController extends HttpServlet {
         }
     }
 
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
+    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the
+    // + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
      *
@@ -102,18 +101,18 @@ public class ClinicStatisticsController extends HttpServlet {
             int totalInvoices = invoiceDAO.getTotalInvoices();
             int lowStockCount = medicineDAO.getLowStockMedicines();
 
-            int apPending = appointmentDAO.getAppointmentsByStatus("Pending");
-            int apApproved = appointmentDAO.getAppointmentsByStatus("Approved");
-            int apCompleted = appointmentDAO.getAppointmentsByStatus("Completed");
-            int apCanceled = appointmentDAO.getAppointmentsByStatus("Canceled");
+            int apPending = appointmentDAO.getAppointmentsByStatus(AdminConstants.APPOINTMENT_STATUS_PENDING);
+            int apApproved = appointmentDAO.getAppointmentsByStatus(AdminConstants.APPOINTMENT_STATUS_APPROVED);
+            int apCompleted = appointmentDAO.getAppointmentsByStatus(AdminConstants.APPOINTMENT_STATUS_COMPLETED);
+            int apCanceled = appointmentDAO.getAppointmentsByStatus(AdminConstants.APPOINTMENT_STATUS_CANCELED);
 
-            int prPending = prescriptionDAO.getPrescriptionsByStatus("Pending");
-            int prDelivered = prescriptionDAO.getPrescriptionsByStatus("Delivered");
+            int prPending = prescriptionDAO.getPrescriptionsByStatus(AdminConstants.PRESCRIPTION_STATUS_PENDING);
+            int prDelivered = prescriptionDAO.getPrescriptionsByStatus(AdminConstants.PRESCRIPTION_STATUS_DELIVERED);
 
-            int invPending = invoiceDAO.getInvoicesByStatus("Pending");
-            int invPaid = invoiceDAO.getInvoicesByStatus("Paid");
+            int invPending = invoiceDAO.getInvoicesByStatus(AdminConstants.INVOICE_STATUS_PENDING);
+            int invPaid = invoiceDAO.getInvoicesByStatus(AdminConstants.INVOICE_STATUS_PAID);
 
-            List<DoctorDTO> topDoctors = doctorDAO.getTopDoctorsByAppointments(5);
+            List<AppointmentDTO> topDoctors = appointmentDAO.getTopDoctorsByAppointments(AdminConstants.TOP_DOCTORS);
 
             request.setAttribute("totalDoctors", totalDoctors);
             request.setAttribute("totalPatients", totalPatients);
@@ -135,9 +134,9 @@ public class ClinicStatisticsController extends HttpServlet {
 
             request.setAttribute("topDoctors", topDoctors);
 
-            request.getRequestDispatcher(AdminConstants.CLINIC_STATISTICS_URL).forward(request, response);
+            request.getRequestDispatcher(AdminConstants.CLINIC_STATISTICS_JSP).forward(request, response);
         } catch (Exception e) {
-            response.sendRedirect(request.getContextPath() + "/admin-dashboard");
+            response.sendRedirect(request.getContextPath() + AdminConstants.ADMIN_DASHBOARD_URL);
         }
     }
 
@@ -152,7 +151,7 @@ public class ClinicStatisticsController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        response.sendRedirect(request.getContextPath() + AdminConstants.CLINIC_STATISTICS_URL);
     }
 
     /**

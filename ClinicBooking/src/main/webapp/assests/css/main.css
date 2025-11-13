@@ -10798,11 +10798,18 @@ textarea.profile-value:disabled {
     box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
+.chart-card canvas {
+    max-height: 250px;
+    margin: 0 auto;
+    display: block;
+}
+
 .chart-card h5 {
     margin: 0 0 20px 0;
     font-size: 18px;
     font-weight: 700;
     color: #1e293b;
+    text-align: center;
 }
 
 .chart-legend {
@@ -10813,10 +10820,14 @@ textarea.profile-value:disabled {
 }
 
 .chart-legend span {
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
+}
+
+.chart-legend i {
+    font-size: 0.7rem;
 }
 
 .doctor-table-card {

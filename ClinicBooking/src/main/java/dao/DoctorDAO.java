@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import model.AppointmentDTO;
 import model.DoctorReviewDTO;
 
 /**
@@ -651,7 +650,8 @@ public class DoctorDAO extends DBContext {
         return false;
     }
 
-    public boolean updateDoctorInfo(int staffID, int specialtyID, int yearExperience, double price, String[] degreeNames) {
+    public boolean updateDoctorInfo(int staffID, int specialtyID, int yearExperience, double price,
+            String[] degreeNames) {
         ResultSet rs = null;
         try {
             // 1️⃣ Lấy DoctorID từ StaffID
@@ -707,8 +707,7 @@ public class DoctorDAO extends DBContext {
         ResultSet rs = null;
 
         try {
-            String insertDoctor
-                    = "INSERT INTO Doctor (StaffID, SpecialtyID, YearExperience) "
+            String insertDoctor = "INSERT INTO Doctor (StaffID, SpecialtyID, YearExperience) "
                     + "VALUES (?, ?, ?); "
                     + "SELECT SCOPE_IDENTITY() AS DoctorID;";
 
@@ -720,7 +719,8 @@ public class DoctorDAO extends DBContext {
             }
 
             // 2️⃣ Cập nhật giá chuyên khoa (nếu thay đổi)
-            db.executeQuery("UPDATE Specialty SET Price = ? WHERE SpecialtyID = ?", new Object[]{price, specialtyID});
+            db.executeQuery("UPDATE Specialty SET Price = ? WHERE SpecialtyID = ?",
+                    new Object[]{price, specialtyID});
 
             // 3️⃣ Thêm bằng cấp
             if (degreeNames != null && doctorID > 0) {
@@ -760,7 +760,13 @@ public class DoctorDAO extends DBContext {
         return list;
     }
 
-    // total doctor
+    /**
+     * Retrieves the total count of active doctors in the system.This method counts all
+     * doctors whose associated staff records are not hidden (Hidden = 0).
+     *
+     * @return The total number of active doctors as an integer. Returns 0 if no doctors
+     * are found or if a database error occurs.
+     */
     public int getTotalDoctors() {
         int countDoctor = 0;
         String sql = "SELECT COUNT(*) AS Total FROM Doctor d JOIN Staff s ON d.StaffID = s.StaffID WHERE s.Hidden = 0";
@@ -777,58 +783,5 @@ public class DoctorDAO extends DBContext {
             closeResources(rs);
         }
         return countDoctor;
-    }
-
-    public List<DoctorDTO> getTopDoctorsByAppointments(int limit) {
-        List<DoctorDTO> doctors = new ArrayList<>();
-        String sql = "SELECT TOP (?) "
-                + "d.DoctorID, d.StaffID, d.SpecialtyID, d.YearExperience, "
-                + "s.FirstName, s.LastName, s.PhoneNumber, s.Email, s.Avatar, "
-                + "sp.SpecialtyName, sp.Price, "
-                + "COUNT(a.AppointmentID) AS TotalAppointments "
-                + "FROM Doctor d "
-                + "JOIN Staff s ON d.StaffID = s.StaffID "
-                + "JOIN Specialty sp ON d.SpecialtyID = sp.SpecialtyID "
-                + "LEFT JOIN Appointment a ON d.DoctorID = a.DoctorID "
-                + "WHERE s.Hidden = 0 "
-                + "GROUP BY d.DoctorID, d.StaffID, d.SpecialtyID, d.YearExperience, "
-                + "s.FirstName, s.LastName, s.PhoneNumber, s.Email, s.Avatar, "
-                + "sp.SpecialtyName, sp.Price "
-                + "ORDER BY TotalAppointments DESC";
-
-        ResultSet rs = null;
-        try {
-            rs = executeSelectQuery(sql, new Object[]{limit});
-            while (rs.next()) {
-
-                StaffDTO staff = new StaffDTO();
-                staff.setStaffID(rs.getInt("StaffID"));
-                staff.setFirstName(rs.getString("FirstName"));
-                staff.setLastName(rs.getString("LastName"));
-                staff.setPhoneNumber(rs.getString("PhoneNumber"));
-                staff.setEmail(rs.getString("Email"));
-                staff.setAvatar(rs.getString("Avatar"));
-
-                SpecialtyDTO specialty = new SpecialtyDTO();
-                specialty.setSpecialtyID(rs.getInt("SpecialtyID"));
-                specialty.setSpecialtyName(rs.getString("SpecialtyName"));
-                specialty.setPrice(rs.getDouble("Price"));
-
-                DoctorDTO doctor = new DoctorDTO();
-                doctor.setDoctorID(rs.getInt("DoctorID"));
-                doctor.setStaffID(staff);
-                doctor.setSpecialtyID(specialty);
-                doctor.setYearExperience(rs.getInt("YearExperience"));
-                AppointmentDTO appointment = new AppointmentDTO();
-                appointment.setTotalAppointments(rs.getInt("TotalAppointments"));
-
-                doctors.add(doctor);
-            }
-        } catch (SQLException e) {
-            Logger.getLogger(DoctorDAO.class.getName()).log(Level.SEVERE, null, e);
-        } finally {
-            closeResources(rs);
-        }
-        return doctors;
     }
 }
