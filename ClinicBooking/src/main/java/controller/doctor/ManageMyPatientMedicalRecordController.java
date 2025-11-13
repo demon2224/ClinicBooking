@@ -125,7 +125,7 @@ public class ManageMyPatientMedicalRecordController extends HttpServlet {
             list = medicalRecordDAO.getPatientMedicalRecordListByDoctorID(doctorID);
         }
         request.setAttribute("myPatientMedicalRecordList", list);
-        request.getRequestDispatcher("/WEB-INF/doctor/MyPatientMedicalRecord.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/doctor/MyPatientMedicalRecordList.jsp").forward(request, response);
     }
 
     /**

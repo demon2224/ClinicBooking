@@ -66,7 +66,7 @@
         <!-- Main Content -->
         <div class="main-content">
             <div class="d-flex justify-content-between align-items-center mb-4">
-                <h2><i class="fa-solid fa-prescription me-2"></i>Create Prescription</h2>
+                <h2><i class="fa-solid fa-prescription me-2"></i>Edit Prescription</h2>
             </div>
 
             <form action="${pageContext.request.contextPath}/manage-my-patient-prescription?action=edit&prescriptionID=${prescription.prescriptionID}" 
@@ -104,7 +104,15 @@
                                             </select>
                                         </td>
                                         <td><input type="number" name="dosage" class="form-control" min="1" value="${item.dosage}" required></td>
-                                        <td><input type="text" name="instruction" class="form-control" value="${item.instruction}" required></td>
+                                        <td>
+                                            <select name="instruction" class="form-select" required>
+                                                <option value="">-- Select instruction --</option>
+                                                <c:forEach var="m" items="${medicineList}">
+                                                    <option value="${item.instruction}">
+                                                        ${item.instruction}
+                                                    </option>
+                                                </c:forEach>
+                                            </select>                                         
                                         <td>
                                             <button type="button" class="btn btn-danger btn-sm remove-row">
                                                 <i class="fa-solid fa-trash"></i>

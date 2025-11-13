@@ -114,7 +114,7 @@ public class ManageMyPatientAppointmentController extends HttpServlet {
             list = appointmentDAO.getPatientAppointmentOfDoctorByID(doctorID);
         }
         request.setAttribute("list", list);
-        request.getRequestDispatcher("/WEB-INF/doctor/ManageMyPatientAppointment.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/doctor/MyPatientAppointmentList.jsp").forward(request, response);
     }
 
     /**
