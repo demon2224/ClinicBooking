@@ -25,7 +25,6 @@
 
                 <form action="${pageContext.request.contextPath}/register" method="POST">
 
-                    <!-- FIRST NAME -->
                     <div class="mb-3">
                         <label class="form-label">First name</label>
                         <input type="text" name="firstName" class="form-control" value="${param.firstName}">
@@ -37,7 +36,6 @@
                         </c:if>
                     </div>
 
-                    <!-- LAST NAME -->
                     <div class="mb-3">
                         <label class="form-label">Last name</label>
                         <input type="text" name="lastName" class="form-control" value="${param.lastName}">
@@ -49,7 +47,6 @@
                         </c:if>
                     </div>
 
-                    <!-- SEX -->
                     <div class="mb-3">
                         <label class="form-label">Sex</label>
                         <select class="form-select" name="sex">
@@ -64,7 +61,6 @@
                         </c:if>
                     </div>
 
-                    <!-- DOB -->
                     <div class="mb-3">
                         <label class="form-label">Date of birth</label>
                         <input type="date" name="dob" class="form-control" value="${param.dob}">
@@ -76,7 +72,6 @@
                         </c:if>
                     </div>
 
-                    <!-- PHONE -->
                     <div class="mb-3">
                         <label class="form-label">Phone number</label>
                         <input type="tel" name="phoneNumber" class="form-control" value="${param.phoneNumber}">
@@ -88,7 +83,6 @@
                         </c:if>
                     </div>
 
-                    <!-- EMAIL -->
                     <div class="mb-3">
                         <label class="form-label">Email</label>
                         <input type="email" name="email" class="form-control" value="${param.email}">
@@ -100,7 +94,6 @@
                         </c:if>
                     </div>
 
-                    <!-- USERNAME -->
                     <div class="mb-3">
                         <label class="form-label">Username</label>
                         <input type="text" name="username" class="form-control" value="${param.username}">
@@ -112,7 +105,6 @@
                         </c:if>
                     </div>
 
-                    <!-- PASSWORD -->
                     <div class="mb-3">
                         <label class="form-label">Password</label>
                         <input type="password" name="password" class="form-control">
@@ -128,7 +120,6 @@
 
                 </form>
 
-                <!-- FAIL MESSAGE -->
                 <c:if test="${not empty registerFailMsg}">
                     <div class="alert alert-danger text-center mt-3">
                         ${registerFailMsg}
