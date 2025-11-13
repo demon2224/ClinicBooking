@@ -749,6 +749,7 @@ public class AppointmentDAO extends DBContext {
                 AppointmentDTO appointment = new AppointmentDTO();
                 appointment.setAppointmentID(rs.getInt("AppointmentID"));
                 appointment.setAppointmentStatus(rs.getString("AppointmentStatus"));
+                appointment.setDateCreate(rs.getTimestamp("DateCreate"));
                 appointment.setDateBegin(rs.getTimestamp("DateBegin"));
                 appointment.setDateEnd(rs.getTimestamp("DateEnd"));
                 appointment.setNote(rs.getString("Note"));
