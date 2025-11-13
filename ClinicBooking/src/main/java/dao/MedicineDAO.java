@@ -115,7 +115,8 @@ public class MedicineDAO extends DBContext {
                 + "FROM [dbo].[Medicine] m\n"
                 + "WHERE m.MedicineCode LIKE ?\n"
                 + "OR m.MedicineType LIKE ?\n"
-                + "OR m.MedicineName LIKE ?;";
+                + "OR m.MedicineName LIKE ?"
+                + "ORDER BY Hidden ASC;";
         Object[] params = {"%" + medicineCode + "%",
             "%" + medicineType + "%",
             "%" + medicineName + "%"};
