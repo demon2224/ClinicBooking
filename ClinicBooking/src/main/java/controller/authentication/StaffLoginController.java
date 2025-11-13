@@ -15,7 +15,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import model.DoctorDTO;
 import model.StaffDTO;
-import validate.LoginValidate;
 
 /**
  *

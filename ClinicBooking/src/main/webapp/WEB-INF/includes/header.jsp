@@ -63,6 +63,10 @@
                     <i class="fas fa-sign-in-alt"></i>
                     Login
                 </a>
+                <a href="${pageContext.request.contextPath}/register" class="btn btn-register">
+                    <i class="fas fa-user-plus"></i>
+                    Register
+                </a>
             </div>
         </c:if>
         <c:if test="${not empty sessionScope.patient}">

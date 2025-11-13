@@ -311,4 +311,34 @@ public class PatientDAO extends DBContext {
         return list;
     }
 
+    public boolean register(String username, String password, String firstName, String lastName, String dob, String gender, String phoneNumber, String email) {
+        String query = "INSERT INTO [dbo].[Patient] (AccountName, AccountPassword, Avatar, FirstName, LastName, DOB, Gender, PhoneNumber, Email)\n"
+                + "VALUES\n"
+                + "	(?, ?, NULL, ?, ?, ?, ?, ?, ?);";
+        Object[] params = {username, hashSha256(password), firstName, lastName, dob, gender, phoneNumber, email};
+
+        int result = executeQuery(query, params);
+        closeResources(null);
+
+        return result != 0;
+    }
+
+    public boolean isExistUsername(String username) {
+        String query = "SELECT TOP 1 pt.AccountName\n"
+                + "FROM [dbo].[Patient] pt\n"
+                + "WHERE pt.AccountName = ?;";
+        Object[] params = {username};
+        ResultSet rs = null;
+        boolean isExist = false;
+
+        try {
+            rs = executeSelectQuery(query, params);
+            isExist = rs.next();
+        } catch (SQLException ex) {
+            Logger.getLogger(PatientDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return isExist;
+    }
+
 }
