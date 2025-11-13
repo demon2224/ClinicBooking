@@ -1,4 +1,4 @@
-<%-- 
+<%--
     Document   : AdminManageAccountList
     Created on : Nov 6, 2025, 7:07:00 PM
     Author     : Ngo Quoc Hung - CE191184
@@ -95,11 +95,7 @@
     </head>
     <body>
         <!-- Sidebar -->
-        <div class="sidebar">
-            <h4 class="text-center mt-3 mb-4">CLINIC</h4>
-            <a href="${pageContext.request.contextPath}/admin-dashboard"><i class="fa-solid fa-gauge me-2"></i>Dashboard</a>
-            <a href="${pageContext.request.contextPath}/admin-manage-account"><i class="fa-solid fa-users me-2"></i>Manage Account</a>
-        </div>
+        <%@include file="../includes/AdminDashboardSidebar.jsp" %>
 
         <!-- Main Content -->
         <div class="main-content">
