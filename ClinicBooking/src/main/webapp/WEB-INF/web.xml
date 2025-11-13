@@ -119,6 +119,18 @@
         <servlet-name>RevenueReportController</servlet-name>
         <servlet-class>controller.admin.RevenueReportController</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>ForgotPasswordController</servlet-name>
+        <servlet-class>controller.authentication.ForgotPasswordController</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>ResetPasswordController</servlet-name>
+        <servlet-class>ResetPasswordController</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>OTPConfirmController</servlet-name>
+        <servlet-class>controller.authentication.OTPConfirmController</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>ReceptionistManageAppointmentController</servlet-name>
         <url-pattern>/receptionist-manage-appointment</url-pattern>
@@ -244,6 +256,18 @@
     <servlet-mapping>
         <servlet-name>RevenueReportController</servlet-name>
         <url-pattern>/revenue-report</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ForgotPasswordController</servlet-name>
+        <url-pattern>/forgot-password</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ResetPasswordController</servlet-name>
+        <url-pattern>/reset-password</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>OTPConfirmController</servlet-name>
+        <url-pattern>/otp-confirm</url-pattern>
     </servlet-mapping>
     <welcome-file-list>
         <welcome-file>index.jsp</welcome-file>

@@ -357,4 +357,32 @@ public class PatientDAO extends DBContext {
         return countPatient;
     }
 
+    public boolean isExistEmail(String email) {
+        String query = "SELECT TOP 1 pt.Email\n"
+                + "FROM [dbo].[Patient] pt\n"
+                + "WHERE pt.Email = ?;";
+        Object[] params = {email};
+        ResultSet rs = executeSelectQuery(query, params);
+        boolean isExist = false;
+
+        try {
+            isExist = rs.next();
+        } catch (SQLException ex) {
+            Logger.getLogger(PatientDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return isExist;
+    }
+
+    public boolean updatePassword(String password, String email) {
+        String query = "UPDATE [dbo].[Patient]\n"
+                + "SET AccountPassword = ?\n"
+                + "WHERE Email = ?;";
+        Object[] params = {hashSha256(password), email};
+
+        int result = executeQuery(query, params);
+        closeResources(null);
+
+        return result != 0;
+    }
 }

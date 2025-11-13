@@ -32,7 +32,7 @@ CREATE TABLE Patient (
 	Gender BIT DEFAULT 0,
 	UserAddress NVARCHAR(255),
 	PhoneNumber NVARCHAR(15) UNIQUE,
-	Email NVARCHAR(50),
+	Email NVARCHAR(50) UNIQUE,
 	[Hidden] BIT DEFAULT 0
 );
 
