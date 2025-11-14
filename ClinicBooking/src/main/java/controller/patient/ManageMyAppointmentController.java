@@ -12,7 +12,7 @@ import model.DoctorDTO;
 import model.PatientDTO;
 import validate.BookAppointmentValidate;
 import validate.CancelAppointmentValidate;
-import constants.ManageMyAppointmentConstans;
+import constants.ManageMyAppointmentConstants;
 import java.io.IOException;
 import java.util.List;
 import java.sql.Timestamp;
@@ -86,6 +86,15 @@ public class ManageMyAppointmentController extends HttpServlet {
             handleBookAppointment(request, response);
             return;
         }
+        
+        if ("clearMessages".equals(action)) {
+            // Clear session messages
+            HttpSession session = request.getSession();
+            session.removeAttribute("successMessage");
+            session.removeAttribute("errorMessage");
+            response.setStatus(HttpServletResponse.SC_OK);
+            return;
+        }
 
         String appointmentIdParam = request.getParameter("appointmentId");
 
@@ -96,7 +105,7 @@ public class ManageMyAppointmentController extends HttpServlet {
 
                 if (!CancelAppointmentValidate.isValidAppointmentId(appointmentId)) {
                     request.getSession().setAttribute("errorMessage", "Invalid appointment ID.");
-                    response.sendRedirect(request.getContextPath() + ManageMyAppointmentConstans.BASE_URL);
+                    response.sendRedirect(request.getContextPath() + ManageMyAppointmentConstants.BASE_URL);
                     return;
                 }
 
@@ -104,24 +113,24 @@ public class ManageMyAppointmentController extends HttpServlet {
                 return;
             } catch (NumberFormatException e) {
                 request.getSession().setAttribute("errorMessage", "Invalid appointment ID format.");
-                response.sendRedirect(request.getContextPath() + ManageMyAppointmentConstans.BASE_URL);
+                response.sendRedirect(request.getContextPath() + ManageMyAppointmentConstants.BASE_URL);
                 return;
             }
         }
 
         // For other actions, validate appointment ID parameter
         if (appointmentIdParam == null || appointmentIdParam.trim().isEmpty()) {
-            response.sendRedirect(request.getContextPath() + ManageMyAppointmentConstans.BASE_URL);
+            response.sendRedirect(request.getContextPath() + ManageMyAppointmentConstants.BASE_URL);
             return;
         }
 
         try {
             int appointmentId = Integer.parseInt(appointmentIdParam);
             // For other actions or no specific action, redirect back to detail page
-            response.sendRedirect(request.getContextPath() + ManageMyAppointmentConstans.BASE_URL + "?id=" + appointmentId);
+            response.sendRedirect(request.getContextPath() + ManageMyAppointmentConstants.BASE_URL + "?id=" + appointmentId);
         } catch (NumberFormatException e) {
             // If invalid ID, redirect to appointments list
-            response.sendRedirect(request.getContextPath() + ManageMyAppointmentConstans.BASE_URL);
+            response.sendRedirect(request.getContextPath() + ManageMyAppointmentConstants.BASE_URL);
         }
     }
 
@@ -139,7 +148,7 @@ public class ManageMyAppointmentController extends HttpServlet {
 
             // Redirect if appointment not found
             if (appointment == null) {
-                response.sendRedirect(request.getContextPath() + ManageMyAppointmentConstans.BASE_URL);
+                response.sendRedirect(request.getContextPath() + ManageMyAppointmentConstants.BASE_URL);
                 return;
             }
 
@@ -157,10 +166,10 @@ public class ManageMyAppointmentController extends HttpServlet {
             request.setAttribute("averageRating", averageRating);
 
             // Forward to detail page
-            request.getRequestDispatcher(ManageMyAppointmentConstans.DETAIL_PAGE_JSP).forward(request, response);
+            request.getRequestDispatcher(ManageMyAppointmentConstants.DETAIL_PAGE_JSP).forward(request, response);
 
         } catch (Exception e) {
-            response.sendRedirect(request.getContextPath() + ManageMyAppointmentConstans.BASE_URL);
+            response.sendRedirect(request.getContextPath() + ManageMyAppointmentConstants.BASE_URL);
         }
     }
 
@@ -191,7 +200,7 @@ public class ManageMyAppointmentController extends HttpServlet {
         request.setAttribute("searchQuery", searchQuery);
 
         // Forward to JSP
-        request.getRequestDispatcher(ManageMyAppointmentConstans.LIST_PAGE_JSP).forward(request, response);
+        request.getRequestDispatcher(ManageMyAppointmentConstants.LIST_PAGE_JSP).forward(request, response);
     }
 
     /**
@@ -208,7 +217,7 @@ public class ManageMyAppointmentController extends HttpServlet {
             // Validate appointment ID
             if (!CancelAppointmentValidate.isValidAppointmentId(appointmentId)) {
                 session.setAttribute("errorMessage", "Invalid appointment ID.");
-                response.sendRedirect(request.getContextPath() + ManageMyAppointmentConstans.BASE_URL);
+                response.sendRedirect(request.getContextPath() + ManageMyAppointmentConstants.BASE_URL);
                 return;
             }
             // Get appointment from database
@@ -217,21 +226,21 @@ public class ManageMyAppointmentController extends HttpServlet {
             // Check if appointment exists
             if (!CancelAppointmentValidate.appointmentExists(appointment)) {
                 session.setAttribute("errorMessage", "Appointment not found.");
-                response.sendRedirect(request.getContextPath() + ManageMyAppointmentConstans.BASE_URL);
+                response.sendRedirect(request.getContextPath() + ManageMyAppointmentConstants.BASE_URL);
                 return;
             }
 
             // Check if appointment can be cancelled (using string status now)
             if (!CancelAppointmentValidate.canBeCancelledByStatus(appointment.getAppointmentStatus())) {
                 session.setAttribute("errorMessage", "This appointment cannot be cancelled.");
-                response.sendRedirect(request.getContextPath() + ManageMyAppointmentConstans.BASE_URL);
+                response.sendRedirect(request.getContextPath() + ManageMyAppointmentConstants.BASE_URL);
                 return;
             }
 
             // Check if patient owns the appointment
             if (!CancelAppointmentValidate.isPatientOwner(appointment.getPatientID().getPatientID(), patient != null ? patient.getPatientID() : 0)) {
                 session.setAttribute("errorMessage", "You can only cancel your own appointments.");
-                response.sendRedirect(request.getContextPath() + ManageMyAppointmentConstans.BASE_URL);
+                response.sendRedirect(request.getContextPath() + ManageMyAppointmentConstants.BASE_URL);
                 return;
             }
 
@@ -249,7 +258,7 @@ public class ManageMyAppointmentController extends HttpServlet {
         }
 
         // Redirect back to appointments list
-        response.sendRedirect(request.getContextPath() + ManageMyAppointmentConstans.BASE_URL);
+        response.sendRedirect(request.getContextPath() + ManageMyAppointmentConstants.BASE_URL);
     }
 
     /**
@@ -278,7 +287,7 @@ public class ManageMyAppointmentController extends HttpServlet {
             request.setAttribute("averageRating", averageRating);
 
             // Forward to book appointment page
-            request.getRequestDispatcher(ManageMyAppointmentConstans.BOOK_APPOINTMENT_JSP).forward(request, response);
+            request.getRequestDispatcher(ManageMyAppointmentConstants.BOOK_APPOINTMENT_JSP).forward(request, response);
 
         } catch (NumberFormatException e) {
             response.sendRedirect(request.getContextPath() + "/doctor-list");
@@ -307,21 +316,21 @@ public class ManageMyAppointmentController extends HttpServlet {
             // Basic null/empty validation
             if (appointmentDateTimeParam == null || appointmentDateTimeParam.trim().isEmpty()) {
                 session.setAttribute("errorMessage", "Please select appointment date and time.");
-                response.sendRedirect(request.getContextPath() + ManageMyAppointmentConstans.BASE_URL + "?action=bookAppointment&doctorId=" + doctorIdParam);
+                response.sendRedirect(request.getContextPath() + ManageMyAppointmentConstants.BASE_URL + "?action=bookAppointment&doctorId=" + doctorIdParam);
                 return;
             }
 
             // Validate appointment date time format
             if (!BookAppointmentValidate.isValidDateTimeFormat(appointmentDateTimeParam)) {
                 session.setAttribute("errorMessage", "Invalid appointment date and time format. Please use the date picker.");
-                response.sendRedirect(request.getContextPath() + ManageMyAppointmentConstans.BASE_URL + "?action=bookAppointment&doctorId=" + doctorIdParam);
+                response.sendRedirect(request.getContextPath() + ManageMyAppointmentConstants.BASE_URL + "?action=bookAppointment&doctorId=" + doctorIdParam);
                 return;
             }
 
             // Validate patient ID
             if (!BookAppointmentValidate.isValidPatientId(patient != null ? patient.getPatientID() : 0)) {
                 session.setAttribute("errorMessage", "Invalid patient. Please log in again.");
-                response.sendRedirect(request.getContextPath() + ManageMyAppointmentConstans.BASE_URL);
+                response.sendRedirect(request.getContextPath() + ManageMyAppointmentConstants.BASE_URL);
                 return;
             }
 
@@ -331,13 +340,13 @@ public class ManageMyAppointmentController extends HttpServlet {
                 doctorId = Integer.parseInt(doctorIdParam);
             } catch (NumberFormatException e) {
                 session.setAttribute("errorMessage", "Invalid doctor selection.");
-                response.sendRedirect(request.getContextPath() + ManageMyAppointmentConstans.BASE_URL);
+                response.sendRedirect(request.getContextPath() + ManageMyAppointmentConstants.BASE_URL);
                 return;
             }
 
             if (!BookAppointmentValidate.isValidDoctorId(doctorId)) {
                 session.setAttribute("errorMessage", "Invalid doctor selection.");
-                response.sendRedirect(request.getContextPath() + ManageMyAppointmentConstans.BASE_URL);
+                response.sendRedirect(request.getContextPath() + ManageMyAppointmentConstants.BASE_URL);
                 return;
             }
 
@@ -349,63 +358,63 @@ public class ManageMyAppointmentController extends HttpServlet {
                 appointmentDateTime = Timestamp.valueOf(timestampFormat);
             } catch (Exception e) {
                 session.setAttribute("errorMessage", "Invalid appointment date and time format.");
-                response.sendRedirect(request.getContextPath() + ManageMyAppointmentConstans.BASE_URL + "?action=bookAppointment&doctorId=" + doctorId);
+                response.sendRedirect(request.getContextPath() + ManageMyAppointmentConstants.BASE_URL + "?action=bookAppointment&doctorId=" + doctorId);
                 return;
             }
 
             // Validate appointment is in the future
             if (!BookAppointmentValidate.isFutureDateTime(appointmentDateTime)) {
                 session.setAttribute("errorMessage", "Appointment must be scheduled for a future date and time.");
-                response.sendRedirect(request.getContextPath() + ManageMyAppointmentConstans.BASE_URL + "?action=bookAppointment&doctorId=" + doctorId);
+                response.sendRedirect(request.getContextPath() + ManageMyAppointmentConstants.BASE_URL + "?action=bookAppointment&doctorId=" + doctorId);
                 return;
             }
 
             // Validate working hours (7AM-4:30PM)
             if (!BookAppointmentValidate.isWithinWorkingHours(appointmentDateTime)) {
                 session.setAttribute("errorMessage", "Appointments are only available between 7:00 AM and 4:30 PM.");
-                response.sendRedirect(request.getContextPath() + ManageMyAppointmentConstans.BASE_URL + "?action=bookAppointment&doctorId=" + doctorId);
+                response.sendRedirect(request.getContextPath() + ManageMyAppointmentConstants.BASE_URL + "?action=bookAppointment&doctorId=" + doctorId);
                 return;
             }
 
             // Validate 24-hour advance booking
             if (!BookAppointmentValidate.isAtLeast24HoursInAdvance(appointmentDateTime)) {
                 session.setAttribute("errorMessage", "Appointments must be booked at least 24 hours in advance.");
-                response.sendRedirect(request.getContextPath() + ManageMyAppointmentConstans.BASE_URL + "?action=bookAppointment&doctorId=" + doctorId);
+                response.sendRedirect(request.getContextPath() + ManageMyAppointmentConstants.BASE_URL + "?action=bookAppointment&doctorId=" + doctorId);
                 return;
             }
 
             // Validate within 30 days limit
             if (!BookAppointmentValidate.isWithin30Days(appointmentDateTime)) {
                 session.setAttribute("errorMessage", "Appointments can only be booked up to 30 days in advance.");
-                response.sendRedirect(request.getContextPath() + ManageMyAppointmentConstans.BASE_URL + "?action=bookAppointment&doctorId=" + doctorId);
+                response.sendRedirect(request.getContextPath() + ManageMyAppointmentConstants.BASE_URL + "?action=bookAppointment&doctorId=" + doctorId);
                 return;
             }
 
             // Validate note length
             if (!BookAppointmentValidate.isValidNoteLength(note)) {
                 session.setAttribute("errorMessage", "Note is too long. Maximum 500 characters allowed.");
-                response.sendRedirect(request.getContextPath() + ManageMyAppointmentConstans.BASE_URL + "?action=bookAppointment&doctorId=" + doctorId);
+                response.sendRedirect(request.getContextPath() + ManageMyAppointmentConstants.BASE_URL + "?action=bookAppointment&doctorId=" + doctorId);
                 return;
             }
 
             // Check 24-hour gap with existing appointments (database-dependent validation)
             if (!appointmentDAO.isValidAppointmentTimeGap(patient.getPatientID(), appointmentDateTime)) {
                 session.setAttribute("errorMessage", "You must wait at least 24 hours between appointments. Please choose a different time.");
-                response.sendRedirect(request.getContextPath() + ManageMyAppointmentConstans.BASE_URL + "?action=bookAppointment&doctorId=" + doctorId);
+                response.sendRedirect(request.getContextPath() + ManageMyAppointmentConstants.BASE_URL + "?action=bookAppointment&doctorId=" + doctorId);
                 return;
             }
 
             // Check if doctor is available at the requested time (no conflicting appointments)
             if (!appointmentDAO.isDoctorAvailable(doctorId, appointmentDateTime)) {
                 session.setAttribute("errorMessage", "This time slot is already booked by another patient. Please choose a different time.");
-                response.sendRedirect(request.getContextPath() + ManageMyAppointmentConstans.BASE_URL + "?action=bookAppointment&doctorId=" + doctorId);
+                response.sendRedirect(request.getContextPath() + ManageMyAppointmentConstants.BASE_URL + "?action=bookAppointment&doctorId=" + doctorId);
                 return;
             }
 
             // Check 30-minute gap between doctor's appointments on the same day
             if (!appointmentDAO.hasValid30MinuteGap(doctorId, appointmentDateTime)) {
                 session.setAttribute("errorMessage", "Appointments must be at least 30 minutes apart. Please choose a different time.");
-                response.sendRedirect(request.getContextPath() + ManageMyAppointmentConstans.BASE_URL + "?action=bookAppointment&doctorId=" + doctorId);
+                response.sendRedirect(request.getContextPath() + ManageMyAppointmentConstants.BASE_URL + "?action=bookAppointment&doctorId=" + doctorId);
                 return;
             }
 
@@ -419,11 +428,11 @@ public class ManageMyAppointmentController extends HttpServlet {
             }
 
             // Redirect back to appointments list
-            response.sendRedirect(request.getContextPath() + ManageMyAppointmentConstans.BASE_URL);
+            response.sendRedirect(request.getContextPath() + ManageMyAppointmentConstants.BASE_URL);
 
         } catch (Exception e) {
             session.setAttribute("errorMessage", "An error occurred while booking appointment!");
-            response.sendRedirect(request.getContextPath() + ManageMyAppointmentConstans.BASE_URL);
+            response.sendRedirect(request.getContextPath() + ManageMyAppointmentConstants.BASE_URL);
         }
     }
 
