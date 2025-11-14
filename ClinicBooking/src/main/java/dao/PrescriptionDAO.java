@@ -104,7 +104,7 @@ public class PrescriptionDAO extends DBContext {
     }
 
     /**
-     * Lấy danh sách đơn thuốc của bác sĩ
+     * L?y danh s�ch ??n thu?c c?a b�c s?
      */
     public List<PrescriptionDTO> getPatientPrescriptionListByDoctorID(int doctorID) {
         List<PrescriptionDTO> prescriptions = new ArrayList<>();
@@ -457,7 +457,7 @@ public class PrescriptionDAO extends DBContext {
         try {
 
             while (rs.next()) {
-                // 🧩 Patient
+                // ? Patient
                 PatientDTO patient = new PatientDTO(
                         rs.getString("FirstName"),
                         rs.getString("LastName"),
@@ -469,7 +469,7 @@ public class PrescriptionDAO extends DBContext {
                 );
                 patient.setPatientID(rs.getInt("PatientID"));
 
-                // 🧩 Appointment
+                // ? Appointment
                 AppointmentDTO appointment = new AppointmentDTO();
                 appointment.setAppointmentID(rs.getInt("AppointmentID"));
                 appointment.setPatientID(patient);
@@ -478,7 +478,7 @@ public class PrescriptionDAO extends DBContext {
                 appointment.setDateEnd(rs.getTimestamp("DateEnd"));
                 appointment.setNote(rs.getString("AppointmentNote"));
 
-                // 🧩 Prescription
+                // ? Prescription
                 PrescriptionDTO prescription = new PrescriptionDTO();
                 prescription.setPrescriptionID(rs.getInt("PrescriptionID"));
                 prescription.setAppointmentID(appointment);
@@ -782,8 +782,7 @@ public class PrescriptionDAO extends DBContext {
     }
 
     /**
-     * Search prescriptions for a specific patient by doctor name or medicine
-     * name
+     * Search prescriptions for a specific patient by doctor name or medicine name
      *
      * @param patientId The patient ID
      * @param searchQuery The search query
@@ -964,27 +963,27 @@ public class PrescriptionDAO extends DBContext {
     }
 
     public boolean restoreMedicinesItems(int prescriptionID) {
-        // lấy danh sách item trong đơn thuốc.
+        // l?y danh s�ch item trong ??n thu?c.
         List<PrescriptionItemDTO> itemList = getPrescriptionItemsByPrescriptionID(prescriptionID);
 
         if (itemList == null || itemList.isEmpty()) {
-            return false; // Không có item nào để phục hồi
+            return false; // Kh�ng c� item n�o ?? ph?c h?i
         }
 
         boolean success = true;
 
         try {
-            // Cập nhật số lượng thuốc trong kho
+            // C?p nh?t s? l??ng thu?c trong kho
             for (PrescriptionItemDTO item : itemList) {
-                int medicineID = item.getMedicineID().getMedicineID(); // lấy từng thuốc trong danh sách ra
-                int dosage = item.getDosage(); // lấy liều lượng của từng thuốc để phục hồi
+                int medicineID = item.getMedicineID().getMedicineID(); // l?y t?ng thu?c trong danh s�ch ra
+                int dosage = item.getDosage(); // l?y li?u l??ng c?a t?ng thu?c ?? ph?c h?i
 
-                // Phục hồi thuốc
+                // Ph?c h?i thu?c
                 String updateMedicineSql = "UPDATE Medicine SET Quantity = Quantity + ? WHERE MedicineID = ?";
                 Object[] updateParams = {dosage, medicineID};
 
                 int updated = executeQuery(updateMedicineSql, updateParams);
-                if (updated == 0) { // Medicine ID không tồn tại hoặc lỗi
+                if (updated == 0) { // Medicine ID kh�ng t?n t?i ho?c l?i
                     success = false;
                 }
             }
@@ -1135,6 +1134,12 @@ public class PrescriptionDAO extends DBContext {
         return 0;
     }
 
+    /**
+     * Returns the total number of prescriptions in the system. This method executes a
+     * COUNT query on the Prescription table.
+     *
+     * @return the total number of prescriptions, or 0 if an error occurs
+     */
     public int getTotalPrescriptions() {
         int countPrescription = 0;
         String sql = "SELECT COUNT(*) AS Total FROM Prescription";
@@ -1152,6 +1157,13 @@ public class PrescriptionDAO extends DBContext {
         return countPrescription;
     }
 
+    /**
+     * Returns the number of prescriptions filtered by a specific status. This method
+     * counts all prescriptions matching the given status value.
+     *
+     * @param status the prescription status to filter by
+     * @return the number of prescriptions with that status, or 0 if an error occurs
+     */
     public int getPrescriptionsByStatus(String status) {
         int countPreStatus = 0;
         String sql = "SELECT COUNT(*) AS Total FROM Prescription WHERE PrescriptionStatus = ?";

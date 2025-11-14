@@ -340,6 +340,14 @@ public class PatientDAO extends DBContext {
         return isExist;
     }
 
+    /**
+     * Returns the total number of visible patients in the system.
+     *
+     * This method counts all patients whose 'Hidden' flag is set to 0. It executes a
+     * SELECT query and retrieves the aggregated result.
+     *
+     * @return the number of active (non-hidden) patients
+     */
     public int getTotalPatients() {
         int countPatient = 0;
         String sql = "SELECT COUNT(*) AS Total FROM Patient WHERE Hidden = 0";

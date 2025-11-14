@@ -290,12 +290,12 @@ public class AppointmentDAO extends DBContext {
                 patient.setPatientID(rs.getInt("PatientID"));
                 appointment.setPatientID(patient);
 
-                // Set DoctorDTO với nested StaffDTO và SpecialtyDTO
+                // Set DoctorDTO v?i nested StaffDTO v� SpecialtyDTO
                 DoctorDTO doctor = new DoctorDTO();
                 doctor.setDoctorID(rs.getInt("DoctorID"));
                 doctor.setYearExperience(rs.getInt("YearExperience"));
 
-                // Tạo StaffDTO
+                // T?o StaffDTO
                 model.StaffDTO staff = new model.StaffDTO();
                 staff.setStaffID(rs.getInt("StaffID"));
                 staff.setFirstName(rs.getString("FirstName"));
@@ -307,7 +307,7 @@ public class AppointmentDAO extends DBContext {
                 staff.setJobStatus(rs.getString("JobStatus"));
                 doctor.setStaffID(staff);
 
-                // Tạo SpecialtyDTO
+                // T?o SpecialtyDTO
                 model.SpecialtyDTO specialty = new model.SpecialtyDTO();
                 specialty.setSpecialtyID(rs.getInt("SpecialtyID"));
                 specialty.setSpecialtyName(rs.getString("SpecialtyName"));
@@ -478,7 +478,7 @@ public class AppointmentDAO extends DBContext {
                 doctor.setDoctorID(rs.getInt("DoctorID"));
                 doctor.setYearExperience(rs.getInt("YearExperience"));
 
-                // --- Staff (doctor’s profile) ---
+                // --- Staff (doctor�s profile) ---
                 StaffDTO staff = new StaffDTO();
                 staff.setStaffID(rs.getInt("StaffID"));
                 staff.setFirstName(rs.getString("StaffFirstName"));
@@ -642,7 +642,7 @@ public class AppointmentDAO extends DBContext {
                 }
             }
 
-            // Thêm appointment
+            // Th�m appointment
             String sqlAppointment = "INSERT INTO Appointment "
                     + "(PatientID, DoctorID, AppointmentStatus, DateCreate, DateBegin, DateEnd, Note, Hidden) "
                     + "VALUES (?, ?, 'Approved', GETDATE(), ?, ?, ?, 1)";
@@ -669,8 +669,8 @@ public class AppointmentDAO extends DBContext {
     }
 
     /**
-     * Cancel appointment by setting status to Canceled Only if current status
-     * is Pending or Approved
+     * Cancel appointment by setting status to Canceled Only if current status is Pending
+     * or Approved
      */
     public boolean cancelAppointment(int appointmentId) {
         String sql = "UPDATE Appointment"
@@ -684,9 +684,8 @@ public class AppointmentDAO extends DBContext {
     }
 
     /**
-     * Update appointment by setting status to Approved Only if current status
-     * is Pending and then setting to Completed Only if current status is
-     * Approved
+     * Update appointment by setting status to Approved Only if current status is Pending
+     * and then setting to Completed Only if current status is Approved
      */
     public boolean updateStatusAppointment(int appointmentId) {
         String sql = "UPDATE Appointment "
@@ -874,13 +873,12 @@ public class AppointmentDAO extends DBContext {
     }
 
     /**
-     * Check if doctor is available at the requested time (no conflicting
-     * appointments with status Pending, Approved, or Completed)
+     * Check if doctor is available at the requested time (no conflicting appointments
+     * with status Pending, Approved, or Completed)
      *
      * @param doctorId Doctor's ID
      * @param newAppointmentTime Requested appointment time
-     * @return true if doctor is available, false if doctor has conflicting
-     * appointment
+     * @return true if doctor is available, false if doctor has conflicting appointment
      */
     public boolean isDoctorAvailable(int doctorId, Timestamp newAppointmentTime) {
         // Check for appointments that overlap with the new appointment time
@@ -912,8 +910,7 @@ public class AppointmentDAO extends DBContext {
 
     /**
      * Check if the new appointment has valid 30-minute gap with doctor's other
-     * appointments Appointments must be at least 30 minutes apart for the same
-     * doctor
+     * appointments Appointments must be at least 30 minutes apart for the same doctor
      *
      * @param doctorId Doctor's ID
      * @param newAppointmentTime New appointment time
@@ -978,16 +975,15 @@ public class AppointmentDAO extends DBContext {
     }
 
     /**
-     * Get doctors from completed appointments for a patient within 24 hours
-     * Only returns doctors that the patient can review (completed within 24h
-     * and not yet reviewed)
+     * Get doctors from completed appointments for a patient within 24 hours Only returns
+     * doctors that the patient can review (completed within 24h and not yet reviewed)
      *
      * @param patientId The patient ID
      * @return List of doctors eligible for review
      */
     public List<DoctorDTO> getDoctorsEligibleForReview(int patientId) {
         List<DoctorDTO> doctors = new ArrayList<>();
-        // Logic: Chỉ lấy doctors từ appointment gần nhất chưa được review
+        // Logic: Ch? l?y doctors t? appointment g?n nh?t ch?a ???c review
         String sql = "SELECT DISTINCT d.DoctorID, s.StaffID, s.FirstName, s.LastName, "
                 + "sp.SpecialtyID, sp.SpecialtyName, a.DateEnd "
                 + "FROM Appointment a "
@@ -1050,15 +1046,15 @@ public class AppointmentDAO extends DBContext {
     }
 
     /**
-     * Check if a patient can review a specific doctor Patient must have a
-     * completed appointment within 24 hours and not yet reviewed
+     * Check if a patient can review a specific doctor Patient must have a completed
+     * appointment within 24 hours and not yet reviewed
      *
      * @param patientId The patient ID
      * @param doctorId The doctor ID
      * @return true if eligible, false otherwise
      */
     public boolean canPatientReviewDoctor(int patientId, int doctorId) {
-        // Logic: Chỉ cho phép review appointment gần nhất chưa được review
+        // Logic: Ch? cho ph�p review appointment g?n nh?t ch?a ???c review
         String sql = "SELECT COUNT(*) AS Total FROM Appointment a "
                 + "WHERE a.PatientID = ? "
                 + "AND a.DoctorID = ? "
@@ -1200,6 +1196,14 @@ public class AppointmentDAO extends DBContext {
         return appointments;
     }
 
+    /**
+     * Returns the total number of appointments in the system.
+     *
+     * This method executes a simple COUNT query on the Appointment table and retrieves
+     * the aggregated result.
+     *
+     * @return the total number of appointments, or 0 if an error occurs
+     */
     public int getTotalAppointments() {
         int countAppointment = 0;
         String sql = "SELECT COUNT(*) AS Total FROM Appointment";
@@ -1217,6 +1221,16 @@ public class AppointmentDAO extends DBContext {
         return countAppointment;
     }
 
+    /**
+     * Returns the number of appointments filtered by a specific status.
+     *
+     * This method performs a COUNT query on the Appointment table using the provided
+     * status as a filter condition.
+     *
+     * @param status the appointment status to filter by
+     * @return the number of appointments matching the given status, or 0 if an error
+     * occurs
+     */
     public int getAppointmentsByStatus(String status) {
         int countAppStatus = 0;
         String sql = "SELECT COUNT(*) AS Total FROM Appointment WHERE AppointmentStatus = ?";
@@ -1236,18 +1250,16 @@ public class AppointmentDAO extends DBContext {
 
     /**
      * Retrieves the top doctors ranked by their total number of appointments.
-     * This method performs a SQL query that joins Doctor, Staff, Specialty, and
-     * Appointment tables to count appointments per doctor and returns the top N
-     * doctors.
      *
-     * @param limit The maximum number of top doctors to retrieve (e.g., 5 for
-     * top 5)
-     * @return A list of AppointmentDTO objects containing doctor information
-     * and their total appointment count. Each AppointmentDTO includes: -
-     * DoctorDTO with full doctor information (including StaffDTO and
-     * SpecialtyDTO) - totalAppointments: the count of appointments for that
-     * doctor Returns an empty list if no doctors are found or if an error
-     * occurs.
+     * This method executes a SQL query that joins Doctor, Staff, Specialty, and
+     * Appointment tables to count appointments per doctor. It returns the top N doctors
+     * sorted by appointment count in descending order.
+     *
+     * @param limit the maximum number of doctors to return (for top 5)
+     * @return a list of AppointmentDTO objects containing: - DoctorDTO (with nested
+     * StaffDTO and SpecialtyDTO) - totalAppointments (the number of appointments per
+     * doctor) Returns an empty list if no data is found or an exception occurs.
+     *
      * @see AppointmentDTO
      * @see DoctorDTO
      * @see StaffDTO

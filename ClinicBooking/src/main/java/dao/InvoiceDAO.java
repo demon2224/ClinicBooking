@@ -668,6 +668,12 @@ public class InvoiceDAO extends DBContext {
         return 0;
     }
 
+    /**
+     * Returns the total number of invoices in the system. This method runs a COUNT query
+     * on the Invoice table and retrieves the result.
+     *
+     * @return the total number of invoices, or 0 if an error occurs
+     */
     public int getTotalInvoices() {
         int countInvoice = 0;
         String sql = "SELECT COUNT(*) AS Total FROM Invoice";
@@ -685,6 +691,13 @@ public class InvoiceDAO extends DBContext {
         return countInvoice;
     }
 
+    /**
+     * Returns the number of invoices filtered by a specific status. This method performs
+     * a COUNT query using the provided status value.
+     *
+     * @param status the invoice status to filter by
+     * @return the number of invoices matching the given status, or 0 if an error occurs
+     */
     public int getInvoicesByStatus(String status) {
         int countInvStatus = 0;
         String sql = "SELECT COUNT(*) AS Total FROM Invoice WHERE InvoiceStatus = ?";

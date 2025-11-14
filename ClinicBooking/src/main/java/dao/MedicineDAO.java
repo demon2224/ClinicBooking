@@ -320,6 +320,12 @@ public class MedicineDAO extends DBContext {
         return "Unknown medicine";
     }
 
+    /**
+     * Returns the number of medicines that are low in stock. This method counts all
+     * medicines with a quantity of 30 or less.
+     *
+     * @return the number of low-stock medicines, or 0 if an error occurs
+     */
     public int getLowStockMedicines() {
         int countLowStockMedicines = 0;
         String sql = "SELECT COUNT(*) AS Total FROM Medicine WHERE Quantity <= 30";
@@ -337,6 +343,12 @@ public class MedicineDAO extends DBContext {
         return countLowStockMedicines;
     }
 
+    /**
+     * Returns the total number of visible medicines in the system. This method counts all
+     * medicines where the 'Hidden' flag is set to 0.
+     *
+     * @return the total number of active medicines, or 0 if an error occurs
+     */
     public int getTotalMedicines() {
 
         String query = "SELECT COUNT(m.MedicineID) AS TotalMedicines\n"
