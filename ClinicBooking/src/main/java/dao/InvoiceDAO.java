@@ -61,7 +61,7 @@ public class InvoiceDAO extends DBContext {
                 + "LEFT JOIN Prescription pre ON i.PrescriptionID = pre.PrescriptionID "
                 + "WHERE i.InvoiceID = ?";
 
-        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+        try ( Connection conn = getConnection();  PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, invoiceId);
             ResultSet rs = ps.executeQuery();
@@ -173,7 +173,7 @@ public class InvoiceDAO extends DBContext {
                 + "LEFT JOIN Prescription pre ON i.PrescriptionID = pre.PrescriptionID "
                 + "WHERE i.InvoiceID = ?";
 
-        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+        try ( Connection conn = getConnection();  PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, invoiceId);
             ResultSet rs = ps.executeQuery();
@@ -275,9 +275,7 @@ public class InvoiceDAO extends DBContext {
                 + " i.DatePay "
                 + "ORDER BY i.InvoiceID DESC";
 
-        try (Connection conn = getConnection();
-                PreparedStatement ps = conn.prepareStatement(sql);
-                ResultSet rs = ps.executeQuery()) {
+        try ( Connection conn = getConnection();  PreparedStatement ps = conn.prepareStatement(sql);  ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
                 // Patient
@@ -361,7 +359,7 @@ public class InvoiceDAO extends DBContext {
 
         String pattern = "%" + searchQuery.trim() + "%";
 
-        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+        try ( Connection conn = getConnection();  PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, pattern);
             ps.setString(2, pattern);
             ps.setString(3, pattern);
@@ -426,7 +424,7 @@ public class InvoiceDAO extends DBContext {
                 + "    DatePay = CASE WHEN ? = 'Paid' THEN GETDATE() ELSE DatePay END "
                 + "WHERE InvoiceID = ?";
 
-        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+        try ( Connection conn = getConnection();  PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setString(1, newStatus);
             ps.setString(2, newPaymentType);
@@ -444,53 +442,37 @@ public class InvoiceDAO extends DBContext {
 
     /**
      * Update invoice payment and status information with LocalDateTime
-     * 
-     * @param invoiceId     Invoice ID to update
-     * @param paymentType   Payment method (Cash, QR Transfer, etc.)
+     *
+     * @param invoiceId Invoice ID to update
+     * @param paymentType Payment method (Cash, QR Transfer, etc.)
      * @param invoiceStatus Invoice status (Paid, Pending, etc.)
-     * @param datePay       Payment date
+     * @param datePay Payment date
      * @return true if update successful, false otherwise
      */
     public boolean updateInvoicePaymentAndStatus(int invoiceId, String paymentType,
             String invoiceStatus, java.time.LocalDateTime datePay) {
+
         String sql = "UPDATE Invoice "
                 + "SET PaymentType = ?, "
                 + "    InvoiceStatus = ?, "
                 + "    DatePay = ? "
                 + "WHERE InvoiceID = ? AND (PaymentType IS NULL OR PaymentType = '')";
 
-        System.out.println("DEBUG: Updating invoice " + invoiceId + " to " + invoiceStatus + " with " + paymentType);
-        System.out.println("DEBUG: SQL Query: " + sql);
+        Object[] params = new Object[]{
+            paymentType,
+            invoiceStatus,
+            (datePay != null ? java.sql.Timestamp.valueOf(datePay) : null),
+            invoiceId
+        };
 
-        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
-
-            ps.setString(1, paymentType);
-            ps.setString(2, invoiceStatus);
-
-            // Convert LocalDateTime to Timestamp
-            if (datePay != null) {
-                ps.setTimestamp(3, java.sql.Timestamp.valueOf(datePay));
-            } else {
-                ps.setTimestamp(3, null);
-            }
-
-            ps.setInt(4, invoiceId);
-
-            int rowsAffected = ps.executeUpdate();
-            System.out.println("DEBUG: Rows affected: " + rowsAffected);
-            return rowsAffected > 0;
-
-        } catch (SQLException e) {
-            System.out.println("DEBUG: SQL Error in updateInvoicePaymentAndStatus: " + e.getMessage());
-            e.printStackTrace();
-            return false;
-        }
+        int rows = executeQuery(sql, params);
+        return rows > 0;
     }
 
     // CANCEL
     public boolean cancelInvoice(int invoiceId) {
         String sql = "UPDATE Invoice SET InvoiceStatus = 'Canceled' WHERE InvoiceID = ?";
-        Object[] params = { invoiceId };
+        Object[] params = {invoiceId};
         int rowsAffected = executeQuery(sql, params);
         return rowsAffected > 0;
     }
@@ -532,7 +514,7 @@ public class InvoiceDAO extends DBContext {
         ResultSet rs = null;
 
         try {
-            Object[] params = { patientId };
+            Object[] params = {patientId};
             rs = executeSelectQuery(sql, params);
 
             while (rs.next()) {
@@ -591,7 +573,7 @@ public class InvoiceDAO extends DBContext {
     /**
      * Search invoices for a specific patient by doctor name or specialty
      *
-     * @param patientId   The patient ID
+     * @param patientId The patient ID
      * @param searchQuery The search query
      * @return List of matching invoices for the patient
      */
@@ -628,7 +610,7 @@ public class InvoiceDAO extends DBContext {
                 + "ORDER BY i.DateCreate DESC";
 
         String searchPattern = "%" + searchQuery.trim() + "%";
-        Object[] params = { patientId, searchPattern, searchPattern };
+        Object[] params = {patientId, searchPattern, searchPattern};
 
         ResultSet rs = null;
         try {
@@ -704,7 +686,7 @@ public class InvoiceDAO extends DBContext {
                 + "      AND i.DatePay >= CAST(GETDATE() AS DATE) "
                 + "      AND i.DatePay < DATEADD(DAY, 1, CAST(GETDATE() AS DATE)) "
                 + "    GROUP BY i.InvoiceID, s.Price) sub;";
-        try (ResultSet rs = executeSelectQuery(sql)) {
+        try ( ResultSet rs = executeSelectQuery(sql)) {
             if (rs != null && rs.next()) {
                 return rs.getDouble("revenue");
             }
@@ -715,9 +697,8 @@ public class InvoiceDAO extends DBContext {
     }
 
     /**
-     * Returns the total number of invoices in the system. This method runs a COUNT
-     * query
-     * on the Invoice table and retrieves the result.
+     * Returns the total number of invoices in the system. This method runs a
+     * COUNT query on the Invoice table and retrieves the result.
      *
      * @return the total number of invoices, or 0 if an error occurs
      */
@@ -740,19 +721,18 @@ public class InvoiceDAO extends DBContext {
 
     /**
      * Returns the number of invoices filtered by a specific status. This method
-     * performs
-     * a COUNT query using the provided status value.
+     * performs a COUNT query using the provided status value.
      *
      * @param status the invoice status to filter by
-     * @return the number of invoices matching the given status, or 0 if an error
-     *         occurs
+     * @return the number of invoices matching the given status, or 0 if an
+     * error occurs
      */
     public int getInvoicesByStatus(String status) {
         int countInvStatus = 0;
         String sql = "SELECT COUNT(*) AS Total FROM Invoice WHERE InvoiceStatus = ?";
         ResultSet rs = null;
         try {
-            rs = executeSelectQuery(sql, new Object[] { status });
+            rs = executeSelectQuery(sql, new Object[]{status});
             if (rs.next()) {
                 countInvStatus = rs.getInt("Total");
             }
@@ -857,7 +837,7 @@ public class InvoiceDAO extends DBContext {
 
     /**
      * Get total paid revenue (Specialty.Price + Medicine revenue)
-     * 
+     *
      * @return Total paid revenue amount
      */
     public double getPaidRevenue() {
@@ -892,7 +872,7 @@ public class InvoiceDAO extends DBContext {
 
     /**
      * Get total pending revenue (not yet paid)
-     * 
+     *
      * @return Total pending revenue amount
      */
     public double getPendingRevenue() {
@@ -927,7 +907,7 @@ public class InvoiceDAO extends DBContext {
 
     /**
      * Get payment method distribution for paid invoices
-     * 
+     *
      * @return Map with payment type as key and count as value
      */
     public Map<String, Integer> getPaymentMethodDistribution() {
@@ -954,7 +934,7 @@ public class InvoiceDAO extends DBContext {
 
     /**
      * Get monthly revenue for the last N months
-     * 
+     *
      * @param months Number of months to retrieve
      * @return List of InvoiceDTO with datePay and totalFee
      */
@@ -984,7 +964,7 @@ public class InvoiceDAO extends DBContext {
 
         ResultSet rs = null;
         try {
-            rs = executeSelectQuery(sql, new Object[] { months });
+            rs = executeSelectQuery(sql, new Object[]{months});
             while (rs.next()) {
                 InvoiceDTO invoice = new InvoiceDTO();
                 invoice.setDatePay(rs.getTimestamp("MonthDate"));
@@ -1001,7 +981,7 @@ public class InvoiceDAO extends DBContext {
 
     /**
      * Get revenue by specialty
-     * 
+     *
      * @return List of SpecialtyDTO with visitCount and totalRevenue
      */
     public List<SpecialtyDTO> getRevenueBySpecialty() {
@@ -1043,7 +1023,7 @@ public class InvoiceDAO extends DBContext {
 
     /**
      * Get top doctors by revenue
-     * 
+     *
      * @param limit Number of doctors to retrieve
      * @return List of DoctorDTO with completedAppointments and totalRevenue
      */
@@ -1075,7 +1055,7 @@ public class InvoiceDAO extends DBContext {
 
         ResultSet rs = null;
         try {
-            rs = executeSelectQuery(sql, new Object[] { limit });
+            rs = executeSelectQuery(sql, new Object[]{limit});
             while (rs.next()) {
                 StaffDTO staff = new StaffDTO();
                 staff.setFirstName(rs.getString("FirstName"));
@@ -1103,7 +1083,7 @@ public class InvoiceDAO extends DBContext {
 
     /**
      * Get top medicines by revenue
-     * 
+     *
      * @param limit Number of medicines to retrieve
      * @return List of MedicineDTO with totalQuantitySold and totalRevenue
      */
@@ -1127,7 +1107,7 @@ public class InvoiceDAO extends DBContext {
 
         ResultSet rs = null;
         try {
-            rs = executeSelectQuery(sql, new Object[] { limit });
+            rs = executeSelectQuery(sql, new Object[]{limit});
             while (rs.next()) {
                 MedicineDTO medicine = new MedicineDTO();
                 medicine.setMedicineID(rs.getInt("MedicineID"));
