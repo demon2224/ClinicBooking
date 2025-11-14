@@ -54,6 +54,27 @@
                     <c:remove var="errorMessage" scope="session"/>
                 </c:if>
 
+                <!-- Success Modal -->
+                <c:if test="${not empty sessionScope.successMessage}">
+                    <div id="successModal" class="modal-overlay">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h3 class="modal-title">
+                                    <i class="fas fa-check-circle text-success"></i> Success
+                                </h3>
+                                <button type="button" class="modal-close" onclick="closeSuccessModal()">&times;</button>
+                            </div>
+                            <div class="modal-body">
+                                <p>${sessionScope.successMessage}</p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-success" onclick="closeSuccessModal()">OK</button>
+                            </div>
+                        </div>
+                    </div>
+                    <c:remove var="successMessage" scope="session"/>
+                </c:if>
+
                 <!-- Doctor Information Section -->
                 <c:if test="${not empty doctor}">
                     <div class="appointment-card">
@@ -314,6 +335,14 @@
                 }
             }
 
+            function closeSuccessModal() {
+                const modal = document.getElementById('successModal');
+                if (modal) {
+                    modal.style.display = 'none';
+                    document.body.style.overflow = 'auto'; // Re-enable scrolling
+                }
+            }
+
             // Calendar and DateTime functionality
             let currentDate = new Date();
             let selectedDateStr = '';
@@ -448,6 +477,27 @@
                     document.addEventListener('keydown', function (e) {
                         if (e.key === 'Escape') {
                             closeModal();
+                        }
+                    });
+                }
+
+                // Auto show success modal on page load if exists
+                const successModal = document.getElementById('successModal');
+                if (successModal) {
+                    successModal.style.display = 'flex';
+                    document.body.style.overflow = 'hidden'; // Disable scrolling when modal is open
+
+                    // Close modal when clicking outside
+                    successModal.addEventListener('click', function (e) {
+                        if (e.target === successModal) {
+                            closeSuccessModal();
+                        }
+                    });
+
+                    // Close modal with Escape key
+                    document.addEventListener('keydown', function (e) {
+                        if (e.key === 'Escape') {
+                            closeSuccessModal();
                         }
                     });
                 }

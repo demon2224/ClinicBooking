@@ -74,8 +74,6 @@
                     </div>
                 </div>
             </div>
-            <c:remove var="successMessage" scope="session"/>
-            <c:remove var="errorMessage" scope="session"/>
         </c:if>
 
         <!-- Confirmation Modal for Cancel Action -->
@@ -261,6 +259,7 @@
         function closeModal() {
             const modal = document.getElementById('messageModal');
             if (modal) {
+                modal.classList.remove('show'); // Remove show class for CSS animation
                 modal.style.display = 'none';
                 document.body.style.overflow = 'auto'; // Re-enable scrolling
             }
@@ -269,6 +268,7 @@
         function closeConfirmModal() {
             const modal = document.getElementById('confirmModal');
             if (modal) {
+                modal.classList.remove('show'); // Remove show class for CSS animation
                 modal.style.display = 'none';
                 document.body.style.overflow = 'auto'; // Re-enable scrolling
             }
@@ -280,6 +280,7 @@
 
             if (modal && confirmBtn) {
                 modal.style.display = 'flex';
+                modal.classList.add('show'); // Add show class for CSS animation
                 document.body.style.overflow = 'hidden'; // Disable scrolling
 
                 // Store appointment ID for confirmation
@@ -304,9 +305,16 @@
         // Auto show modal on page load if exists
         document.addEventListener('DOMContentLoaded', function () {
             const modal = document.getElementById('messageModal');
+            
             if (modal) {
                 modal.style.display = 'flex';
+                modal.classList.add('show'); // Add show class for CSS animation
                 document.body.style.overflow = 'hidden'; // Disable scrolling when modal is open
+                
+                // Clear session messages after modal is shown
+                fetch(window.location.pathname + '?action=clearMessages', {
+                    method: 'POST'
+                }).catch(e => {});
 
                 // Close modal when clicking outside
                 modal.addEventListener('click', function (e) {
