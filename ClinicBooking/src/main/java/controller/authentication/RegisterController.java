@@ -176,6 +176,9 @@ public class RegisterController extends HttpServlet {
         } else if (!RegisterValidate.isValidPhoneNumber(phoneNumberParam.trim())) {
             request.setAttribute("phoneNumberErrorMsg", "Invalid phone number format.");
             return false;
+        } else if (patientDAO.isExistPhoneNumber(phoneNumberParam.trim())) {
+            request.setAttribute("phoneNumberErrorMsg", "Invalid phone number format.");
+            return false;
         } else {
             return true;
         }

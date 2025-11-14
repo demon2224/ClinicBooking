@@ -383,6 +383,23 @@ public class PatientDAO extends DBContext {
         return isExist;
     }
 
+    public boolean isExistPhoneNumber(String phoneNumber) {
+        String query = "SELECT TOP 1 pt.PhoneNumber\n"
+                + "FROM [dbo].[Patient] pt\n"
+                + "WHERE pt.PhoneNumber = ?";
+        Object[] params = {phoneNumber};
+        ResultSet rs = executeSelectQuery(query, params);
+        boolean isExist = false;
+
+        try {
+            isExist = rs.next();
+        } catch (SQLException ex) {
+            Logger.getLogger(PatientDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return isExist;
+    }
+
     public boolean updatePassword(String password, String email) {
         String query = "UPDATE [dbo].[Patient]\n"
                 + "SET AccountPassword = ?\n"
