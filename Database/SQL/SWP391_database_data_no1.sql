@@ -7,16 +7,17 @@ BEGIN
 
 	-- 1. Specialties (10) - Không phụ thuộc
 	INSERT INTO Specialty (SpecialtyName, Price) VALUES
-	('General Practice', 60.00),
-	('Cardiology', 120.00),
-	('Dermatology', 90.00),
-	('Pediatrics', 80.00),
-	('Orthopedics', 110.00),
-	('Neurology', 150.00),
-	('Endocrinology', 100.00),
-	('Ophthalmology', 95.00),
-	('ENT', 85.00),
-	('Psychiatry', 130.00);
+('General Practice', 0.60),
+('Cardiology', 0.90),
+('Dermatology', 0.50),
+('Pediatrics', 0.45),
+('Orthopedics', 0.70),
+('Neurology', 0.95),
+('Endocrinology', 0.55),
+('Ophthalmology', 0.52),
+('ENT', 0.48),
+('Psychiatry', 0.88);
+
 
 	-- 2. PATIENTS (30) - Không phụ thuộc
 	INSERT INTO Patient (AccountName, AccountPassword, Avatar, Bio, FirstName, LastName, DOB, Gender, UserAddress, PhoneNumber, Email)
@@ -191,36 +192,37 @@ BEGIN
 	-- 8. MEDICINES (30) - Không phụ thuộc
 	INSERT INTO Medicine (MedicineType, MedicineStatus, MedicineName, MedicineCode, Quantity, Price)
 	VALUES
-	('Tablet',1,'Paracetamol 500mg','MED001',200,1.50), -- ID 1
-	('Capsule',1,'Amoxicillin 500mg','MED002',150,2.25), -- ID 2
-	('Syrup',1,'Cough Syrup 100ml','MED003',80,4.50), -- ID 3
-	('Ointment',1,'Hydrocortisone 1%','MED004',60,3.00), -- ID 4
-	('Drops',1,'Eye Drops 10ml','MED005',50,5.50), -- ID 5
-	('Tablet',1,'Ibuprofen 200mg','MED006',180,1.75), -- ID 6
-	('Capsule',1,'Omeprazole 20mg','MED007',120,6.00), -- ID 7
-	('Tablet',1,'Aspirin 81mg','MED008',300,0.90), -- ID 8
-	('Capsule',1,'Metformin 500mg','MED009',160,2.10), -- ID 9
-	('Tablet',1,'Loratadine 10mg','MED010',140,1.20), -- ID 10
-	('Syrup',1,'Children Multivitamin','MED011',90,7.50), -- ID 11
-	('Tablet',1,'Prednisone 10mg','MED012',50,2.80), -- ID 12
-	('Capsule',1,'Doxycycline 100mg','MED013',70,3.60), -- ID 13
-	('Ointment',1,'Antifungal Cream','MED014',40,4.00), -- ID 14
-	('Drops',1,'Ear Drops 10ml','MED015',30,6.50), -- ID 15
-	('Tablet',1,'Clopidogrel 75mg','MED016',60,8.00), -- ID 16
-	('Capsule',1,'Levothyroxine 50mcg','MED017',90,3.20), -- ID 17
-	('Tablet',1,'Zinc Supplement 50mg','MED018',200,1.10), -- ID 18
-	('Capsule',1,'Fluconazole 150mg','MED019',45,5.60), -- ID 19
-	('Syrup',1,'Antacid Syrup','MED020',110,3.90), -- ID 20
-	('Tablet',1,'Losartan 50mg','MED021',75,2.70), -- ID 21
-	('Capsule',1,'Albuterol 2mg','MED022',100,4.40), -- ID 22
-	('Tablet',1,'Vitamin D 1000IU','MED023',210,1.30), -- ID 23
-	('Capsule',1,'Nitrofurantoin 100mg','MED024',55,4.80), -- ID 24
-	('Tablet',1,'Tramadol 50mg','MED025',35,6.75), -- ID 25
-	('Ointment',1,'Antiseptic Ointment','MED026',40,2.50), -- ID 26
-	('Drops',1,'Nasal Drops 15ml','MED027',65,3.30), -- ID 27
-	('Capsule',1,'Gabapentin 300mg','MED028',25,7.20), -- ID 28
-	('Tablet',1,'Hydrochlorothiazide 25mg','MED029',120,1.90), -- ID 29
-	('Capsule',1,'Clarithromycin 500mg','MED030',50,5.00); -- ID 30
+('Tablet',1,'Paracetamol 500mg','MED001',200,0.19), -- ID 1
+('Capsule',1,'Amoxicillin 500mg','MED002',150,0.35), -- ID 2
+('Syrup',1,'Cough Syrup 100ml','MED003',80,0.49), -- ID 3
+('Ointment',1,'Hydrocortisone 1%','MED004',60,0.39), -- ID 4
+('Drops',1,'Eye Drops 10ml','MED005',50,0.59), -- ID 5
+('Tablet',1,'Ibuprofen 200mg','MED006',180,0.17), -- ID 6
+('Capsule',1,'Omeprazole 20mg','MED007',120,0.79), -- ID 7
+('Tablet',1,'Aspirin 81mg','MED008',300,0.09), -- ID 8
+('Capsule',1,'Metformin 500mg','MED009',160,0.31), -- ID 9
+('Tablet',1,'Loratadine 10mg','MED010',140,0.22), -- ID 10
+('Syrup',1,'Children Multivitamin','MED011',90,0.69), -- ID 11
+('Tablet',1,'Prednisone 10mg','MED012',50,0.29), -- ID 12
+('Capsule',1,'Doxycycline 100mg','MED013',70,0.33), -- ID 13
+('Ointment',1,'Antifungal Cream','MED014',40,0.25), -- ID 14
+('Drops',1,'Ear Drops 10ml','MED015',30,0.59), -- ID 15
+('Tablet',1,'Clopidogrel 75mg','MED016',60,0.89), -- ID 16
+('Capsule',1,'Levothyroxine 50mcg','MED017',90,0.34), -- ID 17
+('Tablet',1,'Zinc Supplement 50mg','MED018',200,0.14), -- ID 18
+('Capsule',1,'Fluconazole 150mg','MED019',45,0.56), -- ID 19
+('Syrup',1,'Antacid Syrup','MED020',110,0.39), -- ID 20
+('Tablet',1,'Losartan 50mg','MED021',75,0.27), -- ID 21
+('Capsule',1,'Albuterol 2mg','MED022',100,0.44), -- ID 22
+('Tablet',1,'Vitamin D 1000IU','MED023',210,0.13), -- ID 23
+('Capsule',1,'Nitrofurantoin 100mg','MED024',55,0.48), -- ID 24
+('Tablet',1,'Tramadol 50mg','MED025',35,0.65), -- ID 25
+('Ointment',1,'Antiseptic Ointment','MED026',40,0.19), -- ID 26
+('Drops',1,'Nasal Drops 15ml','MED027',65,0.33), -- ID 27
+('Capsule',1,'Gabapentin 300mg','MED028',25,0.72), -- ID 28
+('Tablet',1,'Hydrochlorothiazide 25mg','MED029',120,0.21), -- ID 29
+('Capsule',1,'Clarithromycin 500mg','MED030',50,0.50); -- ID 30
+
 
 	-- 9. APPOINTMENTS - Current date: 2025-11-03 (Tuân thủ các quy tắc đặt lịch)
 	-- Rules: 1) Đặt trước 24h, 2) Cách nhau 24h, 3) 7h-17h, 4) Trong 30 ngày, 5) Không trùng giờ bác sĩ, 6) Cách nhau 30 phút
@@ -654,59 +656,59 @@ BEGIN
 	-- Invoice với Prescription.Pending = Pending (chưa thanh toán do chưa phát thuốc)
 	-- Patient 1 - Completed (MR ID 1-10)
 	UPDATE Invoice SET MedicalRecordID=1, PrescriptionID=1, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay='2025-09-02' WHERE InvoiceID=1;
-	UPDATE Invoice SET MedicalRecordID=2, PrescriptionID=2, PaymentType='E-Wallet', InvoiceStatus='Paid', DatePay='2025-09-11' WHERE InvoiceID=2;
+	UPDATE Invoice SET MedicalRecordID=2, PrescriptionID=2, PaymentType='Cash', InvoiceStatus='Paid', DatePay='2025-09-11' WHERE InvoiceID=2;
 	UPDATE Invoice SET MedicalRecordID=3, PrescriptionID=3, PaymentType='Cash', InvoiceStatus='Paid', DatePay='2025-09-21' WHERE InvoiceID=3;
-	UPDATE Invoice SET MedicalRecordID=4, PrescriptionID=4, PaymentType='Insurance', InvoiceStatus='Pending', DatePay=NULL WHERE InvoiceID=4;
+	UPDATE Invoice SET MedicalRecordID=4, PrescriptionID=4, PaymentType=NULL, InvoiceStatus='Pending', DatePay=NULL WHERE InvoiceID=4;
 	UPDATE Invoice SET MedicalRecordID=5, PrescriptionID=5, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay='2025-10-11' WHERE InvoiceID=5;
-	UPDATE Invoice SET MedicalRecordID=6, PrescriptionID=6, PaymentType='E-Wallet', InvoiceStatus='Paid', DatePay='2025-10-19' WHERE InvoiceID=6;
-	UPDATE Invoice SET MedicalRecordID=7, PrescriptionID=7, PaymentType='Cash', InvoiceStatus='Paid', DatePay='2025-10-26' WHERE InvoiceID=7;
+	UPDATE Invoice SET MedicalRecordID=6, PrescriptionID=6, PaymentType='Cash', InvoiceStatus='Paid', DatePay='2025-10-19' WHERE InvoiceID=6;
+	UPDATE Invoice SET MedicalRecordID=7, PrescriptionID=7, PaymentType=NULL, InvoiceStatus='Pending', DatePay='2025-10-26' WHERE InvoiceID=7;
 	UPDATE Invoice SET MedicalRecordID=8, PrescriptionID=8, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay='2025-10-29' WHERE InvoiceID=8;
-	UPDATE Invoice SET MedicalRecordID=9, PrescriptionID=NULL, PaymentType='Insurance', InvoiceStatus='Paid', DatePay='2025-11-01' WHERE InvoiceID=9;
-	UPDATE Invoice SET MedicalRecordID=10, PrescriptionID=9, PaymentType='E-Wallet', InvoiceStatus='Paid', DatePay='2025-11-02' WHERE InvoiceID=10;
+	UPDATE Invoice SET MedicalRecordID=9, PrescriptionID=NULL, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay='2025-11-01' WHERE InvoiceID=9;
+	UPDATE Invoice SET MedicalRecordID=10, PrescriptionID=9, PaymentType=NULL, InvoiceStatus='Pending', DatePay='2025-11-02' WHERE InvoiceID=10;
 
 	-- Doctor 1 Other Patients - Completed (MR ID 11-19)
 	UPDATE Invoice SET MedicalRecordID=11, PrescriptionID=10, PaymentType='Cash', InvoiceStatus='Paid', DatePay='2025-09-04' WHERE InvoiceID=11;
-	UPDATE Invoice SET MedicalRecordID=12, PrescriptionID=11, PaymentType='Insurance', InvoiceStatus='Paid', DatePay='2025-09-17' WHERE InvoiceID=12;
+	UPDATE Invoice SET MedicalRecordID=12, PrescriptionID=11, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay='2025-09-17' WHERE InvoiceID=12;
 	UPDATE Invoice SET MedicalRecordID=13, PrescriptionID=12, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay='2025-09-26' WHERE InvoiceID=13;
-	UPDATE Invoice SET MedicalRecordID=14, PrescriptionID=13, PaymentType='E-Wallet', InvoiceStatus='Pending', DatePay=NULL WHERE InvoiceID=14;
+	UPDATE Invoice SET MedicalRecordID=14, PrescriptionID=13, PaymentType=NULL, InvoiceStatus='Pending', DatePay=NULL WHERE InvoiceID=14;
 	UPDATE Invoice SET MedicalRecordID=15, PrescriptionID=14, PaymentType='Cash', InvoiceStatus='Paid', DatePay='2025-10-13' WHERE InvoiceID=15;
 	UPDATE Invoice SET MedicalRecordID=16, PrescriptionID=15, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay='2025-10-21' WHERE InvoiceID=16;
-	UPDATE Invoice SET MedicalRecordID=17, PrescriptionID=16, PaymentType='Insurance', InvoiceStatus='Paid', DatePay='2025-10-29' WHERE InvoiceID=17;
-	UPDATE Invoice SET MedicalRecordID=18, PrescriptionID=17, PaymentType='E-Wallet', InvoiceStatus='Paid', DatePay='2025-10-30' WHERE InvoiceID=18;
-	UPDATE Invoice SET MedicalRecordID=19, PrescriptionID=18, PaymentType='Cash', InvoiceStatus='Pending', DatePay=NULL WHERE InvoiceID=19;
+	UPDATE Invoice SET MedicalRecordID=17, PrescriptionID=16, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay='2025-10-29' WHERE InvoiceID=17;
+	UPDATE Invoice SET MedicalRecordID=18, PrescriptionID=17, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay='2025-10-30' WHERE InvoiceID=18;
+	UPDATE Invoice SET MedicalRecordID=19, PrescriptionID=18, PaymentType=NULL, InvoiceStatus='Pending', DatePay=NULL WHERE InvoiceID=19;
 
 	-- Other Doctors - Completed (MR ID 20-34)
-	UPDATE Invoice SET MedicalRecordID=20, PrescriptionID=19, PaymentType='E-Wallet', InvoiceStatus='Paid', DatePay='2025-09-06' WHERE InvoiceID=20;
+	UPDATE Invoice SET MedicalRecordID=20, PrescriptionID=19, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay='2025-09-06' WHERE InvoiceID=20;
 	UPDATE Invoice SET MedicalRecordID=21, PrescriptionID=20, PaymentType='Cash', InvoiceStatus='Paid', DatePay='2025-09-13' WHERE InvoiceID=21;
 	UPDATE Invoice SET MedicalRecordID=22, PrescriptionID=21, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay='2025-09-19' WHERE InvoiceID=22;
-	UPDATE Invoice SET MedicalRecordID=23, PrescriptionID=22, PaymentType='Insurance', InvoiceStatus='Paid', DatePay='2025-09-24' WHERE InvoiceID=23;
-	UPDATE Invoice SET MedicalRecordID=24, PrescriptionID=23, PaymentType='E-Wallet', InvoiceStatus='Paid', DatePay='2025-09-29' WHERE InvoiceID=24;
+	UPDATE Invoice SET MedicalRecordID=23, PrescriptionID=22, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay='2025-09-24' WHERE InvoiceID=23;
+	UPDATE Invoice SET MedicalRecordID=24, PrescriptionID=23, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay='2025-09-29' WHERE InvoiceID=24;
 	UPDATE Invoice SET MedicalRecordID=25, PrescriptionID=24, PaymentType='Cash', InvoiceStatus='Paid', DatePay='2025-10-06' WHERE InvoiceID=25;
-	UPDATE Invoice SET MedicalRecordID=26, PrescriptionID=25, PaymentType='Credit Card', InvoiceStatus='Pending', DatePay=NULL WHERE InvoiceID=26;
-	UPDATE Invoice SET MedicalRecordID=27, PrescriptionID=26, PaymentType='Insurance', InvoiceStatus='Paid', DatePay='2025-10-16' WHERE InvoiceID=27;
-	UPDATE Invoice SET MedicalRecordID=28, PrescriptionID=27, PaymentType='E-Wallet', InvoiceStatus='Paid', DatePay='2025-10-17' WHERE InvoiceID=28;
+	UPDATE Invoice SET MedicalRecordID=26, PrescriptionID=25, PaymentType=NULL, InvoiceStatus='Pending', DatePay=NULL WHERE InvoiceID=26;
+	UPDATE Invoice SET MedicalRecordID=27, PrescriptionID=26, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay='2025-10-16' WHERE InvoiceID=27;
+	UPDATE Invoice SET MedicalRecordID=28, PrescriptionID=27, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay='2025-10-17' WHERE InvoiceID=28;
 	UPDATE Invoice SET MedicalRecordID=29, PrescriptionID=NULL, PaymentType='Cash', InvoiceStatus='Paid', DatePay='2025-10-22' WHERE InvoiceID=29;
 	UPDATE Invoice SET MedicalRecordID=30, PrescriptionID=28, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay='2025-10-24' WHERE InvoiceID=30;
-	UPDATE Invoice SET MedicalRecordID=31, PrescriptionID=29, PaymentType='Insurance', InvoiceStatus='Paid', DatePay='2025-10-28' WHERE InvoiceID=31;
-	UPDATE Invoice SET MedicalRecordID=32, PrescriptionID=30, PaymentType='E-Wallet', InvoiceStatus='Pending', DatePay=NULL WHERE InvoiceID=32;
+	UPDATE Invoice SET MedicalRecordID=31, PrescriptionID=29, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay='2025-10-28' WHERE InvoiceID=31;
+	UPDATE Invoice SET MedicalRecordID=32, PrescriptionID=30, PaymentType=NULL, InvoiceStatus='Pending', DatePay=NULL WHERE InvoiceID=32;
 	UPDATE Invoice SET MedicalRecordID=33, PrescriptionID=31, PaymentType='Cash', InvoiceStatus='Paid', DatePay='2025-10-31' WHERE InvoiceID=33;
 	UPDATE Invoice SET MedicalRecordID=34, PrescriptionID=32, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay='2025-11-02' WHERE InvoiceID=34;
 
 	-- Approved - Patient 1 (MR ID 35-36)
 	UPDATE Invoice SET MedicalRecordID=35, PrescriptionID=33, PaymentType='Cash', InvoiceStatus='Paid', DatePay='2025-11-05' WHERE InvoiceID=35;
-	UPDATE Invoice SET MedicalRecordID=36, PrescriptionID=34, PaymentType='E-Wallet', InvoiceStatus='Paid', DatePay='2025-11-08' WHERE InvoiceID=36;
+	UPDATE Invoice SET MedicalRecordID=36, PrescriptionID=34, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay='2025-11-08' WHERE InvoiceID=36;
 
 	-- Approved - Doctor 1 Other Patients (MR ID 37-39)
 	UPDATE Invoice SET MedicalRecordID=37, PrescriptionID=35, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay='2025-11-06' WHERE InvoiceID=37;
-	UPDATE Invoice SET MedicalRecordID=38, PrescriptionID=36, PaymentType='Insurance', InvoiceStatus='Paid', DatePay='2025-11-09' WHERE InvoiceID=38;
+	UPDATE Invoice SET MedicalRecordID=38, PrescriptionID=36, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay='2025-11-09' WHERE InvoiceID=38;
 	UPDATE Invoice SET MedicalRecordID=39, PrescriptionID=37, PaymentType='Cash', InvoiceStatus='Paid', DatePay='2025-11-13' WHERE InvoiceID=39;
 
 	-- Approved - Other Doctors (MR ID 40-44)
-	UPDATE Invoice SET MedicalRecordID=40, PrescriptionID=38, PaymentType='E-Wallet', InvoiceStatus='Paid', DatePay='2025-11-07' WHERE InvoiceID=40;
+	UPDATE Invoice SET MedicalRecordID=40, PrescriptionID=38, PaymentType='Cash', InvoiceStatus='Paid', DatePay='2025-11-07' WHERE InvoiceID=40;
 	UPDATE Invoice SET MedicalRecordID=41, PrescriptionID=39, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay='2025-11-11' WHERE InvoiceID=41;
 	UPDATE Invoice SET MedicalRecordID=42, PrescriptionID=40, PaymentType='Cash', InvoiceStatus='Paid', DatePay='2025-11-14' WHERE InvoiceID=42;
-	UPDATE Invoice SET MedicalRecordID=43, PrescriptionID=41, PaymentType='Insurance', InvoiceStatus='Paid', DatePay='2025-11-17' WHERE InvoiceID=43;
-	UPDATE Invoice SET MedicalRecordID=44, PrescriptionID=42, PaymentType='E-Wallet', InvoiceStatus='Paid', DatePay='2025-11-21' WHERE InvoiceID=44;
+	UPDATE Invoice SET MedicalRecordID=43, PrescriptionID=41, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay='2025-11-17' WHERE InvoiceID=43;
+	UPDATE Invoice SET MedicalRecordID=44, PrescriptionID=42, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay='2025-11-21' WHERE InvoiceID=44;
 	
 	-- KHÔNG TẠO Invoice cho Pending (ID 13-16,30-32,52-56) - chưa duyệt
 	-- KHÔNG TẠO Invoice cho Canceled (ID 17,33,57) - đã hủy
