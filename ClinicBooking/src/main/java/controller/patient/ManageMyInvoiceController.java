@@ -51,12 +51,12 @@ public class ManageMyInvoiceController extends HttpServlet {
         PatientDTO patient = (PatientDTO) session.getAttribute("patient");
 
         if (patient == null) {
-            session.setAttribute("errorMessage", ManageMyInvoiceConstants.ERROR_SESSION_EXPIRED);
-            response.sendRedirect(request.getContextPath() + "/authentication");
+            session.setAttribute("errorMessage", "Your session has expired. Please log in again.");
+            response.sendRedirect(request.getContextPath() + "/patient-login");
             return;
         }
 
-        String invoiceIdParam = request.getParameter(ManageMyInvoiceConstants.PARAM_ID);
+        String invoiceIdParam = request.getParameter("id");
 
         // Check if this is a request for invoice detail
         if (invoiceIdParam != null && !invoiceIdParam.trim().isEmpty()) {
@@ -94,7 +94,7 @@ public class ManageMyInvoiceController extends HttpServlet {
 
             // Check if invoice exists
             if (invoice == null) {
-                request.getSession().setAttribute("errorMessage", ManageMyInvoiceConstants.ERROR_INVOICE_NOT_FOUND);
+                request.getSession().setAttribute("errorMessage", "Invoice not found.");
                 response.sendRedirect(request.getContextPath() + ManageMyInvoiceConstants.BASE_URL);
                 return;
             }
@@ -105,7 +105,7 @@ public class ManageMyInvoiceController extends HttpServlet {
                     || invoice.getMedicalRecordID().getAppointmentID().getPatientID() == null
                     || invoice.getMedicalRecordID().getAppointmentID().getPatientID().getPatientID() != patientId) {
 
-                request.getSession().setAttribute("errorMessage", ManageMyInvoiceConstants.ERROR_UNAUTHORIZED_ACCESS);
+                request.getSession().setAttribute("errorMessage", "You are not authorized to view this invoice.");
                 response.sendRedirect(request.getContextPath() + ManageMyInvoiceConstants.BASE_URL);
                 return;
             }
@@ -118,16 +118,16 @@ public class ManageMyInvoiceController extends HttpServlet {
             }
 
             // Set attributes for JSP
-            request.setAttribute(ManageMyInvoiceConstants.ATTR_INVOICE, invoice);
+            request.setAttribute("invoice", invoice);
 
             // Forward to detail page
             request.getRequestDispatcher(ManageMyInvoiceConstants.DETAIL_PAGE_JSP).forward(request, response);
 
         } catch (NumberFormatException e) {
-            request.getSession().setAttribute("errorMessage", ManageMyInvoiceConstants.ERROR_INVALID_INVOICE_ID);
+            request.getSession().setAttribute("errorMessage", "Invalid invoice ID.");
             response.sendRedirect(request.getContextPath() + ManageMyInvoiceConstants.BASE_URL);
         } catch (Exception e) {
-            request.getSession().setAttribute("errorMessage", ManageMyInvoiceConstants.ERROR_GENERAL);
+            request.getSession().setAttribute("errorMessage", "An error occurred while processing your request.");
             response.sendRedirect(request.getContextPath() + ManageMyInvoiceConstants.BASE_URL);
         }
     }
@@ -140,7 +140,7 @@ public class ManageMyInvoiceController extends HttpServlet {
 
         try {
             // Get search parameters
-            String searchQuery = request.getParameter(ManageMyInvoiceConstants.PARAM_SEARCH);
+            String searchQuery = request.getParameter("search");
             List<InvoiceDTO> invoiceList;
 
             // Apply search - Use existing DAO methods
@@ -151,14 +151,14 @@ public class ManageMyInvoiceController extends HttpServlet {
             }
 
             // Set attributes for JSP
-            request.setAttribute(ManageMyInvoiceConstants.ATTR_INVOICE_LIST, invoiceList);
-            request.setAttribute(ManageMyInvoiceConstants.ATTR_SEARCH_QUERY, searchQuery);
+            request.setAttribute("invoiceList", invoiceList);
+            request.setAttribute("searchQuery", searchQuery);
 
             // Forward to JSP
             request.getRequestDispatcher(ManageMyInvoiceConstants.LIST_PAGE_JSP).forward(request, response);
 
         } catch (Exception e) {
-            request.getSession().setAttribute("errorMessage", ManageMyInvoiceConstants.ERROR_GENERAL);
+            request.getSession().setAttribute("errorMessage", "An error occurred while processing your request.");
             request.getRequestDispatcher(ManageMyInvoiceConstants.LIST_PAGE_JSP).forward(request, response);
         }
     }
