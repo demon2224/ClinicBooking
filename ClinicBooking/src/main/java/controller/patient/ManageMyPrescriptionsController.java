@@ -4,12 +4,10 @@ package controller.patient;
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-
 import dao.PrescriptionDAO;
 import dao.PatientDAO;
 import dao.DoctorDAO;
 import model.PrescriptionDTO;
-import model.DoctorDTO;
 import model.PatientDTO;
 import constants.ManageMyPrescriptionsConstants;
 import java.io.IOException;
@@ -21,7 +19,9 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 /**
- * Controller for viewing and managing patient's prescriptions (list, detail, search).
+ * Controller for viewing and managing patient's prescriptions (list, detail,
+ * search).
+ *
  * @author Le Anh Tuan - CE180905
  */
 public class ManageMyPrescriptionsController extends HttpServlet {
@@ -92,9 +92,9 @@ public class ManageMyPrescriptionsController extends HttpServlet {
             // Validate session
             HttpSession session = request.getSession();
             PatientDTO sessionPatient = (PatientDTO) session.getAttribute("patient");
-            
+
             if (sessionPatient == null) {
-                response.sendRedirect(request.getContextPath() + "/login");
+                response.sendRedirect(request.getContextPath() + "/patient-login");
                 return;
             }
 
@@ -112,17 +112,16 @@ public class ManageMyPrescriptionsController extends HttpServlet {
             // Verify this prescription belongs to the logged-in patient
             // TEMPORARILY DISABLED FOR TESTING
             /*
-            if (prescription.getAppointmentID() != null && 
+            if (prescription.getAppointmentID() != null &&
                 prescription.getAppointmentID().getPatientID() != null &&
                 prescription.getAppointmentID().getPatientID().getPatientID() != sessionPatient.getPatientID()) {
                 response.sendRedirect(request.getContextPath() + ManageMyPrescriptionsConstants.BASE_URL);
                 return;
             }
-            */
-
+             */
             // Set attributes for JSP (prescription already contains doctor and patient info)
             request.setAttribute("prescription", prescription);
-            
+
             // Get doctor rating
             int doctorId = prescription.getAppointmentID().getDoctorID().getDoctorID();
             double averageRating = doctorDAO.getAverageRatingByDoctorId(doctorId);
