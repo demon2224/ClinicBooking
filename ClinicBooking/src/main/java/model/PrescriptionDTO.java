@@ -6,6 +6,7 @@ package model;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -108,6 +109,11 @@ public class PrescriptionDTO {
             totalValue += prescriptionItemDTO.getMedicineID().getPrice() * prescriptionItemDTO.getDosage();
         }
         return String.format("%.2f", totalValue);
+    }
+
+    public boolean getIsExpired() {
+        LocalDateTime create = this.dateCreate.toLocalDateTime();
+        return create.plusHours(24).isBefore(LocalDateTime.now());
     }
 
     @Override

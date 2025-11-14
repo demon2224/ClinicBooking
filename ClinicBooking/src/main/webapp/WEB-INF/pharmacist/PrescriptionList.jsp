@@ -168,7 +168,7 @@
                                             </a>
 
                                             <c:choose>
-                                                <c:when test="${prescription.prescriptionStatus eq 'Pending'}">
+                                                <c:when test="${prescription.prescriptionStatus eq 'Pending' and not prescription.isExpired}">
                                                     <button type="button"
                                                             class="btn btn-success btn-sm action-btn"
                                                             data-bs-toggle="modal"
@@ -185,7 +185,7 @@
                                             </c:choose>
 
                                             <c:choose>
-                                                <c:when test="${prescription.prescriptionStatus eq 'Pending'}">
+                                                <c:when test="${prescription.prescriptionStatus eq 'Pending' and not prescription.isExpired}">
                                                     <button type="button"
                                                             class="btn btn-danger btn-sm action-btn"
                                                             data-bs-toggle="modal"

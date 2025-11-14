@@ -178,7 +178,7 @@ public class PharmacistManagePrescriptionController extends HttpServlet {
 
             int prescriptionID = Integer.parseInt(prescriptionIDParam);
 
-            if (isValidUpdateDate(prescriptionID)) {
+            if (!isValidUpdateDate(prescriptionID)) {
                 request.setAttribute("errorMsg", "Can't update prescription status after 24h.");
                 List<PrescriptionDTO> prescriptionList = prescriptionDAO.getAllActivePrescriptions();
                 request.setAttribute("prescriptionList", prescriptionList);
@@ -208,7 +208,7 @@ public class PharmacistManagePrescriptionController extends HttpServlet {
 
             int prescriptionID = Integer.parseInt(prescriptionIDParam);
 
-            if (isValidUpdateDate(prescriptionID)) {
+            if (!isValidUpdateDate(prescriptionID)) {
                 request.setAttribute("errorMsg", "Can't update prescription status after 24h.");
                 List<PrescriptionDTO> prescriptionList = prescriptionDAO.getAllActivePrescriptions();
                 request.setAttribute("prescriptionList", prescriptionList);

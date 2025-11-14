@@ -104,7 +104,7 @@ public class PrescriptionDAO extends DBContext {
     }
 
     /**
-     * L?y danh sách ??n thu?c c?a bác s?
+     * L?y danh sï¿½ch ??n thu?c c?a bï¿½c s?
      */
     public List<PrescriptionDTO> getPatientPrescriptionListByDoctorID(int doctorID) {
         List<PrescriptionDTO> prescriptions = new ArrayList<>();
@@ -782,7 +782,8 @@ public class PrescriptionDAO extends DBContext {
     }
 
     /**
-     * Search prescriptions for a specific patient by doctor name or medicine name
+     * Search prescriptions for a specific patient by doctor name or medicine
+     * name
      *
      * @param patientId The patient ID
      * @param searchQuery The search query
@@ -963,11 +964,11 @@ public class PrescriptionDAO extends DBContext {
     }
 
     public boolean restoreMedicinesItems(int prescriptionID) {
-        // l?y danh sách item trong ??n thu?c.
+        // l?y danh sï¿½ch item trong ??n thu?c.
         List<PrescriptionItemDTO> itemList = getPrescriptionItemsByPrescriptionID(prescriptionID);
 
         if (itemList == null || itemList.isEmpty()) {
-            return false; // Không có item nào ?? ph?c h?i
+            return false; // Khï¿½ng cï¿½ item nï¿½o ?? ph?c h?i
         }
 
         boolean success = true;
@@ -975,7 +976,7 @@ public class PrescriptionDAO extends DBContext {
         try {
             // C?p nh?t s? l??ng thu?c trong kho
             for (PrescriptionItemDTO item : itemList) {
-                int medicineID = item.getMedicineID().getMedicineID(); // l?y t?ng thu?c trong danh sách ra
+                int medicineID = item.getMedicineID().getMedicineID(); // l?y t?ng thu?c trong danh sï¿½ch ra
                 int dosage = item.getDosage(); // l?y li?u l??ng c?a t?ng thu?c ?? ph?c h?i
 
                 // Ph?c h?i thu?c
@@ -983,7 +984,7 @@ public class PrescriptionDAO extends DBContext {
                 Object[] updateParams = {dosage, medicineID};
 
                 int updated = executeQuery(updateMedicineSql, updateParams);
-                if (updated == 0) { // Medicine ID không t?n t?i ho?c l?i
+                if (updated == 0) { // Medicine ID khï¿½ng t?n t?i ho?c l?i
                     success = false;
                 }
             }
@@ -1135,8 +1136,8 @@ public class PrescriptionDAO extends DBContext {
     }
 
     /**
-     * Returns the total number of prescriptions in the system. This method executes a
-     * COUNT query on the Prescription table.
+     * Returns the total number of prescriptions in the system. This method
+     * executes a COUNT query on the Prescription table.
      *
      * @return the total number of prescriptions, or 0 if an error occurs
      */
@@ -1158,11 +1159,12 @@ public class PrescriptionDAO extends DBContext {
     }
 
     /**
-     * Returns the number of prescriptions filtered by a specific status. This method
-     * counts all prescriptions matching the given status value.
+     * Returns the number of prescriptions filtered by a specific status. This
+     * method counts all prescriptions matching the given status value.
      *
      * @param status the prescription status to filter by
-     * @return the number of prescriptions with that status, or 0 if an error occurs
+     * @return the number of prescriptions with that status, or 0 if an error
+     * occurs
      */
     public int getPrescriptionsByStatus(String status) {
         int countPreStatus = 0;
@@ -1261,6 +1263,7 @@ public class PrescriptionDAO extends DBContext {
                 + "ON pt.PatientID = a.PatientID\n"
                 + "WHERE p.Hidden = 0\n"
                 + "AND p.PrescriptionStatus = 'Pending'\n"
+                + "AND CAST(p.DateCreate AS DATE) = GETDATE()\n"
                 + "ORDER BY DateCreate DESC;";
         List<PrescriptionDTO> prescriptionList = new ArrayList<>();
         ResultSet rs = null;
