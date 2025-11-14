@@ -438,6 +438,50 @@ public class InvoiceDAO extends DBContext {
             return false;
         }
     }
+    
+    /**
+     * Update invoice payment and status information with LocalDateTime
+     * @param invoiceId Invoice ID to update
+     * @param paymentType Payment method (Cash, QR Transfer, etc.)
+     * @param invoiceStatus Invoice status (Paid, Pending, etc.)
+     * @param datePay Payment date
+     * @return true if update successful, false otherwise
+     */
+    public boolean updateInvoicePaymentAndStatus(int invoiceId, String paymentType, 
+                                                String invoiceStatus, java.time.LocalDateTime datePay) {
+        String sql = "UPDATE Invoice "
+                + "SET PaymentType = ?, "
+                + "    InvoiceStatus = ?, "
+                + "    DatePay = ? "
+                + "WHERE InvoiceID = ? AND (PaymentType IS NULL OR PaymentType = '')";
+
+        System.out.println("DEBUG: Updating invoice " + invoiceId + " to " + invoiceStatus + " with " + paymentType);
+        System.out.println("DEBUG: SQL Query: " + sql);
+
+        try ( Connection conn = getConnection();  PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, paymentType);
+            ps.setString(2, invoiceStatus);
+            
+            // Convert LocalDateTime to Timestamp
+            if (datePay != null) {
+                ps.setTimestamp(3, java.sql.Timestamp.valueOf(datePay));
+            } else {
+                ps.setTimestamp(3, null);
+            }
+            
+            ps.setInt(4, invoiceId);
+
+            int rowsAffected = ps.executeUpdate();
+            System.out.println("DEBUG: Rows affected: " + rowsAffected);
+            return rowsAffected > 0;
+
+        } catch (SQLException e) {
+            System.out.println("DEBUG: SQL Error in updateInvoicePaymentAndStatus: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
 
     // CANCEL
     public boolean cancelInvoice(int invoiceId) {

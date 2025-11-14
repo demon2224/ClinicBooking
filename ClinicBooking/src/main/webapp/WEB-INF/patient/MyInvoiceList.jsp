@@ -137,6 +137,14 @@
                                             <i class="fas fa-eye"></i>
                                             View Details
                                         </a>
+                                        
+                                        <!-- Add checkout button for unpaid invoices -->
+                                        <c:if test="${invoice.invoiceStatus == 'Pending'}">
+                                            <a href="${pageContext.request.contextPath}/payment?id=${invoice.invoiceID}" class="btn-action btn-primary">
+                                                <i class="fas fa-credit-card"></i>
+                                                Checkout
+                                            </a>
+                                        </c:if>
                                     </div>
                                 </div>
                             </c:forEach>

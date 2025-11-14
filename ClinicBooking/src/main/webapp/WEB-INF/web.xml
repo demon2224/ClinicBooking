@@ -177,6 +177,10 @@
         <servlet-name>OTPConfirmController</servlet-name>
         <servlet-class>controller.authentication.OTPConfirmController</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>PaymentController</servlet-name>
+        <servlet-class>controller.patient.PaymentController</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>ReceptionistManageAppointmentController</servlet-name>
         <url-pattern>/receptionist-manage-appointment</url-pattern>
@@ -342,6 +346,10 @@
     <servlet-mapping>
         <servlet-name>OTPConfirmController</servlet-name>
         <url-pattern>/otp-confirm</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>PaymentController</servlet-name>
+        <url-pattern>/payment</url-pattern>
     </servlet-mapping>
     <welcome-file-list>
         <welcome-file>index.jsp</welcome-file>
