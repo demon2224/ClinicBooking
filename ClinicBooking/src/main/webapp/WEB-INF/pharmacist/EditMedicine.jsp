@@ -8,175 +8,181 @@
 
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Edit Medicine</title>
+    <head>
+        <meta charset="UTF-8">
+        <title>Edit Medicine</title>
 
-    <!-- Bootstrap & FontAwesome -->
-    <link rel="stylesheet" 
-          href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" 
-          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+        <!-- Bootstrap & FontAwesome -->
+        <link rel="stylesheet" 
+              href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+        <link rel="stylesheet" 
+              href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
-    <style>
-        body {
-            background-color: #f8f9fa;
-        }
-        .main-content {
-            margin-left: 260px;
-            padding: 25px;
-        }
+        <style>
+            body {
+                background-color: #f8f9fa;
+            }
+            .main-content {
+                margin-left: 260px;
+                padding: 25px;
+            }
+            .card {
+                border-radius: 10px;
+                box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+                margin-bottom: 30px;
+            }
+            .card-header {
+                background-color: #1B5A90;
+                color: white;
+                font-weight: bold;
+            }
+            .required::after {
+                content: " *";
+                color: red;
+            }
+        </style>
+    </head>
 
-        .card {
-            border-radius: 10px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-            margin-bottom: 30px;
-        }
+    <body>
 
-        .card-header {
-            background-color: #1B5A90;
-            color: white;
-            font-weight: bold;
-        }
+        <%@include file="../includes/PharmacistDashboardSidebar.jsp" %>
 
-        .required::after {
-            content: " *";
-            color: red;
-        }
-    </style>
-</head>
+        <div class="main-content">
 
-<body>
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="fw-bold text-primary">
+                    <i class="fa-solid fa-pen-to-square me-2"></i>Edit Medicine
+                </h2>
+            </div>
 
-<%@include file="../includes/PharmacistDashboardSidebar.jsp" %>
+            <div class="card">
+                <div class="card-header">
+                    <i class="fa-solid fa-file-pen me-2"></i>Medicine Information
+                </div>
 
-<div class="main-content">
+                <div class="card-body p-4">
 
-    <!-- Page Title -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="fw-bold text-primary">
-            <i class="fa-solid fa-pen-to-square me-2"></i>Edit Medicine
-        </h2>
-    </div>
+                    <form action="${pageContext.request.contextPath}/manage-medicine" method="POST">
+                        <input type="hidden" name="action" value="edit">
+                        <input type="hidden" name="medicineID" value="${medicine.medicineID}">
 
-    <div class="card">
-        <div class="card-header">
-            <i class="fa-solid fa-file-pen me-2"></i>Medicine Information
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <label class="form-label required">Medicine Name</label>
+                                <input type="text" class="form-control"
+                                       name="medicineName"
+                                       value="${medicine.medicineName}" required>
+
+                                <c:if test="${not empty medicineNameErrorMsg}">
+                                    <div class="text-danger small mt-1">
+                                        <i class="fa-solid fa-circle-exclamation me-1"></i>
+                                        ${medicineNameErrorMsg}
+                                    </div>
+                                </c:if>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label required">Medicine Code</label>
+                                <input type="text" class="form-control"
+                                       name="medicineCode"
+                                       value="${medicine.medicineCode}" required>
+
+                                <c:if test="${not empty medicineCodeErrorMsg}">
+                                    <div class="text-danger small mt-1">
+                                        <i class="fa-solid fa-circle-exclamation me-1"></i>
+                                        ${medicineCodeErrorMsg}
+                                    </div>
+                                </c:if>
+                            </div>
+                        </div>
+
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <label class="form-label required">Medicine Type</label>
+                                <select class="form-select" name="medicineType" required>
+                                    <c:forEach var="type" items="${medicineTypeList}">
+                                        <option value="${type}"
+                                                <c:if test="${medicine.medicineType eq type}">selected</c:if>>
+                                            ${type}
+                                        </option>
+                                    </c:forEach>
+                                </select>
+
+                                <c:if test="${not empty medicineTypeErrorMsg}">
+                                    <div class="text-danger small mt-1">
+                                        <i class="fa-solid fa-circle-exclamation me-1"></i>
+                                        ${medicineTypeErrorMsg}
+                                    </div>
+                                </c:if>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label required">Price ($)</label>
+                                <input type="number" step="0.01" min="0"
+                                       class="form-control"
+                                       name="price" value="${medicine.price}" required>
+
+                                <c:if test="${not empty medicinePriceErrorMsg}">
+                                    <div class="text-danger small mt-1">
+                                        <i class="fa-solid fa-circle-exclamation me-1"></i>
+                                        ${medicinePriceErrorMsg}
+                                    </div>
+                                </c:if>
+                            </div>
+                        </div>
+
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <label class="form-label required">Status</label>
+                                <select class="form-select" name="medicineStatus" required>
+                                    <option value="1" <c:if test="${medicine.medicineStatus}">selected</c:if>>Available</option>
+                                    <option value="0" <c:if test="${!medicine.medicineStatus}">selected</c:if>>Unavailable</option>
+                                    </select>
+
+                                <c:if test="${not empty medicineStatusErrorsMsg}">
+                                    <div class="text-danger small mt-1">
+                                        <i class="fa-solid fa-circle-exclamation me-1"></i>
+                                        ${medicineStatusErrorsMsg}
+                                    </div>
+                                </c:if>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-center mt-4">
+                            <button class="btn btn-success px-5 py-2 fw-bold"
+                                    style="border-radius: 30px;">
+                                Update
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
         </div>
 
-        <div class="card-body p-4">
-
-            <form action="${pageContext.request.contextPath}/manage-medicine" method="POST">
-                <input type="hidden" name="action" value="edit">
-                <input type="hidden" name="medicineID" value="${medicine.medicineID}">
-
-                <!-- Row 1: Name / Code -->
-                <div class="row mb-4">
-                    <div class="col-md-6">
-                        <label class="form-label required">Medicine Name</label>
-                        <input type="text" class="form-control" 
-                               name="medicineName" 
-                               value="${medicine.medicineName}" required>
-
-                        <c:if test="${not empty sessionScope.medicineNameErrorMsg}">
-                            <div class="text-danger small mt-1">
-                                <i class="fa-solid fa-circle-exclamation me-1"></i>
-                                <c:out value="${sessionScope.medicineNameErrorMsg}"/>
-                            </div>
-                        </c:if>
+        <div class="modal fade" id="successModal" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content border-0 shadow">
+                    <div class="modal-header bg-success text-white">
+                        <h5 class="modal-title">Success</h5>
                     </div>
-
-                    <div class="col-md-6">
-                        <label class="form-label required">Medicine Code</label>
-                        <input type="text" class="form-control" 
-                               name="medicineCode" 
-                               value="${medicine.medicineCode}" required>
-
-                        <c:if test="${not empty sessionScope.medicineCodeErrorMsg}">
-                            <div class="text-danger small mt-1">
-                                <i class="fa-solid fa-circle-exclamation me-1"></i>
-                                <c:out value="${sessionScope.medicineCodeErrorMsg}"/>
-                            </div>
-                        </c:if>
+                    <div class="modal-body">
+                        ${sessionScope.medicineEditSuccessMsg}
                     </div>
                 </div>
-
-                <!-- Row 2: Type / Price -->
-                <div class="row mb-4">
-                    <div class="col-md-6">
-                        <label class="form-label required">Medicine Type</label>
-
-                        <select class="form-select" name="medicineType" required>
-                            <c:forEach var="type" items="${medicineTypeList}">
-                                <option value="${type}" 
-                                    <c:if test="${medicine.medicineType eq type}">selected</c:if>>
-                                    <c:out value="${type}"/>
-                                </option>
-                            </c:forEach>
-                        </select>
-
-                        <c:if test="${not empty sessionScope.medicineTypeErrorMsg}">
-                            <div class="text-danger small mt-1">
-                                <i class="fa-solid fa-circle-exclamation me-1"></i>
-                                <c:out value="${sessionScope.medicineTypeErrorMsg}"/>
-                            </div>
-                        </c:if>
-                    </div>
-
-                    <div class="col-md-6">
-                        <label class="form-label required">Price ($)</label>
-
-                        <input type="number" step="0.01" min="0"
-                               class="form-control" 
-                               name="price" value="${medicine.price}" required>
-
-                        <c:if test="${not empty sessionScope.medicinePriceErrorsMsg}">
-                            <div class="text-danger small mt-1">
-                                <i class="fa-solid fa-circle-exclamation me-1"></i>
-                                <c:out value="${sessionScope.medicinePriceErrorsMsg}"/>
-                            </div>
-                        </c:if>
-                    </div>
-                </div>
-
-                <!-- Row 3: Status -->
-                <div class="row mb-4">
-                    <div class="col-md-6">
-                        <label class="form-label required">Status</label>
-
-                        <select class="form-select" name="medicineStatus" required>
-                            <option value="1" <c:if test="${medicine.medicineStatus}">selected</c:if>>
-                                Available
-                            </option>
-                            <option value="0" <c:if test="${!medicine.medicineStatus}">selected</c:if>>
-                                Unavailable
-                            </option>
-                        </select>
-
-                        <c:if test="${not empty sessionScope.medicineStatusErrorsMsg}">
-                            <div class="text-danger small mt-1">
-                                <i class="fa-solid fa-circle-exclamation me-1"></i>
-                                <c:out value="${sessionScope.medicineStatusErrorsMsg}"/>
-                            </div>
-                        </c:if>
-                    </div>
-                </div>
-
-                <!-- Submit Button -->
-                <div class="d-flex justify-content-center mt-4">
-                    <button class="btn btn-success px-5 py-2 fw-bold" 
-                            style="border-radius: 30px;">
-                        Update
-                    </button>
-                </div>
-
-            </form>
-
+            </div>
         </div>
-    </div>
 
-</div>
+        <c:if test="${not empty sessionScope.medicineEditSuccessMsg}">
+            <script>
+                window.onload = function () {
+                    var myModal = new bootstrap.Modal(document.getElementById('successModal'));
+                    myModal.show();
+                }
+            </script>
+            <c:remove var="medicineEditSuccessMsg" scope="session"/>
+        </c:if>
 
-</body>
+    </body>
 </html>
 

@@ -233,6 +233,54 @@
             </div>
         </div>
 
+        <div class="modal fade" id="successModal" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content border-0 shadow">
+
+                    <div class="modal-header bg-success text-white">
+                        <h5 class="modal-title">Success</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+
+                    <div class="modal-body fs-5 text-center">
+                        <c:choose>
+                            <c:when test="${not empty sessionScope.medicineEditSuccessMsg}">
+                                ${sessionScope.medicineEditSuccessMsg}
+                            </c:when>
+
+                            <c:when test="${not empty sessionScope.medicineImportSuccessMsg}">
+                                ${sessionScope.medicineImportSuccessMsg}
+                            </c:when>
+
+                            <c:when test="${not empty sessionScope.medicineDeleteSuccessMsg}">
+                                ${sessionScope.medicineDeleteSuccessMsg}
+                            </c:when>
+                        </c:choose>
+                    </div>
+
+                    <div class="modal-footer justify-content-center">
+                        <button class="btn btn-outline-success px-4" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <c:if test="${not empty sessionScope.medicineEditSuccessMsg 
+                      or not empty sessionScope.medicineImportSuccessMsg
+                      or not empty sessionScope.medicineDeleteSuccessMsg}">
+              <script>
+                  window.onload = function () {
+                      var modal = new bootstrap.Modal(document.getElementById('successModal'));
+                      modal.show();
+                  }
+              </script>
+
+              <c:remove var="medicineEditSuccessMsg" scope="session" />
+              <c:remove var="medicineImportSuccessMsg" scope="session" />
+              <c:remove var="medicineDeleteSuccessMsg" scope="session" />
+        </c:if>
+
+
         <script src="${pageContext.request.contextPath}/assests/js/bootstrap.bundle.min.js"></script>
     </body>
 </html>

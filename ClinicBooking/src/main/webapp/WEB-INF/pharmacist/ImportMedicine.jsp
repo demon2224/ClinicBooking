@@ -13,7 +13,6 @@
         <meta charset="UTF-8">
         <title>Import Medicine</title>
 
-        <!-- Bootstrap & FontAwesome -->
         <link rel="stylesheet" 
               href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
         <link rel="stylesheet" 
@@ -54,21 +53,18 @@
 
         <div class="main-content">
 
-            <!-- Page Title -->
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h2 class="fw-bold text-primary">
                     <i class="fa-solid fa-file-import me-2"></i>Import Medicine
                 </h2>
             </div>
 
-            <!-- CASE: Medicine Not Found -->
             <c:if test="${medicine.isHidden}">
                 <div class="alert alert-danger text-center fs-4 py-3">
                     <i class="fa-solid fa-circle-exclamation me-2"></i>Medicine Not Found
                 </div>
             </c:if>
 
-            <!-- CASE: Import Form -->
             <c:if test="${!medicine.isHidden}">
 
                 <div class="card">
@@ -78,46 +74,49 @@
 
                     <div class="card-body p-4">
 
-                        <!-- Table Info Like Template -->
                         <table class="table table-bordered mb-4">
                             <tr>
                                 <th>Name</th>
-                                <td><c:out value="${medicine.medicineName}" /></td>
+                                <td>${medicine.medicineName}</td>
                             </tr>
 
                             <tr>
                                 <th>Code</th>
-                                <td><c:out value="${medicine.medicineCode}" /></td>
+                                <td>${medicine.medicineCode}</td>
                             </tr>
 
                             <tr>
                                 <th>Type</th>
-                                <td><c:out value="${medicine.medicineType}" /></td>
+                                <td>${medicine.medicineType}</td>
                             </tr>
 
                             <tr>
                                 <th>Price</th>
-                                <td>$<c:out value="${medicine.price}" /></td>
+                                <td>$${medicine.price}</td>
                             </tr>
                         </table>
 
-                        <!-- IMPORT FORM -->
                         <form action="${pageContext.request.contextPath}/manage-medicine" method="POST">
                             <input type="hidden" name="action" value="import">
                             <input type="hidden" name="medicineID" value="${medicine.medicineID}">
 
-                            <!-- Quantity -->
                             <div class="row mb-4">
                                 <div class="col-md-4">
                                     <label class="form-label fw-bold">Quantity</label>
                                     <input type="number" name="quantity" class="form-control" min="1" required>
+
+                                    <c:if test="${not empty medicineImportQuantityErrorMsg}">
+                                        <div class="text-danger small mt-1">
+                                            <i class="fa-solid fa-circle-exclamation me-1"></i>
+                                            ${medicineImportQuantityErrorMsg}
+                                        </div>
+                                    </c:if>
                                 </div>
                             </div>
 
-                            <!-- Import Button -->
                             <div class="d-flex justify-content-center mt-4">
-                                <button type="submit" 
-                                        class="btn btn-success px-5 py-2 fw-bold" 
+                                <button type="submit"
+                                        class="btn btn-success px-5 py-2 fw-bold"
                                         style="border-radius: 30px;">
                                     Import
                                 </button>
@@ -126,11 +125,8 @@
                         </form>
                     </div>
                 </div>
-
             </c:if>
-
         </div>
-
     </body>
 </html>
 
