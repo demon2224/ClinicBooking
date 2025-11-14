@@ -14,7 +14,6 @@
         <meta charset="UTF-8">
         <title>Prescription Detail</title>
 
-        <!-- Bootstrap & FontAwesome -->
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
@@ -63,9 +62,6 @@
                 <h2 class="fw-bold text-primary">
                     <i class="fa-solid fa-prescription-bottle-medical me-2"></i>Prescription Detail
                 </h2>
-                <a href="${pageContext.request.contextPath}/pharmacist-manage-prescription" class="btn btn-outline-secondary">
-                    <i class="fa-solid fa-arrow-left me-2"></i>Back
-                </a>
             </div>
 
             <c:choose>
