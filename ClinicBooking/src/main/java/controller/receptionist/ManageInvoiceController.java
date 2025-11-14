@@ -8,7 +8,6 @@ import dao.AppointmentDAO;
 import dao.DoctorDAO;
 import dao.InvoiceDAO;
 import dao.PatientDAO;
-import dao.UserDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;

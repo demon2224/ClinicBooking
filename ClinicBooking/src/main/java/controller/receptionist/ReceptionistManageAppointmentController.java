@@ -7,7 +7,6 @@ package controller.receptionist;
 import dao.AppointmentDAO;
 import dao.DoctorDAO;
 import dao.PatientDAO;
-import dao.UserDAO;
 import java.io.IOException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -26,15 +25,13 @@ import model.SpecialtyDTO;
  */
 public class ReceptionistManageAppointmentController extends HttpServlet {
 
-    private AppointmentDAO appointmentDAO;
-    private UserDAO userDAO;
+    private AppointmentDAO appointmentDAO;;
     private DoctorDAO doctorDAO;
     private PatientDAO patientDAO;
 
     @Override
     public void init() throws ServletException {
         appointmentDAO = new AppointmentDAO();
-        userDAO = new UserDAO();
         doctorDAO = new DoctorDAO();
         patientDAO = new PatientDAO();
     }
