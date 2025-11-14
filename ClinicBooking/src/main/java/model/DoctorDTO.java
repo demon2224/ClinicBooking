@@ -14,6 +14,8 @@ public class DoctorDTO {
     private StaffDTO staffID;
     private SpecialtyDTO specialtyID;
     private int yearExperience;
+    
+     private double totalRevenue;
 
     public DoctorDTO() {
     }
@@ -71,4 +73,13 @@ public class DoctorDTO {
         return "";
     }
 
+    public double getTotalRevenue() {
+        return totalRevenue;
+    }
+
+    public void setTotalRevenue(double totalRevenue) {
+        this.totalRevenue = totalRevenue;
+    }
+
+    
 }

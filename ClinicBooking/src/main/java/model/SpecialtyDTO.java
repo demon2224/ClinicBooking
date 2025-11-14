@@ -13,6 +13,8 @@ public class SpecialtyDTO {
     private int specialtyID;
     private String specialtyName;
     private double price;
+    
+    private int totalBookings;
 
     public SpecialtyDTO() {
     }
@@ -46,5 +48,14 @@ public class SpecialtyDTO {
     public void setPrice(double price) {
         this.price = price;
     }
+
+    public int getTotalBookings() {
+        return totalBookings;
+    }
+
+    public void setTotalBookings(int totalBookings) {
+        this.totalBookings = totalBookings;
+    }
+    
 
 }
