@@ -293,16 +293,30 @@ public class ManageMyAppointmentController extends HttpServlet {
 
         HttpSession session = request.getSession();
         PatientDTO patient = (PatientDTO) session.getAttribute("patient");
-       
+
         if (patient == null) {
             response.sendRedirect(request.getContextPath() + "/patient-login");
             return;
         }
-        
+
         try {
             String doctorIdParam = request.getParameter("doctorId");
             String appointmentDateTimeParam = request.getParameter("appointmentDateTime");
             String note = request.getParameter("note");
+
+            // Basic null/empty validation
+            if (appointmentDateTimeParam == null || appointmentDateTimeParam.trim().isEmpty()) {
+                session.setAttribute("errorMessage", "Please select appointment date and time.");
+                response.sendRedirect(request.getContextPath() + ManageMyAppointmentConstans.BASE_URL + "?action=bookAppointment&doctorId=" + doctorIdParam);
+                return;
+            }
+
+            // Validate appointment date time format
+            if (!BookAppointmentValidate.isValidDateTimeFormat(appointmentDateTimeParam)) {
+                session.setAttribute("errorMessage", "Invalid appointment date and time format. Please use the date picker.");
+                response.sendRedirect(request.getContextPath() + ManageMyAppointmentConstans.BASE_URL + "?action=bookAppointment&doctorId=" + doctorIdParam);
+                return;
+            }
 
             // Validate patient ID
             if (!BookAppointmentValidate.isValidPatientId(patient != null ? patient.getPatientID() : 0)) {
@@ -327,13 +341,7 @@ public class ManageMyAppointmentController extends HttpServlet {
                 return;
             }
 
-            // Validate and parse appointment date time
-            if (!BookAppointmentValidate.isValidDateTimeFormat(appointmentDateTimeParam)) {
-                session.setAttribute("errorMessage", "Invalid appointment date and time format. Please use the date picker.");
-                response.sendRedirect(request.getContextPath() + ManageMyAppointmentConstans.BASE_URL + "?action=bookAppointment&doctorId=" + doctorId);
-                return;
-            }
-
+            // Parse appointment date time
             Timestamp appointmentDateTime = null;
             try {
                 // Convert datetime-local format to Timestamp
@@ -352,9 +360,9 @@ public class ManageMyAppointmentController extends HttpServlet {
                 return;
             }
 
-            // Validate working hours (7AM-5PM)
+            // Validate working hours (7AM-4:30PM)
             if (!BookAppointmentValidate.isWithinWorkingHours(appointmentDateTime)) {
-                session.setAttribute("errorMessage", "Appointments are only available between 7:00 AM and 5:00 PM.");
+                session.setAttribute("errorMessage", "Appointments are only available between 7:00 AM and 4:30 PM.");
                 response.sendRedirect(request.getContextPath() + ManageMyAppointmentConstans.BASE_URL + "?action=bookAppointment&doctorId=" + doctorId);
                 return;
             }
