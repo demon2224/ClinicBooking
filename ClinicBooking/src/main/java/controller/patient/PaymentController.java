@@ -7,6 +7,7 @@ package controller.patient;
 import dao.InvoiceDAO;
 import model.InvoiceDTO;
 import utils.VietQRService;
+import constants.PaymentConstants;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.time.LocalDateTime;
@@ -15,6 +16,8 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import com.google.gson.JsonObject;
+import jakarta.servlet.http.HttpSession;
+import model.PatientDTO;
 
 /**
  *
@@ -36,9 +39,18 @@ public class PaymentController extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
+        // 1. Validate login
+        HttpSession session = request.getSession();
+        PatientDTO patient = (PatientDTO) session.getAttribute("patient");
+
+        if (patient == null) {
+            session.setAttribute("errorMessage", "Your session has expired. Please log in again.");
+            response.sendRedirect(request.getContextPath() + "/patient-login");
+            return;
+        }
         String invoiceIdStr = request.getParameter("id");
         if (invoiceIdStr == null) {
-            response.sendRedirect(request.getContextPath() + "/manage-my-invoices");
+            response.sendRedirect(request.getContextPath() + PaymentConstants.MANAGE_INVOICES_REDIRECT);
             return;
         }
 
@@ -48,33 +60,33 @@ public class PaymentController extends HttpServlet {
 
             if (invoice == null) {
                 request.setAttribute("errorMessage", "Invoice not found");
-                request.getRequestDispatcher("/WEB-INF/patient/Payment.jsp").forward(request, response);
+                request.getRequestDispatcher(PaymentConstants.PAYMENT_JSP).forward(request, response);
                 return;
             }
 
             // Generate time format for payment reference
             java.text.SimpleDateFormat timeFormat = new java.text.SimpleDateFormat("HHmm");
             String currentTime = timeFormat.format(new java.util.Date());
-            
+
             // Generate QR code URL with new reference format
             String qrDescription = "CLINIC" + currentTime;
             String qrUrl = VietQRService.createVietQRImageUrl(invoice.getTotalFee(), qrDescription);
-            
+
             // Set attributes for JSP
             request.setAttribute("invoice", invoice);
             request.setAttribute("invoiceId", invoiceId);
             request.setAttribute("qrUrl", qrUrl);
             request.setAttribute("contextPath", request.getContextPath());
-            
+
             // Add bank information for QR section
             request.setAttribute("bankName", utils.VietQRConfig.get("vietqr.bank.name"));
             request.setAttribute("accountNumber", utils.VietQRConfig.getAccountNumber());
             request.setAttribute("accountName", utils.VietQRConfig.getAccountName());
-            
+
             // Calculate VND amount
             double vndAmount = VietQRService.convertUsdToVnd(invoice.getTotalFee());
             request.setAttribute("vndAmount", vndAmount);
-            
+
             // Payment reference - CLINIC + current time
             String paymentReference = "CLINIC" + currentTime;
             request.setAttribute("paymentReference", paymentReference);
@@ -83,10 +95,10 @@ public class PaymentController extends HttpServlet {
             String currencyDisplay = String.format("$%.2f", invoice.getTotalFee());
             request.setAttribute("currencyDisplay", currencyDisplay);
 
-            request.getRequestDispatcher("/WEB-INF/patient/Payment.jsp").forward(request, response);
+            request.getRequestDispatcher(PaymentConstants.PAYMENT_JSP).forward(request, response);
 
         } catch (NumberFormatException e) {
-            response.sendRedirect(request.getContextPath() + "/manage-my-invoices");
+            response.sendRedirect(request.getContextPath() + PaymentConstants.MANAGE_INVOICES_REDIRECT);
         }
     }
 
