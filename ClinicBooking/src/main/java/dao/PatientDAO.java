@@ -148,7 +148,7 @@ public class PatientDAO extends DBContext {
 
             return sb.toString();
         } catch (NoSuchAlgorithmException ex) {
-            Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(PatientDAO.class.getName()).log(Level.SEVERE, null, ex);
             return "";
         }
     }
@@ -253,7 +253,8 @@ public class PatientDAO extends DBContext {
      * @param patientId Patient ID
      * @param currentPassword Current password (for verification)
      * @param newPassword New password (will be hashed)
-     * @return true if successful, false if current password incorrect or update failed
+     * @return true if successful, false if current password incorrect or update
+     * failed
      */
     public boolean updatePatientPassword(int patientId, String currentPassword, String newPassword) {
         // First verify current password
@@ -343,8 +344,8 @@ public class PatientDAO extends DBContext {
     /**
      * Returns the total number of visible patients in the system.
      *
-     * This method counts all patients whose 'Hidden' flag is set to 0. It executes a
-     * SELECT query and retrieves the aggregated result.
+     * This method counts all patients whose 'Hidden' flag is set to 0. It
+     * executes a SELECT query and retrieves the aggregated result.
      *
      * @return the number of active (non-hidden) patients
      */

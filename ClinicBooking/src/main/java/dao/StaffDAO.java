@@ -34,7 +34,7 @@ public class StaffDAO extends DBContext {
 
             return sb.toString();
         } catch (NoSuchAlgorithmException ex) {
-            Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(StaffDAO.class.getName()).log(Level.SEVERE, null, ex);
             return "";
         }
     }
