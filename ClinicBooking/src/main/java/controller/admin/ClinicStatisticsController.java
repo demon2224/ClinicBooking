@@ -88,11 +88,7 @@ public class ClinicStatisticsController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        HttpSession session = request.getSession(false);
-        if (session == null || session.getAttribute("staff") == null) {
-            response.sendRedirect(request.getContextPath() + "/staff-login");
-            return;
-        }
+
         try {
             int totalDoctors = doctorDAO.getTotalDoctors();
             int totalPatients = patientDAO.getTotalPatients();
