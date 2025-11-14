@@ -39,7 +39,8 @@ public class ManageMyMedicalRecordController extends HttpServlet {
     }
 
     /**
-     * Handles GET requests - Display medical records list or medical record detail
+     * Handles GET requests - Display medical records list or medical record
+     * detail
      *
      * @param request
      * @param response
@@ -93,32 +94,53 @@ public class ManageMyMedicalRecordController extends HttpServlet {
             throws ServletException, IOException {
 
         try {
+
+            //Check session login
+            HttpSession session = request.getSession();
+            PatientDTO sessionPatient = (PatientDTO) session.getAttribute("patient");
+
+            if (sessionPatient == null) {
+                session.setAttribute("errorMessage", "Your session has expired. Please log in again.");
+                response.sendRedirect(request.getContextPath() + "/patient-login");
+                return;
+            }
+
+            //Validate param
+            if (medicalRecordIdParam == null || !medicalRecordIdParam.matches("\\d+")) {
+                response.sendRedirect(request.getContextPath() + ManageMyMedicalRecordConstants.BASE_URL);
+                return;
+            }
+
             int medicalRecordId = Integer.parseInt(medicalRecordIdParam);
 
-            // Get medical record details
+            //Get medical record
             MedicalRecordDTO medicalRecord = medicalRecordDAO.getMedicalRecordById(medicalRecordId);
-
-            // Redirect if medical record not found
             if (medicalRecord == null) {
                 response.sendRedirect(request.getContextPath() + ManageMyMedicalRecordConstants.BASE_URL);
                 return;
             }
 
-            // Get patient and doctor information
-            PatientDTO patient = patientDAO.getPatientById(medicalRecord.getAppointmentID().getPatientID().getPatientID());
-            DoctorDTO doctor = doctorDAO.getDoctorById(medicalRecord.getAppointmentID().getDoctorID().getDoctorID());
+            //Validate record belongs to logged-in patient
+            int recordPatientId = medicalRecord.getAppointmentID().getPatientID().getPatientID();
+            if (recordPatientId != sessionPatient.getPatientID()) {
+                response.sendRedirect(request.getContextPath() + "/403");
+                return;
+            }
 
-            // Get doctor rating
+            //Load patient + doctor data
+            PatientDTO patientInfo = patientDAO.getPatientById(recordPatientId);
             int doctorId = medicalRecord.getAppointmentID().getDoctorID().getDoctorID();
+            DoctorDTO doctor = doctorDAO.getDoctorById(doctorId);
+
             double averageRating = doctorDAO.getAverageRatingByDoctorId(doctorId);
 
-            // Set attributes for JSP
+            //Set attributes
             request.setAttribute("medicalRecord", medicalRecord);
-            request.setAttribute("patient", patient);
+            request.setAttribute("patient", patientInfo);
             request.setAttribute("doctor", doctor);
             request.setAttribute("averageRating", averageRating);
 
-            // Forward to detail page
+            //Forward
             request.getRequestDispatcher(ManageMyMedicalRecordConstants.DETAIL_PAGE_JSP).forward(request, response);
 
         } catch (Exception e) {
