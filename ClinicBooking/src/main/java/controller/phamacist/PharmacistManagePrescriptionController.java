@@ -11,9 +11,9 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.time.LocalDateTime;
 import java.util.List;
 import model.PrescriptionDTO;
-import model.PrescriptionItemDTO;
 
 /**
  *
@@ -104,7 +104,7 @@ public class PharmacistManagePrescriptionController extends HttpServlet {
             int prescriptionID = Integer.parseInt(prescriptionIDParam);
 
             PrescriptionDTO prescription = prescriptionDAO.getPrescriptionById(prescriptionID);
-            request.setAttribute("prescription", prescription);;
+            request.setAttribute("prescription", prescription);
             request.getRequestDispatcher("/WEB-INF/pharmacist/PrescriptionDetail.jsp").forward(request, response);
 
         } catch (NumberFormatException e) {
@@ -150,7 +150,6 @@ public class PharmacistManagePrescriptionController extends HttpServlet {
 //        processRequest(request, response);
 
         String action = request.getParameter("action");
-        removeSessionMsg(request);
 
         try {
             switch (action) {
@@ -166,48 +165,66 @@ public class PharmacistManagePrescriptionController extends HttpServlet {
                     handleInvalidResponse(request, response);
                     break;
             }
-        } catch (IOException | NullPointerException e) {
+        } catch (IOException | ServletException | NullPointerException e) {
             handleInvalidResponse(request, response);
         }
     }
 
-    private void handleDeliverResponse(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    private void handleDeliverResponse(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 
         String prescriptionIDParam = request.getParameter("prescriptionID");
 
         try {
 
             int prescriptionID = Integer.parseInt(prescriptionIDParam);
-            boolean deliverResult = prescriptionDAO.deliverPrescription(prescriptionID);
 
-            if (deliverResult) {
-                request.getSession().setAttribute("prescriptionDeliverSuccessMsg", "Deliver medicine successfully.");
+            if (isValidUpdateDate(prescriptionID)) {
+                request.setAttribute("errorMsg", "Can't update prescription status after 24h.");
+                List<PrescriptionDTO> prescriptionList = prescriptionDAO.getAllActivePrescriptions();
+                request.setAttribute("prescriptionList", prescriptionList);
+                request.getRequestDispatcher("/WEB-INF/pharmacist/PrescriptionList.jsp").forward(request, response);
             } else {
-                request.getSession().setAttribute("prescriptionDeliverErrorMsg", "Failed to deliver prescription.");
-            }
 
-            response.sendRedirect(request.getContextPath() + "/pharmacist-manage-prescription");
+                boolean deliverResult = prescriptionDAO.deliverPrescription(prescriptionID);
+
+                if (deliverResult) {
+                    request.getSession().setAttribute("successMsg", "Deliver medicine successfully.");
+                } else {
+                    request.getSession().setAttribute("errorMsg", "Failed to deliver prescription.");
+                }
+
+                response.sendRedirect(request.getContextPath() + "/pharmacist-manage-prescription");
+            }
         } catch (NumberFormatException e) {
             response.sendRedirect(request.getContextPath() + "/pharmacist-manage-prescription");
         }
     }
 
-    private void handleCancelResponse(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    private void handleCancelResponse(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 
         String prescriptionIDParam = request.getParameter("prescriptionID");
 
         try {
 
             int prescriptionID = Integer.parseInt(prescriptionIDParam);
-            boolean cancelResult = prescriptionDAO.cancelPrescription(prescriptionID);
 
-            if (cancelResult) {
-                request.getSession().setAttribute("prescriptionCancelSuccessMsg", "Cancel medicine successfully.");
+            if (isValidUpdateDate(prescriptionID)) {
+                request.setAttribute("errorMsg", "Can't update prescription status after 24h.");
+                List<PrescriptionDTO> prescriptionList = prescriptionDAO.getAllActivePrescriptions();
+                request.setAttribute("prescriptionList", prescriptionList);
+                request.getRequestDispatcher("/WEB-INF/pharmacist/PrescriptionList.jsp").forward(request, response);
             } else {
-                request.getSession().setAttribute("prescriptionCancelErrorMsg", "Failed to cancel prescription.");
-            }
 
-            response.sendRedirect(request.getContextPath() + "/pharmacist-manage-prescription");
+                boolean cancelResult = prescriptionDAO.cancelPrescription(prescriptionID);
+
+                if (cancelResult) {
+                    request.getSession().setAttribute("successMsg", "Cancel medicine successfully.");
+                } else {
+                    request.getSession().setAttribute("errorMsg", "Failed to cancel prescription.");
+                }
+
+                response.sendRedirect(request.getContextPath() + "/pharmacist-manage-prescription");
+            }
         } catch (NumberFormatException e) {
             response.sendRedirect(request.getContextPath() + "/pharmacist-manage-prescription");
         }
@@ -217,8 +234,13 @@ public class PharmacistManagePrescriptionController extends HttpServlet {
         response.sendRedirect(request.getContextPath() + "/pharmacist-manage-prescription");
     }
 
-    private void removeSessionMsg(HttpServletRequest request) {
+    private boolean isValidUpdateDate(int prescriptionID) {
 
+        PrescriptionDTO prescription = prescriptionDAO.getPrescriptionById(prescriptionID);
+        LocalDateTime dateCreate = prescription.getDateCreate().toLocalDateTime();
+        LocalDateTime now = LocalDateTime.now();
+
+        return dateCreate.plusHours(24).isAfter(now);
     }
 
     /**
