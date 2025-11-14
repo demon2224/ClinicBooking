@@ -160,6 +160,9 @@ public class RegisterController extends HttpServlet {
         } else if (!RegisterValidate.isValidEmail(emailParam.trim())) {
             request.setAttribute("emailErrorMsg", "Invalid email format.");
             return false;
+        } else if (patientDAO.isExistEmail(emailParam.trim())) {
+            request.setAttribute("emailErrorMsg", "Email already used.");
+            return false;
         } else {
             return true;
         }
