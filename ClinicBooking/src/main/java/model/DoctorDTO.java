@@ -14,8 +14,10 @@ public class DoctorDTO {
     private StaffDTO staffID;
     private SpecialtyDTO specialtyID;
     private int yearExperience;
-    
-     private double totalRevenue;
+
+    // Transient fields for revenue report
+    private int completedAppointments;
+    private double totalRevenue;
 
     public DoctorDTO() {
     }
@@ -81,5 +83,11 @@ public class DoctorDTO {
         this.totalRevenue = totalRevenue;
     }
 
-    
+    public int getCompletedAppointments() {
+        return completedAppointments;
+    }
+
+    public void setCompletedAppointments(int completedAppointments) {
+        this.completedAppointments = completedAppointments;
+    }
 }

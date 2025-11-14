@@ -149,6 +149,7 @@
     gap: 1rem;
 }
 
+
 .header .search-btn {
     background: none;
     border: none;
@@ -11277,13 +11278,13 @@ textarea.profile-value:disabled {
         gap: 0;
         min-height: auto;
     }
-    
+
     .date-selection {
         border-right: none;
         border-bottom: 1px solid #e5e7eb;
         border-radius: 0;
     }
-    
+
     .time-selection {
         border-radius: 0;
     }
@@ -11296,11 +11297,11 @@ textarea.profile-value:disabled {
     .calendar-days {
         font-size: 0.875rem;
     }
-    
+
     .calendar-container {
         max-width: 100%;
     }
-    
+
     .weekday {
         font-size: 0.75rem;
         padding: 0.5rem 0.25rem;
@@ -11317,13 +11318,13 @@ textarea.profile-value:disabled {
     .time-slots-grid {
         grid-template-columns: repeat(2, 1fr);
     }
-    
+
     .time-slot {
         padding: 0.5rem;
         font-size: 0.75rem;
         min-height: 36px;
     }
-    
+
     .date-selection,
     .time-selection {
         padding: 1rem;
@@ -11379,7 +11380,7 @@ textarea.profile-value:disabled {
     .appointment-actions {
         flex-direction: column;
     }
-    
+
     .appointment-btn,
     .checkout-btn {
         width: 100%;
@@ -11495,7 +11496,7 @@ textarea.profile-value:disabled {
     accent-color: #175CDD;
 }
 
-.payment-actions {  
+.payment-actions {
     display: flex;
     justify-content: flex-end;
     align-items: center;
@@ -11653,22 +11654,22 @@ textarea.profile-value:disabled {
         grid-template-columns: 1fr;
         gap: 1rem;
     }
-    
+
     .payment-actions {
         flex-direction: column;
         gap: 1rem;
     }
-    
+
     .payment-actions .btn {
         width: 100%;
         justify-content: center;
     }
-    
+
     .qr-container {
         padding: 1rem;
         min-height: 250px;
     }
-    
+
     .qr-image {
         max-width: 250px;
     }
@@ -11786,8 +11787,12 @@ textarea.profile-value:disabled {
 }
 
 @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
 }
 
 /* Payment methods styles */

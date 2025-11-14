@@ -72,6 +72,11 @@
         <c:if test="${not empty sessionScope.patient}">
             <div class="user-actions">
 
+                <!-- Profile User -->
+                <a href="${pageContext.request.contextPath}/profile" class="icon-user-profile">
+                    <i class="fa-solid fa-circle-user"></i>
+                </a>
+
                 <!-- Logout Button -->
                 <a href="${pageContext.request.contextPath}/patient-logout" class="btn btn-logout">
                     <i class="fas fa-sign-in-alt"></i>

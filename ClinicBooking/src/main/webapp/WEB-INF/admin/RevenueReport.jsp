@@ -14,6 +14,7 @@
         <title>Revenue Report - CLINIC</title>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     </head>
     <body>
         <style>
@@ -69,6 +70,209 @@
                     </a>
                 </form>
             </nav>
-        </div>
+            <div class="container-fluid p-4">
+                <!-- ROW 1: KPI Overview -->
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="card shadow-sm bg-success text-white">
+                            <div class="card-body">
+                                <h6><i class="fa-solid fa-check-circle me-2"></i>Paid Revenue</h6>
+                                <h3>$<fmt:formatNumber value="${paidRevenue}" pattern="#,##0.00"/></h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card shadow-sm bg-warning text-dark">
+                            <div class="card-body">
+                                <h6><i class="fa-solid fa-clock me-2"></i>Pending Revenue</h6>
+                                <h3>$<fmt:formatNumber value="${pendingRevenue}" pattern="#,##0.00"/></h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ROW 2: Payment Methods -->
+                <div class="row mb-4">
+                    <div class="col-md-12">
+                        <div class="card shadow-sm">
+                            <div class="card-body">
+                                <h6>Payment Method Distribution</h6>
+                                <canvas id="paymentChart" style="max-height: 300px;"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- ROW 3: Revenue Timeline -->
+                <div class="row mb-4">
+                    <div class="col-md-12">
+                        <div class="card shadow-sm">
+                            <div class="card-body">
+                                <h6>Monthly Revenue Timeline (Last 12 Months)</h6>
+                                <canvas id="timelineChart" style="max-height: 350px;"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ROW 4: Revenue by Specialty -->
+                <div class="row mb-4">
+                    <div class="col-md-12">
+                        <div class="card shadow-sm">
+                            <div class="card-body">
+                                <h6>Revenue by Specialty</h6>
+                                <canvas id="specialtyChart" style="max-height: 400px;"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ROW 5: Revenue by Doctor -->
+                <div class="row mb-4">
+                    <div class="col-md-12">
+                        <div class="card shadow-sm">
+                            <div class="card-body">
+                                <h6>Top 10 Doctors by Revenue</h6>
+                                <canvas id="doctorChart" style="max-height: 400px;"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- ROW 6: Top Medicines -->
+                <div class="row mb-4">
+                    <div class="col-md-12">
+                        <div class="card shadow-sm">
+                            <div class="card-body">
+                                <h6>Top 5 Medicines by Revenue</h6>
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Medicine Name</th>
+                                            <th>Quantity Sold</th>
+                                            <th>Revenue</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <c:forEach var="m" items="${topMedicines}">
+                                            <tr>
+                                                <td>${m.medicineName}</td>
+                                                <td><fmt:formatNumber value="${m.totalQuantitySold}"/></td>
+                                                <td>$<fmt:formatNumber value="${m.totalRevenue}" pattern="#,##0.00"/></td>
+                                            </tr>
+                                        </c:forEach>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <script>
+                // Payment Method Pie Chart
+                const paymentData = {
+                    labels: [<c:forEach var="entry" items="${paymentMethods}" varStatus="status">'${entry.key}'<c:if test="${!status.last}">,</c:if></c:forEach>],
+                    datasets: [{
+                        data: [<c:forEach var="entry" items="${paymentMethods}" varStatus="status">${entry.value}<c:if test="${!status.last}">,</c:if></c:forEach>],
+                        backgroundColor: ['#36A2EB', '#FF6384']
+                    }]
+                };
+                new Chart(document.getElementById('paymentChart'), {
+                    type: 'pie',
+                    data: paymentData,
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: { position: 'top' },
+                            title: { display: false }
+                        }
+                    }
+                });
+
+                // Monthly Revenue Timeline
+                const monthLabels = [<c:forEach var="m" items="${monthlyRevenue}" varStatus="status">'<fmt:formatDate value="${m.datePay}" pattern="MM/yyyy"/>'<c:if test="${!status.last}">,</c:if></c:forEach>];
+                const monthRevenue = [<c:forEach var="m" items="${monthlyRevenue}" varStatus="status">${m.totalFee}<c:if test="${!status.last}">,</c:if></c:forEach>];
+                
+                new Chart(document.getElementById('timelineChart'), {
+                    type: 'line',
+                    data: {
+                        labels: monthLabels,
+                        datasets: [{
+                            label: 'Monthly Revenue (USD)',
+                            data: monthRevenue,
+                            borderColor: '#36A2EB',
+                            backgroundColor: 'rgba(54, 162, 235, 0.1)',
+                            fill: true,
+                            tension: 0.3
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: { display: true },
+                            title: { display: false }
+                        },
+                        scales: {
+                            y: { beginAtZero: true }
+                        }
+                    }
+                });
+
+                // Specialty Revenue Bar Chart
+                const specialtyNames = [<c:forEach var="s" items="${specialtyRevenue}" varStatus="status">'${s.specialtyName}'<c:if test="${!status.last}">,</c:if></c:forEach>];
+                const specialtyRevenues = [<c:forEach var="s" items="${specialtyRevenue}" varStatus="status">${s.totalRevenue}<c:if test="${!status.last}">,</c:if></c:forEach>];
+                
+                new Chart(document.getElementById('specialtyChart'), {
+                    type: 'bar',
+                    data: {
+                        labels: specialtyNames,
+                        datasets: [{
+                            label: 'Revenue (USD)',
+                            data: specialtyRevenues,
+                            backgroundColor: '#4BC0C0'
+                        }]
+                    },
+                    options: {
+                        indexAxis: 'y',
+                        responsive: true,
+                        plugins: {
+                            legend: { display: false },
+                            title: { display: false }
+                        },
+                        scales: {
+                            x: { beginAtZero: true }
+                        }
+                    }
+                });
+
+                // Doctor Revenue Bar Chart
+                const doctorNames = [<c:forEach var="d" items="${doctorRevenue}" varStatus="status">'${d.staffID.firstName} ${d.staffID.lastName}'<c:if test="${!status.last}">,</c:if></c:forEach>];
+                const doctorRevenues = [<c:forEach var="d" items="${doctorRevenue}" varStatus="status">${d.totalRevenue}<c:if test="${!status.last}">,</c:if></c:forEach>];
+                
+                new Chart(document.getElementById('doctorChart'), {
+                    type: 'bar',
+                    data: {
+                        labels: doctorNames,
+                        datasets: [{
+                            label: 'Revenue (USD)',
+                            data: doctorRevenues,
+                            backgroundColor: '#FFCE56'
+                        }]
+                    },
+                    options: {
+                        indexAxis: 'y',
+                        responsive: true,
+                        plugins: {
+                            legend: { display: false },
+                            title: { display: false }
+                        },
+                        scales: {
+                            x: { beginAtZero: true }
+                        }
+                    }
+                });
+            </script>
     </body>
 </html>

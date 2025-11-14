@@ -17,6 +17,7 @@ public class AdminConstants {
 
     public static final String ADMIN_DASHBOARD_URL = "/admin-dashboard";
     public static final String CLINIC_STATISTICS_URL = "/clinic-statistics";
+    public static final String REVENUE_REPORT_URL = "/revenue-report";
 
     public static final String APPOINTMENT_STATUS_PENDING = "Pending";
     public static final String APPOINTMENT_STATUS_APPROVED = "Approved";

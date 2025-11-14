@@ -25,7 +25,8 @@ public class MedicineDTO {
     // The type of the medicine
     private String medicineType;
 
-    // The availability status of the medicine (true = available, false = unavailable)
+    // The availability status of the medicine (true = available, false =
+    // unavailable)
     private boolean medicineStatus;
 
     // The current quantity in stock
@@ -40,6 +41,10 @@ public class MedicineDTO {
     // The active status of medicine
     private boolean isHidden;
 
+    // Transient fields for revenue report
+    private int totalQuantitySold;
+    private double totalRevenue;
+
     /**
      * Default constructor for Medicine.
      */
@@ -49,17 +54,18 @@ public class MedicineDTO {
     /**
      * Constructs a Medicine with all properties specified.
      *
-     * @param medicineID The unique identifier for the medicine
-     * @param medicineType The type/category of the medicine
+     * @param medicineID     The unique identifier for the medicine
+     * @param medicineType   The type/category of the medicine
      * @param medicineStatus The availability status of the medicine
-     * @param medicineName The name of the medicine
-     * @param medicineCode The unique code for the medicine
-     * @param quantity The current quantity in stock
-     * @param price The price of the medicine
-     * @param dateCreate The creation timestamp
-     * @param isHidden The active status of medicine
+     * @param medicineName   The name of the medicine
+     * @param medicineCode   The unique code for the medicine
+     * @param quantity       The current quantity in stock
+     * @param price          The price of the medicine
+     * @param dateCreate     The creation timestamp
+     * @param isHidden       The active status of medicine
      */
-    public MedicineDTO(int medicineID, String medicineName, String medicineCode, String medicineType, boolean medicineStatus, int quantity, double price, Timestamp dateCreate, boolean isHidden) {
+    public MedicineDTO(int medicineID, String medicineName, String medicineCode, String medicineType,
+            boolean medicineStatus, int quantity, double price, Timestamp dateCreate, boolean isHidden) {
         this.medicineID = medicineID;
         this.medicineName = medicineName;
         this.medicineCode = medicineCode;
@@ -238,7 +244,7 @@ public class MedicineDTO {
      * empty string if the creation date is null.
      *
      * @return Formatted date string in "dd/MM/yyyy HH:mm:ss" format, or empty
-     * string if null
+     *         string if null
      */
     public String getDateCreateFormatDate() {
         if (this.dateCreate == null) {
@@ -252,9 +258,27 @@ public class MedicineDTO {
      *
      * @return string present the attribute of Medicine
      */
+    public int getTotalQuantitySold() {
+        return totalQuantitySold;
+    }
+
+    public void setTotalQuantitySold(int totalQuantitySold) {
+        this.totalQuantitySold = totalQuantitySold;
+    }
+
+    public double getTotalRevenue() {
+        return totalRevenue;
+    }
+
+    public void setTotalRevenue(double totalRevenue) {
+        this.totalRevenue = totalRevenue;
+    }
+
     @Override
     public String toString() {
-        return "MedicineDTO{" + "medicineID=" + medicineID + ", medicineName=" + medicineName + ", medicineCode=" + medicineCode + ", medicineType=" + medicineType + ", medicineStatus=" + medicineStatus + ", quantity=" + quantity + ", price=" + price + ", dateCreate=" + dateCreate + ", isHidden=" + isHidden + '}';
+        return "MedicineDTO{" + "medicineID=" + medicineID + ", medicineName=" + medicineName + ", medicineCode="
+                + medicineCode + ", medicineType=" + medicineType + ", medicineStatus=" + medicineStatus + ", quantity="
+                + quantity + ", price=" + price + ", dateCreate=" + dateCreate + ", isHidden=" + isHidden + '}';
     }
 
 }

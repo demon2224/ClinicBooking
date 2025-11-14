@@ -13,8 +13,11 @@ public class SpecialtyDTO {
     private int specialtyID;
     private String specialtyName;
     private double price;
-    
+
+    // Transient fields for revenue report
     private int totalBookings;
+    private int visitCount;
+    private double totalRevenue;
 
     public SpecialtyDTO() {
     }
@@ -56,6 +59,21 @@ public class SpecialtyDTO {
     public void setTotalBookings(int totalBookings) {
         this.totalBookings = totalBookings;
     }
-    
+
+    public int getVisitCount() {
+        return visitCount;
+    }
+
+    public void setVisitCount(int visitCount) {
+        this.visitCount = visitCount;
+    }
+
+    public double getTotalRevenue() {
+        return totalRevenue;
+    }
+
+    public void setTotalRevenue(double totalRevenue) {
+        this.totalRevenue = totalRevenue;
+    }
 
 }
