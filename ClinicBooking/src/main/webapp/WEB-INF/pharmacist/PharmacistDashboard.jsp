@@ -90,10 +90,8 @@
                 </a>
             </nav>
 
-            <!-- TOP STATISTICS -->
             <div class="row g-4 mb-4">
 
-                <!-- TOTAL MEDICINE -->
                 <div class="col-md-3">
                     <div class="card text-center py-4">
                         <div class="text-primary fs-1"><i class="fa-solid fa-capsules"></i></div>
@@ -102,7 +100,6 @@
                     </div>
                 </div>
 
-                <!-- LOW STOCK -->
                 <div class="col-md-3">
                     <div class="card text-center py-4">
                         <div class="text-warning fs-1"><i class="fa-solid fa-triangle-exclamation"></i></div>

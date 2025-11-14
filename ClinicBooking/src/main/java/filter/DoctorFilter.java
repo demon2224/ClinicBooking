@@ -1,0 +1,50 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+package filter;
+
+import jakarta.servlet.Filter;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.FilterConfig;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import model.StaffDTO;
+
+/**
+ *
+ * @author Vu Minh Khang - CE191371
+ */
+public class DoctorFilter implements Filter {
+
+    @Override
+    public void init(FilterConfig filterConfig) throws ServletException {
+
+    }
+
+    @Override
+    public void doFilter(ServletRequest sr, ServletResponse sr1, FilterChain fc) throws IOException, ServletException {
+        HttpServletRequest httpRequest = (HttpServletRequest) sr;
+        HttpServletResponse httpResponse = (HttpServletResponse) sr1;
+        
+        StaffDTO staff = (StaffDTO) httpRequest.getSession().getAttribute("staff");
+        
+        if (staff == null || !staff.getRole().equals("Doctor")) {
+            httpResponse.sendRedirect(httpRequest.getContextPath() + "/staff-login");
+            return;
+        }
+
+        // Continue with the filter chain for other requests
+        fc.doFilter(sr, sr1);
+    }
+
+    @Override
+    public void destroy() {
+
+    }
+
+}

@@ -2,6 +2,52 @@
 <web-app version="3.1" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee                              http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd">
     <display-name>Clinic Booking System</display-name>
     <!-- ================= SERVLETS ================= -->
+    <filter-mapping>
+        <filter-name>DoctorFilter</filter-name>
+        <url-pattern>/doctor-dashboard</url-pattern>
+        <url-pattern>/manage-my-patient-appointment</url-pattern>
+        <url-pattern>/manage-my-patient-medical-record</url-pattern>
+        <url-pattern>/manage-my-patient-prescription</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>ReceptionistFilter</filter-name>
+        <url-pattern>/receptionist-dashboard</url-pattern>
+        <url-pattern>/receptionist-manage-appointment</url-pattern>
+        <url-pattern>/manage-invoice</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>PharmacistFilter</filter-name>
+        <url-pattern>/pharmacist-dashboard</url-pattern>
+        <url-pattern>/manage-medicine</url-pattern>
+        <url-pattern>/pharmacist-manage-prescription</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>AdminFilter</filter-name>
+        <url-pattern>/admin-manage-account</url-pattern>
+        <url-pattern>/admin-dashboard</url-pattern>
+        <url-pattern>/clinic-statistics</url-pattern>
+        <url-pattern>/clinic-statistics</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>PatientFilter</filter-name>
+        <url-pattern>/profile</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>PatientLoginFilter</filter-name>
+        <url-pattern>/patient-login</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>DefaultHomeFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>StaffLogoutFilter</filter-name>
+        <url-pattern>/staff-logout</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>PatientLogoutFilter</filter-name>
+        <url-pattern>/patient-logout</url-pattern>
+    </filter-mapping>
     <servlet>
         <servlet-name>ReceptionistManageAppointmentController</servlet-name>
         <servlet-class>controller.receptionist.ReceptionistManageAppointmentController</servlet-class>
@@ -236,10 +282,38 @@
         <filter-name>DefaultHomeFilter</filter-name>
         <filter-class>filter.DefaultHomeFilter</filter-class>
     </filter>
-    <filter-mapping>
-        <filter-name>DefaultHomeFilter</filter-name>
-        <url-pattern>/*</url-pattern>
-    </filter-mapping>
+    <filter>
+        <filter-name>DoctorFilter</filter-name>
+        <filter-class>filter.DoctorFilter</filter-class>
+    </filter>
+    <filter>
+        <filter-name>ReceptionistFilter</filter-name>
+        <filter-class>filter.ReceptionistFilter</filter-class>
+    </filter>
+    <filter>
+        <filter-name>PharmacistFilter</filter-name>
+        <filter-class>filter.PharmacistFilter</filter-class>
+    </filter>
+    <filter>
+        <filter-name>AdminFilter</filter-name>
+        <filter-class>filter.AdminFilter</filter-class>
+    </filter>
+    <filter>
+        <filter-name>PatientFilter</filter-name>
+        <filter-class>filter.PatientFilter</filter-class>
+    </filter>
+    <filter>
+        <filter-name>PatientLoginFilter</filter-name>
+        <filter-class>filter.PatientLoginFilter</filter-class>
+    </filter>
+    <filter>
+        <filter-name>StaffLogoutFilter</filter-name>
+        <filter-class>filter.StaffLogoutFilter</filter-class>
+    </filter>
+    <filter>
+        <filter-name>PatientLogoutFilter</filter-name>
+        <filter-class>filter.PatientLogoutFilter</filter-class>
+    </filter>
     <!-- ================= WELCOME FILE ================= -->
     <servlet-mapping>
         <servlet-name>ManageMyInvoiceController</servlet-name>

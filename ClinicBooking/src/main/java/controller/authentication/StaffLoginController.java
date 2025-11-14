@@ -69,6 +69,13 @@ public class StaffLoginController extends HttpServlet {
             throws ServletException, IOException {
 //        processRequest(request, response);
 
+        StaffDTO staff = (StaffDTO) request.getSession().getAttribute("staff");
+        
+        if (staff != null) {
+            redirectToDashboard(request, response);
+            return;
+        }
+
         request.getRequestDispatcher("/WEB-INF/authentication/StaffLogin.jsp").forward(request, response);
     }
 
@@ -101,7 +108,7 @@ public class StaffLoginController extends HttpServlet {
 
             if (isExistAccount) {
                 HttpSession session = request.getSession();
-                session.setAttribute("staff", staff);;
+                session.setAttribute("staff", staff);
                 redirectToDashboard(request, response);
             } else {
                 request.getSession().setAttribute("loginErrorMsg", "Logic failed");
@@ -134,7 +141,8 @@ public class StaffLoginController extends HttpServlet {
                 break;
 
             default:
-                throw new IOException();
+                response.sendRedirect(request.getContextPath() + "/staff-login");
+                break;
         }
     }
 
