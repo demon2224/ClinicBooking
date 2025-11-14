@@ -149,7 +149,7 @@ CREATE TABLE Invoice (
 	InvoiceID INT PRIMARY KEY IDENTITY(1,1),
 	MedicalRecordID INT FOREIGN KEY REFERENCES MedicalRecord(MedicalRecordID) NOT NULL,
 	PrescriptionID INT FOREIGN KEY REFERENCES Prescription(PrescriptionID),
-	PaymentType NVARCHAR(50) CHECK (PaymentType IN ('Cash', 'Credit Card', 'Insurance', 'Online Banking', 'E-Wallet')) NOT NULL,
+	PaymentType NVARCHAR(50) CHECK (PaymentType IN ('Cash', 'Credit Card')),
 	InvoiceStatus NVARCHAR(50) CHECK (InvoiceStatus IN ('Pending', 'Paid', 'Canceled')) NOT NULL,
 	DateCreate DATETIME DEFAULT GETDATE(),
 	DatePay DATETIME
