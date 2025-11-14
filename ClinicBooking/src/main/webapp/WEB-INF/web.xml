@@ -171,7 +171,7 @@
     </servlet>
     <servlet>
         <servlet-name>ResetPasswordController</servlet-name>
-        <servlet-class>ResetPasswordController</servlet-class>
+        <servlet-class>controller.authentication.ResetPasswordController</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>OTPConfirmController</servlet-name>
