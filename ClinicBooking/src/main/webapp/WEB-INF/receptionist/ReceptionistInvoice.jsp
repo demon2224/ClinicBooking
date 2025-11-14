@@ -111,15 +111,6 @@
                 </form>
             </nav>
 
-            <!-- Success Alert -->
-            <c:if test="${not empty sessionScope.successMessage}">
-                <div id="successAlert" class="alert alert-success alert-dismissible fade show mt-3" role="alert">
-                    <i class="fa-solid fa-circle-check me-2"></i>${sessionScope.successMessage}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
-                <c:remove var="successMessage" scope="session"/>
-            </c:if>
-
             <!-- Invoice List -->
             <div class="card mt-4">
                 <div class="card-header">
@@ -168,7 +159,6 @@
                                                 <i class="fa-solid fa-eye"></i> View
                                             </a>
 
-  
                                             <c:choose>
                                                 <c:when test="${inv.invoiceStatus eq 'Pending'}">
                                                     <a href="manage-invoice?action=update&id=${inv.invoiceID}"
@@ -183,16 +173,16 @@
                                                 </c:otherwise>
                                             </c:choose>
 
-  
                                             <c:choose>
                                                 <c:when test="${inv.invoiceStatus eq 'Pending'}">
-                                                    <form action="manage-invoice" method="post" style="display:inline;">
-                                                        <input type="hidden" name="invoiceId" value="${inv.invoiceID}">
-                                                        <input type="hidden" name="action" value="cancel">
-                                                        <button type="submit" class="btn btn-sm btn-danger text-white">
-                                                            <i class="fa-solid fa-xmark"></i> Cancel
-                                                        </button>
-                                                    </form>
+                                                    <!-- Open confirm modal; pass invoice id in data attribute -->
+                                                    <button type="button"
+                                                            class="btn btn-sm btn-danger text-white btn-open-cancel"
+                                                            data-bs-toggle="modal"
+                                                            data-bs-target="#confirmCancelModal"
+                                                            data-invoiceid="${inv.invoiceID}">
+                                                        <i class="fa-solid fa-xmark"></i> Cancel
+                                                    </button>
                                                 </c:when>
                                                 <c:otherwise>
                                                     <button class="btn btn-sm btn-danger invisible">
@@ -218,6 +208,86 @@
             </div>
         </div>
 
+        <!-- Confirm Cancel Modal (uses POST form) -->
+        <div class="modal fade" id="confirmCancelModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content border-danger">
+                    <div class="modal-header bg-danger text-white">
+                        <h5 class="modal-title">
+                            <i class="fa-solid fa-triangle-exclamation me-2"></i>Confirm Cancel
+                        </h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+
+                    <div class="modal-body text-center">
+                        <p class="fs-5 mb-2">Are you sure you want to cancel this invoice?</p>
+                        <p class="text-muted">
+                            <i class="fa-solid fa-circle-info me-1"></i> This action cannot be undone.
+                        </p>
+                    </div>
+
+                    <div class="modal-footer justify-content-center">
+                        <!-- form posts to servlet; controller expects POST with action=cancel and invoiceId -->
+                        <form id="cancelForm" action="${pageContext.request.contextPath}/manage-invoice" method="post" class="d-inline">
+                            <input type="hidden" name="action" value="cancel"/>
+                            <input type="hidden" name="invoiceId" id="cancelInvoiceId" value=""/>
+                            <button type="submit" class="btn btn-danger px-4">
+                                <i class="fa-solid fa-xmark me-1"></i> Cancel
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Success Modal -->
+        <div class="modal fade" id="successModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content border-success">
+                    <div class="modal-header bg-success text-white">
+                        <h5 class="modal-title">
+                            <i class="fa-solid fa-circle-check me-2"></i>Success
+                        </h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body text-center fs-5">
+                        ${sessionScope.successMessage}
+                    </div>
+                    <div class="modal-footer justify-content-center">
+                        <button type="button" class="btn btn-success px-4" data-bs-dismiss="modal">OK</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- JS (single block, no duplicates) -->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                // When confirmCancelModal opens, read invoice id from opener button and set hidden input
+                var confirmCancelModal = document.getElementById('confirmCancelModal');
+                confirmCancelModal.addEventListener('show.bs.modal', function (event) {
+                    var button = event.relatedTarget; // Button that triggered the modal
+                    var invoiceId = button.getAttribute('data-invoiceid');
+                    document.getElementById('cancelInvoiceId').value = invoiceId || '';
+                });
+
+                // If server placed successMessage in session, show success modal once (then session removed on server side)
+            <%-- Use JSTL to render script that triggers modal if message exists --%>
+            });
+        </script>
+
+        <c:if test="${not empty sessionScope.successMessage}">
+            <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    var modal = new bootstrap.Modal(document.getElementById('successModal'));
+                    modal.show();
+                });
+            </script>
+            <!-- remove session attribute from server side view handling was in servlet (redirect), but if you need also to remove here: -->
+            <c:remove var="successMessage" scope="session"/>
+        </c:if>
+
     </body>
 </html>

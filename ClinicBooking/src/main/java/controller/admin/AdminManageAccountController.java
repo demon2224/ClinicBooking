@@ -12,34 +12,43 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.time.LocalDate;
 import model.*;
+import validate.AdminValidate;
 
 public class AdminManageAccountController extends HttpServlet {
+// DAO members để dùng chung
+
+    private StaffDAO staffDAO;
+    private DoctorDAO doctorDAO;
+
+    @Override
+    public void init() throws ServletException {
+        super.init();
+        staffDAO = new StaffDAO();
+        doctorDAO = new DoctorDAO();
+    }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse res)
             throws ServletException, IOException {
 
-        StaffDAO staffDAO = new StaffDAO();
-        DoctorDAO doctorDAO = new DoctorDAO();
         String action = req.getParameter("action");
         String id = req.getParameter("id");
 
-        clearSessionErrors(req);
-
         try {
             if ("add".equalsIgnoreCase(action)) {
-                showAddPage(req, res, doctorDAO);
+                showAddPage(req, res);
                 return;
             }
 
             if ("edit".equalsIgnoreCase(action)) {
-                showEditPage(req, res, staffDAO, doctorDAO, id);
+                showEditPage(req, res, id);
                 return;
             }
 
             if ("view".equalsIgnoreCase(action)) {
-                showDetailPage(req, res, staffDAO, doctorDAO, id);
+                showDetailPage(req, res, id);
                 return;
             }
 
@@ -58,15 +67,14 @@ public class AdminManageAccountController extends HttpServlet {
         }
     }
 
-    private void showAddPage(HttpServletRequest req, HttpServletResponse res, DoctorDAO dao)
+    private void showAddPage(HttpServletRequest req, HttpServletResponse res)
             throws ServletException, IOException {
-        req.setAttribute("specialties", dao.getAllSpecialtiesWithPrice());
+        req.setAttribute("specialties", doctorDAO.getAllSpecialtiesWithPrice());
         req.setAttribute("staff", new StaffDTO());
         req.getRequestDispatcher("/WEB-INF/admin/AddAccount.jsp").forward(req, res);
     }
 
-    private void showEditPage(HttpServletRequest req, HttpServletResponse res,
-            StaffDAO staffDAO, DoctorDAO doctorDAO, String id)
+    private void showEditPage(HttpServletRequest req, HttpServletResponse res, String id)
             throws ServletException, IOException {
         int staffID = parseIntSafe(id);
         StaffDTO staff = staffDAO.getStaffById(staffID);
@@ -85,8 +93,7 @@ public class AdminManageAccountController extends HttpServlet {
         req.getRequestDispatcher("/WEB-INF/admin/EditAccount.jsp").forward(req, res);
     }
 
-    private void showDetailPage(HttpServletRequest req, HttpServletResponse res,
-            StaffDAO staffDAO, DoctorDAO doctorDAO, String id)
+    private void showDetailPage(HttpServletRequest req, HttpServletResponse res, String id)
             throws ServletException, IOException {
         int staffID = parseIntSafe(id);
         StaffDTO staff = staffDAO.getStaffById(staffID);
@@ -104,16 +111,14 @@ public class AdminManageAccountController extends HttpServlet {
         req.getRequestDispatcher("/WEB-INF/admin/AccountDetail.jsp").forward(req, res);
     }
 
-    // 🔹 Gom logic Doctor chung cho Edit & Detail
+    // Gom logic Doctor chung cho Edit & Detail
     private void prepareDoctorData(HttpServletRequest req, DoctorDAO doctorDAO, int staffID) {
         DoctorDTO doctor = doctorDAO.getDoctorByStaffID(staffID);
-        List<DegreeDTO> degrees = doctorDAO.getDoctorDegrees(
-                doctor != null ? doctor.getDoctorID() : 0);
+        List<DegreeDTO> degrees = doctorDAO.getDoctorDegrees(doctor != null ? doctor.getDoctorID() : 0);
         List<SpecialtyDTO> specialties = doctorDAO.getAllSpecialtiesWithPrice();
 
-
         if (doctor != null) {
-            SpecialtyDTO doctorSpec = doctor.getSpecialtyID(); 
+            SpecialtyDTO doctorSpec = doctor.getSpecialtyID();
 
             if (doctorSpec != null) {
                 for (SpecialtyDTO sp : specialties) {
@@ -135,20 +140,26 @@ public class AdminManageAccountController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse res)
             throws ServletException, IOException {
-        StaffDAO staffDAO = new StaffDAO();
-        DoctorDAO doctorDAO = new DoctorDAO();
+
         String action = req.getParameter("action");
 
         try {
             if ("delete".equalsIgnoreCase(action)) {
                 int staffID = parseIntSafe(req.getParameter("staffID"));
-                staffDAO.deleteStaffAccount(staffID);
+                boolean result = staffDAO.deleteStaffAccount(staffID);
+
+                if (result) {
+                    req.getSession().setAttribute("successMessage", "Account deleted successfully!");
+                } else {
+                    req.getSession().setAttribute("successMessage", "Failed to delete account!");
+                }
+
                 res.sendRedirect(req.getContextPath() + "/admin-manage-account");
                 return;
             }
 
             if ("add".equalsIgnoreCase(action) || "update".equalsIgnoreCase(action)) {
-                handleSave(req, res, staffDAO, doctorDAO, action);
+                handleSave(req, res, action);
             }
 
         } catch (Exception e) {
@@ -157,20 +168,31 @@ public class AdminManageAccountController extends HttpServlet {
         }
     }
 
-    private void handleSave(HttpServletRequest req, HttpServletResponse res,
-            StaffDAO staffDAO, DoctorDAO doctorDAO, String action)
+    private void handleSave(HttpServletRequest req, HttpServletResponse res, String action)
             throws ServletException, IOException {
         boolean hasError = validateForm(req, action);
         if (hasError) {
+
+            req.setAttribute("specialties", doctorDAO.getAllSpecialtiesWithPrice());
+            if ("update".equalsIgnoreCase(action)) {
+
+                int staffID = parseIntSafe(req.getParameter("staffID"));
+                StaffDTO staff = staffDAO.getStaffById(staffID);
+                req.setAttribute("staff", staff);
+
+                if ("Doctor".equalsIgnoreCase(staff.getRole())) {
+                    prepareDoctorData(req, doctorDAO, staffID);
+                }
+            }
+
             if ("add".equalsIgnoreCase(action)) {
-                res.sendRedirect(req.getContextPath() + "/admin-manage-account?action=add");
+                req.getRequestDispatcher("/WEB-INF/admin/AddAccount.jsp").forward(req, res);
             } else {
-                res.sendRedirect(req.getContextPath() + "/admin-manage-account?action=edit&id=" + req.getParameter("staffID"));
+                req.getRequestDispatcher("/WEB-INF/admin/EditAccount.jsp").forward(req, res);
             }
             return;
         }
 
-        // Lấy data
         int staffID = parseIntSafe(req.getParameter("staffID"));
         String account = req.getParameter("accountName");
         String password = req.getParameter("accountPassword");
@@ -179,14 +201,16 @@ public class AdminManageAccountController extends HttpServlet {
         String phone = req.getParameter("phoneNumber");
         String job = req.getParameter("jobStatus");
         String dob = req.getParameter("dob");
-        boolean gender = Boolean.parseBoolean(req.getParameter("gender"));
+        boolean gender = Boolean.parseBoolean(req.getParameter("gender") == null ? "false" : req.getParameter("gender"));
         String address = req.getParameter("userAddress");
         boolean hidden = "1".equals(req.getParameter("hidden"));
 
         if ("update".equalsIgnoreCase(action)) {
             staffDAO.updateStaffAccount(staffID, account, fullName, role, phone, job, dob, gender, address, hidden);
+            req.getSession().setAttribute("successMessage", "Account updated successfully!");
         } else {
             staffID = staffDAO.addStaffAccount(account, password, fullName, role, phone, job, dob, gender, address, hidden);
+            req.getSession().setAttribute("successMessage", "Account added successfully!");
         }
 
         if ("Doctor".equalsIgnoreCase(role)) {
@@ -210,66 +234,149 @@ public class AdminManageAccountController extends HttpServlet {
             }
         }
     }
-    // ==================== Validation ====================
 
+// ==================== VALIDATION ====================
     private boolean validateForm(HttpServletRequest request, String action) {
+
         clearSessionErrors(request);
         boolean hasError = false;
 
-        if (validate.AdminValidate.isEmpty(request.getParameter("accountName"))) {
-            request.getSession().setAttribute("usernameErrorMsg", "Username cannot be empty.");
+        String username = request.getParameter("accountName");
+        String password = request.getParameter("accountPassword");
+        String fullName = request.getParameter("fullName");
+        String role = request.getParameter("role");
+        String phone = request.getParameter("phoneNumber");
+        String address = request.getParameter("userAddress");
+        String dobString = request.getParameter("dob");
+
+        // ================= USERNAME =================
+        if (!AdminValidate.isValidUsername(username)) {
+            request.getSession().setAttribute("usernameErrorMsg",
+                    "Username must be 8–200 characters, letters and digits only.");
             hasError = true;
         }
 
+        // ================= PASSWORD (Only for ADD) =================
         if ("add".equalsIgnoreCase(action)) {
-            String password = request.getParameter("accountPassword");
-            if (validate.AdminValidate.isEmpty(password)) {
-                request.getSession().setAttribute("passwordErrorMsg", "Password cannot be empty.");
+            if (!AdminValidate.isValidPassword(password)) {
+                request.getSession().setAttribute("passwordErrorMsg",
+                        "Password must contain upper, lower, digit, special character, min 8 chars.");
                 hasError = true;
             }
         }
 
-        if (validate.AdminValidate.isEmpty(request.getParameter("fullName"))) {
-            request.getSession().setAttribute("fullNameErrorMsg", "Full name cannot be empty.");
+        // ================= FULL NAME =================
+        if (!AdminValidate.isValidFullName(fullName)) {
+            request.getSession().setAttribute("fullNameErrorMsg",
+                    "Full name must contain only letters and spaces.");
             hasError = true;
         }
 
-        if (validate.AdminValidate.isEmpty(request.getParameter("phoneNumber"))) {
-            request.getSession().setAttribute("phoneErrorMsg", "Phone number cannot be empty.");
+        // ================= PHONE =================
+        if (!AdminValidate.isValidPhone(phone)) {
+            request.getSession().setAttribute("phoneErrorMsg",
+                    "Phone number must start with 0 and contain 10–11 digits.");
             hasError = true;
         }
 
-        if (validate.AdminValidate.isEmpty(request.getParameter("userAddress"))) {
-            request.getSession().setAttribute("addressErrorMsg", "Address cannot be empty.");
+        // ================= ADDRESS =================
+        if (!AdminValidate.isValidAddress(address)) {
+            request.getSession().setAttribute("addressErrorMsg",
+                    "Address must contain at least 5 characters.");
             hasError = true;
         }
 
-        if (validate.AdminValidate.isEmpty(request.getParameter("dob"))) {
-            request.getSession().setAttribute("dobErrorMsg", "Date of birth cannot be empty.");
+        // ================= ROLE =================
+        // ❗ IMPORTANT: Only validate role when ADDING
+        if ("add".equalsIgnoreCase(action)) {
+            if (!AdminValidate.isValidRole(role)) {
+                request.getSession().setAttribute("roleErrorMsg",
+                        "Please select a valid role.");
+                hasError = true;
+            }
+        }
+
+        // ================= DOB =================
+        LocalDate dob = null;
+        try {
+            dob = LocalDate.parse(dobString);
+            if (!AdminValidate.isValidDOB(dob)) {
+                request.getSession().setAttribute("dobErrorMsg",
+                        "Age must be between 18 and 120.");
+                hasError = true;
+            }
+        } catch (Exception e) {
+            request.getSession().setAttribute("dobErrorMsg",
+                    "Invalid date of birth.");
             hasError = true;
         }
 
-        String role = request.getParameter("role");
-        if (validate.AdminValidate.isEmpty(role)) {
-            request.getSession().setAttribute("roleErrorMsg", "Please select role.");
-            hasError = true;
+        // ================= DUPLICATE CHECK =================
+        if ("add".equalsIgnoreCase(action)) {
+
+            if (username != null && staffDAO.isUsernameExists(username)) {
+                request.getSession().setAttribute("usernameErrorMsg", "This username already exists.");
+                hasError = true;
+            }
+
+            if (phone != null && staffDAO.isPhoneExists(phone)) {
+                request.getSession().setAttribute("phoneErrorMsg", "This phone number already exists.");
+                hasError = true;
+            }
+
+        } else if ("update".equalsIgnoreCase(action)) {
+
+            int staffID = parseIntSafe(request.getParameter("staffID"));
+            StaffDTO existing = staffDAO.getStaffById(staffID);
+
+            if (existing != null) {
+
+                // Username duplicate check
+                if (!username.equals(existing.getAccountName())
+                        && staffDAO.isUsernameExists(username)) {
+
+                    request.getSession().setAttribute("usernameErrorMsg",
+                            "This username already belongs to another account.");
+                    hasError = true;
+                }
+
+                // Phone duplicate check
+                if (!phone.equals(existing.getPhoneNumber())
+                        && staffDAO.isPhoneExists(phone)) {
+
+                    request.getSession().setAttribute("phoneErrorMsg",
+                            "This phone number is already used by another account.");
+                    hasError = true;
+                }
+
+            } else {
+                request.getSession().setAttribute("usernameErrorMsg", "Invalid staff id.");
+                hasError = true;
+            }
         }
 
+        // ================= Doctor Section =================
         if ("Doctor".equalsIgnoreCase(role)) {
+
             String specialtyID = request.getParameter("specialtyID");
-            String yearExp = request.getParameter("yearExperience");
+            String exp = request.getParameter("yearExperience");
             String price = request.getParameter("price");
 
-            if (validate.AdminValidate.isEmpty(specialtyID)) {
-                request.getSession().setAttribute("specialtyErrorMsg", "Please select a specialty.");
+            if (AdminValidate.isEmpty(specialtyID)) {
+                request.getSession().setAttribute("specialtyErrorMsg",
+                        "Please select specialty.");
                 hasError = true;
             }
-            if (validate.AdminValidate.isEmpty(yearExp)) {
-                request.getSession().setAttribute("experienceErrorMsg", "Experience cannot be empty.");
+
+            if (dob != null && !AdminValidate.isValidExperience(exp, dob)) {
+                request.getSession().setAttribute("experienceErrorMsg",
+                        "Experience must be >=0 and <= (Age - 18).");
                 hasError = true;
             }
-            if (validate.AdminValidate.isEmpty(price)) {
-                request.getSession().setAttribute("priceErrorMsg", "Price cannot be empty.");
+
+            if (!AdminValidate.isValidPrice(price)) {
+                request.getSession().setAttribute("priceErrorMsg",
+                        "Price must be a positive number.");
                 hasError = true;
             }
         }

@@ -137,15 +137,25 @@
                                 <select class="form-select" id="doctorSelect" name="doctorId" required>
                                     <option value="">-- Select Doctor --</option>
                                 </select>
+                                <div class="text-danger">
+                                    <c:if test="${not empty sessionScope.doctorErrorMsg}">
+                                        <c:out value="${sessionScope.doctorErrorMsg}"/>
+                                    </c:if>
+                                </div>
                             </div>
                         </div>
+
 
                         <div class="mb-3 row">
                             <label class="col-sm-3 col-form-label required">Date Begin</label>
                             <div class="col-sm-9">
                                 <input type="datetime-local" class="form-control" name="dateBegin"
-                                       value="<c:out value='${param.dateBegin != null ? param.dateBegin : defaultDateBegin}'/>"
-                                       min="<%=defaultDateBegin%>" required>
+                                       value="<%=defaultDateBegin%>" min="<%=defaultDateBegin%>" required>
+                                <div class="text-danger">
+                                    <c:if test="${not empty sessionScope.dateErrorMsg}">
+                                        <c:out value="${sessionScope.dateErrorMsg}"/>
+                                    </c:if>
+                                </div>
                             </div>
                         </div>
 
@@ -153,8 +163,14 @@
                             <label class="col-sm-3 col-form-label">Note</label>
                             <div class="col-sm-9">
                                 <textarea class="form-control" name="note" rows="2" placeholder="Additional notes..."></textarea>
+                                <div class="text-danger">
+                                    <c:if test="${not empty sessionScope.noteErrorMsg}">
+                                        <c:out value="${sessionScope.noteErrorMsg}"/>
+                                    </c:if>
+                                </div>
                             </div>
                         </div>
+
                     </div>
                 </div>
 
@@ -177,18 +193,30 @@
                             <div class="col-sm-9">
                                 <input type="text" class="form-control" name="patientName" id="patientName"
                                        placeholder="Enter full name"
-                                       pattern="[A-Za-z\\s]+" title="Full Name cannot contain numbers or symbols" required>
+                                       pattern="[A-Za-z ]+" title="Full name must contain only English letters and spaces." required>
+                                <div class="text-danger">
+                                    <c:if test="${not empty sessionScope.patientNameErrorMsg}">
+                                        <c:out value="${sessionScope.patientNameErrorMsg}"/>
+                                    </c:if>
+                                </div>
                             </div>
                         </div>
+
 
                         <div class="mb-3 row">
                             <label class="col-sm-3 col-form-label required">Phone</label>
                             <div class="col-sm-9">
                                 <input type="text" class="form-control" name="phone" id="phone"
                                        placeholder="e.g. 0901234567"
-                                       pattern="0\\d{9}" title="Phone must start with 0 and have 10 digits" required>
+                                       pattern="0\\d{9,10}" title="Phone must start with 0 and contain 10–11 digits" required>
+                                <div class="text-danger">
+                                    <c:if test="${not empty sessionScope.phoneErrorMsg}">
+                                        <c:out value="${sessionScope.phoneErrorMsg}"/>
+                                    </c:if>
+                                </div>
                             </div>
                         </div>
+
 
                         <div class="mb-3 row">
                             <label class="col-sm-3 col-form-label required">Gender</label>
@@ -205,11 +233,11 @@
                 <!-- Buttons -->
                 <div class="d-flex justify-content-end">
                     <button type="submit" class="btn btn-success me-2">
-                        <i class="fa-solid fa-check"></i> Confirm Add Appointment
+                        <i class="fa-solid fa-check"></i>  Add 
                     </button>
-                    <a href="${pageContext.request.contextPath}/receptionist-manage-appointment" class="btn btn-secondary">
+<!--                    <a href="${pageContext.request.contextPath}/receptionist-manage-appointment" class="btn btn-secondary">
                         <i class="fa-solid fa-xmark"></i> Cancel
-                    </a>
+                    </a>-->
                 </div>
             </form>
         </div>

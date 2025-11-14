@@ -121,7 +121,7 @@
                 <div class="card-header">
                     <i class="fa-solid fa-list me-2"></i>Account List
                     <a href="${pageContext.request.contextPath}/admin-manage-account?action=add"
-                       class="btn btn-light btn-sm float-end text-primary fw-bold">
+                       class="btn btn-success btn-sm float-end fw-bold text-white">
                         <i class="fa-solid fa-plus me-1"></i> Add
                     </a>
                 </div>
@@ -202,35 +202,75 @@
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content border-danger">
                     <div class="modal-header bg-danger text-white">
-                        <h5 class="modal-title"><i class="fa-solid fa-triangle-exclamation me-2"></i>Confirm Deletion</h5>
+                        <h5 class="modal-title">
+                            <i class="fa-solid fa-triangle-exclamation me-2"></i>Confirm Delete
+                        </h5>
                         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                     </div>
-                    <div class="modal-body text-center fs-5">
-                        Are you sure you want to delete this account? This action cannot be undone.
+
+                    <div class="modal-body text-center">
+                        <p class="fs-5 mb-2">Are you sure you want to delete this account?</p>
+                        <p class="text-muted">
+                            <i class="fa-solid fa-circle-info me-1"></i> This action cannot be undone.
+                        </p>
                     </div>
+
                     <div class="modal-footer justify-content-center">
-                        <form id="deleteForm" method="post" action="admin-manage-account">
-                            <input type="hidden" name="action" value="delete">
-                            <input type="hidden" name="staffID" id="deleteStaffID">
-                            <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">Cancel</button>
-                            <button type="submit" class="btn btn-danger px-4">Delete</button>
+                        <form id="deleteForm" action="${pageContext.request.contextPath}/admin-manage-account" method="post" class="d-inline">
+                            <input type="hidden" name="action" value="delete"/>
+                            <input type="hidden" name="staffID" id="deleteStaffID"/>
+                            <button type="submit" class="btn btn-danger px-4">
+                                <i class="fa-solid fa-trash me-1"></i> Delete
+                            </button>
                         </form>
                     </div>
                 </div>
             </div>
         </div>
 
+        <!-- Success Modal -->
+        <div class="modal fade" id="successModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content border-success">
+                    <div class="modal-header bg-success text-white">
+                        <h5 class="modal-title">
+                            <i class="fa-solid fa-circle-check me-2"></i>Success
+                        </h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body text-center fs-5">
+                        ${sessionScope.successMessage}
+                    </div>
+                    <div class="modal-footer justify-content-center">
+                        <button type="button" class="btn btn-success px-4" data-bs-dismiss="modal">OK</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
         <script>
             document.addEventListener('DOMContentLoaded', function () {
-                var modal = document.getElementById('confirmDeleteModal');
-                modal.addEventListener('show.bs.modal', function (event) {
+                // When Delete Modal opens – set staffID
+                var deleteModal = document.getElementById('confirmDeleteModal');
+                deleteModal.addEventListener('show.bs.modal', function (event) {
                     var button = event.relatedTarget;
                     var staffID = button.getAttribute('data-id');
-                    document.getElementById('deleteStaffID').value = staffID;
+                    document.getElementById('deleteStaffID').value = staffID || '';
                 });
             });
         </script>
+        <c:if test="${not empty sessionScope.successMessage}">
+            <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    var modal = new bootstrap.Modal(document.getElementById('successModal'));
+                    modal.show();
+                });
+            </script>
+            <c:remove var="successMessage" scope="session"/>
+        </c:if>
+
     </body>
 </html>
 

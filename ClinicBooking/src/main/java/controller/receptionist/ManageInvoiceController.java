@@ -139,12 +139,12 @@ public class ManageInvoiceController extends HttpServlet {
         boolean updated = invoiceDAO.updateInvoice(invoiceId, newStatus, paymentType);
 
         if (updated) {
-            request.setAttribute("message", "Invoice updated successfully!");
+            request.getSession().setAttribute("successMessage", "Invoice updated successfully!");
         } else {
-            request.setAttribute("message", "Failed to update invoice!");
+            request.getSession().setAttribute("successMessage", "Failed to update invoice!");
         }
 
-        showInvoiceList(request, response);
+        response.sendRedirect("manage-invoice");
     }
 
     /**
@@ -157,15 +157,13 @@ public class ManageInvoiceController extends HttpServlet {
         boolean result = invoiceDAO.cancelInvoice(invoiceId);
 
         if (result) {
-            request.setAttribute("message", "Invoice canceled successfully!");
+            request.getSession().setAttribute("successMessage", "Invoice canceled successfully!");
         } else {
-            request.setAttribute("message", "Failed to cancel invoice!");
+            request.getSession().setAttribute("successMessage", "Failed to cancel invoice!");
         }
 
-        showInvoiceList(request, response);
+        response.sendRedirect("manage-invoice");
     }
-
-
 
     @Override
     public String getServletInfo() {

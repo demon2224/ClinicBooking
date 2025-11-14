@@ -111,36 +111,13 @@
                 </form>
             </nav>
 
-            <!-- Success Modal -->
-            <div class="modal fade" id="successModal" tabindex="-1" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered">
-                    <div class="modal-content text-center border-0 shadow-lg">
-                        <div class="modal-body p-5">
-                            <i class="fa-solid fa-circle-check text-success fa-4x mb-3"></i>
-                            <h4 class="mb-3 text-success fw-bold">Success!</h4>
-                            <p class="text-secondary mb-4">${sessionScope.successMessage}</p>
-                            <button type="button" class="btn btn-success px-4" data-bs-dismiss="modal">OK</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <c:if test="${not empty sessionScope.successMessage}">
-                <script>
-                    document.addEventListener("DOMContentLoaded", function () {
-                        const modal = new bootstrap.Modal(document.getElementById("successModal"));
-                        modal.show();
-                    });
-                </script>
-                <c:remove var="successMessage" scope="session"/>
-            </c:if>
 
             <!-- Appointment List -->
             <div class="card mt-4">
                 <div class="card-header">
                     <i class="fa-solid fa-list me-2"></i>Appointment List
                     <a href="${pageContext.request.contextPath}/receptionist-manage-appointment?action=add"
-                       class="btn btn-light btn-sm float-end text-primary fw-bold">
+                       class="btn btn-success btn-sm float-end fw-bold text-white">
                         <i class="fa-solid fa-plus me-1"></i> Add
                     </a>
                 </div>
@@ -239,73 +216,116 @@
                 </div>
             </div>
         </div>
-
         <!-- Confirm Modal -->
         <div class="modal fade" id="confirmModal" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content border-primary">
-                    <div class="modal-header bg-primary text-white">
-                        <h5 class="modal-title"><i class="fa-solid fa-triangle-exclamation me-2"></i>Confirm Action</h5>
+                <div class="modal-content border-primary" id="confirmModalContent">
+                    <div class="modal-header bg-primary text-white" id="confirmModalHeader">
+                        <h5 class="modal-title">
+                            <i class="fa-solid fa-triangle-exclamation me-2"></i>
+                            <span id="confirmModalTitle">Confirm Action</span>
+                        </h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+
+                    <div class="modal-body text-center fs-5" id="confirmModalMessage">
+                        Are you sure you want to continue?
+                    </div>
+
+                    <div class="modal-footer justify-content-center">
+                        <form id="confirmForm" action="${pageContext.request.contextPath}/receptionist-manage-appointment" method="post">
+                            <input type="hidden" name="action" id="modalActionValue">
+                            <input type="hidden" name="appointmentId" id="modalAppointmentId">
+
+                            <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-primary px-4" id="modalSubmitBtn">
+                                Confirm
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Success Modal -->
+        <div class="modal fade" id="successModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content border-success">
+                    <div class="modal-header bg-success text-white">
+                        <h5 class="modal-title">
+                            <i class="fa-solid fa-circle-check me-2"></i>Success
+                        </h5>
                         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                     </div>
                     <div class="modal-body text-center fs-5">
-                        Are you sure you want to proceed with this action?
+                        ${sessionScope.successMessage}
                     </div>
                     <div class="modal-footer justify-content-center">
-                        <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">Cancel</button>
-                        <button type="button" class="btn btn-primary px-4" id="confirmActionBtn">Confirm</button>
+                        <button type="button" class="btn btn-success px-4" data-bs-dismiss="modal">OK</button>
                     </div>
                 </div>
             </div>
         </div>
 
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <c:if test="${not empty sessionScope.successMessage}">
+            <script>
+                document.addEventListener("DOMContentLoaded", function () {
+                    new bootstrap.Modal(document.getElementById("successModal")).show();
+                });
+            </script>
+            <c:remove var="successMessage" scope="session"/>
+        </c:if>
+
         <script>
-                    document.addEventListener('DOMContentLoaded', () => {
-                        const contextPath = '${pageContext.request.contextPath}';
-                        let actionType = '', appointmentId = '';
+            document.addEventListener("DOMContentLoaded", function () {
 
-                        document.querySelectorAll('.btn-approve').forEach(btn => {
-                            btn.addEventListener('click', function () {
-                                actionType = 'approve';
-                                appointmentId = this.getAttribute('data-id');
-                                document.querySelector('#confirmModal .modal-body').innerText = 'Approve this appointment?';
-                            });
-                        });
-
-                        document.querySelectorAll('.btn-cancel').forEach(btn => {
-                            btn.addEventListener('click', function () {
-                                actionType = 'cancel';
-                                appointmentId = this.getAttribute('data-id');
-                                document.querySelector('#confirmModal .modal-body').innerText = 'Cancel this appointment?';
-                            });
-                        });
-
-                        document.getElementById('confirmActionBtn').addEventListener('click', function () {
-                            if (!actionType || !appointmentId)
-                                return;
-
-                            const form = document.createElement('form');
-                            form.method = 'post';
-                            form.action = contextPath + '/receptionist-manage-appointment';
-                            form.style.display = 'none';
-
-                            const inputAction = document.createElement('input');
-                            inputAction.type = 'hidden';
-                            inputAction.name = 'action';
-                            inputAction.value = actionType;
-                            form.appendChild(inputAction);
-
-                            const inputId = document.createElement('input');
-                            inputId.type = 'hidden';
-                            inputId.name = 'appointmentId';
-                            inputId.value = appointmentId;
-                            form.appendChild(inputId);
-
-                            document.body.appendChild(form);
-                            form.submit();
-                        });
+                document.querySelectorAll(".btn-approve").forEach(btn => {
+                    btn.addEventListener("click", function () {
+                        setupModal("approve", this.getAttribute("data-id"));
                     });
+                });
+
+                document.querySelectorAll(".btn-cancel").forEach(btn => {
+                    btn.addEventListener("click", function () {
+                        setupModal("cancel", this.getAttribute("data-id"));
+                    });
+                });
+
+                function setupModal(action, id) {
+                    const header = document.getElementById("confirmModalHeader");
+                    const title = document.getElementById("confirmModalTitle");
+                    const msg = document.getElementById("confirmModalMessage");
+                    const submitBtn = document.getElementById("modalSubmitBtn");
+
+                    document.getElementById("modalActionValue").value = action;
+                    document.getElementById("modalAppointmentId").value = id;
+
+                    if (action === "approve") {
+                        header.classList.remove("bg-danger");
+                        header.classList.add("bg-primary");
+
+                        title.innerText = "Confirm Approve";
+                        msg.innerText = "Are you sure you want to approve this appointment?";
+                        submitBtn.innerHTML = `<i class="fa-solid fa-check me-1"></i> Approve`;
+                        submitBtn.classList.remove("btn-danger");
+                        submitBtn.classList.add("btn-primary");
+
+                    } else {
+                        header.classList.remove("bg-primary");
+                        header.classList.add("bg-danger");
+
+                        title.innerText = "Confirm Cancel";
+                        msg.innerText = "Are you sure you want to cancel this appointment?";
+                        submitBtn.innerHTML = `<i class="fa-solid fa-xmark me-1"></i> Cancel`;
+                        submitBtn.classList.remove("btn-primary");
+                        submitBtn.classList.add("btn-danger");
+                    }
+                }
+
+            });
         </script>
+
+
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     </body>
 </html>

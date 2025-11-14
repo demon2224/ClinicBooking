@@ -15,6 +15,7 @@
         <title>Invoice Detail</title>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
         <style>
             body {
                 background-color: #f8f9fa;
@@ -35,22 +36,44 @@
             .sidebar a:hover {
                 background-color: #00D0F1;
             }
+
             .main-content {
                 margin-left: 260px;
                 padding: 25px;
             }
-            .section-title {
-                margin-top: 30px;
-                color: #1B5A90;
+
+            /* === MATCH DOCTOR STYLE === */
+            .card {
+                border-radius: 10px;
+                box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+                margin-bottom: 30px;
+            }
+            .card-header {
+                background-color: #1B5A90 !important;
+                color: white !important;
                 font-weight: bold;
             }
+
             th {
+                background-color: #f1f3f5 !important;
                 width: 220px;
-                background-color: #f1f1f1;
+                font-weight: 600;
+            }
+            td {
+                background-color: #ffffff !important;
+            }
+            .table-bordered th, .table-bordered td {
+                border: 1px solid #dee2e6 !important;
+            }
+
+            .fw-bold {
+                font-weight: 700 !important;
             }
         </style>
     </head>
+
     <body>
+
         <!-- Sidebar -->
         <div class="sidebar">
             <h4 class="text-center mt-3 mb-4">CLINIC</h4>
@@ -61,103 +84,138 @@
 
         <!-- Main Content -->
         <div class="main-content">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h2><i class="fa-solid fa-file-invoice-dollar me-2"></i>Patient Invoice Detail</h2>
+
+            <!-- Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="fw-bold text-primary">
+                    <i class="fa-solid fa-file-invoice-dollar me-2"></i>Patient Invoice Detail
+                </h2>
             </div>
 
             <!-- Invoice Information -->
-            <h3 class="section-title">Invoice Information</h3>
-            <table class="table table-bordered">
-                <tr>
-                    <th>Status</th>
-                    <td>
-                        <c:choose>
-                            <c:when test="${invoiceDetail.invoiceStatus eq 'Paid'}">
-                                <span class="badge bg-success">Paid</span>
-                            </c:when>
-                            <c:when test="${invoiceDetail.invoiceStatus eq 'Pending'}">
-                                <span class="badge bg-warning text-dark">Pending</span>
-                            </c:when>
-                            <c:when test="${invoiceDetail.invoiceStatus eq 'Canceled'}">
-                                <span class="badge bg-danger">Canceled</span>
-                            </c:when>
-                        </c:choose>
-                    </td>
-                </tr>
-                <tr>
-                    <th>Date Created</th>
-                    <td><fmt:formatDate value="${invoiceDetail.dateCreate}" pattern="dd/MM/yyyy HH:mm" /></td>
-                </tr>
-                <tr>
-                    <th>Date Paid</th>
-                    <td>
-                        <c:choose>
-                            <c:when test="${not empty invoiceDetail.datePay}">
-                                <fmt:formatDate value="${invoiceDetail.datePay}" pattern="dd/MM/yyyy HH:mm" />
-                            </c:when>
-                            <c:otherwise>
-                                <span class="text-muted">Not yet paid</span>
-                            </c:otherwise>
-                        </c:choose>
-                    </td>
-                </tr>
-                <tr>
-                    <th>Payment Method</th>
-                    <td>${invoiceDetail.paymentType}</td>
-                </tr>
-                <tr>
-                    <th>Total Fee</th>
-                    <td><fmt:formatNumber value="${invoiceDetail.totalFee}" type="currency" currencySymbol="$"/></td>
-                </tr>
-            </table>
+            <div class="card">
+                <div class="card-header">
+                    <i class="fa-solid fa-receipt me-2"></i>Invoice Information
+                </div>
+                <div class="card-body p-4">
+                    <table class="table table-bordered mb-0">
+                        <tr>
+                            <th>Status</th>
+                            <td>
+                                <c:choose>
+                                    <c:when test="${invoiceDetail.invoiceStatus eq 'Paid'}">
+                                        <span class="badge bg-success">Paid</span>
+                                    </c:when>
+                                    <c:when test="${invoiceDetail.invoiceStatus eq 'Pending'}">
+                                        <span class="badge bg-warning text-dark">Pending</span>
+                                    </c:when>
+                                    <c:when test="${invoiceDetail.invoiceStatus eq 'Canceled'}">
+                                        <span class="badge bg-danger">Canceled</span>
+                                    </c:when>
+                                </c:choose>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <th>Date Created</th>
+                            <td><fmt:formatDate value="${invoiceDetail.dateCreate}" pattern="dd/MM/yyyy HH:mm"/></td>
+                        </tr>
+
+                        <tr>
+                            <th>Date Paid</th>
+                            <td>
+                                <c:choose>
+                                    <c:when test="${not empty invoiceDetail.datePay}">
+                                        <fmt:formatDate value="${invoiceDetail.datePay}" pattern="dd/MM/yyyy HH:mm"/>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <span class="text-muted">Not yet paid</span>
+                                    </c:otherwise>
+                                </c:choose>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <th>Payment Method</th>
+                            <td>${invoiceDetail.paymentType}</td>
+                        </tr>
+
+                        <tr>
+                            <th>Total Fee</th>
+                            <td><fmt:formatNumber value="${invoiceDetail.totalFee}" type="currency" currencySymbol="$"/></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
 
             <!-- Patient Information -->
-            <h3 class="section-title">Patient Information</h3>
-            <table class="table table-bordered">
-                <tr>
-                    <th>Patient Name</th>
-                    <td>
-                        ${invoiceDetail.medicalRecordID.appointmentID.patientID.firstName}
-                        ${invoiceDetail.medicalRecordID.appointmentID.patientID.lastName}
-                    </td>
-                </tr>
-                <tr><th>Symptoms</th><td>${invoiceDetail.medicalRecordID.symptoms}</td></tr>
-                <tr><th>Diagnosis</th><td>${invoiceDetail.medicalRecordID.diagnosis}</td></tr>
-                <tr><th>Medical Note</th><td>${invoiceDetail.medicalRecordID.note}</td></tr>
-            </table>
+            <div class="card">
+                <div class="card-header">
+                    <i class="fa-solid fa-user me-2"></i>Patient Information
+                </div>
+                <div class="card-body p-4">
+                    <table class="table table-bordered mb-0">
+                        <tr>
+                            <th>Patient Name</th>
+                            <td>${invoiceDetail.medicalRecordID.appointmentID.patientID.firstName}
+                                ${invoiceDetail.medicalRecordID.appointmentID.patientID.lastName}</td>
+                        </tr>
+                        <tr><th>Symptoms</th><td>${invoiceDetail.medicalRecordID.symptoms}</td></tr>
+                        <tr><th>Diagnosis</th><td>${invoiceDetail.medicalRecordID.diagnosis}</td></tr>
+                        <tr><th>Medical Note</th><td>${invoiceDetail.medicalRecordID.note}</td></tr>
+                    </table>
+                </div>
+            </div>
 
             <!-- Doctor Information -->
-            <h3 class="section-title">Doctor Information</h3>
-            <table class="table table-bordered">
-                <tr>
-                    <th>Doctor Name</th>
-                    <td>
-                        ${invoiceDetail.medicalRecordID.appointmentID.doctorID.staffID.firstName}
-                        ${invoiceDetail.medicalRecordID.appointmentID.doctorID.staffID.lastName}
-                    </td>
-                </tr>
-                <tr><th>Specialty</th><td>${invoiceDetail.specialtyID.specialtyName}</td></tr>
-                <tr><th>Consultation Fee</th><td><fmt:formatNumber value="${invoiceDetail.specialtyID.price}" type="currency" currencySymbol="$"/></td>
-
-            </table>
+            <div class="card">
+                <div class="card-header">
+                    <i class="fa-solid fa-user-doctor me-2"></i>Doctor Information
+                </div>
+                <div class="card-body p-4">
+                    <table class="table table-bordered mb-0">
+                        <tr>
+                            <th>Doctor Name</th>
+                            <td>${invoiceDetail.medicalRecordID.appointmentID.doctorID.staffID.firstName}
+                                ${invoiceDetail.medicalRecordID.appointmentID.doctorID.staffID.lastName}</td>
+                        </tr>
+                        <tr>
+                            <th>Specialty</th>
+                            <td>${invoiceDetail.specialtyID.specialtyName}</td>
+                        </tr>
+                        <tr>
+                            <th>Consultation Fee</th>
+                            <td><fmt:formatNumber value="${invoiceDetail.specialtyID.price}" type="currency" currencySymbol="$"/></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
 
             <!-- Prescription Information -->
-            <h3 class="section-title">Prescription Information</h3>
-            <table class="table table-bordered">
-                <tr>
-                    <th>Prescription Note</th>
-                    <td>
-                        <c:choose>
-                            <c:when test="${not empty invoiceDetail.prescriptionID.note}">
-                                ${invoiceDetail.prescriptionID.note}
-                            </c:when>
-                            <c:otherwise>
-                                <span class="text-muted">No note available</span>
-                            </c:otherwise>
-                        </c:choose>
-                    </td>
-                </tr>
-            </table>
+            <div class="card">
+                <div class="card-header">
+                    <i class="fa-solid fa-prescription me-2"></i>Prescription Information
+                </div>
+                <div class="card-body p-4">
+                    <table class="table table-bordered mb-0">
+                        <tr>
+                            <th>Prescription Note</th>
+                            <td>
+                                <c:choose>
+                                    <c:when test="${not empty invoiceDetail.prescriptionID.note}">
+                                        ${invoiceDetail.prescriptionID.note}
+                                    </c:when>
+                                    <c:otherwise>
+                                        <span class="text-muted">No note available</span>
+                                    </c:otherwise>
+                                </c:choose>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
         </div>
+
     </body>
 </html>

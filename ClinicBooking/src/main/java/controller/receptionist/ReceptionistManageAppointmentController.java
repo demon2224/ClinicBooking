@@ -17,7 +17,7 @@ import java.util.List;
 import model.AppointmentDTO;
 import model.DoctorDTO;
 import model.PatientDTO;
-import model.SpecialtyDTO;
+import validate.AppointmentValidate;
 
 /**
  *
@@ -36,14 +36,6 @@ public class ReceptionistManageAppointmentController extends HttpServlet {
         patientDAO = new PatientDAO();
     }
 
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -52,7 +44,7 @@ public class ReceptionistManageAppointmentController extends HttpServlet {
         String searchQuery = request.getParameter("searchQuery");
 
         try {
-            if (null == action) {
+            if (action == null) {
                 handleViewAppointmentList(request, response, searchQuery);
             } else {
                 switch (action) {
@@ -79,14 +71,6 @@ public class ReceptionistManageAppointmentController extends HttpServlet {
         }
     }
 
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -104,7 +88,6 @@ public class ReceptionistManageAppointmentController extends HttpServlet {
                 case "addAppointment":
                     handleAddAppointment(request, response);
                     break;
-
                 default:
                     response.sendRedirect(request.getContextPath() + "/receptionist-manage-appointment");
             }
@@ -157,6 +140,98 @@ public class ReceptionistManageAppointmentController extends HttpServlet {
         request.getRequestDispatcher("/WEB-INF/receptionist/AddAppointment.jsp").forward(request, response);
     }
 
+    private void handleAddAppointment(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        String existingPatientId = request.getParameter("existingPatientId");
+        String fullName = request.getParameter("patientName");
+        String phone = request.getParameter("phone");
+        String genderStr = request.getParameter("gender");
+        boolean gender = genderStr != null ? Boolean.parseBoolean(genderStr) : true;
+        String doctorIdStr = request.getParameter("doctorId");
+        String dateBeginStr = request.getParameter("dateBegin");
+        String note = request.getParameter("note");
+
+        clearAppointmentErrors(request);
+        boolean isValid = true;
+
+        if (AppointmentValidate.isEmpty(existingPatientId)) {
+
+            // Validate Full Name
+            if (AppointmentValidate.isEmpty(fullName)) {
+                request.getSession().setAttribute("patientNameErrorMsg", "Full name cannot be empty.");
+                isValid = false;
+            } else if (!AppointmentValidate.isValidName(fullName)) {
+                request.getSession().setAttribute("patientNameErrorMsg", "Full name must contain only English letters and spaces.");
+                isValid = false;
+            }
+
+            // Validate Phone
+            if (AppointmentValidate.isEmpty(phone)) {
+                request.getSession().setAttribute("phoneErrorMsg", "Phone number cannot be empty.");
+                isValid = false;
+            } else if (!AppointmentValidate.isValidPhone(phone)) {
+                request.getSession().setAttribute("phoneErrorMsg", "Phone must start with 0 and contain 10–11 digits.");
+                isValid = false;
+            }
+
+        } else {
+            fullName = null;
+            phone = null;
+        }
+
+        // Validate Doctor
+        if (AppointmentValidate.isEmpty(doctorIdStr)) {
+            request.getSession().setAttribute("doctorErrorMsg", "Please select a doctor.");
+            isValid = false;
+        }
+
+        // Validate Date
+        if (AppointmentValidate.isEmpty(dateBeginStr)) {
+            request.getSession().setAttribute("dateErrorMsg", "Please select a date and time.");
+            isValid = false;
+        }
+
+        // Validate Note
+        if (!AppointmentValidate.isValidNote(note)) {
+            request.getSession().setAttribute("noteErrorMsg", "Note cannot exceed 500 characters.");
+            isValid = false;
+        }
+
+        if (!isValid) {
+            response.sendRedirect(request.getContextPath() + "/receptionist-manage-appointment?action=add");
+            return;
+        }
+
+        try {
+            LocalDateTime dateBegin = LocalDateTime.parse(dateBeginStr);
+            int doctorId = Integer.parseInt(doctorIdStr);
+
+            boolean success = appointmentDAO.addAppointment(existingPatientId, fullName, phone, gender, doctorId, dateBegin, note);
+
+            if (success) {
+                request.getSession().setAttribute("successMessage", "Appointment created successfully!");
+            } else {
+                request.getSession().setAttribute("errorMessage", "Failed to create appointment.");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            request.getSession().setAttribute("appointmentCreateErrorMsg", "Error: " + e.getMessage());
+        }
+
+        response.sendRedirect(request.getContextPath() + "/receptionist-manage-appointment");
+    }
+
+    private void clearAppointmentErrors(HttpServletRequest request) {
+        String[] keys = {
+            "patientNameErrorMsg", "phoneErrorMsg", "doctorErrorMsg", "dateErrorMsg",
+            "noteErrorMsg", "successMessage", "errorMessage"
+        };
+        for (String key : keys) {
+            request.getSession().removeAttribute(key);
+        }
+    }
+
     private void handleGetDoctorsBySpecialty(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
         int specialtyID = Integer.parseInt(request.getParameter("specialtyID"));
@@ -179,88 +254,6 @@ public class ReceptionistManageAppointmentController extends HttpServlet {
         }
         json.append("]");
         response.getWriter().write(json.toString());
-    }
-
-    private void handleCancelAppointment(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        int appointmentId = Integer.parseInt(request.getParameter("appointmentId"));
-        boolean success = appointmentDAO.cancelAppointment(appointmentId);
-
-        if (success) {
-            request.getSession().setAttribute("successMessage", "Appointment canceled successfully!");
-        } else {
-            request.getSession().setAttribute("errorMessage", "Failed to cancel appointment!");
-        }
-        response.sendRedirect(request.getContextPath() + "/receptionist-manage-appointment");
-    }
-
-    private void handleApproveAppointment(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        int appointmentId = Integer.parseInt(request.getParameter("appointmentId"));
-        boolean success = appointmentDAO.updateStatusAppointment(appointmentId);
-
-        if (success) {
-            request.getSession().setAttribute("successMessage", "Appointment approved successfully!");
-        } else {
-            request.getSession().setAttribute("errorMessage", "Failed to approve appointment!");
-        }
-        response.sendRedirect(request.getContextPath() + "/receptionist-manage-appointment");
-    }
-
-    private void handleAddAppointment(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-
-        String existingPatientId = request.getParameter("existingPatientId");
-        String fullName = request.getParameter("patientName");
-        String phone = request.getParameter("phone");
-        String genderStr = request.getParameter("gender");
-        boolean gender = genderStr != null ? Boolean.parseBoolean(genderStr) : true;
-        String doctorIdStr = request.getParameter("doctorId");
-        String dateBeginStr = request.getParameter("dateBegin");
-        String note = request.getParameter("note");
-
-        if (doctorIdStr == null || doctorIdStr.isEmpty()) {
-            request.setAttribute("error", "Please select a doctor!");
-            request.getRequestDispatcher("/WEB-INF/receptionist/AddAppointment.jsp").forward(request, response);
-            return;
-        }
-        int doctorId = Integer.parseInt(doctorIdStr);
-
-        if (dateBeginStr == null || dateBeginStr.isEmpty()) {
-            request.setAttribute("error", "Please select a date and time for the appointment!");
-            request.getRequestDispatcher("/WEB-INF/receptionist/AddAppointment.jsp").forward(request, response);
-            return;
-        }
-
-        LocalDateTime dateBegin;
-        try {
-            dateBegin = LocalDateTime.parse(dateBeginStr);
-        } catch (Exception e) {
-            request.setAttribute("error", "Invalid date/time format!");
-            request.getRequestDispatcher("/WEB-INF/receptionist/AddAppointment.jsp").forward(request, response);
-            return;
-        }
-
-        if ((existingPatientId == null || existingPatientId.isEmpty())
-                && (fullName == null || fullName.trim().isEmpty() || phone == null || phone.trim().isEmpty())) {
-            request.setAttribute("error", "Please select an existing patient or enter full name and phone for new patient.");
-            request.getRequestDispatcher("/WEB-INF/receptionist/AddAppointment.jsp").forward(request, response);
-            return;
-        }
-
-        try {
-            boolean success = appointmentDAO.addAppointment(existingPatientId, fullName, phone, gender, doctorId, dateBegin, note);
-            if (success) {
-                request.getSession().setAttribute("successMessage", "Appointment added successfully!");
-            } else {
-                request.getSession().setAttribute("errorMessage", "Failed to add appointment!");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            request.getSession().setAttribute("errorMessage", "Error adding appointment: " + e.getMessage());
-        }
-
-        response.sendRedirect(request.getContextPath() + "/receptionist-manage-appointment");
     }
 
     private void handleSearchPatients(HttpServletRequest request, HttpServletResponse response)
@@ -291,14 +284,34 @@ public class ReceptionistManageAppointmentController extends HttpServlet {
         response.getWriter().write(json.toString());
     }
 
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
+    private void handleCancelAppointment(HttpServletRequest request, HttpServletResponse response)
+            throws IOException {
+        int appointmentId = Integer.parseInt(request.getParameter("appointmentId"));
+        boolean success = appointmentDAO.cancelAppointment(appointmentId);
+
+        if (success) {
+            request.getSession().setAttribute("successMessage", "Appointment canceled successfully!");
+        } else {
+            request.getSession().setAttribute("errorMessage", "Failed to cancel appointment!");
+        }
+        response.sendRedirect(request.getContextPath() + "/receptionist-manage-appointment");
+    }
+
+    private void handleApproveAppointment(HttpServletRequest request, HttpServletResponse response)
+            throws IOException {
+        int appointmentId = Integer.parseInt(request.getParameter("appointmentId"));
+        boolean success = appointmentDAO.updateStatusAppointment(appointmentId);
+
+        if (success) {
+            request.getSession().setAttribute("successMessage", "Appointment approved successfully!");
+        } else {
+            request.getSession().setAttribute("errorMessage", "Failed to approve appointment!");
+        }
+        response.sendRedirect(request.getContextPath() + "/receptionist-manage-appointment");
+    }
+
     @Override
     public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
-
+        return "Receptionist appointment management controller with validation.";
+    }
 }
