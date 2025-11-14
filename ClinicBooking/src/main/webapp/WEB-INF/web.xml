@@ -31,6 +31,13 @@
     <filter-mapping>
         <filter-name>PatientFilter</filter-name>
         <url-pattern>/profile</url-pattern>
+        <url-pattern>/manage-my-appoinments</url-pattern>
+        <url-pattern>/manage-my-feedback</url-pattern>
+        <url-pattern>/manage-my-medical-records</url-pattern>
+        <url-pattern>/manage-my-prescriptions</url-pattern>
+        <url-pattern>/manage-my-invoices</url-pattern>
+        <url-pattern>/payment</url-pattern>
+
     </filter-mapping>
     <filter-mapping>
         <filter-name>PatientLoginFilter</filter-name>
@@ -98,7 +105,11 @@
     </servlet>
     <servlet>
         <servlet-name>ProfileController</servlet-name>
-        <servlet-class>controller.ProfileController</servlet-class>
+        <servlet-class>controller.patient.ProfileController</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>ManageMyAppiontmentController</servlet-name>
+        <servlet-class>controller.patient.ManageMyAppiontmentController</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>ManageMyPrescriptionsController</servlet-name>
@@ -262,10 +273,6 @@
         <url-pattern>/receptionist-dashboard</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>ManageMyAppointmentController</servlet-name>
-        <url-pattern>/manage-my-appointments</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
         <servlet-name>ManageMyMedicalRecordController</servlet-name>
         <url-pattern>/manage-my-medical-records</url-pattern>
     </servlet-mapping>
@@ -322,6 +329,10 @@
     <servlet-mapping>
         <servlet-name>ManageMyInvoiceController</servlet-name>
         <url-pattern>/manage-my-invoices</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ManageMyAppointmentController</servlet-name>
+        <url-pattern>/manage-my-appointments</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>RegisterController</servlet-name>
