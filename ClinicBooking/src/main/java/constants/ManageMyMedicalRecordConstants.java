@@ -1,10 +1,11 @@
 /*
- * Constants for ManageMyMedicalRecordController
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package constants;
 
 /**
- * Constants for ManageMyMedicalRecordController - Contains only URL patterns and paths
+ * Constants for ManageMyMedicalRecordController
  *
  * @author Le Anh Tuan - CE180905
  */
@@ -14,6 +15,5 @@ public class ManageMyMedicalRecordConstants {
     public static final String BASE_URL = "/manage-my-medical-records";
     public static final String DETAIL_PAGE_JSP = "/WEB-INF/patient/MyMedicalRecordDetail.jsp";
     public static final String LIST_PAGE_JSP = "/WEB-INF/patient/ManageMyMedicalRecord.jsp";
-    public static final String LOGIN_REDIRECT = "/patient-login";
-    
+     
 }
