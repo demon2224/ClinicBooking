@@ -640,8 +640,7 @@ public class InvoiceDAO extends DBContext {
     }
 
     public double sumRevenueToday() {
-        String sql
-                = "SELECT ISNULL(SUM(sub.Total), 0) AS revenue "
+        String sql = "SELECT ISNULL(SUM(sub.Total), 0) AS revenue "
                 + "FROM ( "
                 + "    SELECT DISTINCT i.InvoiceID, "
                 + "        ISNULL(s.Price, 0) + ISNULL(SUM(pi.Dosage * m.Price), 0) AS Total "
@@ -656,8 +655,7 @@ public class InvoiceDAO extends DBContext {
                 + "    WHERE i.InvoiceStatus = 'Paid' "
                 + "      AND i.DatePay >= CAST(GETDATE() AS DATE) "
                 + "      AND i.DatePay < DATEADD(DAY, 1, CAST(GETDATE() AS DATE)) "
-                + "    GROUP BY i.InvoiceID, s.Price "
-                + ") sub;";
+                + "    GROUP BY i.InvoiceID, s.Price) sub;";
         try ( ResultSet rs = executeSelectQuery(sql)) {
             if (rs != null && rs.next()) {
                 return rs.getDouble("revenue");
@@ -713,6 +711,98 @@ public class InvoiceDAO extends DBContext {
             closeResources(rs);
         }
         return countInvStatus;
+    }
+
+    public List<DoctorDTO> getTop5DoctorByRevenue() {
+        List<DoctorDTO> list = new ArrayList<>();
+
+        String sql = "SELECT TOP 5 "
+                + " d.DoctorID, "
+                + " st.FirstName AS DoctorFirstName, "
+                + " st.LastName AS DoctorLastName, "
+                + " sp.SpecialtyName, "
+                + " SUM(ISNULL(sp.Price,0) + ISNULL(pi.TotalMedicinePrice,0)) AS TotalRevenue "
+                + "FROM Invoice i "
+                + "JOIN MedicalRecord mr ON i.MedicalRecordID = mr.MedicalRecordID "
+                + "JOIN Appointment a ON mr.AppointmentID = a.AppointmentID "
+                + "JOIN Doctor d ON a.DoctorID = d.DoctorID "
+                + "JOIN Staff st ON d.StaffID = st.StaffID "
+                + "LEFT JOIN Specialty sp ON d.SpecialtyID = sp.SpecialtyID "
+                + "OUTER APPLY ( "
+                + "    SELECT SUM(pii.Dosage * m.Price) AS TotalMedicinePrice "
+                + "    FROM PrescriptionItem pii "
+                + "    JOIN Medicine m ON pii.MedicineID = m.MedicineID "
+                + "    WHERE pii.PrescriptionID = i.PrescriptionID "
+                + ") pi "
+                + "WHERE i.InvoiceStatus = 'Paid' "
+                + "GROUP BY d.DoctorID, st.FirstName, st.LastName, sp.SpecialtyName "
+                + "ORDER BY TotalRevenue DESC";
+
+        ResultSet rs = null;
+
+        try {
+            rs = executeSelectQuery(sql);
+
+            while (rs.next()) {
+
+                StaffDTO staff = new StaffDTO();
+                staff.setFirstName(rs.getString("DoctorFirstName"));
+                staff.setLastName(rs.getString("DoctorLastName"));
+
+                SpecialtyDTO specialty = new SpecialtyDTO();
+                specialty.setSpecialtyName(rs.getString("SpecialtyName"));
+
+                DoctorDTO doctor = new DoctorDTO();
+                doctor.setDoctorID(rs.getInt("DoctorID"));
+                doctor.setStaffID(staff);
+                doctor.setSpecialtyID(specialty);
+                doctor.setTotalRevenue(rs.getDouble("TotalRevenue"));
+
+                list.add(doctor);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            closeResources(rs);
+        }
+
+        return list;
+    }
+
+    public List<SpecialtyDTO> getTop5BookedSpecialties() {
+        List<SpecialtyDTO> list = new ArrayList<>();
+
+        String sql
+                = "SELECT TOP 5 "
+                + "    s.SpecialtyID, "
+                + "    s.SpecialtyName, "
+                + "    COUNT(a.AppointmentID) AS TotalBookings "
+                + "FROM Appointment a "
+                + "JOIN Doctor d ON a.DoctorID = d.DoctorID "
+                + "JOIN Specialty s ON d.SpecialtyID = s.SpecialtyID "
+                + "WHERE a.AppointmentStatus IN ('Approved','Completed') "
+                + "GROUP BY s.SpecialtyID, s.SpecialtyName "
+                + "ORDER BY TotalBookings DESC";
+
+        ResultSet rs = null;
+
+        try {
+            rs = executeSelectQuery(sql);
+            while (rs.next()) {
+                SpecialtyDTO sp = new SpecialtyDTO();
+                sp.setSpecialtyID(rs.getInt("SpecialtyID"));
+                sp.setSpecialtyName(rs.getString("SpecialtyName"));
+                sp.setTotalBookings(rs.getInt("TotalBookings"));
+                list.add(sp);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            closeResources(rs);
+        }
+
+        return list;
     }
 
 }

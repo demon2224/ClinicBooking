@@ -4,15 +4,16 @@
  */
 package controller.receptionist;
 
-
 import dao.AppointmentDAO;
+import dao.InvoiceDAO;
 import java.io.IOException;
-import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
+import model.DoctorDTO;
+import model.SpecialtyDTO;
 
 /**
  *
@@ -20,30 +21,13 @@ import java.util.List;
  */
 public class ReceptionistDashboardController extends HttpServlet {
 
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        try ( PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet ReceptionistDashboardController</title>");
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet ReceptionistDashboardController at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
-        }
+    private InvoiceDAO invoiceDAO;
+    private AppointmentDAO appointmentDAO;
+
+    @Override
+    public void init() throws ServletException {
+        invoiceDAO = new InvoiceDAO();
+        appointmentDAO = new AppointmentDAO();
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
@@ -59,33 +43,39 @@ public class ReceptionistDashboardController extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-            request.getRequestDispatcher("/WEB-INF/receptionist/ReceptionistDashboard.jsp")
-                    .forward(request, response);
 
+
+        // ===== Stats =====
+        int todayAppointments = appointmentDAO.countAppointmentsToday();
+        int completedAppointments = appointmentDAO.countCompletedAppointmentsToday();
+        double todayRevenue = invoiceDAO.sumRevenueToday();
+
+        // ===== Top 5 Doctors by Revenue =====
+        List<DoctorDTO> topDoctors = invoiceDAO.getTop5DoctorByRevenue();
+
+        // ===== Top 5 Specialties Booked =====
+        List<SpecialtyDTO> topSpecialties = invoiceDAO.getTop5BookedSpecialties();
+
+        // ===== Set Attributes =====
+        request.setAttribute("todayAppointments", todayAppointments);
+        request.setAttribute("completedAppointments", completedAppointments);
+        request.setAttribute("todayRevenue", todayRevenue);
+
+        request.setAttribute("topDoctors", topDoctors);
+        request.setAttribute("topSpecialties", topSpecialties);
+
+        // ===== Forward to JSP =====
+        request.getRequestDispatcher("/WEB-INF/receptionist/ReceptionistDashboard.jsp")
+                .forward(request, response);
     }
 
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
     }
 
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
     @Override
     public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
-
+        return "Receptionist Dashboard Controller";
+    }
 }

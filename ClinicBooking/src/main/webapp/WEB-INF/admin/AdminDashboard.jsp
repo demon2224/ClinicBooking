@@ -1,9 +1,8 @@
 <%--
     Document   : AdminDashboard
-    Created on : Nov 6, 2025, 7:07:36 PM
+    Created on : Nov 6, 2025
     Author     : Ngo Quoc Hung - CE191184
 --%>
-
 
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
@@ -13,140 +12,185 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8">
-        <title>Admin Manage Account</title>
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+        <title>Admin Dashboard</title>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+        <link href="${pageContext.request.contextPath}/assests/css/main.css" rel="stylesheet" type="text/css"/>
+
         <style>
             body {
                 background-color: #f8f9fa;
+                margin: 0;
+                padding: 0;
             }
+
+            /* ===== Sidebar (giữ nguyên của Statistics) ===== */
             .sidebar {
                 width: 240px;
                 height: 100vh;
                 background-color: #1B5A90;
                 color: white;
                 position: fixed;
+                top: 0;
+                left: 0;
+                z-index: 1000;
             }
+
+            .sidebar h4 {
+                text-align: center;
+                margin-top: 1rem;
+                margin-bottom: 1.5rem;
+                font-size: 1.4rem;
+                font-weight: 500;
+            }
+
             .sidebar a {
                 display: block;
                 color: white;
                 text-decoration: none;
                 padding: 12px 20px;
+                transition: 0.3s ease;
             }
+
+            .sidebar a i {
+                margin-right: 8px;
+            }
+
             .sidebar a:hover {
                 background-color: #00D0F1;
             }
-            .main-content {
-                margin-left: 260px;
-                padding: 25px;
+
+            /* ===== Main Content giống Statistics ===== */
+            .clinic-main-content {
+                margin-left: 240px;
+                padding-bottom: 50px;
             }
-            .card {
-                border-radius: 10px;
+
+            /* ===== Navbar giống Statistics ===== */
+            .clinic-navbar {
+                background-color: #ffffff;
+                padding: 15px 20px;
+                box-shadow: 0px 2px 5px rgba(0,0,0,0.1);
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
             }
-            .table img {
-                border-radius: 50%;
-                width: 40px;
-                height: 40px;
+
+            .clinic-navbar-title {
+                font-size: 1.5rem;
+                font-weight: 600;
+                color: #1B5A90;
             }
-            .status-toggle {
-                width: 40px;
-                height: 20px;
+
+            .clinic-logout-btn {
+                color: #dc3545;
+                font-weight: 500;
+                text-decoration: none;
             }
-            .navbar {
-                background: white;
-                border-bottom: 1px solid #dee2e6;
+
+            /* ===== Stats Row giống Statistics ===== */
+            .stats-row {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 22px;
+                padding: 25px 30px;
             }
-            #Logout {
-                color: red;
-                border-color: red;
+
+            .stat-card {
+                background: #ffffff;
+                border-radius: 12px;
+                padding: 20px 25px;
+                box-shadow: 0px 3px 10px rgba(0,0,0,0.08);
+                transition: 0.25s ease;
             }
-            #Logout:hover {
-                background-color: red;
-                color: white;
+
+            .stat-card:hover {
+                transform: translateY(-4px);
             }
-            /* === Role badge colors === */
-            .badge-doctor {
-                background-color: #007bff;
+
+            .stat-card-content {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
             }
-            .badge-pharmacist {
-                background-color: #20c997;
+
+            .stat-card-content h6 {
+                font-size: 0.9rem;
+                margin: 0;
+                color: #6c757d;
+                font-weight: 500;
             }
-            .badge-admin {
-                background-color: #ffc107;
-                color: black;
+
+            .stat-card-content h3 {
+                margin: 5px 0 0;
+                font-size: 2rem;
+                font-weight: 700;
+                color: #1B5A90;
             }
-            .badge-receptionist {
-                background-color: #6f42c1;
+
+            .stat-icon {
+                font-size: 2.5rem;
+                color: #1B5A90;
+                opacity: 0.9;
             }
         </style>
     </head>
     <body>
-        <!-- Sidebar -->
+
         <%@include file="../includes/AdminDashboardSidebar.jsp" %>
 
-        <!-- Main content -->
-        <div class="main-content">
-            <nav class="navbar navbar-light">
-                <div class="container-fluid">
-                    <form class="d-flex w-50" method="get" action="manage-invoice">
-                        <input class="form-control me-2" type="search" name="searchQuery" placeholder="Search here"
-                               value="${param.searchQuery}">
-                        <button type="submit" class="btn btn-outline-primary" id="searchBtn">
-                            <i class="fa-solid fa-magnifying-glass"></i>
-                        </button>
-                    </form>
-                    <div>
-                        <a href="${pageContext.request.contextPath}/staff-logout"
-                           class="btn btn-outline-danger d-flex align-items-center" id="Logout">
-                            <i class="fa-solid fa-right-from-bracket me-2"></i>Logout
-                        </a>
-                    </div>
-                </div>
-            </nav>
+        <div class="clinic-main-content">
 
-            <!-- Dashboard statistic cards -->
-            <div class="container mt-4">
-                <div class="row g-4">
-                    <!-- All Staff -->
-                    <div class="col-md-4">
-                        <div class="card shadow-sm border-0 text-center">
-                            <div class="card-body">
-                                <i class="fa-solid fa-users fa-2x text-primary mb-2"></i>
-                                <h5 class="card-title">All Staff Accounts</h5>
-                                <h2 class="fw-bold text-dark">${totalAccounts}</h2>
-                                <p class="text-muted mb-0">Total registered staff</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Active Accounts -->
-                    <div class="col-md-4">
-                        <div class="card shadow-sm border-0 text-center">
-                            <div class="card-body">
-                                <i class="fa-solid fa-user-check fa-2x text-success mb-2"></i>
-                                <h5 class="card-title">Active Accounts</h5>
-                                <h2 class="fw-bold text-success">${activeAccounts}</h2>
-                                <p class="text-muted mb-0">Currently available</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Inactive Accounts -->
-                    <div class="col-md-4">
-                        <div class="card shadow-sm border-0 text-center">
-                            <div class="card-body">
-                                <i class="fa-solid fa-user-slash fa-2x text-danger mb-2"></i>
-                                <h5 class="card-title">Inactive Accounts</h5>
-                                <h2 class="fw-bold text-danger">${inactiveAccounts}</h2>
-                                <p class="text-muted mb-0">Hidden or disabled</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <!-- NAVBAR -->
+            <div class="clinic-navbar">
+                <h3 class="clinic-navbar-title">
+                    <i class="fa-solid fa-clipboard me-2"></i>
+                    Admin Dashboard
+                </h3>
+                <a href="${pageContext.request.contextPath}/staff-logout" class="clinic-logout-btn">
+                    <i class="fa-solid fa-right-from-bracket"></i> Logout
+                </a>
             </div>
+
+            <!-- STATS ROW -->
+            <div class="stats-row">
+
+                <!-- Total Staff Accounts -->
+                <div class="stat-card">
+                    <div class="stat-card-content">
+                        <div>
+                            <h6>Total Staff Accounts</h6>
+                            <h3>${totalAccounts}</h3>
+                        </div>
+                        <i class="fa-solid fa-users stat-icon"></i>
+                    </div>
+                </div>
+
+                <!-- Active Accounts -->
+                <div class="stat-card">
+                    <div class="stat-card-content">
+                        <div>
+                            <h6>Active Accounts</h6>
+                            <h3>${activeAccounts}</h3>
+                        </div>
+                        <i class="fa-solid fa-user-check stat-icon"></i>
+                    </div>
+                </div>
+
+                <!-- Inactive Accounts -->
+                <div class="stat-card">
+                    <div class="stat-card-content">
+                        <div>
+                            <h6>Inactive Accounts</h6>
+                            <h3>${inactiveAccounts}</h3>
+                        </div>
+                        <i class="fa-solid fa-user-slash stat-icon"></i>
+                    </div>
+                </div>
+
+
+            </div>
+
         </div>
 
     </body>
 </html>
-
-

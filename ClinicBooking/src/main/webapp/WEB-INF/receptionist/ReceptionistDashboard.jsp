@@ -14,59 +14,132 @@
     <head>
         <meta charset="UTF-8">
         <title>Receptionist Dashboard</title>
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+        <link href="${pageContext.request.contextPath}/assests/css/main.css" rel="stylesheet" type="text/css"/>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+
+
         <style>
             body {
                 background-color: #f8f9fa;
+                margin: 0;
+                padding: 0;
             }
+
+            /* ===== Sidebar (giống 100% Statistics) ===== */
             .sidebar {
                 width: 240px;
                 height: 100vh;
                 background-color: #1B5A90;
                 color: white;
                 position: fixed;
+                top: 0;
+                left: 0;
+                z-index: 1000;
             }
+
+            .sidebar h4 {
+                text-align: center;
+                margin-top: 1rem;
+                margin-bottom: 1.5rem;
+                font-size: 1.4rem;
+                font-weight: 500;
+            }
+
             .sidebar a {
                 display: block;
                 color: white;
                 text-decoration: none;
                 padding: 12px 20px;
+                transition: 0.3s ease;
             }
+
+            .sidebar a i {
+                margin-right: 8px;
+            }
+
             .sidebar a:hover {
                 background-color: #00D0F1;
             }
-            .main-content {
-                margin-left: 260px;
-                padding: 25px;
+
+            /* ===== Main Content giống Statistics ===== */
+            .clinic-main-content {
+                margin-left: 240px;
+                padding-bottom: 50px;
             }
-            .card {
-                border-radius: 10px;
+
+            /* ===== Navbar giống Statistics ===== */
+            .clinic-navbar {
+                background-color: #ffffff;
+                padding: 15px 20px;
+                box-shadow: 0px 2px 5px rgba(0,0,0,0.1);
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
             }
-            .table img {
-                border-radius: 50%;
-                width: 40px;
-                height: 40px;
+
+            .clinic-navbar-title {
+                font-size: 1.5rem;
+                font-weight: 600;
+                color: #1B5A90;
             }
-            .status-toggle {
-                width: 40px;
-                height: 20px;
+
+            .clinic-logout-btn {
+                color: #dc3545;
+                font-weight: 500;
+                text-decoration: none;
             }
-            .navbar {
-                background: white;
-                border-bottom: 1px solid #dee2e6;
+
+            /* ===== Stats Row giống Statistics ===== */
+            .stats-row {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 22px;
+                padding: 25px 30px;
             }
-            #Logout {
-                color: red;
-                border-color: red;
+
+            .stat-card {
+                background: #ffffff;
+                border-radius: 12px;
+                padding: 20px 25px;
+                box-shadow: 0px 3px 10px rgba(0,0,0,0.08);
+                transition: 0.25s ease;
             }
-            #Logout:hover {
-                background-color: red;
-                color: white;
+
+            .stat-card:hover {
+                transform: translateY(-4px);
+            }
+
+            .stat-card-content {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .stat-card-content h6 {
+                font-size: 0.9rem;
+                margin: 0;
+                color: #6c757d;
+                font-weight: 500;
+            }
+
+            .stat-card-content h3 {
+                margin: 5px 0 0;
+                font-size: 2rem;
+                font-weight: 700;
+                color: #1B5A90;
+            }
+
+            /* ===== Icon thống nhất màu giống Statistics ===== */
+            .stat-icon {
+                font-size: 2.5rem;
+                color: #1B5A90 !important;
+                opacity: 0.9;
             }
         </style>
     </head>
     <body>
+
         <!-- Sidebar -->
         <div class="sidebar">
             <h4 class="text-center mt-3 mb-4">CLINIC</h4>
@@ -75,21 +148,148 @@
             <a href="${pageContext.request.contextPath}/manage-invoice"><i class="fa-solid fa-file-invoice-dollar me-2"></i>Manage Invoice</a>
         </div>
 
-        <!-- Main content -->
-        <div class="main-content">
-            <nav class="navbar navbar-light">
-                <div class="container-fluid">
-                    <form class="d-flex w-50" method="get" action="${pageContext.request.contextPath}/receptionist-dashboard">
-                        <input class="form-control me-2" type="search" name="searchQuery" placeholder="Search here" value="${param.searchQuery}">
-                        <button class="btn btn-outline-primary" type="submit">
-                            <i class="fa-solid fa-magnifying-glass"></i>
-                        </button>
-                    </form>
-                    <div>
-                        <button class="btn btn-submit" id="Logout" type="submit">Logout</button>
+        <!-- Main Content -->
+        <div class="clinic-main-content">
+
+            <div class="clinic-navbar">
+                <h3 class="clinic-navbar-title">
+                    <i class="fa-solid fa-clipboard me-2"></i>
+                    Receptionist Dashboard
+                </h3>
+                <a href="${pageContext.request.contextPath}/staff-logout" class="clinic-logout-btn">
+                    <i class="fa-solid fa-right-from-bracket"></i> Logout
+                </a>
+            </div>
+
+            <!-- ===== STATS CARDS ===== -->
+            <div class="stats-row">
+
+                <!-- Today Appointments -->
+                <div class="stat-card">
+                    <div class="stat-card-content">
+                        <div>
+                            <h6>Today Appointments</h6>
+                            <h3>${todayAppointments}</h3>
+                        </div>
+                        <i class="fa-solid fa-calendar-check stat-icon"></i>
                     </div>
                 </div>
-            </nav>
+
+                <!-- Completed Today -->
+                <div class="stat-card">
+                    <div class="stat-card-content">
+                        <div>
+                            <h6>Completed (Today)</h6>
+                            <h3>${completedAppointments}</h3>
+                        </div>
+                        <i class="fa-solid fa-user-md stat-icon"></i>
+                    </div>
+                </div>
+
+                <!-- Revenue Today -->
+                <div class="stat-card">
+                    <div class="stat-card-content">
+                        <div>
+                            <h6>Revenue (Today)</h6>
+                            <h3>
+                                <c:choose>
+                                    <c:when test="${todayRevenue != null && todayRevenue > 0}">
+                                        <fmt:formatNumber value="${todayRevenue}" type="currency" currencySymbol="$"/>
+                                    </c:when>
+                                    <c:otherwise>0 $</c:otherwise>
+                                </c:choose>
+                            </h3>
+                        </div>
+                        <i class="fa-solid fa-sack-dollar stat-icon"></i>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- ===== Row: Top 5 Doctors & Top 5 Specialties (Side by Side) ===== -->
+            <div class="row px-3">
+
+                <!-- Left: Top 5 Doctors by Revenue -->
+                <div class="col-md-6">
+                    <div class="card mb-4 mt-3" 
+                         style="border:none; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.08);">
+                        <div class="card-header"
+                             style="background-color:#1B5A90; color:white; border-top-left-radius:12px; border-top-right-radius:12px;">
+                            <i class="fa-solid fa-user-doctor me-2"></i>Top 5 Doctors by Revenue
+                        </div>
+
+                        <div class="card-body">
+                            <c:if test="${empty topDoctors}">
+                                <p class="text-muted text-center mb-0">No revenue data for today.</p>
+                            </c:if>
+
+                            <c:if test="${not empty topDoctors}">
+                                <table class="table table-hover align-middle">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Doctor</th>
+                                            <th>Specialty</th>
+                                            <th class="text-end">Revenue</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <c:forEach var="d" items="${topDoctors}" varStatus="i">
+                                            <tr>
+                                                <td>${i.index + 1}</td>
+                                                <td>${d.doctorName}</td>
+                                                <td>${d.specialtyName}</td>
+                                                <td class="text-end">
+                                                    <fmt:formatNumber value="${d.totalRevenue}" type="currency" currencySymbol="$"/>
+                                                </td>
+                                            </tr>
+                                        </c:forEach>
+                                    </tbody>
+                                </table>
+                            </c:if>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: Top 5 Specialties Booked -->
+                <div class="col-md-6">
+                    <div class="card mb-4 mt-3" 
+                         style="border:none; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.08);">
+                        <div class="card-header"
+                             style="background-color:#1B5A90; color:white; border-top-left-radius:12px; border-top-right-radius:12px;">
+                            <i class="fa-solid fa-hospital-user me-2"></i>Top 5 Specialties Booked
+                        </div>
+
+                        <div class="card-body">
+                            <c:if test="${empty topSpecialties}">
+                                <p class="text-muted text-center mb-0">No booking data for today.</p>
+                            </c:if>
+
+                            <c:if test="${not empty topSpecialties}">
+                                <table class="table table-hover align-middle">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Specialty</th>
+                                            <th class="text-end">Bookings</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <c:forEach var="sp" items="${topSpecialties}" varStatus="i">
+                                            <tr>
+                                                <td>${i.index + 1}</td>
+                                                <td>${sp.specialtyName}</td>
+                                                <td class="text-end">${sp.totalBookings}</td>
+                                            </tr>
+                                        </c:forEach>
+                                    </tbody>
+                                </table>
+                            </c:if>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </body>
 </html>
