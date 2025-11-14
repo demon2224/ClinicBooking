@@ -288,7 +288,6 @@
 
         </script>
 
-        <!-- Triggers from server-side session/request -->
         <c:if test="${not empty sessionScope.successMsg}">
             <script>showNotification('success', '${sessionScope.successMsg}');</script>
             <c:remove var="successMsg" scope="session"/>

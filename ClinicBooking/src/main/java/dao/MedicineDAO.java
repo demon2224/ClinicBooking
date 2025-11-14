@@ -71,7 +71,8 @@ public class MedicineDAO extends DBContext {
 
         String query = "SELECT m.MedicineID, m.MedicineType, m.MedicineStatus, m.MedicineName, m.MedicineCode, m.Quantity, m.Price, m.DateCreate, m.[Hidden]\n"
                 + "FROM [dbo].[Medicine] m\n"
-                + "WHERE m.MedicineID = ?;";
+                + "WHERE m.MedicineID = ?\n"
+                + "And m.Hidden = 0;";
 
         ResultSet rs = null;
         Object[] params = {medicineId};
@@ -114,9 +115,10 @@ public class MedicineDAO extends DBContext {
 
         String query = "SELECT m.MedicineID, m.MedicineType, m.MedicineStatus, m.MedicineName, m.MedicineCode, m.Quantity, m.Price, m.DateCreate, m.[Hidden]\n"
                 + "FROM [dbo].[Medicine] m\n"
-                + "WHERE m.MedicineCode LIKE ?\n"
+                + "WHERE (m.MedicineCode LIKE ?\n"
                 + "OR m.MedicineType LIKE ?\n"
-                + "OR m.MedicineName LIKE ?"
+                + "OR m.MedicineName LIKE ?)\n"
+                + "AND m.Hidden = 0\n"
                 + "ORDER BY Hidden ASC;";
         Object[] params = {"%" + medicineCode + "%",
             "%" + medicineType + "%",

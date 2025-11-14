@@ -117,6 +117,8 @@
                     </div>
 
                     <button type="submit" class="btn btn-success w-100 rounded-pill">Register</button>
+                    
+                    <a href="${pageContext.request.contextPath}/patient-login" class="d-flex text-center">Already have an account. Login here.</a>
 
                 </form>
 
