@@ -22,22 +22,9 @@ public class VietQRService {
         String imageFormat = VietQRConfig.getImageFormat();
         String apiUrl = VietQRConfig.getApiUrl();
         
-        // Debug: Log all config values
-        System.out.println("DEBUG VietQR Config:");
-        System.out.println("  bankCode: " + bankCode);
-        System.out.println("  accountNumber: " + accountNumber);
-        System.out.println("  accountName: " + accountName);
-        System.out.println("  template: " + template);
-        System.out.println("  imageFormat: " + imageFormat);
-        System.out.println("  apiUrl: " + apiUrl);
-        System.out.println("  usdAmount: " + usdAmount);
-        
         // Convert USD to VND
         double vndAmount = convertUsdToVnd(usdAmount);
         String transferAmount = String.format("%.0f", vndAmount);
-        
-        System.out.println("  vndAmount: " + vndAmount);
-        System.out.println("  transferAmount: " + transferAmount);
         
         // Create description with currency information
         String currencyDescription = String.format("%s (%.2f USD = %.0f VND)", 
