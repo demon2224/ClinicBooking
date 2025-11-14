@@ -29,6 +29,7 @@ public class MedicineDAO extends DBContext {
 
         String query = "SELECT m.MedicineID, m.MedicineType, m.MedicineStatus, m.MedicineName, m.MedicineCode, m.Quantity, m.Price, m.DateCreate, m.[Hidden]\n"
                 + "FROM [dbo].[Medicine] m\n"
+                + "Where m.Hidden = 0\n"
                 + "ORDER BY Hidden ASC;";
 
         ResultSet rs = null;
