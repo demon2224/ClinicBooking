@@ -90,6 +90,7 @@ public class ResetPasswordController extends HttpServlet {
 
         if (isValidPassword) {
             patientDAO.updatePassword(passwordParam, (String) request.getSession().getAttribute("email"));
+            request.getSession().invalidate();
             response.sendRedirect(request.getContextPath() + "/patient-login");
         } else {
             request.getRequestDispatcher("/WEB-INF/authentication/ResetPassword.jsp").forward(request, response);
