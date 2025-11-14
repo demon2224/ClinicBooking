@@ -17,7 +17,7 @@ public class BookAppointmentValidate {
     
     // Business rules constants
     private static final int MIN_HOUR = 7;  // 7:00 AM
-    private static final int MAX_HOUR = 17; // 5:00 PM
+    private static final int MAX_HOUR = 17; // 5:00 PM (but validate up to 16:30)
     private static final int MIN_ADVANCE_HOURS = 24; // Must book at least 24 hours in advance
     private static final int MAX_ADVANCE_DAYS = 30; // Can only book up to 30 days in advance
     private static final int MIN_GAP_HOURS = 24; // Must have 24 hours gap between appointments
@@ -64,7 +64,7 @@ public class BookAppointmentValidate {
     }
 
     /**
-     * Validates appointment time is within working hours (7 AM - 5 PM)
+     * Validates appointment time is within working hours (7:00 AM - 4:30 PM)
      *
      * @param appointmentDateTime Appointment date time
      * @return true if within working hours, false otherwise
@@ -75,7 +75,20 @@ public class BookAppointmentValidate {
         }
         LocalDateTime localDateTime = appointmentDateTime.toLocalDateTime();
         int hour = localDateTime.getHour();
-        return hour >= MIN_HOUR && hour < MAX_HOUR;
+        int minute = localDateTime.getMinute();
+        
+        // Check if time is between 7:00 AM and 4:30 PM
+        if (hour < MIN_HOUR) {
+            return false; // Before 7:00 AM
+        }
+        if (hour > 16) {
+            return false; // After 4:00 PM
+        }
+        if (hour == 16 && minute > 30) {
+            return false; // After 4:30 PM
+        }
+        
+        return true;
     }
 
     /**
