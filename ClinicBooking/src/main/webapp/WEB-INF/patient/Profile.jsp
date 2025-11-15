@@ -88,21 +88,27 @@
                         <!-- Left Section - Avatar & Actions -->
                         <div class="profile-left">
                             <div class="profile-avatar-section">
-                                <c:choose>
-                                    <c:when test="${not empty patient.avatar}">
-                                        <img src="${pageContext.request.contextPath}/${patient.avatar}"
-                                             alt="Profile Avatar"
-                                             class="profile-avatar"
-                                             id="profileAvatar"
-                                             onerror="this.src='${pageContext.request.contextPath}/assests/img/0.png'">
-                                    </c:when>
-                                    <c:otherwise>
-                                        <img src="${pageContext.request.contextPath}/assests/img/0.png"
-                                             alt="Profile Avatar"
-                                             class="profile-avatar"
-                                             id="profileAvatar">
-                                    </c:otherwise>
-                                </c:choose>
+                                <div class="profile-avatar-large">
+                                    <c:choose>
+                                        <c:when test="${patient.avatar != null && !empty patient.avatar}">
+                                            <img src="${pageContext.request.contextPath}${patient.avatar}"
+                                                 alt="Profile Avatar"
+                                                 id="profileAvatar"
+                                                 class="profile-avatar-large"
+                                                 onerror="this.onerror=null; this.src='${pageContext.request.contextPath}/assests/img/patient1.jpg'">
+                                        </c:when>
+                                        <c:otherwise>
+                                            <img src="${pageContext.request.contextPath}/assests/img/0.png"
+                                                 alt="Profile Avatar"
+                                                 id="profileAvatar"
+                                                 class="profile-avatar-large"
+                                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+                                            <div class="avatar-placeholder avatar-placeholder-large" style="display: none;">
+                                                <i class="fas fa-user"></i>
+                                            </div>
+                                        </c:otherwise>
+                                    </c:choose>
+                                </div>
 
                                 <div class="profile-name">${patient.firstName} ${patient.lastName}</div>
                                 <button type="button" class="change-password-btn" id="changePasswordBtn">
@@ -249,6 +255,7 @@
         </div>
 
         <!-- Custom Modal JS - no Bootstrap dependency -->
+        <jsp:include page="../includes/footer.jsp" />
 
         <script>
             // Modal Controls

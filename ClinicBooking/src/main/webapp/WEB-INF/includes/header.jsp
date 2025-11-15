@@ -74,7 +74,23 @@
 
                 <!-- Profile User -->
                 <a href="${pageContext.request.contextPath}/profile" class="icon-user-profile">
-                    <i class="fa-solid fa-circle-user"></i>
+                    <div class="profile-avatar-small">
+                        <c:choose>
+                            <c:when test="${sessionScope.patient.avatar != null && !empty sessionScope.patient.avatar}">
+                                <img src="${pageContext.request.contextPath}${sessionScope.patient.avatar}"
+                                     alt="Profile"
+                                     onerror="this.onerror=null; this.src='${pageContext.request.contextPath}/assests/img/patient1.jpg'">
+                            </c:when>
+                            <c:otherwise>
+                                <img src="${pageContext.request.contextPath}/assests/img/0.png"
+                                     alt="Profile"
+                                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+                                <div class="avatar-placeholder profile-avatar-small" style="display: none;">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                            </c:otherwise>
+                        </c:choose>
+                    </div>
                 </a>
 
                 <!-- Logout Button -->
@@ -89,106 +105,106 @@
 
 <!-- Contact Scroll JavaScript -->
 <script>
-function scrollToContact(event) {
-    event.preventDefault();
-    
-    // Check if footer exists on current page
-    const footer = document.getElementById('footer-contact');
-    
-    if (footer) {
-        // Smooth scroll to footer
-        footer.scrollIntoView({
-            behavior: 'smooth',
-            block: 'start'
-        });
-        
-        // Add highlight effect
-        footer.style.transition = 'all 0.3s ease';
-        footer.style.backgroundColor = 'rgba(25, 118, 210, 0.1)';
-        
-        setTimeout(() => {
-            footer.style.backgroundColor = '';
-        }, 2000);
-    } else {
-        // If no footer on current page, redirect to home and then scroll
-        const currentPath = window.location.pathname;
-        const contextPath = '${pageContext.request.contextPath}';
-        
-        if (currentPath.includes('/home') || currentPath.endsWith('/') || currentPath.endsWith(contextPath)) {
-            // Already on home page, scroll to bottom
-            window.scrollTo({
-                top: document.body.scrollHeight,
-                behavior: 'smooth'
+    function scrollToContact(event) {
+        event.preventDefault();
+
+        // Check if footer exists on current page
+        const footer = document.getElementById('footer-contact');
+
+        if (footer) {
+            // Smooth scroll to footer
+            footer.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
             });
+
+            // Add highlight effect
+            footer.style.transition = 'all 0.3s ease';
+            footer.style.backgroundColor = 'rgba(25, 118, 210, 0.1)';
+
+            setTimeout(() => {
+                footer.style.backgroundColor = '';
+            }, 2000);
         } else {
-            // Redirect to home page with scroll parameter
-            window.location.href = contextPath + '/home#footer-contact';
+            // If no footer on current page, redirect to home and then scroll
+            const currentPath = window.location.pathname;
+            const contextPath = '${pageContext.request.contextPath}';
+
+            if (currentPath.includes('/home') || currentPath.endsWith('/') || currentPath.endsWith(contextPath)) {
+                // Already on home page, scroll to bottom
+                window.scrollTo({
+                    top: document.body.scrollHeight,
+                    behavior: 'smooth'
+                });
+            } else {
+                // Redirect to home page with scroll parameter
+                window.location.href = contextPath + '/home#footer-contact';
+            }
         }
     }
-}
 
 // Scroll to About section function
-function scrollToAbout(event) {
-    event.preventDefault();
-    
-    // Check if about section exists on current page
-    const aboutSection = document.getElementById('about-section');
-    
-    if (aboutSection) {
-        // Smooth scroll to about section
-        aboutSection.scrollIntoView({
-            behavior: 'smooth',
-            block: 'start'
-        });
-        
-        // Add highlight effect
-        aboutSection.style.transition = 'all 0.3s ease';
-        aboutSection.style.backgroundColor = 'rgba(25, 118, 210, 0.05)';
-        
-        setTimeout(() => {
-            aboutSection.style.backgroundColor = '';
-        }, 2000);
-    } else {
-        // If no about section on current page, redirect to home and then scroll
-        const currentPath = window.location.pathname;
-        const contextPath = '${pageContext.request.contextPath}';
-        
-        if (currentPath.includes('/home') || currentPath.endsWith('/') || currentPath.endsWith(contextPath)) {
-            // Already on home page, scroll to top
-            window.scrollTo({
-                top: 0,
-                behavior: 'smooth'
+    function scrollToAbout(event) {
+        event.preventDefault();
+
+        // Check if about section exists on current page
+        const aboutSection = document.getElementById('about-section');
+
+        if (aboutSection) {
+            // Smooth scroll to about section
+            aboutSection.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
             });
+
+            // Add highlight effect
+            aboutSection.style.transition = 'all 0.3s ease';
+            aboutSection.style.backgroundColor = 'rgba(25, 118, 210, 0.05)';
+
+            setTimeout(() => {
+                aboutSection.style.backgroundColor = '';
+            }, 2000);
         } else {
-            // Redirect to home page with scroll parameter
-            window.location.href = contextPath + '/home#about-section';
+            // If no about section on current page, redirect to home and then scroll
+            const currentPath = window.location.pathname;
+            const contextPath = '${pageContext.request.contextPath}';
+
+            if (currentPath.includes('/home') || currentPath.endsWith('/') || currentPath.endsWith(contextPath)) {
+                // Already on home page, scroll to top
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            } else {
+                // Redirect to home page with scroll parameter
+                window.location.href = contextPath + '/home#about-section';
+            }
         }
     }
-}
-}
+    }
 
 // Handle scroll to contact on page load if hash is present
-window.addEventListener('load', function() {
-    if (window.location.hash === '#footer-contact') {
-        setTimeout(() => {
-            const footer = document.getElementById('footer-contact');
-            if (footer) {
-                footer.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
-                });
-            }
-        }, 500);
-    } else if (window.location.hash === '#about-section') {
-        setTimeout(() => {
-            const aboutSection = document.getElementById('about-section');
-            if (aboutSection) {
-                aboutSection.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
-                });
-            }
-        }, 500);
-    }
-});
+    window.addEventListener('load', function () {
+        if (window.location.hash === '#footer-contact') {
+            setTimeout(() => {
+                const footer = document.getElementById('footer-contact');
+                if (footer) {
+                    footer.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            }, 500);
+        } else if (window.location.hash === '#about-section') {
+            setTimeout(() => {
+                const aboutSection = document.getElementById('about-section');
+                if (aboutSection) {
+                    aboutSection.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            }, 500);
+        }
+    });
 </script>

@@ -211,7 +211,8 @@ public class DoctorDAO extends DBContext {
      * Search doctors by name and specialty only.
      *
      * @param searchName The doctor's name to search for (can be partial match).
-     * @param specialtyName The specialty name to filter (null or empty for all).
+     * @param specialtyName The specialty name to filter (null or empty for
+     * all).
      * @return A list of DoctorDTO objects matching the search criteria.
      */
     public List<DoctorDTO> searchDoctors(String searchName, String specialtyName) {
@@ -291,10 +292,12 @@ public class DoctorDAO extends DBContext {
     }
 
     /**
-     * Builds and returns a DoctorDTO object from the current row of a ResultSet.
+     * Builds and returns a DoctorDTO object from the current row of a
+     * ResultSet.
      *
      * @param rs the ResultSet positioned at the current doctor record
-     * @return a fully populated DoctorDTO object created from the ResultSet data
+     * @return a fully populated DoctorDTO object created from the ResultSet
+     * data
      * @throws SQLException if any SQL access or column retrieval error occurs
      */
     private DoctorDTO createDoctorFromResultSet(ResultSet rs) throws SQLException {
@@ -330,8 +333,8 @@ public class DoctorDAO extends DBContext {
      * Retrieves all academic degrees earned by a specific doctor.
      *
      * @param doctorId the ID of the doctor whose degrees are being retrieved
-     * @return a list of DegreeDTO objects representing the doctor's degrees, or an empty
-     * list if none are found or an error occurs
+     * @return a list of DegreeDTO objects representing the doctor's degrees, or
+     * an empty list if none are found or an error occurs
      */
     public List<DegreeDTO> getDoctorDegrees(int doctorId) {
 
@@ -630,7 +633,8 @@ public class DoctorDAO extends DBContext {
      *
      * @param patientId The ID of the patient.
      * @param doctorId The ID of the doctor.
-     * @return true if the patient has already reviewed this doctor, false otherwise.
+     * @return true if the patient has already reviewed this doctor, false
+     * otherwise.
      */
     public boolean hasPatientReviewedDoctor(int patientId, int doctorId) {
         String sql = "SELECT COUNT(*) as ReviewCount FROM DoctorReview WHERE PatientID = ? AND DoctorID = ?";
@@ -761,11 +765,12 @@ public class DoctorDAO extends DBContext {
     }
 
     /**
-     * Retrieves the total count of active doctors in the system.This method counts all
-     * doctors whose associated staff records are not hidden (Hidden = 0).
+     * Retrieves the total count of active doctors in the system.This method
+     * counts all doctors whose associated staff records are not hidden (Hidden
+     * = 0).
      *
-     * @return The total number of active doctors as an integer. Returns 0 if no doctors
-     * are found or if a database error occurs.
+     * @return The total number of active doctors as an integer. Returns 0 if no
+     * doctors are found or if a database error occurs.
      */
     public int getTotalDoctors() {
         int countDoctor = 0;
@@ -783,5 +788,80 @@ public class DoctorDAO extends DBContext {
             closeResources(rs);
         }
         return countDoctor;
+    }
+
+    /**
+     * Retrieves the top 5 doctors with the most appointments. This method
+     * counts all completed appointments for each doctor and returns the top 5
+     * doctors ordered by appointment count in descending order.
+     *
+     * @return A list of DoctorDTO objects representing the top 5 doctors with
+     * most appointments. Returns an empty list if no doctors are found or if a
+     * database error occurs.
+     */
+    public List<DoctorDTO> getTop5DoctorsByAppointmentCount() {
+        List<DoctorDTO> topDoctors = new ArrayList<>();
+        String query = "SELECT TOP 5 \n"
+                + "    st.StaffID, st.JobStatus, st.Role, st.AccountName, st.AccountPassword,\n"
+                + "    st.DayCreated, st.Avatar, st.Bio, st.FirstName, st.LastName,\n"
+                + "    st.DOB, st.Gender, st.UserAddress, st.PhoneNumber, st.Email,\n"
+                + "    st.Hidden, dt.DoctorID, dt.SpecialtyID, dt.YearExperience, \n"
+                + "    sp.SpecialtyName, sp.Price,\n"
+                + "    COUNT(apt.AppointmentID) as AppointmentCount\n"
+                + "FROM [dbo].[Staff] st\n"
+                + "INNER JOIN [dbo].[Doctor] dt ON dt.StaffID = st.StaffID\n"
+                + "INNER JOIN [dbo].[Specialty] sp ON sp.SpecialtyID = dt.SpecialtyID\n"
+                + "LEFT JOIN [dbo].[Appointment] apt ON apt.DoctorID = dt.DoctorID \n"
+                + "    AND apt.AppointmentStatus IN ('Completed', 'Confirmed', 'Approved')\n"
+                + "WHERE st.Hidden = 0 AND st.JobStatus = 'Active'\n"
+                + "GROUP BY st.StaffID, st.JobStatus, st.Role, st.AccountName, st.AccountPassword,\n"
+                + "    st.DayCreated, st.Avatar, st.Bio, st.FirstName, st.LastName,\n"
+                + "    st.DOB, st.Gender, st.UserAddress, st.PhoneNumber, st.Email,\n"
+                + "    st.Hidden, dt.DoctorID, dt.SpecialtyID, dt.YearExperience, \n"
+                + "    sp.SpecialtyName, sp.Price\n"
+                + "ORDER BY AppointmentCount DESC, st.FirstName ASC";
+
+        ResultSet rs = null;
+        try {
+            rs = executeSelectQuery(query);
+
+            while (rs.next()) {
+                // Create StaffDTO
+                StaffDTO staff = new StaffDTO();
+                staff.setStaffID(rs.getInt("StaffID"));
+                staff.setJobStatus(rs.getString("JobStatus"));
+                staff.setRole(rs.getString("Role"));
+                staff.setAccountName(rs.getString("AccountName"));
+                staff.setAccountPassword(rs.getString("AccountPassword"));
+                staff.setAvatar(rs.getString("Avatar"));
+                staff.setBio(rs.getString("Bio"));
+                staff.setFirstName(rs.getString("FirstName"));
+                staff.setLastName(rs.getString("LastName"));
+                staff.setUserAddress(rs.getString("UserAddress"));
+                staff.setPhoneNumber(rs.getString("PhoneNumber"));
+                staff.setEmail(rs.getString("Email"));
+                staff.setHidden(rs.getBoolean("Hidden"));
+
+                // Create SpecialtyDTO
+                SpecialtyDTO specialty = new SpecialtyDTO();
+                specialty.setSpecialtyID(rs.getInt("SpecialtyID"));
+                specialty.setSpecialtyName(rs.getString("SpecialtyName"));
+                specialty.setPrice(rs.getDouble("Price"));
+
+                // Create DoctorDTO
+                DoctorDTO doctor = new DoctorDTO();
+                doctor.setDoctorID(rs.getInt("DoctorID"));
+                doctor.setStaffID(staff);
+                doctor.setSpecialtyID(specialty);
+                doctor.setYearExperience(rs.getInt("YearExperience"));
+                topDoctors.add(doctor);
+            }
+        } catch (SQLException e) {
+            Logger.getLogger(DoctorDAO.class.getName()).log(Level.SEVERE, "Error retrieving top doctors by appointment count", e);
+        } finally {
+            closeResources(rs);
+        }
+
+        return topDoctors;
     }
 }

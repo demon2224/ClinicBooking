@@ -10,7 +10,7 @@ package constants;
  */
 public class ProfileConstants {
 
-    public static final String URL_PROFILE_JSP = "/WEB-INF/Profile.jsp";
-    public static final String URL_EDIT_PROFILE_JSP = "/WEB-INF/EditProfile.jsp";
+    public static final String URL_PROFILE_JSP = "/WEB-INF/patient/Profile.jsp";
+    public static final String URL_EDIT_PROFILE_JSP = "/WEB-INF/patient/EditProfile.jsp";
 
 }

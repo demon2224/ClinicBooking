@@ -28,16 +28,9 @@
         </jsp:include>
 
         <div class="doctor-detail-container">
-            <!-- Page Title -->
             <div class="appointment-page-header">
-                <h1><i class="fas fa-user-md"></i> Dr. ${doctor.staffID.firstName} ${doctor.staffID.lastName}</h1>
-                <c:if test="${not empty doctor.specialtyID.specialtyName}">
-                    <p class="doctor-specialty-subtitle">
-                        <i class="fas fa-stethoscope"></i> ${doctor.specialtyID.specialtyName}
-                    </p>
-                </c:if>
+                <h1><i class="fas fa-user-md"></i> Doctor Detail </h1>
             </div>
-            
             <!-- Doctor Profile Card -->
             <div class="doctor-detail-card">
                 <div class="doctor-detail-header">
@@ -49,10 +42,10 @@
                                     <img src="${pageContext.request.contextPath}${doctor.staffID.avatar}"
                                          alt="Dr. ${doctor.staffID.firstName} ${doctor.staffID.lastName}"
                                          class="doctor-detail-avatar"
-                                         onerror="this.onerror=null; this.src='${pageContext.request.contextPath}/assests/img/doctor${(doctor.doctorID % 3) + 1}.png'">
+                                         onerror="this.onerror=null; this.src='${pageContext.request.contextPath}/assests/img/doctor${(doctor.doctorID % 3) + 1}.jpg'">
                                 </c:when>
                                 <c:otherwise>
-                                    <img src="${pageContext.request.contextPath}/assests/img/doctor${(doctor.doctorID % 3) + 1}.png"
+                                    <img src="${pageContext.request.contextPath}/assests/img/doctor${(doctor.doctorID % 3) + 1}.jpg"
                                          alt="Dr. ${doctor.staffID.firstName} ${doctor.staffID.lastName}"
                                          class="doctor-detail-avatar"
                                          onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
@@ -64,6 +57,15 @@
                         </div>
 
                         <div class="doctor-detail-info">
+                            <h1 class="doctor-detail-name">
+                                Dr. ${doctor.staffID.firstName} ${doctor.staffID.lastName}
+                            </h1>
+                            <c:if test="${not empty doctor.specialtyID.specialtyName}">
+                                <p class="doctor-detail-specialty">
+                                    <i class="fas fa-user-md"></i>
+                                    ${doctor.specialtyID.specialtyName}
+                                </p>
+                            </c:if>
                             <div class="doctor-detail-contact">
                                 <c:if test="${not empty doctor.staffID.phoneNumber}">
                                     <div class="doctor-detail-contact-item">
@@ -184,6 +186,8 @@
             </div>
             <jsp:include page="DoctorReview.jsp" />
         </div>
+        <jsp:include page="includes/footer.jsp" />
+
     </body>
 
 </html>

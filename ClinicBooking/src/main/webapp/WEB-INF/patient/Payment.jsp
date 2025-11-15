@@ -169,33 +169,9 @@
                         </div>
                     </div>
                 </div>
-
-                <!-- Payment Status Messages - Hidden -->
-                <%--
-                <c:if test="${not empty sessionScope.successMessage}">
-                    <div class="appointment-card success-card">
-                        <div class="success-content">
-                            <i class="fas fa-check-circle success-icon"></i>
-                            <h3>Payment Successful!</h3>
-                            <p>${sessionScope.successMessage}</p>
-                        </div>
-                    </div>
-                    <c:remove var="successMessage" scope="session"/>
-                </c:if>
-
-                <c:if test="${not empty sessionScope.errorMessage}">
-                    <div class="appointment-card error-card">
-                        <div class="error-content">
-                            <i class="fas fa-exclamation-triangle error-icon"></i>
-                            <h3>Notice</h3>
-                            <p>${sessionScope.errorMessage}</p>
-                        </div>
-                    </div>
-                    <c:remove var="errorMessage" scope="session"/>
-                </c:if>
-                --%>
             </div>
         </div>
+        <jsp:include page="../includes/footer.jsp" />
 
         <script>
             let selectedPaymentMethod = 'cash'; // Default to cash

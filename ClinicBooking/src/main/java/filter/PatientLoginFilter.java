@@ -34,7 +34,7 @@ public class PatientLoginFilter implements Filter {
         PatientDTO patient = (PatientDTO) httpRequest.getSession().getAttribute("patient");
 
         if (patient != null) {
-            httpResponse.sendRedirect(httpRequest.getContextPath() + "/home");
+            httpResponse.sendRedirect(httpRequest.getContextPath() + "/patient-login");
             return;
         }
 

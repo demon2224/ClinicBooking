@@ -140,6 +140,7 @@
             </div>
         </div>
     </main>
+    <jsp:include page="../includes/footer.jsp" />
 
     <!-- JavaScript for interactivity -->
     <script>

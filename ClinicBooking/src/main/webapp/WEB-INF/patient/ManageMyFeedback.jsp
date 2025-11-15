@@ -366,6 +366,7 @@
         </div>
 
         <!-- Custom Modal JS removed Bootstrap dependency -->
+        <jsp:include page="../includes/footer.jsp" />
 
         <script>
             // Custom Modal Functions

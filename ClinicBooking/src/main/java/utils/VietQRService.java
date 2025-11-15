@@ -7,6 +7,7 @@ import java.util.Date;
 
 /**
  * VietQR Service - Handle VietQR code generation
+ *
  * @author Le Anh Tuan - CE180905
  */
 public class VietQRService {
@@ -21,35 +22,33 @@ public class VietQRService {
         String template = VietQRConfig.getTemplate();
         String imageFormat = VietQRConfig.getImageFormat();
         String apiUrl = VietQRConfig.getApiUrl();
-        
+
         // Convert USD to VND
         double vndAmount = convertUsdToVnd(usdAmount);
         String transferAmount = String.format("%.0f", vndAmount);
-        
+
         // Create description with currency information
-        String currencyDescription = String.format("%s (%.2f USD = %.0f VND)", 
-            description, usdAmount, vndAmount);
-        
+        String currencyDescription = description;
         try {
             // URL encode to avoid special character errors
             String encodedDescription = URLEncoder.encode(currencyDescription, StandardCharsets.UTF_8.toString());
             String encodedAccountName = URLEncoder.encode(accountName, StandardCharsets.UTF_8.toString());
-            
+
             // Create VietQR URL
-            return String.format("%s/%s-%s-%s.%s?amount=%s&addInfo=%s&accountName=%s", 
-                apiUrl,
-                bankCode, 
-                accountNumber, 
-                template,
-                imageFormat,
-                transferAmount, 
-                encodedDescription,
-                encodedAccountName);
+            return String.format("%s/%s-%s-%s.%s?amount=%s&addInfo=%s&accountName=%s",
+                    apiUrl,
+                    bankCode,
+                    accountNumber,
+                    template,
+                    imageFormat,
+                    transferAmount,
+                    encodedDescription,
+                    encodedAccountName);
         } catch (Exception e) {
             e.printStackTrace();
             // Fallback URL if encoding error occurs
-            return String.format("%s/%s-%s-%s.%s?amount=%s", 
-                apiUrl, bankCode, accountNumber, template, imageFormat, transferAmount);
+            return String.format("%s/%s-%s-%s.%s?amount=%s",
+                    apiUrl, bankCode, accountNumber, template, imageFormat, transferAmount);
         }
     }
 

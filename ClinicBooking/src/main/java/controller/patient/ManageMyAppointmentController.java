@@ -86,7 +86,7 @@ public class ManageMyAppointmentController extends HttpServlet {
             handleBookAppointment(request, response);
             return;
         }
-        
+
         if ("clearMessages".equals(action)) {
             // Clear session messages
             HttpSession session = request.getSession();
@@ -274,7 +274,7 @@ public class ManageMyAppointmentController extends HttpServlet {
 
             if (doctor == null) {
                 request.getSession().setAttribute("errorMessage", "Doctor not found!");
-                response.sendRedirect(request.getContextPath() + "/doctor-list");
+                response.sendRedirect(request.getContextPath() + "/doctor");
                 return;
             }
 
@@ -290,7 +290,7 @@ public class ManageMyAppointmentController extends HttpServlet {
             request.getRequestDispatcher(ManageMyAppointmentConstants.BOOK_APPOINTMENT_JSP).forward(request, response);
 
         } catch (NumberFormatException e) {
-            response.sendRedirect(request.getContextPath() + "/doctor-list");
+            response.sendRedirect(request.getContextPath() + "/doctor");
         }
     }
 

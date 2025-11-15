@@ -305,5 +305,6 @@
                 </div>
             </div>
         </main>
+        <jsp:include page="../includes/footer.jsp" />
     </body>
 </html>
