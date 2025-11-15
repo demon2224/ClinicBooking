@@ -93,19 +93,20 @@ public class ResetPasswordController extends HttpServlet {
             request.getSession().invalidate();
             response.sendRedirect(request.getContextPath() + "/patient-login");
         } else {
+            request.setAttribute("errorMsg", "An error has occur.");
             request.getRequestDispatcher("/WEB-INF/authentication/ResetPassword.jsp").forward(request, response);
         }
 
     }
 
     private boolean isValidPassword(HttpServletRequest request, String passwordParam, String confirmPasswordParam) {
-        if (ResetPasswordValidate.isEmpty(passwordParam) || ResetPasswordValidate.isEmpty(confirmPasswordParam)) {
+        if (passwordParam == null ||  confirmPasswordParam == null || passwordParam.isBlank() || confirmPasswordParam.isBlank()) {
             request.setAttribute("errorMsg", "Password can't be empty.");
             return false;
-        } else if (!ResetPasswordValidate.isValidPassword(passwordParam)) {
+        } else if (!passwordParam.trim().matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[@#$%^&+=!])(?=\\S+$).{8,}$")) {
             request.setAttribute("errorMsg", "Invalid password.");
             return false;
-        } else if (!ResetPasswordValidate.isValidConfirmPassword(passwordParam, confirmPasswordParam)) {
+        } else if (!passwordParam.equals(confirmPasswordParam)) {
             request.setAttribute("errorMsg", "Confirm password is not match with password.");
             return false;
         } else {
