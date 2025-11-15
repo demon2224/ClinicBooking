@@ -11,8 +11,8 @@ import java.util.Properties;
 
 public class EmailService {
 
-    private static final String FROM_EMAIL = "";
-    private static final String APP_PASSWORD = "";
+    private static final String FROM_EMAIL = "khangvm.ce191371@gmail.com";
+    private static final String APP_PASSWORD = "vljsqelijmdpvebj";
 
     public void sendOtpEmail(String toEmail, String otpCode) throws Exception {
 
