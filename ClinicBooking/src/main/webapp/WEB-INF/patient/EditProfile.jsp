@@ -25,7 +25,7 @@
     </head>
     <body class="appointment-page">
         <!-- Include Header -->
-        <jsp:include page="includes/header.jsp">
+        <jsp:include page="../includes/header.jsp">
             <jsp:param name="activePage" value="profile" />
         </jsp:include>
 
