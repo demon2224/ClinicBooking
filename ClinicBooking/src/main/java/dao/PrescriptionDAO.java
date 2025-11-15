@@ -964,27 +964,24 @@ public class PrescriptionDAO extends DBContext {
     }
 
     public boolean restoreMedicinesItems(int prescriptionID) {
-        // l?y danh s�ch item trong ??n thu?c.
         List<PrescriptionItemDTO> itemList = getPrescriptionItemsByPrescriptionID(prescriptionID);
 
         if (itemList == null || itemList.isEmpty()) {
-            return false; // Kh�ng c� item n�o ?? ph?c h?i
+            return false;
         }
 
         boolean success = true;
 
         try {
-            // C?p nh?t s? l??ng thu?c trong kho
             for (PrescriptionItemDTO item : itemList) {
-                int medicineID = item.getMedicineID().getMedicineID(); // l?y t?ng thu?c trong danh s�ch ra
-                int dosage = item.getDosage(); // l?y li?u l??ng c?a t?ng thu?c ?? ph?c h?i
+                int medicineID = item.getMedicineID().getMedicineID();
+                int dosage = item.getDosage();
 
-                // Ph?c h?i thu?c
                 String updateMedicineSql = "UPDATE Medicine SET Quantity = Quantity + ? WHERE MedicineID = ?";
                 Object[] updateParams = {dosage, medicineID};
 
                 int updated = executeQuery(updateMedicineSql, updateParams);
-                if (updated == 0) { // Medicine ID kh�ng t?n t?i ho?c l?i
+                if (updated == 0) {
                     success = false;
                 }
             }
