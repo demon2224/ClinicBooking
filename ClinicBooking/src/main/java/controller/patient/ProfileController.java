@@ -102,7 +102,7 @@ public class ProfileController extends HttpServlet {
             int patientId = ((PatientDTO) session.getAttribute("patient")).getPatientID();
 
             // Get patient from database
-            PatientDTO patient = patientDAO.getPatientById(patientId);
+            PatientDTO patient = (PatientDTO) session.getAttribute("patient");
 
             if (patient == null) {
                 response.sendRedirect(request.getContextPath() + "/home");

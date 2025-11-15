@@ -211,7 +211,7 @@
                                             <i class="fas fa-eye"></i>
                                             View Profile
                                         </button>
-                                        <button class="btn-action btn-cancel" onclick="bookAppointment('${doctor.doctorID}')">
+                                        <button class="btn-action btn-primary" onclick="bookAppointment('${doctor.doctorID}')">
                                             <i class="fas fa-calendar-plus"></i>
                                             Book Appointment
                                         </button>

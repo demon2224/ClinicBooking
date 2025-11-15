@@ -1,3 +1,15 @@
+.btn-primary {
+    background: #175CDD;
+    color: #fff;
+    border: 2px solid #175CDD;
+}
+.btn-primary:hover {
+    background: #1450C4;
+    color: #fff;
+    border-color: #1450C4;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(25, 118, 210, 0.3);
+}
 /* Avatar nhỏ ở header/profile */
 .profile-avatar-small {
     width: 32px;
