@@ -9,6 +9,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Doctor List - CLINIC</title>
+        <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/assests/img/logo.png">
 
         <!-- Font Awesome Icons -->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -85,10 +86,25 @@
                             <c:forEach var="doctor" items="${doctors}">
                                 <div class="doctor-profile-card">
                                     <!-- Doctor Avatar -->
-                                    <img src="${pageContext.request.contextPath}${doctor.staffID.avatar}"
-                                         alt="Dr. ${doctor.staffID.firstName} ${doctor.staffID.lastName}"
-                                         class="doctor-profile-avatar"
-                                         onerror="this.src='${pageContext.request.contextPath}/assests/img/0.png'">
+                                    <c:choose>
+                                        <c:when test="${doctor.staffID.avatar != null && !empty doctor.staffID.avatar}">
+                                            <!-- Display avatar from database -->
+                                            <img src="${pageContext.request.contextPath}${doctor.staffID.avatar}"
+                                                 alt="Dr. ${doctor.staffID.firstName} ${doctor.staffID.lastName}"
+                                                 class="doctor-profile-avatar"
+                                                 onerror="this.onerror=null; this.src='${pageContext.request.contextPath}/assests/img/doctor${(doctor.doctorID % 3) + 1}.jpg'">
+                                        </c:when>
+                                        <c:otherwise>
+                                            <!-- Fallback to default doctor images -->
+                                            <img src="${pageContext.request.contextPath}/assests/img/doctor${(doctor.doctorID % 3) + 1}.jpg"
+                                                 alt="Dr. ${doctor.staffID.firstName} ${doctor.staffID.lastName}"
+                                                 class="doctor-profile-avatar"
+                                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+                                            <div class="doctor-avatar-fallback" style="display: none;">
+                                                <i class="fas fa-user-md"></i>
+                                            </div>
+                                        </c:otherwise>
+                                    </c:choose>
 
                                     <!-- Doctor Name -->
                                     <h3 class="doctor-profile-name">

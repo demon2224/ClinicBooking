@@ -14,6 +14,8 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>My Invoices - CLINIC</title>
+        <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/assests/img/logo.png">
+
 
         <!-- Font Awesome Icons -->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -137,7 +139,7 @@
                                             <i class="fas fa-eye"></i>
                                             View Details
                                         </a>
-                                        
+
                                         <!-- Add checkout button for unpaid invoices -->
                                         <c:if test="${invoice.invoiceStatus == 'Pending'}">
                                             <a href="${pageContext.request.contextPath}/payment?id=${invoice.invoiceID}" class="btn-action btn-primary">

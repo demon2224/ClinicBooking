@@ -14,6 +14,8 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>My Prescriptions - CLINIC</title>
+        <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/assests/img/logo.png">
+
 
         <!-- Font Awesome Icons -->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -115,14 +117,14 @@
                                                 </c:choose>
                                             </div>
                                         </div>
-                                        <div class="appointment-status 
-                                        <c:choose>
-                                            <c:when test="${prescription.prescriptionStatus == 'Delivered'}">status-completed</c:when>
-                                            <c:when test="${prescription.prescriptionStatus == 'Pending'}">status-pending</c:when>
-                                            <c:when test="${prescription.prescriptionStatus == 'Canceled'}">status-cancelled</c:when>
-                                            <c:otherwise>status-pending</c:otherwise>
-                                        </c:choose>
-                                        ">
+                                        <div class="appointment-status
+                                             <c:choose>
+                                                 <c:when test="${prescription.prescriptionStatus == 'Delivered'}">status-completed</c:when>
+                                                 <c:when test="${prescription.prescriptionStatus == 'Pending'}">status-pending</c:when>
+                                                 <c:when test="${prescription.prescriptionStatus == 'Canceled'}">status-cancelled</c:when>
+                                                 <c:otherwise>status-pending</c:otherwise>
+                                             </c:choose>
+                                             ">
                                             ${prescription.prescriptionStatus != null ? prescription.prescriptionStatus : 'Pending'}
                                         </div>
                                     </div>

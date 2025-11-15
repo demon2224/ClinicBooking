@@ -19,6 +19,8 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>My Profile - CLINIC</title>
+        <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/assests/img/logo.png">
+
 
         <!-- Font Awesome Icons -->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -398,9 +400,9 @@
 
                 if (errors.length > 0) {
                     e.preventDefault();
-                     errorContainer.innerHTML = errors.map(
-                        `<div class="error-message"><i class="fas fa-exclamation-circle"></i>` + ${errors} + `</div>`
-                ).join('');
+                    errorContainer.innerHTML = errors.map(
+                            `<div class="error-message"><i class="fas fa-exclamation-circle"></i>` + ${errors} + `</div>`
+                            ).join('');
                 } else {
                     errorContainer.classList.add('hidden');
                 }

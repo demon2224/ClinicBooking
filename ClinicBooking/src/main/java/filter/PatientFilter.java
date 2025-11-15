@@ -29,11 +29,11 @@ public class PatientFilter implements Filter {
     public void doFilter(ServletRequest sr, ServletResponse sr1, FilterChain fc) throws IOException, ServletException {
         HttpServletRequest httpRequest = (HttpServletRequest) sr;
         HttpServletResponse httpResponse = (HttpServletResponse) sr1;
-        
+
         PatientDTO patient = (PatientDTO) httpRequest.getSession().getAttribute("patient");
-        
+
         if (patient == null) {
-            httpResponse.sendRedirect(httpRequest.getContextPath() + "/patient-login");
+            httpResponse.sendRedirect(httpRequest.getContextPath() + "/home");
             return;
         }
 
@@ -44,5 +44,5 @@ public class PatientFilter implements Filter {
     @Override
     public void destroy() {
     }
-    
+
 }

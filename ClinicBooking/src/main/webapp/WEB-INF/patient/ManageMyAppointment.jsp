@@ -14,6 +14,8 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Manage My Appointments - CLINIC</title>
+        <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/assests/img/logo.png">
+
 
         <!-- Font Awesome Icons -->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -305,16 +307,17 @@
         // Auto show modal on page load if exists
         document.addEventListener('DOMContentLoaded', function () {
             const modal = document.getElementById('messageModal');
-            
+
             if (modal) {
                 modal.style.display = 'flex';
                 modal.classList.add('show'); // Add show class for CSS animation
                 document.body.style.overflow = 'hidden'; // Disable scrolling when modal is open
-                
+
                 // Clear session messages after modal is shown
                 fetch(window.location.pathname + '?action=clearMessages', {
                     method: 'POST'
-                }).catch(e => {});
+                }).catch(e => {
+                });
 
                 // Close modal when clicking outside
                 modal.addEventListener('click', function (e) {

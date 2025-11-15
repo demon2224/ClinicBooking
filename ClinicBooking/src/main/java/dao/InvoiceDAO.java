@@ -8,6 +8,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -449,21 +451,16 @@ public class InvoiceDAO extends DBContext {
      * @param datePay Payment date
      * @return true if update successful, false otherwise
      */
-    public boolean updateInvoicePaymentAndStatus(int invoiceId, String paymentType,
-            String invoiceStatus, java.time.LocalDateTime datePay) {
+    public boolean updateInvoicePaymentAndStatus(int invoiceId,
+            String paymentType,
+            String invoiceStatus,
+            LocalDateTime datePay) {
 
         String sql = "UPDATE Invoice "
-                + "SET PaymentType = ?, "
-                + "    InvoiceStatus = ?, "
-                + "    DatePay = ? "
+                + "SET PaymentType = ?, InvoiceStatus = ?, DatePay = ? "
                 + "WHERE InvoiceID = ? AND (PaymentType IS NULL OR PaymentType = '')";
 
-        Object[] params = new Object[]{
-            paymentType,
-            invoiceStatus,
-            (datePay != null ? java.sql.Timestamp.valueOf(datePay) : null),
-            invoiceId
-        };
+        Object[] params = new Object[]{paymentType, invoiceStatus, datePay, invoiceId};
 
         int rows = executeQuery(sql, params);
         return rows > 0;

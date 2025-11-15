@@ -12,6 +12,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Dr.${doctor.staffID.firstName} ${doctor.staffID.lastName} - CLINIC</title>
+        <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/assests/img/logo.png">
         <!-- Font Awesome Icons -->
         <link rel="stylesheet"
               href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -27,27 +28,42 @@
         </jsp:include>
 
         <div class="doctor-detail-container">
+            <!-- Page Title -->
             <div class="appointment-page-header">
-                <h1><i class="fas fa-user-md"></i> Doctor Detail </h1>
+                <h1><i class="fas fa-user-md"></i> Dr. ${doctor.staffID.firstName} ${doctor.staffID.lastName}</h1>
+                <c:if test="${not empty doctor.specialtyID.specialtyName}">
+                    <p class="doctor-specialty-subtitle">
+                        <i class="fas fa-stethoscope"></i> ${doctor.specialtyID.specialtyName}
+                    </p>
+                </c:if>
             </div>
+            
             <!-- Doctor Profile Card -->
             <div class="doctor-detail-card">
                 <div class="doctor-detail-header">
                     <!-- Main Doctor Info (Left Side) -->
                     <div class="doctor-detail-main-info">
-                        <img src="${pageContext.request.contextPath}/${doctor.staffID.avatar}"
-                             alt="Dr.${doctor.staffID.firstName} ${doctor.staffID.lastName}" class="doctor-detail-avatar">
+                        <div class="doctor-detail-avatar-container">
+                            <c:choose>
+                                <c:when test="${doctor.staffID.avatar != null && !empty doctor.staffID.avatar}">
+                                    <img src="${pageContext.request.contextPath}${doctor.staffID.avatar}"
+                                         alt="Dr. ${doctor.staffID.firstName} ${doctor.staffID.lastName}"
+                                         class="doctor-detail-avatar"
+                                         onerror="this.onerror=null; this.src='${pageContext.request.contextPath}/assests/img/doctor${(doctor.doctorID % 3) + 1}.png'">
+                                </c:when>
+                                <c:otherwise>
+                                    <img src="${pageContext.request.contextPath}/assests/img/doctor${(doctor.doctorID % 3) + 1}.png"
+                                         alt="Dr. ${doctor.staffID.firstName} ${doctor.staffID.lastName}"
+                                         class="doctor-detail-avatar"
+                                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+                                    <div class="doctor-detail-avatar-fallback" style="display: none;">
+                                        <i class="fas fa-user-md"></i>
+                                    </div>
+                                </c:otherwise>
+                            </c:choose>
+                        </div>
 
                         <div class="doctor-detail-info">
-                            <h1 class="doctor-detail-name">
-                                Dr. ${doctor.staffID.firstName} ${doctor.staffID.lastName}
-                            </h1>
-                            <c:if test="${not empty doctor.specialtyID.specialtyName}">
-                                <p class="doctor-detail-specialty">
-                                    <i class="fas fa-user-md"></i>
-                                    ${doctor.specialtyID.specialtyName}
-                                </p>
-                            </c:if>
                             <div class="doctor-detail-contact">
                                 <c:if test="${not empty doctor.staffID.phoneNumber}">
                                     <div class="doctor-detail-contact-item">

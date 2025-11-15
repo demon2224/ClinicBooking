@@ -14,6 +14,8 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Book Appointment - CLINIC</title>
+        <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/assests/img/logo.png">
+
         <!-- Font Awesome Icons -->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
@@ -200,7 +202,7 @@
                                     <span class="label-subtitle">Choose your appointment date and time</span>
                                 </div>
                             </label>
-                            
+
                             <div class="datetime-selector">
                                 <!-- Date Selection (Left Side) -->
                                 <div class="date-selection">
@@ -247,7 +249,7 @@
                                                 <button type="button" class="time-slot" data-time="11:30">11:30</button>
                                             </div>
                                         </div>
-                                        
+
                                         <div class="time-period">
                                             <div class="time-period-header">Afternoon</div>
                                             <div class="time-slots-grid">
@@ -266,12 +268,12 @@
                                     </div>
                                 </div>
                             </div>
-                            
+
                             <!-- Hidden inputs for form submission -->
                             <input type="hidden" id="appointmentDateTime" name="appointmentDateTime">
                             <input type="hidden" id="selectedDate" name="selectedDate">
                             <input type="hidden" id="selectedTime" name="selectedTime">
-                            
+
                             <div class="booking-rules-notice">
                                 <div class="notice-header">
                                     <i class="fas fa-info-circle"></i>
@@ -356,48 +358,48 @@
             function renderCalendar() {
                 const monthYear = document.getElementById('monthYear');
                 const calendarDays = document.getElementById('calendarDays');
-                
+
                 const year = currentDate.getFullYear();
                 const month = currentDate.getMonth();
-                
+
                 // Set month/year header
-                monthYear.textContent = new Intl.DateTimeFormat('en-US', { 
-                    month: 'long', 
-                    year: 'numeric' 
+                monthYear.textContent = new Intl.DateTimeFormat('en-US', {
+                    month: 'long',
+                    year: 'numeric'
                 }).format(currentDate);
-                
+
                 // Clear previous days
                 calendarDays.innerHTML = '';
-                
+
                 // Get first day of month and number of days
                 const firstDay = new Date(year, month, 1).getDay();
                 const daysInMonth = new Date(year, month + 1, 0).getDate();
                 const today = new Date();
                 const minDate = new Date(today.getTime() + 24 * 60 * 60 * 1000); // 24 hours from now
                 const maxDate = new Date(today.getTime() + 30 * 24 * 60 * 60 * 1000); // 30 days from now
-                
+
                 // Add empty cells for days before month starts
                 for (let i = 0; i < firstDay; i++) {
                     const emptyDay = document.createElement('div');
                     emptyDay.className = 'calendar-day empty';
                     calendarDays.appendChild(emptyDay);
                 }
-                
+
                 // Add days of month
                 for (let day = 1; day <= daysInMonth; day++) {
                     const dayElement = document.createElement('div');
                     dayElement.className = 'calendar-day';
                     dayElement.textContent = day;
-                    
+
                     const dayDate = new Date(year, month, day);
-                    
+
                     // Disable past dates and dates beyond 30 days (visual only)
                     if (dayDate < minDate || dayDate > maxDate) {
                         dayElement.classList.add('disabled');
                     } else {
                         dayElement.addEventListener('click', () => selectDate(dayDate, dayElement));
                     }
-                    
+
                     calendarDays.appendChild(dayElement);
                 }
             }
@@ -407,33 +409,33 @@
                 document.querySelectorAll('.calendar-day.selected').forEach(day => {
                     day.classList.remove('selected');
                 });
-                
+
                 // Add selection to clicked date
                 element.classList.add('selected');
-                
+
                 // Store selected date
                 selectedDateStr = date.toISOString().split('T')[0];
                 document.getElementById('selectedDate').value = selectedDateStr;
-                
+
                 // Update combined datetime if time is also selected
                 updateDateTime();
             }
 
             function setupTimeSlots() {
                 const timeSlots = document.querySelectorAll('.time-slot');
-                
+
                 timeSlots.forEach(slot => {
                     slot.addEventListener('click', () => {
                         // Remove previous selection
                         timeSlots.forEach(s => s.classList.remove('selected'));
-                        
+
                         // Add selection to clicked slot
                         slot.classList.add('selected');
-                        
+
                         // Store selected time
                         selectedTimeStr = slot.dataset.time;
                         document.getElementById('selectedTime').value = selectedTimeStr;
-                        
+
                         // Update combined datetime if date is also selected
                         updateDateTime();
                     });
@@ -455,11 +457,11 @@
             document.addEventListener('DOMContentLoaded', function () {
                 // Initialize calendar
                 initCalendar();
-                
+
                 // Calendar navigation
                 document.getElementById('prevMonth').addEventListener('click', () => navigateMonth(-1));
                 document.getElementById('nextMonth').addEventListener('click', () => navigateMonth(1));
-                
+
                 // Auto show modal on page load if exists
                 const modal = document.getElementById('messageModal');
                 if (modal) {
@@ -505,12 +507,12 @@
                 // Character counter functionality (display only, no validation)
                 const noteTextarea = document.getElementById('note');
                 const charCount = document.getElementById('charCount');
-                
+
                 if (noteTextarea && charCount) {
                     noteTextarea.addEventListener('input', function () {
                         const currentLength = this.value.length;
                         charCount.textContent = currentLength;
-                        
+
                         // Change color based on character count (visual feedback only)
                         if (currentLength > 450) {
                             charCount.style.color = '#ef4444';

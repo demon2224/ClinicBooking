@@ -14,6 +14,8 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Edit Profile - CLINIC</title>
+        <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/assests/img/logo.png">
+
 
         <!-- Font Awesome Icons -->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -83,7 +85,7 @@
                 <div class="appointments-content">
                     <form method="post" action="${pageContext.request.contextPath}/profile" enctype="multipart/form-data">
                         <input type="hidden" name="action" value="update">
-                        
+
                         <div class="profile-layout">
                             <!-- Left Section - Avatar & Actions -->
                             <div class="profile-left">
@@ -115,13 +117,13 @@
                             <!-- Right Section - Profile Information -->
                             <div class="profile-right">
                                 <h2 class="profile-section-title">Profile Information:</h2>
-                                
+
                                 <div class="profile-info-grid">
                                     <div class="profile-field">
                                         <label class="profile-label">Username:</label>
                                         <input type="text" class="profile-value" value="${patient.accountName}" readonly disabled>
                                     </div>
-                                    
+
                                     <div class="profile-field">
                                         <label class="profile-label">First name:</label>
                                         <input type="text" class="profile-value" id="firstName" name="firstName" value="${patient.firstName}" required>
@@ -178,40 +180,40 @@
         </main>
 
         <script>
-                                // Avatar upload preview
-                                document.getElementById('avatarUpload').addEventListener('change', function (e) {
-                                    const file = e.target.files[0];
-                                    if (file) {
-                                        // File validation will be handled by backend - show in modal
+            // Avatar upload preview
+            document.getElementById('avatarUpload').addEventListener('change', function (e) {
+                const file = e.target.files[0];
+                if (file) {
+                    // File validation will be handled by backend - show in modal
 
-                                        // Preview image
-                                        const reader = new FileReader();
-                                        reader.onload = function (e) {
-                                            document.getElementById('profileAvatar').src = e.target.result;
-                                        };
-                                        reader.readAsDataURL(file);
-                                    }
-                                });
+                    // Preview image
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        document.getElementById('profileAvatar').src = e.target.result;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
 
-                                // Avatar upload preview (keep simple, no validation popups)
+            // Avatar upload preview (keep simple, no validation popups)
 
-                                // Form validation removed - let backend handle all validation via modal
+            // Form validation removed - let backend handle all validation via modal
 
-                                // Close modal function
-                                function closeModal() {
-                                    const modal = document.getElementById('messageModal');
-                                    if (modal) {
-                                        modal.style.display = 'none';
-                                    }
-                                }
+            // Close modal function
+            function closeModal() {
+                const modal = document.getElementById('messageModal');
+                if (modal) {
+                    modal.style.display = 'none';
+                }
+            }
 
-                                // Auto-show modal on page load
-                                window.addEventListener('DOMContentLoaded', function () {
-                                    const modal = document.getElementById('messageModal');
-                                    if (modal) {
-                                        modal.style.display = 'flex';
-                                    }
-                                });
+            // Auto-show modal on page load
+            window.addEventListener('DOMContentLoaded', function () {
+                const modal = document.getElementById('messageModal');
+                if (modal) {
+                    modal.style.display = 'flex';
+                }
+            });
         </script>
     </body>
 </html>
