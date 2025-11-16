@@ -1,4 +1,4 @@
-<%-- 
+<%--
     Document   : PrescriptionDetail
     Created on : Nov 5, 2025, 10:11:23 PM
     Author     : Vu Minh Khang - CE191371
@@ -13,7 +13,7 @@
     <head>
         <meta charset="UTF-8">
         <title>Prescription Detail</title>
-
+        <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/assests/img/logo.png">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
@@ -116,7 +116,7 @@
                                     <th>Patient</th>
                                     <td>
                                         <strong>
-                                            <c:out value="${prescription.appointmentID.patientID.firstName}"/> 
+                                            <c:out value="${prescription.appointmentID.patientID.firstName}"/>
                                             <c:out value="${prescription.appointmentID.patientID.lastName}"/>
                                         </strong>
                                     </td>

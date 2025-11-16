@@ -12,6 +12,7 @@
     <head>
         <meta charset="UTF-8">
         <title>Pharmacist - Prescription List</title>
+        <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/assests/img/logo.png">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assests/css/bootstrap.min.css">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assests/css/all.min.css"/>
 

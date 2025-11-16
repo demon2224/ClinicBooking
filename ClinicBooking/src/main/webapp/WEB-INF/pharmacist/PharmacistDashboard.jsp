@@ -1,4 +1,4 @@
-<%-- 
+<%--
     Document   : PharmacistDashboard
     Created on : Oct 10, 2025, 1:47:38 PM
     Author     : Vu Minh Khang - CE191371
@@ -13,7 +13,7 @@
     <head>
         <meta charset="UTF-8">
         <title>Pharmacist Dashboard</title>
-
+        <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/assests/img/logo.png">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assests/css/bootstrap.min.css">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assests/css/all.min.css" />
 

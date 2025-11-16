@@ -1,4 +1,4 @@
-<%-- 
+<%--
     Document   : medicine
     Created on : Oct 10, 2025, 3:41:23 PM
     Author     : Vu Minh Khang - CE191371
@@ -13,7 +13,7 @@
     <head>
         <meta charset="UTF-8">
         <title>Pharmacist - Medicine Management</title>
-
+        <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/assests/img/logo.png">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assests/css/bootstrap.min.css">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assests/css/all.min.css"/>
 
@@ -265,7 +265,7 @@
             </div>
         </div>
 
-        <c:if test="${not empty sessionScope.medicineEditSuccessMsg 
+        <c:if test="${not empty sessionScope.medicineEditSuccessMsg
                       or not empty sessionScope.medicineImportSuccessMsg
                       or not empty sessionScope.medicineDeleteSuccessMsg}">
               <script>

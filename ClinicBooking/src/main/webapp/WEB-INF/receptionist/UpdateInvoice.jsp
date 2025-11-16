@@ -1,4 +1,4 @@
-<%-- 
+<%--
     Document   : UpdateInvoice
     Created on : Nov 6, 2025, 5:33:17 PM
     Author     : Ngo Quoc Hung - CE191184
@@ -13,6 +13,7 @@
     <head>
         <meta charset="UTF-8">
         <title>Invoice Detail</title>
+        <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/assests/img/logo.png">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
         <style>
@@ -100,7 +101,7 @@
                     </tr>
                     <tr>
                         <th>Payment Method</th>
-                        <td> 
+                        <td>
                             <select id="paymentType" name="paymentType" class="form-select">
                                 <option value="Cash">Cash</option>
                                 <option value="Credit Card">Credit Card</option>

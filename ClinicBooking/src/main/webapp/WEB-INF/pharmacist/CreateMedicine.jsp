@@ -1,4 +1,4 @@
-<%-- 
+<%--
     Document   : CreateMedicine
     Created on : Oct 11, 2025, 2:00:09 PM
     Author     : Vu Minh Khang - CE191371
@@ -12,7 +12,7 @@
     <head>
         <meta charset="UTF-8">
         <title>Create Medicine</title>
-
+        <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/assests/img/logo.png">
         <!-- Bootstrap & FontAwesome -->
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">

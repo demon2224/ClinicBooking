@@ -14,6 +14,7 @@
     <head>
         <meta charset="UTF-8">
         <title>Receptionist Dashboard</title>
+        <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/assests/img/logo.png">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
         <link href="${pageContext.request.contextPath}/assests/css/main.css" rel="stylesheet" type="text/css"/>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
@@ -211,7 +212,7 @@
 
                 <!-- Left: Top 5 Doctors by Revenue -->
                 <div class="col-md-6">
-                    <div class="card mb-4 mt-3" 
+                    <div class="card mb-4 mt-3"
                          style="border:none; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.08);">
                         <div class="card-header"
                              style="background-color:#1B5A90; color:white; border-top-left-radius:12px; border-top-right-radius:12px;">
@@ -253,7 +254,7 @@
 
                 <!-- Right: Top 5 Specialties Booked -->
                 <div class="col-md-6">
-                    <div class="card mb-4 mt-3" 
+                    <div class="card mb-4 mt-3"
                          style="border:none; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.08);">
                         <div class="card-header"
                              style="background-color:#1B5A90; color:white; border-top-left-radius:12px; border-top-right-radius:12px;">

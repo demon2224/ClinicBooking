@@ -1,4 +1,4 @@
-<%-- 
+<%--
     Document   : AddAppointment
     Created on : Oct 11, 2025
     Author     : Ngo Quoc Hung - CE191184
@@ -16,6 +16,7 @@
     <head>
         <meta charset="UTF-8">
         <title>Add Appointment</title>
+        <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/assests/img/logo.png">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
@@ -233,7 +234,7 @@
                 <!-- Buttons -->
                 <div class="d-flex justify-content-end">
                     <button type="submit" class="btn btn-success me-2">
-                        <i class="fa-solid fa-check"></i>  Add 
+                        <i class="fa-solid fa-check"></i>  Add
                     </button>
 <!--                    <a href="${pageContext.request.contextPath}/receptionist-manage-appointment" class="btn btn-secondary">
                         <i class="fa-solid fa-xmark"></i> Cancel
@@ -371,6 +372,6 @@
         </script>
 
     </body>
-</html>  
+</html>
 
 
