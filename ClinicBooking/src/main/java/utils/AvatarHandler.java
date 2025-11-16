@@ -87,12 +87,12 @@ public class AvatarHandler {
      * Handle avatar file upload for patient
      *
      * @param avatarPart     Uploaded file part
-     * @param userId         User ID (for filename)
+     * @param username       Username (for filename)
      * @param userType       User type ("patient")
      * @param servletContext Servlet context to get real path
      * @return Relative path to saved avatar, or null if failed
      */
-    public static String handleAvatarUpload(Part avatarPart, int userId, String userType,
+    public static String handleAvatarUpload(Part avatarPart, String username, String userType,
             ServletContext servletContext) {
         try {
             // Validate file
@@ -104,7 +104,7 @@ public class AvatarHandler {
             String fileName = extractFileName(avatarPart);
             String extension = AvatarValidate.getFileExtension(fileName);
 
-            // Use patient avatar directory
+            // Use patient avatar directory  
             String uploadDir = AvatarConstants.PATIENT_AVATAR_DIR;
 
             // Get real path (target folder)
@@ -128,8 +128,8 @@ public class AvatarHandler {
                 sourceDir.mkdirs();
             }
 
-            // Generate unique filename
-            String newFileName = "avatar_" + userType + "_" + userId + "_" + System.currentTimeMillis() + extension;
+            // Generate filename with username
+            String newFileName = username + extension;
 
             // Save file to source folder (persistent)
             Path sourceFilePath = Paths.get(sourcePath, newFileName);

@@ -99,15 +99,19 @@ public class ProfileController extends HttpServlet {
             return;
         }
         try {
+            // Get patient ID from session
             int patientId = ((PatientDTO) session.getAttribute("patient")).getPatientID();
 
-            // Get patient from database
-            PatientDTO patient = (PatientDTO) session.getAttribute("patient");
+            // Reload patient from database to get latest data
+            PatientDTO patient = patientDAO.getPatientById(patientId);
 
             if (patient == null) {
                 response.sendRedirect(request.getContextPath() + "/home");
                 return;
             }
+
+            // Update session with fresh data from database
+            session.setAttribute("patient", patient);
 
             // Process avatar - set default if not exists
             AvatarHandler.processPatientAvatar(patient);
@@ -191,10 +195,10 @@ public class ProfileController extends HttpServlet {
             throws ServletException, IOException {
 
         try {
-            PatientDTO patient = (PatientDTO) session.getAttribute("patient");
-            int patientId = patient.getPatientID();
+            int patientId = ((PatientDTO) session.getAttribute("patient")).getPatientID();
+            PatientDTO currentPatient = patientDAO.getPatientById(patientId);
 
-            // Get form data from request parameters
+            // Get form data
             String firstName = request.getParameter("firstName");
             String lastName = request.getParameter("lastName");
             String phoneNumber = request.getParameter("phoneNumber");
@@ -207,14 +211,14 @@ public class ProfileController extends HttpServlet {
             List<String> errors = ProfileValidate.validateProfileInput(
                     firstName, lastName, phoneNumber, email, dobStr, genderStr, address);
 
-            // Check if email is unique (if changed)
-            PatientDTO currentPatient = patientDAO.getPatientById(patientId);
+            // Check email uniqueness if changed
             if (!email.equalsIgnoreCase(currentPatient.getEmail())) {
                 if (patientDAO.isEmailExistForOtherPatient(email, patientId)) {
                     errors.add("This email is already in use by another patient");
                 }
             }
 
+            // If validation errors, return to form
             if (!errors.isEmpty()) {
                 request.setAttribute("errors", errors);
                 request.setAttribute("patient", currentPatient);
@@ -222,11 +226,12 @@ public class ProfileController extends HttpServlet {
                 return;
             }
 
-            // Handle avatar upload
+            // Handle avatar upload if present
             Part avatarPart = request.getPart("avatar");
             String newAvatarPath = null;
 
             if (avatarPart != null && avatarPart.getSize() > 0) {
+                // Validate avatar file
                 if (!AvatarValidate.isValidAvatarFile(avatarPart)) {
                     errors.add("Invalid avatar file (only .jpg, .png, .gif, max 10MB accepted)");
                     request.setAttribute("errors", errors);
@@ -235,8 +240,9 @@ public class ProfileController extends HttpServlet {
                     return;
                 }
 
+                // Upload avatar
                 newAvatarPath = AvatarHandler.handleAvatarUpload(
-                        avatarPart, patientId, "patient", getServletContext());
+                        avatarPart, currentPatient.getAccountName(), "patient", getServletContext());
 
                 if (newAvatarPath == null) {
                     errors.add("Upload avatar failed");
@@ -248,27 +254,30 @@ public class ProfileController extends HttpServlet {
             }
 
             // Update patient data
-            patient = patientDAO.getPatientById(patientId);
-            patient.setFirstName(firstName);
-            patient.setLastName(lastName);
-            patient.setPhoneNumber(phoneNumber);
-            patient.setEmail(email);
-            patient.setUserAddress(address);
-            patient.setDob(parseDate(dobStr));
-            patient.setGender("Male".equalsIgnoreCase(genderStr));
+            currentPatient.setFirstName(firstName);
+            currentPatient.setLastName(lastName);
+            currentPatient.setPhoneNumber(phoneNumber);
+            currentPatient.setEmail(email);
+            currentPatient.setUserAddress(address);
+            currentPatient.setDob(parseDate(dobStr));
+            currentPatient.setGender("Male".equalsIgnoreCase(genderStr));
 
             if (newAvatarPath != null) {
-                patient.setAvatar(newAvatarPath);
+                currentPatient.setAvatar(newAvatarPath);
             }
 
-            boolean success = patientDAO.updatePatientProfile(patient);
+            // Save to database
+            boolean success = patientDAO.updatePatientProfile(currentPatient);
 
             if (success) {
-                response.sendRedirect(request.getContextPath() + "/profile?success=true");
+                // Update session with new data
+                session.setAttribute("patient", currentPatient);
+                session.setAttribute("successMessage", "Profile updated successfully!");
+                response.sendRedirect(request.getContextPath() + "/profile");
             } else {
                 errors.add("Update information failed");
                 request.setAttribute("errors", errors);
-                request.setAttribute("patient", patient);
+                request.setAttribute("patient", currentPatient);
                 request.getRequestDispatcher(ProfileConstants.URL_EDIT_PROFILE_JSP).forward(request, response);
             }
 
@@ -286,30 +295,28 @@ public class ProfileController extends HttpServlet {
             throws ServletException, IOException {
 
         int patientId = ((PatientDTO) session.getAttribute("patient")).getPatientID();
+        
         // Get form data
         String currentPassword = request.getParameter("currentPassword");
         String newPassword = request.getParameter("newPassword");
         String confirmPassword = request.getParameter("confirmPassword");
 
-        // Validate passwords
+        // Validate new password strength
         List<String> errors = ProfileValidate.validatePasswordStrength(newPassword);
-        log(errors + "1");
-        // Check if passwords match
+        
+        // Check if new password matches confirmation
         if (!ProfileValidate.isPasswordMatch(newPassword, confirmPassword)) {
-            log(errors + "2");
             errors.add("New password and confirmation do not match");
         }
 
-        // Check if new password is different from current
-        if (currentPassword.equals(newPassword)) {
-            log(errors + "3");
-            errors.add("The new password must be different from the current password.");
+        // Check if new password is different from current password
+        if (currentPassword != null && currentPassword.equals(newPassword)) {
+            errors.add("New password must be different from current password");
         }
 
+        // If validation errors, show them
         if (!errors.isEmpty()) {
-            log(errors + "");
             request.setAttribute("passwordErrorList", errors);
-
             viewProfile(request, response);
             return;
         }

@@ -42,7 +42,7 @@
             </div>
 
             <!-- Success Modal -->
-            <c:if test= "true">
+            <c:if test="${not empty sessionScope.successMessage}">
                 <div id="messageModal" class="modal-overlay">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -62,7 +62,7 @@
             </c:if>
 
             <!-- Error Modal for Password Change -->
-            <c:if test="${not empty requestScope.passwordError}">
+            <c:if test="${not empty requestScope.passwordError or not empty requestScope.passwordErrorList}">
                 <div id="passwordErrorModal" class="modal-overlay">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -72,7 +72,16 @@
                             <button type="button" class="modal-close" onclick="closePasswordErrorModal()">&times;</button>
                         </div>
                         <div class="modal-body">
-                            <p class="error-messages"> ${requestScope.passwordError}</p>
+                            <c:if test="${not empty requestScope.passwordError}">
+                                <p class="error-messages">${requestScope.passwordError}</p>
+                            </c:if>
+                            <c:if test="${not empty requestScope.passwordErrorList}">
+                                <div class="error-messages">
+                                    <c:forEach var="error" items="${requestScope.passwordErrorList}">
+                                        <p><i class="fas fa-exclamation-circle"></i> ${error}</p>
+                                    </c:forEach>
+                                </div>
+                            </c:if>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-danger" onclick="closePasswordErrorModal()">Close</button>
@@ -257,191 +266,289 @@
         <!-- Custom Modal JS - no Bootstrap dependency -->
         <jsp:include page="../includes/footer.jsp" />
 
-        <script>
-            // Modal Controls
-            const modal = document.getElementById('changePasswordModal');
-            const openModalBtn = document.getElementById('changePasswordBtn');
-            const closeModalBtn = document.getElementById('closeModalBtn');
-            const cancelBtn = document.getElementById('cancelBtn');
+        <style>
+            /* Change Password Button Styling */
+            .change-password-btn {
+                width: 100%;
+                padding: 0.875rem 1.5rem;
+                background: linear-gradient(120deg, #175CDD, #1450C4);
+                color: white;
+                border: none;
+                border-radius: 0.5rem;
+                font-weight: 600;
+                font-size: 0.95rem;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 0.5rem;
+                box-shadow: 0 2px 4px rgba(23, 92, 221, 0.2);
+                margin-top: 1rem;
+            }
 
-            openModalBtn.addEventListener('click', () => {
-                modal.classList.add('active');
-            });
+            .change-password-btn:hover {
+                background: linear-gradient(135deg, #1450C4, #0f46b8);
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(23, 92, 221, 0.3);
+            }
 
-            closeModalBtn.addEventListener('click', () => {
-                modal.classList.remove('active');
-                resetForm();
-            });
+            .change-password-btn:active {
+                transform: translateY(0);
+                box-shadow: 0 2px 4px rgba(23, 92, 221, 0.2);
+            }
 
-            cancelBtn.addEventListener('click', () => {
-                modal.classList.remove('active');
-                resetForm();
-            });
+            .change-password-btn i {
+                font-size: 1rem;
+            }
 
-            // Close modal when clicking outside
-            modal.addEventListener('click', (e) => {
-                if (e.target === modal) {
-                    modal.classList.remove('active');
-                    resetForm();
+            /* Modal Overlay Styling - Override to ensure display */
+            #changePasswordModal {
+                display: none !important;
+                position: fixed !important;
+                top: 0 !important;
+                left: 0 !important;
+                width: 100% !important;
+                height: 100% !important;
+                background: rgba(0, 0, 0, 0.5) !important;
+                backdrop-filter: blur(4px) !important;
+                z-index: 10000 !important;
+                align-items: center !important;
+                justify-content: center !important;
+            }
+
+            #changePasswordModal.active {
+                display: flex !important;
+                opacity: 1 !important;
+                visibility: visible !important;
+            }
+
+            #changePasswordModal .modal-content {
+                background: white !important;
+                border-radius: 0.75rem !important;
+                width: 90% !important;
+                max-width: 500px !important;
+                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3) !important;
+                animation: modalSlideIn 0.3s ease-out !important;
+                max-height: 90vh !important;
+                overflow-y: auto !important;
+                position: relative !important;
+            }
+
+            @keyframes modalSlideIn {
+                from {
+                    transform: translateY(-50px) scale(0.95);
+                    opacity: 0;
                 }
-            });
+                to {
+                    transform: translateY(0) scale(1);
+                    opacity: 1;
+                }
+            }
+        </style>
 
-            // Password Strength Checker
-            const newPasswordInput = document.getElementById('newPassword');
-            const strengthBarFill = document.getElementById('strengthBarFill');
-            const strengthText = document.getElementById('strengthText');
-            const reqLength = document.getElementById('req-length');
-            const reqUpper = document.getElementById('req-upper');
-            const reqLower = document.getElementById('req-lower');
-            const reqNumber = document.getElementById('req-number');
-            const reqSpecial = document.getElementById('req-special');
+        <script>
+            // Wait for DOM to be fully loaded
+            document.addEventListener('DOMContentLoaded', function() {
+                // Modal Controls
+                const modal = document.getElementById('changePasswordModal');
+                const openModalBtn = document.getElementById('changePasswordBtn');
+                const closeModalBtn = document.getElementById('closeModalBtn');
+                const cancelBtn = document.getElementById('cancelBtn');
 
-            newPasswordInput.addEventListener('input', function () {
-                const password = this.value;
-                let strength = 0;
+                // Debug logging
+                console.log('Modal element:', modal);
+                console.log('Open button:', openModalBtn);
+                console.log('Close button:', closeModalBtn);
+                console.log('Cancel button:', cancelBtn);
 
-                // Check requirements
-                const hasLength = password.length >= 8;
-                const hasUpper = /[A-Z]/.test(password);
-                const hasLower = /[a-z]/.test(password);
-                const hasNumber = /[0-9]/.test(password);
-                const hasSpecial = /[@#$%^&+=!]/.test(password);
+                // Add null checks and bind events
+                if (openModalBtn && modal) {
+                    console.log('Binding click event to open button');
+                    openModalBtn.addEventListener('click', function(e) {
+                        e.preventDefault(); // Prevent any default action
+                        console.log('=== MODAL DEBUG START ===');
+                        console.log('Open button clicked!');
+                        console.log('Modal before:', modal.className);
+                        
+                        modal.classList.add('active');
+                        
+                        console.log('Modal after:', modal.className);
+                        
+                        // Check computed styles
+                        const styles = window.getComputedStyle(modal);
+                        console.log('Display:', styles.display);
+                        console.log('Visibility:', styles.visibility);
+                        console.log('Opacity:', styles.opacity);
+                        console.log('Z-index:', styles.zIndex);
+                        console.log('Position:', styles.position);
+                        console.log('Width:', styles.width);
+                        console.log('Height:', styles.height);
+                        
+                        // Check if modal is visible in viewport
+                        const rect = modal.getBoundingClientRect();
+                        console.log('BoundingRect:', rect);
+                        console.log('Is visible:', rect.width > 0 && rect.height > 0);
+                        
+                        console.log('=== MODAL DEBUG END ===');
+                        
+                        document.body.style.overflow = 'hidden'; // Prevent background scrolling
+                    });
+                } else {
+                    console.error('Cannot bind modal: modal or button not found');
+                    if (!openModalBtn) console.error('Button not found!');
+                    if (!modal) console.error('Modal not found!');
+                }
 
-                // Update requirement indicators
-                updateRequirement(reqLength, hasLength);
-                updateRequirement(reqUpper, hasUpper);
-                updateRequirement(reqLower, hasLower);
-                updateRequirement(reqNumber, hasNumber);
-                updateRequirement(reqSpecial, hasSpecial);
+                if (closeModalBtn && modal) {
+                    closeModalBtn.addEventListener('click', () => {
+                        modal.classList.remove('active');
+                        document.body.style.overflow = ''; // Restore scrolling
+                        resetForm();
+                    });
+                }
 
-                // Calculate strength
-                if (hasLength)
-                    strength++;
-                if (hasUpper)
-                    strength++;
-                if (hasLower)
-                    strength++;
-                if (hasNumber)
-                    strength++;
-                if (hasSpecial)
-                    strength++;
+                if (cancelBtn && modal) {
+                    cancelBtn.addEventListener('click', () => {
+                        modal.classList.remove('active');
+                        document.body.style.overflow = ''; // Restore scrolling
+                        resetForm();
+                    });
+                }
 
-                // Update strength bar
-                strengthBarFill.className = 'strength-bar-fill';
-                strengthText.className = 'strength-text';
+                // Close modal when clicking outside
+                if (modal) {
+                    modal.addEventListener('click', (e) => {
+                        if (e.target === modal) {
+                            modal.classList.remove('active');
+                            document.body.style.overflow = ''; // Restore scrolling
+                            resetForm();
+                        }
+                    });
+                }
 
-                if (password.length === 0) {
+                // Password Strength Checker
+                const newPasswordInput = document.getElementById('newPassword');
+                const strengthBarFill = document.getElementById('strengthBarFill');
+                const strengthText = document.getElementById('strengthText');
+                const reqLength = document.getElementById('req-length');
+                const reqUpper = document.getElementById('req-upper');
+                const reqLower = document.getElementById('req-lower');
+                const reqNumber = document.getElementById('req-number');
+                const reqSpecial = document.getElementById('req-special');
+
+                newPasswordInput.addEventListener('input', function () {
+                    const password = this.value;
+                    let strength = 0;
+
+                    // Check requirements
+                    const hasLength = password.length >= 8;
+                    const hasUpper = /[A-Z]/.test(password);
+                    const hasLower = /[a-z]/.test(password);
+                    const hasNumber = /[0-9]/.test(password);
+                    const hasSpecial = /[@#$%^&+=!]/.test(password);
+
+                    // Update requirement indicators
+                    updateRequirement(reqLength, hasLength);
+                    updateRequirement(reqUpper, hasUpper);
+                    updateRequirement(reqLower, hasLower);
+                    updateRequirement(reqNumber, hasNumber);
+                    updateRequirement(reqSpecial, hasSpecial);
+
+                    // Calculate strength
+                    if (hasLength)
+                        strength++;
+                    if (hasUpper)
+                        strength++;
+                    if (hasLower)
+                        strength++;
+                    if (hasNumber)
+                        strength++;
+                    if (hasSpecial)
+                        strength++;
+
+                    // Update strength bar
+                    strengthBarFill.className = 'strength-bar-fill';
+                    strengthText.className = 'strength-text';
+
+                    if (password.length === 0) {
+                        strengthBarFill.style.width = '0%';
+                        strengthText.textContent = '';
+                    } else if (strength <= 2) {
+                        strengthBarFill.classList.add('weak');
+                        strengthText.classList.add('weak');
+                        strengthText.textContent = 'Weak password';
+                    } else if (strength === 3 || strength === 4) {
+                        strengthBarFill.classList.add('medium');
+                        strengthText.classList.add('medium');
+                        strengthText.textContent = 'Medium password';
+                    } else if (strength === 5) {
+                        strengthBarFill.classList.add('strong');
+                        strengthText.classList.add('strong');
+                        strengthText.textContent = 'Strong password';
+                    }
+                });
+
+                function updateRequirement(element, isMet) {
+                    if (isMet) {
+                        element.style.color = '#10b981';
+                        element.innerHTML = '<i class="fas fa-check"></i> ' + element.textContent.replace('✓ ', '').replace('✗ ', '');
+                    } else {
+                        element.style.color = '#ef4444';
+                        element.innerHTML = '<i class="fas fa-times"></i> ' + element.textContent.replace('✓ ', '').replace('✗ ', '');
+                    }
+                }
+
+                // Form submission - validation handled by controller
+                const form = document.getElementById('changePasswordForm');
+                const errorContainer = document.getElementById('errorContainer');
+
+                // Clear error container on form submit
+                form.addEventListener('submit', function (e) {
+                    errorContainer.classList.add('hidden');
+                });
+
+                function resetForm() {
+                    form.reset();
+                    errorContainer.classList.add('hidden');
                     strengthBarFill.style.width = '0%';
                     strengthText.textContent = '';
-                } else if (strength <= 2) {
-                    strengthBarFill.classList.add('weak');
-                    strengthText.classList.add('weak');
-                    strengthText.textContent = 'Weak password';
-                } else if (strength === 3 || strength === 4) {
-                    strengthBarFill.classList.add('medium');
-                    strengthText.classList.add('medium');
-                    strengthText.textContent = 'Medium password';
-                } else if (strength === 5) {
-                    strengthBarFill.classList.add('strong');
-                    strengthText.classList.add('strong');
-                    strengthText.textContent = 'Strong password';
-                }
-            });
 
-            function updateRequirement(element, isMet) {
-                if (isMet) {
-                    element.style.color = '#10b981';
-                    element.innerHTML = '<i class="fas fa-check"></i> ' + element.textContent.replace('✓ ', '').replace('✗ ', '');
-                } else {
-                    element.style.color = '#ef4444';
-                    element.innerHTML = '<i class="fas fa-times"></i> ' + element.textContent.replace('✓ ', '').replace('✗ ', '');
-                }
-            }
-
-            // Form Validation
-            const form = document.getElementById('changePasswordForm');
-            const errorContainer = document.getElementById('errorContainer');
-            const confirmPasswordInput = document.getElementById('confirmPassword');
-            const submitBtn = document.getElementById('submitBtn');
-
-            form.addEventListener('submit', function (e) {
-                const errors = [];
-                const currentPassword = document.getElementById('currentPassword').value;
-                const newPassword = newPasswordInput.value;
-                const confirmPassword = confirmPasswordInput.value;
-
-                // Validate current password
-                if (!currentPassword) {
-                    errors.push('Current password is required');
+                    // Reset requirement colors
+                    [reqLength, reqUpper, reqLower, reqSpecial, reqNumber].forEach(el => {
+                        el.style.color = '#64748b';
+                        el.innerHTML = el.textContent.replace('✓ ', '').replace('✗ ', '');
+                    });
                 }
 
-                // Validate new password strength
-                if (newPassword.length < 8) {
-                    errors.push('Password must be at least 8 characters');
-                }
-                if (!/[A-Z]/.test(newPassword)) {
-                    errors.push('Password must contain at least 1 uppercase letter');
-                }
-                if (!/[a-z]/.test(newPassword)) {
-                    errors.push('Password must contain at least 1 lowercase letter');
-                }
-                if (!/[0-9]/.test(newPassword)) {
-                    errors.push('Password must contain at least 1 number');
-                }
-                if (!/[@#$%^&+=!]/.test(newPassword)) {
-                    errors.push('Password must contain at least 1 special character (@#$%^&+=!)');
-                }
-                if (/\s/.test(newPassword)) {
-                    errors.push('Password must not contain spaces');
+                // Avatar upload preview (only if avatarUpload element exists)
+                const avatarUploadElement = document.getElementById('avatarUpload');
+                if (avatarUploadElement) {
+                    avatarUploadElement.addEventListener('change', function (e) {
+                        const file = e.target.files[0];
+                        if (file) {
+                            const reader = new FileReader();
+                            reader.onload = function (e) {
+                                document.getElementById('profileAvatar').src = e.target.result;
+                            };
+                            reader.readAsDataURL(file);
+                        }
+                    });
                 }
 
-                // Validate password match
-                if (newPassword !== confirmPassword) {
-                    errors.push('New password and confirmation do not match');
+                // Auto-show modals on page load
+                const messageModal = document.getElementById('messageModal');
+                if (messageModal) {
+                    messageModal.classList.add('active');
                 }
 
-                // Validate new password different from current
-                if (currentPassword === newPassword) {
-                    errors.push('New password must be different from current password');
+                const passwordErrorModal = document.getElementById('passwordErrorModal');
+                if (passwordErrorModal) {
+                    passwordErrorModal.classList.add('active');
                 }
+            }); // End DOMContentLoaded
 
-                if (errors.length > 0) {
-                    e.preventDefault();
-                    errorContainer.innerHTML = errors.map(
-                            `<div class="error-message"><i class="fas fa-exclamation-circle"></i>` + ${errors} + `</div>`
-                            ).join('');
-                } else {
-                    errorContainer.classList.add('hidden');
-                }
-            });
-
-
-            function resetForm() {
-                form.reset();
-                errorContainer.classList.add('hidden');
-                strengthBarFill.style.width = '0%';
-                strengthText.textContent = '';
-
-                // Reset requirement colors
-                [reqLength, reqUpper, reqLower, reqSpecial].forEach(el => {
-                    el.style.color = '#64748b';
-                    el.innerHTML = el.textContent.replace('✓ ', '').replace('✗ ', '');
-                });
-            }
-
-            // Avatar upload preview
-            document.getElementById('avatarUpload').addEventListener('change', function (e) {
-                const file = e.target.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = function (e) {
-                        document.getElementById('profileAvatar').src = e.target.result;
-                    };
-                    reader.readAsDataURL(file);
-                }
-            });
-
-            // Close modals
+            // Close modals functions - globally accessible
             function closeMessageModal() {
                 const modal = document.getElementById('messageModal');
                 if (modal) {
@@ -457,19 +564,6 @@
                 // Open change password modal after closing error
                 document.getElementById('changePasswordModal').classList.add('active');
             }
-
-            // Auto-show modals on page load
-            window.addEventListener('DOMContentLoaded', function () {
-                const messageModal = document.getElementById('messageModal');
-                if (messageModal) {
-                    messageModal.classList.add('active');
-                }
-
-                const passwordErrorModal = document.getElementById('passwordErrorModal');
-                if (passwordErrorModal) {
-                    passwordErrorModal.classList.add('active');
-                }
-            });
         </script>
     </body>
 </html>

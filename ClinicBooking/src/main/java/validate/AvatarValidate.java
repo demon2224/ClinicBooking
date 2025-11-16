@@ -14,7 +14,7 @@ import jakarta.servlet.http.Part;
 public class AvatarValidate {
 
     // Allowed image extensions
-    private static final String[] ALLOWED_EXTENSIONS = { ".jpg", ".jpeg", ".png", ".gif" };
+    private static final String[] ALLOWED_EXTENSIONS = {".jpg", ".png", ".gif"};
 
     // Max file size: 10MB
     private static final long MAX_FILE_SIZE = 10 * 1024 * 1024;
