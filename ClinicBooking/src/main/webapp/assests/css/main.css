@@ -13153,3 +13153,142 @@ textarea.profile-value:disabled {
         padding: 1.25rem;
     }
 }
+
+/*--------------------------------------------------------------
+# Payment Validation Alert - Unique Classes for Payment.jsp
+--------------------------------------------------------------*/
+
+/* Overlay */
+.payment-validation-alert-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    animation: pvAlertFadeIn 0.3s ease-in-out;
+}
+
+/* Alert Box */
+.payment-validation-alert-box {
+    background: #ffffff;
+    padding: 35px 40px;
+    border-radius: 12px;
+    text-align: center;
+    max-width: 450px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    animation: pvAlertSlideDown 0.3s ease-in-out;
+}
+
+/* Icon */
+.payment-validation-alert-icon {
+    font-size: 56px;
+    color: #f59e0b;
+    margin-bottom: 20px;
+}
+
+.payment-validation-alert-icon i {
+    animation: pvAlertPulse 1s infinite;
+}
+
+/* Title */
+.payment-validation-alert-title {
+    font-size: 22px;
+    font-weight: 600;
+    color: #1f2937;
+    margin-bottom: 12px;
+}
+
+/* Message */
+.payment-validation-alert-message {
+    font-size: 15px;
+    color: #6b7280;
+    margin-bottom: 25px;
+    line-height: 1.5;
+}
+
+/* Button */
+.payment-validation-alert-btn {
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    color: white;
+    border: none;
+    padding: 12px 40px;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.payment-validation-alert-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
+}
+
+.payment-validation-alert-btn:active {
+    transform: translateY(0);
+}
+
+.payment-validation-alert-btn i {
+    margin-right: 6px;
+}
+
+/* Animations */
+@keyframes pvAlertFadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes pvAlertSlideDown {
+    from {
+        transform: translateY(-50px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes pvAlertPulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .payment-validation-alert-box {
+        max-width: 90%;
+        padding: 25px 30px;
+    }
+    
+    .payment-validation-alert-icon {
+        font-size: 48px;
+    }
+    
+    .payment-validation-alert-title {
+        font-size: 20px;
+    }
+    
+    .payment-validation-alert-message {
+        font-size: 14px;
+    }
+    
+    .payment-validation-alert-btn {
+        padding: 10px 30px;
+        font-size: 14px;
+    }
+}

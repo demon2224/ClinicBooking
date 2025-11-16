@@ -129,7 +129,6 @@ public class PaymentController extends HttpServlet {
 
         String action = request.getParameter("action");
         response.setContentType("application/json");
-        response.setCharacterEncoding("UTF-8");
 
         JsonObject jsonResponse = new JsonObject();
 

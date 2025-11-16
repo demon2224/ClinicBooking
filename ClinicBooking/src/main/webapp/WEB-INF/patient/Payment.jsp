@@ -174,7 +174,7 @@
         <jsp:include page="../includes/footer.jsp" />
 
         <script>
-            let selectedPaymentMethod = 'cash'; // Default to cash
+            let selectedPaymentMethod = null; // No default selection
 
             // Select payment method
             function selectPaymentMethod(method) {
@@ -202,12 +202,45 @@
 
             // Process payment when Continue button is clicked
             function processPayment() {
+                // Validate payment method selection
+                if (!selectedPaymentMethod) {
+                    showPaymentMethodAlert();
+                    return;
+                }
+                
                 if (selectedPaymentMethod === 'cash') {
                     // PT1: Cash payment - direct success
                     processCashPayment();
                 } else if (selectedPaymentMethod === 'qr') {
                     // PT2: Credit Card payment - show payment section
                     showQRSection();
+                }
+            }
+
+            // Show payment method validation alert
+            function showPaymentMethodAlert() {
+                const alertModal = document.createElement('div');
+                alertModal.className = 'payment-validation-alert-overlay';
+                alertModal.innerHTML = `
+                    <div class="payment-validation-alert-box">
+                        <div class="payment-validation-alert-icon">
+                            <i class="fas fa-exclamation-circle"></i>
+                        </div>
+                        <h3 class="payment-validation-alert-title">Payment Method Required</h3>
+                        <p class="payment-validation-alert-message">Please select a payment method before continuing.</p>
+                        <button onclick="closePaymentAlert()" class="payment-validation-alert-btn">
+                            <i class="fas fa-check"></i> OK
+                        </button>
+                    </div>
+                `;
+                document.body.appendChild(alertModal);
+            }
+
+            // Close payment validation alert
+            function closePaymentAlert() {
+                const alert = document.querySelector('.payment-validation-alert-overlay');
+                if (alert) {
+                    alert.remove();
                 }
             }
 
@@ -320,7 +353,7 @@
 
             // Initialize on page load
             document.addEventListener('DOMContentLoaded', function () {
-                selectPaymentMethod('cash'); // Auto-select cash
+                // No auto-selection - user must choose payment method
             });
         </script>
     </body>
