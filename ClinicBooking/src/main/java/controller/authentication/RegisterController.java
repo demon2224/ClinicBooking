@@ -27,8 +27,7 @@ public class RegisterController extends HttpServlet {
     }
 
     /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
+     * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
      *
      * @param request servlet request
      * @param response servlet response
@@ -192,7 +191,7 @@ public class RegisterController extends HttpServlet {
             request.setAttribute("dobErrorMsg", "Invalid date format.");
             return false;
         } else if (!RegisterValidate.isValidDob(dobParam.trim())) {
-            request.setAttribute("dobErrorMsg", "Your age must between 18 and 120.");
+            request.setAttribute("dobErrorMsg", "You must be at least 18 years old");
             return false;
         } else {
             return true;
