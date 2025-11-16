@@ -214,14 +214,14 @@
                             </tr>
 
                             <!-- Price -->
-                            <tr>
+<!--                            <tr>
                                 <th>Price</th>
                                 <td>
                                     <input type="number" name="price" class="form-control" min="0"
                                            value="${param.price != null ? param.price : doctor.specialtyID.price}">
                                     <div class="text-danger">${sessionScope.priceErrorMsg}</div>
                                 </td>
-                            </tr>
+                            </tr>-->
 
                             <!-- Degrees -->
                             <tr>

@@ -355,7 +355,7 @@ public class AdminManageAccountController extends HttpServlet {
         if ("Doctor".equalsIgnoreCase(role)) {
             String specialtyID = request.getParameter("specialtyID");
             String exp = request.getParameter("yearExperience");
-            String price = request.getParameter("price");
+//            String price = request.getParameter("price");
 
             if (AdminValidate.isEmpty(specialtyID)) {
                 request.getSession().setAttribute("specialtyErrorMsg", "Please select specialty.");
@@ -364,14 +364,14 @@ public class AdminManageAccountController extends HttpServlet {
 
             if (dob != null && !AdminValidate.isValidExperience(exp, dob)) {
                 request.getSession().setAttribute("experienceErrorMsg",
-                        "Experience must be >=0 and <= (Age - 18).");
+                        "Experience cannot exceed the number of years since you turned 18.");
                 hasError = true;
             }
 
-            if (!AdminValidate.isValidPrice(price)) {
-                request.getSession().setAttribute("priceErrorMsg", "Price must be a positive number.");
-                hasError = true;
-            }
+//            if (!AdminValidate.isValidPrice(price)) {
+//                request.getSession().setAttribute("priceErrorMsg", "Price must be a positive number.");
+//                hasError = true;
+//            }
         }
 
         return hasError;
@@ -398,7 +398,7 @@ public class AdminManageAccountController extends HttpServlet {
     private void clearSessionErrors(HttpServletRequest req) {
         String[] keys = {"usernameErrorMsg", "passwordErrorMsg", "fullNameErrorMsg",
             "roleErrorMsg", "phoneErrorMsg", "dobErrorMsg", "addressErrorMsg",
-            "specialtyErrorMsg", "experienceErrorMsg", "priceErrorMsg"};
+            "specialtyErrorMsg", "experienceErrorMsg"};
         for (String k : keys) {
             req.getSession().removeAttribute(k);
         }
