@@ -157,7 +157,7 @@ public class AdminManageAccountController extends HttpServlet {
                     handleSave(req, res, action); // Add or update account
                     break;
                 default:
-                    res.sendError(400, "Invalid action."); // Bad request
+                    res.sendError(400, "Invalid action.");
                     break;
             }
         } catch (Exception e) {

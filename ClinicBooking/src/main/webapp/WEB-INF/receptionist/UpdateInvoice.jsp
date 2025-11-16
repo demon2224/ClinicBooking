@@ -145,11 +145,16 @@
 
                 <h3 class="section-title">Prescription Information</h3>
                 <table class="table table-bordered">
+
                     <tr>
                         <th>Prescription Note</th>
-                        <td><input type="text" class="form-control" value="${invoiceDetail.prescriptionID.note}" readonly></td>
+                        <td>
+                            <input type="text" class="form-control"
+                                   value="${invoiceDetail.prescriptionID.note}" readonly>
+                        </td>
                     </tr>
                 </table>
+
 
                 <div class="text-end mt-4">
                     <button type="submit" class="btn btn-primary">Save Changes</button>

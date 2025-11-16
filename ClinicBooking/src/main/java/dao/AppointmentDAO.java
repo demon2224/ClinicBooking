@@ -478,7 +478,7 @@ public class AppointmentDAO extends DBContext {
                 doctor.setDoctorID(rs.getInt("DoctorID"));
                 doctor.setYearExperience(rs.getInt("YearExperience"));
 
-                // --- Staff (doctor�s profile) ---
+                // --- Staff (doctors profile) ---
                 StaffDTO staff = new StaffDTO();
                 staff.setStaffID(rs.getInt("StaffID"));
                 staff.setFirstName(rs.getString("StaffFirstName"));
