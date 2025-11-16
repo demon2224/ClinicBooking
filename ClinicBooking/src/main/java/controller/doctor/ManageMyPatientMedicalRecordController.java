@@ -208,9 +208,16 @@ public class ManageMyPatientMedicalRecordController extends HttpServlet {
         try {
             int doctorID = ((DoctorDTO) request.getSession().getAttribute("doctor")).getDoctorID();
             int medicalRecordID = Integer.parseInt(request.getParameter("medicalRecordID"));
+            boolean ableToEditMedicalRecord = medicalRecordDAO.isAbleToEditMedicalRecord(medicalRecordID);
+            if (ableToEditMedicalRecord) {
+                request.getSession().setAttribute("error", "Cannot edit a Medical Record after its status is changed to \"Completed.\"");
+                response.sendRedirect(request.getContextPath() + "/manage-my-patient-medical-record");
+                return;
+            }
             MedicalRecordDTO medicalRecord = medicalRecordDAO.getPatientMedicalRecordDetailByDoctorIDAndMedicalRecordID(doctorID, medicalRecordID);
             boolean isExist = medicalRecordDAO.isExistMedicalRecordByMedicalRecordID(medicalRecordID);
             if (!isExist) {
+                request.getSession().setAttribute("error", "\"Medical Record Not Found\"");
                 response.sendRedirect(request.getContextPath() + "/manage-my-patient-medical-record");
                 return;
             }

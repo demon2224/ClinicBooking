@@ -77,7 +77,8 @@ public class MedicalRecordDAO extends DBContext {
      */
     public List<MedicalRecordDTO> getPatientMedicalRecordListByDoctorID(int doctorID) {
         List<MedicalRecordDTO> medicalRecords = new ArrayList<>();
-        String sql = "Select p.FirstName,\n"
+        String sql = "Select a.AppointmentStatus,\n"
+                + "p.FirstName,\n"
                 + "p.LastName,\n"
                 + "m.MedicalRecordID,\n"
                 + "m.Symptoms,\n"
@@ -101,6 +102,7 @@ public class MedicalRecordDAO extends DBContext {
                     // Appointmnet
                     AppointmentDTO appointment = new AppointmentDTO();
                     appointment.setPatientID(patient);
+                    appointment.setAppointmentStatus(rs.getString("AppointmentStatus"));
                     // Medical Record
                     MedicalRecordDTO medicalRecord = new MedicalRecordDTO();
                     medicalRecord.setMedicalRecordID(rs.getInt("MedicalRecordID"));
@@ -129,7 +131,8 @@ public class MedicalRecordDAO extends DBContext {
      */
     public List<MedicalRecordDTO> searchPatientMedicalRecordListByPatientName(int doctorID, String keyword) {
         List<MedicalRecordDTO> medicalRecords = new ArrayList<>();
-        String sql = "Select p.FirstName,\n"
+        String sql = "Select a.AppointmentStatus,\n"
+                + "p.FirstName,\n"
                 + "p.LastName,\n"
                 + "m.MedicalRecordID,\n"
                 + "m.Symptoms,\n"
@@ -155,6 +158,7 @@ public class MedicalRecordDAO extends DBContext {
                     patient.setLastName(rs.getString("LastName"));
                     AppointmentDTO appointment = new AppointmentDTO();
                     appointment.setPatientID(patient);
+                    appointment.setAppointmentStatus(rs.getString("AppointmentStatus"));
                     // Medical Record
                     MedicalRecordDTO medicalRecord = new MedicalRecordDTO();
                     medicalRecord.setMedicalRecordID(rs.getInt("MedicalRecordID"));
@@ -759,4 +763,23 @@ public class MedicalRecordDAO extends DBContext {
         }
         return isAble;
     }
+
+    public boolean isAbleToEditMedicalRecord(int medicalRecordID) {
+        String sql = "select  m.MedicalRecordID\n"
+                + "from MedicalRecord m\n"
+                + "join Appointment a on a.AppointmentID = m.AppointmentID\n"
+                + "where a.AppointmentStatus = 'Completed' and m.MedicalRecordID = ?";
+        Object[] params = {medicalRecordID};
+        ResultSet rs = executeSelectQuery(sql, params);
+        boolean isAble = false;
+        try {
+            isAble = rs.next();
+        } catch (SQLException ex) {
+            Logger.getLogger(MedicalRecordDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            closeResources(rs);
+        }
+        return isAble;
+    }
+
 }

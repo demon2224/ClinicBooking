@@ -151,9 +151,14 @@ public class AppointmentDTO {
         this.totalAppointments = totalAppointments;
     }
 
+    /**
+     * Duoc phep tao medical record trong khoang thoi gian truoc 5p va tre 30p
+     *
+     * @return
+     */
     public boolean getAble() {
         LocalDateTime end = this.dateBegin.toLocalDateTime().plusMinutes(30);
-        LocalDateTime begin = this.dateBegin.toLocalDateTime();
+        LocalDateTime begin = this.dateBegin.toLocalDateTime().minusMinutes(5);
         LocalDateTime now = LocalDateTime.now();
         return now.isAfter(begin) && now.isBefore(end);
 
