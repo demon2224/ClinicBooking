@@ -116,6 +116,7 @@
                                 <th>Phone</th>
                                 <th>Date Begin</th>
                                 <th>Note</th>
+                                <th>Status</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -136,6 +137,18 @@
                                                 ${list.note}
                                             </c:otherwise>
                                         </c:choose>
+                                    </td>
+                                    <td>
+                                        <span class="badge
+                                              <c:choose>
+                                                  <c:when test="${list.appointmentStatus eq 'Pending'}">bg-warning text-dark</c:when>
+                                                  <c:when test="${list.appointmentStatus eq 'Approved'}">bg-primary</c:when>
+                                                  <c:when test="${list.appointmentStatus eq 'Completed'}">bg-success</c:when>
+                                                  <c:when test="${list.appointmentStatus eq 'Canceled'}">bg-danger</c:when>
+                                                  <c:otherwise>bg-secondary</c:otherwise>
+                                              </c:choose>">
+                                            ${list.appointmentStatus}
+                                        </span>
                                     </td>
                                     <td>
                                         <a href="${pageContext.request.contextPath}/manage-my-patient-appointment?action=detail&appointmentID=${list.appointmentID}"

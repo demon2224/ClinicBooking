@@ -97,7 +97,7 @@
             <!-- Welcome Section -->
             <div class="alert alert-primary shadow-sm" role="alert">
                 <i class="fa-solid fa-stethoscope me-2"></i>
-                Welcome back, <strong>${sessionScope.doctorName}</strong>!
+                Welcome back, <strong>${sessionScope.staff.fullName}</strong>!
                 Here’s an overview of your current medical activities.
             </div>
 

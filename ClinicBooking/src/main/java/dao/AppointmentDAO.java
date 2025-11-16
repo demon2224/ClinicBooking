@@ -48,8 +48,6 @@ public class AppointmentDAO extends DBContext {
                 + "JOIN Staff s on s.StaffID = d.StaffID\n"
                 + "JOIN Patient p on p.PatientID = a.PatientID\n"
                 + "Where d.DoctorID = ? "
-                + "and a.AppointmentStatus = 'Approved'"
-                + "AND a.DateBegin > GETDATE() \n"
                 + "ORDER BY a.DateBegin ASC";
         // + "and CAST (a.DateBegin as DATE) = CAST (GETDATE() as DATE)";
         Object[] params = {doctorID};
@@ -152,9 +150,8 @@ public class AppointmentDAO extends DBContext {
                 + "JOIN Doctor d on a.DoctorID = d.DoctorID\n"
                 + "JOIN Staff s on s.StaffID = d.StaffID\n"
                 + "JOIN Patient p on p.PatientID = a.PatientID\n"
-                + "Where d.DoctorID = ? and a.AppointmentStatus = 'Approved'"
+                + "Where d.DoctorID = ?"
                 + "AND (p.FirstName LIKE ? OR p.LastName LIKE ?)"
-                + "AND a.DateBegin > GETDATE() \n"
                 + "ORDER BY a.DateBegin ASC";
 
         Object[] params = {
@@ -1170,7 +1167,7 @@ public class AppointmentDAO extends DBContext {
                 + "JOIN Patient p ON a.PatientID = p.PatientID "
                 + "WHERE a.DoctorID = ? "
                 + "AND a.AppointmentStatus = 'Approved' "
-                + "AND a.DateBegin > GETDATE() "
+                + "  AND DateBegin > DATEADD(MINUTE, -30, GETDATE())"
                 + "ORDER BY a.DateBegin ASC";
         Object[] params = {doctorID};
         ResultSet rs = executeSelectQuery(sql, params);

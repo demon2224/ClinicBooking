@@ -172,6 +172,13 @@ public class ManageMyPatientMedicalRecordController extends HttpServlet {
             int doctorID = ((DoctorDTO) request.getSession().getAttribute("doctor")).getDoctorID();
             int appointmentID = Integer.parseInt(request.getParameter("appointmentID"));
             AppointmentDTO appointment = appointmentDAO.getPatientAppointmentDetailOfDoctorByID(appointmentID, doctorID);
+            boolean isAble = medicalRecordDAO.isAbleToCreateMedicalRecord(appointmentID);
+
+            if (!isAble) {
+                log(isAble + "<----------- isAble");
+                response.sendRedirect(request.getContextPath() + "/manage-my-patient-appointment");
+                return;
+            }
 
             if ((appointment == null) || (appointment.getAppointmentID() != appointmentID)) {
                 response.sendRedirect(request.getContextPath() + "/manage-my-patient-appointment");

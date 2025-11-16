@@ -103,7 +103,6 @@ public class DoctorDashboardController extends HttpServlet {
             List<MedicalRecordDTO> recentRecords = medicalRecordDAO.getRecentMedicalRecordsByDoctorID(doctorID);
             List<String> topDiagnoses = medicalRecordDAO.getTopDiagnosesByDoctorID(doctorID);
 
-            request.setAttribute("doctorName", doctor.getStaffID().getFirstName());
             request.setAttribute("todayAppointments", todayAppointmentCount);
             request.setAttribute("totalMedicalRecords", totalMedicalRecordCount);
             request.setAttribute("totalPrescriptions", totalPrescriptionCount);

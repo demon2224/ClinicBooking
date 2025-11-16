@@ -740,4 +740,23 @@ public class MedicalRecordDAO extends DBContext {
 
         return diagnoses;
     }
+
+    public boolean isAbleToCreateMedicalRecord(int appointmentID) {
+        String sql = "				SELECT AppointmentID\n"
+                + "FROM Appointment\n"
+                + "WHERE AppointmentID = ?\n"
+                + "  AND DateBegin BETWEEN DATEADD(MINUTE, -30, GETDATE()) \n"
+                + "                    AND DATEADD(MINUTE,  20, GETDATE());";
+        Object[] params = {appointmentID};
+        ResultSet rs = executeSelectQuery(sql, params);
+        boolean isAble = false;
+        try {
+            isAble = rs.next();
+        } catch (SQLException ex) {
+            Logger.getLogger(MedicalRecordDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            closeResources(rs);
+        }
+        return isAble;
+    }
 }
