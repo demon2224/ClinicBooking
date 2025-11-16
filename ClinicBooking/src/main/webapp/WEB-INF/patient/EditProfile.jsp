@@ -22,6 +22,54 @@
 
         <!-- Custom CSS -->
         <link href="${pageContext.request.contextPath}/assests/css/main.css?v=${System.currentTimeMillis()}" rel="stylesheet" type="text/css"/>
+        
+        <style>
+            /* Modal Overlay Styling - Common styles for all modals */
+            .modal-overlay {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.5);
+                backdrop-filter: blur(4px);
+                z-index: 10000;
+                align-items: center;
+                justify-content: center;
+                opacity: 0;
+                transition: opacity 0.3s ease;
+            }
+
+            .modal-overlay.active {
+                display: flex !important;
+                opacity: 1 !important;
+                visibility: visible !important;
+            }
+
+            .modal-overlay .modal-content {
+                background: white;
+                border-radius: 0.75rem;
+                width: 90%;
+                max-width: 500px;
+                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+                animation: modalSlideIn 0.3s ease-out;
+                max-height: 90vh;
+                overflow-y: auto;
+                position: relative;
+            }
+
+            @keyframes modalSlideIn {
+                from {
+                    transform: translateY(-50px) scale(0.95);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateY(0) scale(1);
+                    opacity: 1;
+                }
+            }
+        </style>
     </head>
     <body class="appointment-page">
         <!-- Include Header -->
@@ -36,45 +84,28 @@
                 <h1><i class="fas fa-user-edit"></i> Edit Profile</h1>
             </div>
 
-            <!-- Error Modal -->
-            <c:if test="${not empty errors}">
-                <div id="messageModal" class="modal-overlay">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h3 class="modal-title">
-                                <i class="fas fa-exclamation-triangle text-error"></i> Error
-                            </h3>
-                            <button type="button" class="modal-close" onclick="closeModal()">&times;</button>
-                        </div>
-                        <div class="modal-body">
-                            <ul style="margin: 0; padding-left: 1.5rem; color: #374151;">
-                                <c:forEach var="error" items="${errors}">
-                                    <li>${error}</li>
-                                    </c:forEach>
-                            </ul>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-danger" onclick="closeModal()">Close</button>
-                        </div>
-                    </div>
+            <!-- General Error Message (for non-field errors) -->
+            <c:if test="${not empty generalErrorMsg}">
+                <div class="alert alert-danger" style="margin: 1rem 0; padding: 0.75rem 1rem; border-radius: 0.5rem;">
+                    <i class="fas fa-exclamation-triangle me-2"></i>${generalErrorMsg}
                 </div>
             </c:if>
 
             <!-- Success Modal -->
             <c:if test="${not empty successMessage}">
-                <div id="messageModal" class="modal-overlay">
+                <div id="successModal" class="modal-overlay">
                     <div class="modal-content">
                         <div class="modal-header">
                             <h3 class="modal-title">
                                 <i class="fas fa-check-circle text-success"></i> Success
                             </h3>
-                            <button type="button" class="modal-close" onclick="closeModal()">&times;</button>
+                            <button type="button" class="modal-close" onclick="closeSuccessModal()">&times;</button>
                         </div>
                         <div class="modal-body">
                             <p>${successMessage}</p>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-success" onclick="closeModal()">OK</button>
+                            <button type="button" class="btn btn-success" onclick="closeSuccessModal()">OK</button>
                         </div>
                     </div>
                 </div>
@@ -117,6 +148,11 @@
                                         <i class="fas fa-camera"></i> Change Photo
                                     </label>
                                     <input type="file" id="avatarUpload" name="avatar" style="display: none;" accept="image/jpeg,image/png,image/gif">
+                                    <c:if test="${not empty avatarErrorMsg}">
+                                        <div class="text-danger small mt-1" style="font-size: 0.875rem; margin-top: 0.5rem; text-align: center;">
+                                            <i class="fa-solid fa-circle-exclamation me-1"></i>${avatarErrorMsg}
+                                        </div>
+                                    </c:if>
                                 </div>
                             </div>
 
@@ -132,40 +168,75 @@
 
                                     <div class="profile-field">
                                         <label class="profile-label">First name:</label>
-                                        <input type="text" class="profile-value" id="firstName" name="firstName" value="${patient.firstName}" required>
+                                        <input type="text" class="profile-value" id="firstName" name="firstName" value="${patient.firstName}">
+                                        <c:if test="${not empty firstNameErrorMsg}">
+                                            <div class="text-danger small mt-1" style="font-size: 0.875rem; margin-top: 0.25rem;">
+                                                <i class="fa-solid fa-circle-exclamation me-1"></i>${firstNameErrorMsg}
+                                            </div>
+                                        </c:if>
                                     </div>
 
                                     <div class="profile-field">
                                         <label class="profile-label">Last name:</label>
-                                        <input type="text" class="profile-value" id="lastName" name="lastName" value="${patient.lastName}" required>
+                                        <input type="text" class="profile-value" id="lastName" name="lastName" value="${patient.lastName}">
+                                        <c:if test="${not empty lastNameErrorMsg}">
+                                            <div class="text-danger small mt-1" style="font-size: 0.875rem; margin-top: 0.25rem;">
+                                                <i class="fa-solid fa-circle-exclamation me-1"></i>${lastNameErrorMsg}
+                                            </div>
+                                        </c:if>
                                     </div>
 
                                     <div class="profile-field">
                                         <label class="profile-label">Phone number:</label>
-                                        <input type="tel" class="profile-value" id="phoneNumber" name="phoneNumber" value="${patient.phoneNumber}" required>
+                                        <input type="tel" class="profile-value" id="phoneNumber" name="phoneNumber" value="${patient.phoneNumber}">
+                                        <c:if test="${not empty phoneNumberErrorMsg}">
+                                            <div class="text-danger small mt-1" style="font-size: 0.875rem; margin-top: 0.25rem;">
+                                                <i class="fa-solid fa-circle-exclamation me-1"></i>${phoneNumberErrorMsg}
+                                            </div>
+                                        </c:if>
                                     </div>
 
                                     <div class="profile-field full-width">
                                         <label class="profile-label">Email:</label>
-                                        <input type="email" class="profile-value" id="email" name="email" value="${patient.email}" required>
+                                        <input type="text" class="profile-value" id="email" name="email" value="${patient.email}">
+                                        <c:if test="${not empty emailErrorMsg}">
+                                            <div class="text-danger small mt-1" style="font-size: 0.875rem; margin-top: 0.25rem;">
+                                                <i class="fa-solid fa-circle-exclamation me-1"></i>${emailErrorMsg}
+                                            </div>
+                                        </c:if>
                                     </div>
 
                                     <div class="profile-field full-width">
                                         <label class="profile-label">Address:</label>
                                         <input type="text" class="profile-value" id="address" name="address" value="${patient.userAddress}">
+                                        <c:if test="${not empty addressErrorMsg}">
+                                            <div class="text-danger small mt-1" style="font-size: 0.875rem; margin-top: 0.25rem;">
+                                                <i class="fa-solid fa-circle-exclamation me-1"></i>${addressErrorMsg}
+                                            </div>
+                                        </c:if>
                                     </div>
 
                                     <div class="profile-field">
                                         <label class="profile-label">Date of birth:</label>
-                                        <input type="date" class="profile-value" id="dob" name="dob" value="<fmt:formatDate value='${patient.dob}' pattern='yyyy-MM-dd'/>" required>
+                                        <input type="date" class="profile-value" id="dob" name="dob" value="<fmt:formatDate value='${patient.dob}' pattern='yyyy-MM-dd'/>">
+                                        <c:if test="${not empty dobErrorMsg}">
+                                            <div class="text-danger small mt-1" style="font-size: 0.875rem; margin-top: 0.25rem;">
+                                                <i class="fa-solid fa-circle-exclamation me-1"></i>${dobErrorMsg}
+                                            </div>
+                                        </c:if>
                                     </div>
 
                                     <div class="profile-field">
                                         <label class="profile-label">Sex:</label>
-                                        <select class="profile-value" id="gender" name="gender" required>
+                                        <select class="profile-value" id="gender" name="gender">
                                             <option value="Male" ${patient.gender ? 'selected' : ''}>Male</option>
                                             <option value="Female" ${!patient.gender ? 'selected' : ''}>Female</option>
                                         </select>
+                                        <c:if test="${not empty genderErrorMsg}">
+                                            <div class="text-danger small mt-1" style="font-size: 0.875rem; margin-top: 0.25rem;">
+                                                <i class="fa-solid fa-circle-exclamation me-1"></i>${genderErrorMsg}
+                                            </div>
+                                        </c:if>
                                     </div>
                                 </div>
 
@@ -187,40 +258,71 @@
         <jsp:include page="../includes/footer.jsp" />
 
         <script>
-            // Avatar upload preview
-            document.getElementById('avatarUpload').addEventListener('change', function (e) {
-                const file = e.target.files[0];
-                if (file) {
-                    // File validation will be handled by backend - show in modal
+            document.addEventListener('DOMContentLoaded', function() {
+                // Avatar upload preview - show immediately when file is selected
+                const avatarUploadElement = document.getElementById('avatarUpload');
+                if (avatarUploadElement) {
+                    avatarUploadElement.addEventListener('change', function (e) {
+                        const file = e.target.files[0];
+                        if (file) {
+                            // Validate file type
+                            const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
+                            if (!validTypes.includes(file.type)) {
+                                alert('Please select a valid image file (JPG, PNG, or GIF)');
+                                e.target.value = ''; // Clear the input
+                                return;
+                            }
+                            
+                            // Validate file size (max 10MB)
+                            const maxSize = 10 * 1024 * 1024; // 10MB in bytes
+                            if (file.size > maxSize) {
+                                alert('File size must be less than 10MB');
+                                e.target.value = ''; // Clear the input
+                                return;
+                            }
+                            
+                            // Preview image immediately
+                            const reader = new FileReader();
+                            reader.onload = function (event) {
+                                const profileAvatar = document.getElementById('profileAvatar');
+                                if (profileAvatar) {
+                                    profileAvatar.src = event.target.result;
+                                    // Hide placeholder if exists
+                                    const placeholder = profileAvatar.nextElementSibling;
+                                    if (placeholder && placeholder.classList.contains('avatar-placeholder')) {
+                                        placeholder.style.display = 'none';
+                                    }
+                                    profileAvatar.style.display = 'block';
+                                }
+                            };
+                            reader.onerror = function() {
+                                alert('Error reading file. Please try again.');
+                            };
+                            reader.readAsDataURL(file);
+                        }
+                    });
+                }
 
-                    // Preview image
-                    const reader = new FileReader();
-                    reader.onload = function (e) {
-                        document.getElementById('profileAvatar').src = e.target.result;
-                    };
-                    reader.readAsDataURL(file);
+                // Auto-show success modal on page load
+                const successModal = document.getElementById('successModal');
+                if (successModal) {
+                    successModal.classList.add('active');
+                    // Close on backdrop click
+                    successModal.addEventListener('click', function(e) {
+                        if (e.target === successModal) {
+                            closeSuccessModal();
+                        }
+                    });
                 }
             });
 
-            // Avatar upload preview (keep simple, no validation popups)
-
-            // Form validation removed - let backend handle all validation via modal
-
-            // Close modal function
-            function closeModal() {
-                const modal = document.getElementById('messageModal');
+            // Close success modal function - globally accessible
+            function closeSuccessModal() {
+                const modal = document.getElementById('successModal');
                 if (modal) {
-                    modal.style.display = 'none';
+                    modal.classList.remove('active');
                 }
             }
-
-            // Auto-show modal on page load
-            window.addEventListener('DOMContentLoaded', function () {
-                const modal = document.getElementById('messageModal');
-                if (modal) {
-                    modal.style.display = 'flex';
-                }
-            });
         </script>
     </body>
 </html>

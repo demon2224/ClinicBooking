@@ -8,11 +8,6 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <fmt:setLocale value="en_US" />
-<%-- Get and remove success message from session --%>
-<c:if test="${not empty sessionScope.successMessage}">
-    <c:set var="successMessage" value="${sessionScope.successMessage}"/>
-    <c:remove var="successMessage" scope="session"/>
-</c:if>
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -59,6 +54,30 @@
                         </div>
                     </div>
                 </div>
+                <%-- Remove message after displaying --%>
+                <c:remove var="successMessage" scope="session"/>
+            </c:if>
+
+            <!-- Error Modal for General Errors -->
+            <c:if test="${not empty sessionScope.errorMessage}">
+                <div id="errorMessageModal" class="modal-overlay">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3 class="modal-title">
+                                <i class="fas fa-exclamation-triangle text-error"></i> Error
+                            </h3>
+                            <button type="button" class="modal-close" onclick="closeErrorMessageModal()">&times;</button>
+                        </div>
+                        <div class="modal-body">
+                            <p>${sessionScope.errorMessage}</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger" onclick="closeErrorMessageModal()">Close</button>
+                        </div>
+                    </div>
+                </div>
+                <%-- Remove message after displaying --%>
+                <c:remove var="errorMessage" scope="session"/>
             </c:if>
 
             <!-- Error Modal for Password Change -->
@@ -302,37 +321,39 @@
                 font-size: 1rem;
             }
 
-            /* Modal Overlay Styling - Override to ensure display */
-            #changePasswordModal {
-                display: none !important;
-                position: fixed !important;
-                top: 0 !important;
-                left: 0 !important;
-                width: 100% !important;
-                height: 100% !important;
-                background: rgba(0, 0, 0, 0.5) !important;
-                backdrop-filter: blur(4px) !important;
-                z-index: 10000 !important;
-                align-items: center !important;
-                justify-content: center !important;
+            /* Modal Overlay Styling - Common styles for all modals */
+            .modal-overlay {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.5);
+                backdrop-filter: blur(4px);
+                z-index: 10000;
+                align-items: center;
+                justify-content: center;
+                opacity: 0;
+                transition: opacity 0.3s ease;
             }
 
-            #changePasswordModal.active {
+            .modal-overlay.active {
                 display: flex !important;
                 opacity: 1 !important;
                 visibility: visible !important;
             }
 
-            #changePasswordModal .modal-content {
-                background: white !important;
-                border-radius: 0.75rem !important;
-                width: 90% !important;
-                max-width: 500px !important;
-                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3) !important;
-                animation: modalSlideIn 0.3s ease-out !important;
-                max-height: 90vh !important;
-                overflow-y: auto !important;
-                position: relative !important;
+            .modal-overlay .modal-content {
+                background: white;
+                border-radius: 0.75rem;
+                width: 90%;
+                max-width: 500px;
+                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+                animation: modalSlideIn 0.3s ease-out;
+                max-height: 90vh;
+                overflow-y: auto;
+                position: relative;
             }
 
             @keyframes modalSlideIn {
@@ -542,17 +563,47 @@
                 const messageModal = document.getElementById('messageModal');
                 if (messageModal) {
                     messageModal.classList.add('active');
+                    // Close on backdrop click
+                    messageModal.addEventListener('click', function(e) {
+                        if (e.target === messageModal) {
+                            closeMessageModal();
+                        }
+                    });
+                }
+
+                const errorMessageModal = document.getElementById('errorMessageModal');
+                if (errorMessageModal) {
+                    errorMessageModal.classList.add('active');
+                    // Close on backdrop click
+                    errorMessageModal.addEventListener('click', function(e) {
+                        if (e.target === errorMessageModal) {
+                            closeErrorMessageModal();
+                        }
+                    });
                 }
 
                 const passwordErrorModal = document.getElementById('passwordErrorModal');
                 if (passwordErrorModal) {
                     passwordErrorModal.classList.add('active');
+                    // Close on backdrop click
+                    passwordErrorModal.addEventListener('click', function(e) {
+                        if (e.target === passwordErrorModal) {
+                            closePasswordErrorModal();
+                        }
+                    });
                 }
             }); // End DOMContentLoaded
 
             // Close modals functions - globally accessible
             function closeMessageModal() {
                 const modal = document.getElementById('messageModal');
+                if (modal) {
+                    modal.classList.remove('active');
+                }
+            }
+
+            function closeErrorMessageModal() {
+                const modal = document.getElementById('errorMessageModal');
                 if (modal) {
                     modal.classList.remove('active');
                 }

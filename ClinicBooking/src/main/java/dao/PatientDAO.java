@@ -223,6 +223,33 @@ public class PatientDAO extends DBContext {
     }
 
     /**
+     * Check if phone number already exists for another patient
+     *
+     * @param phoneNumber Phone number to check
+     * @param excludePatientId Patient ID to exclude from check (for update)
+     * @return true if phone number exists for another patient
+     */
+    public boolean isPhoneExistForOtherPatient(String phoneNumber, int excludePatientId) {
+        String sql = "SELECT COUNT(*) as count FROM Patient "
+                + "WHERE PhoneNumber = ? AND PatientID != ? AND Hidden = 0";
+        ResultSet rs = null;
+        try {
+            Object[] params = {phoneNumber, excludePatientId};
+            rs = executeSelectQuery(sql, params);
+
+            if (rs.next()) {
+                return rs.getInt("count") > 0;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            closeResources(rs);
+        }
+
+        return false;
+    }
+
+    /**
      * Update patient profile information
      *
      * @param patient Patient object with updated data

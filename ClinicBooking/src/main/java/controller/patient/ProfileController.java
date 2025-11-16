@@ -194,34 +194,42 @@ public class ProfileController extends HttpServlet {
     private void updateProfile(HttpServletRequest request, HttpServletResponse response, HttpSession session)
             throws ServletException, IOException {
 
+        String firstName = null;
+        String lastName = null;
+        String phoneNumber = null;
+        String email = null;
+        String address = null;
+        String dobStr = null;
+        String genderStr = null;
+        PatientDTO currentPatient = null;
+
         try {
             int patientId = ((PatientDTO) session.getAttribute("patient")).getPatientID();
-            PatientDTO currentPatient = patientDAO.getPatientById(patientId);
+            currentPatient = patientDAO.getPatientById(patientId);
 
             // Get form data
-            String firstName = request.getParameter("firstName");
-            String lastName = request.getParameter("lastName");
-            String phoneNumber = request.getParameter("phoneNumber");
-            String email = request.getParameter("email");
-            String address = request.getParameter("address");
-            String dobStr = request.getParameter("dob");
-            String genderStr = request.getParameter("gender");
+            firstName = request.getParameter("firstName");
+            lastName = request.getParameter("lastName");
+            phoneNumber = request.getParameter("phoneNumber");
+            email = request.getParameter("email");
+            address = request.getParameter("address");
+            dobStr = request.getParameter("dob");
+            genderStr = request.getParameter("gender");
 
-            // Validate input
-            List<String> errors = ProfileValidate.validateProfileInput(
-                    firstName, lastName, phoneNumber, email, dobStr, genderStr, address);
+            // Validate each field and set error message directly (like RegisterController)
+            boolean isValidFirstName = validateFirstName(request, firstName);
+            boolean isValidLastName = validateLastName(request, lastName);
+            boolean isValidPhoneNumber = validatePhoneNumber(request, phoneNumber, currentPatient, patientId);
+            boolean isValidEmail = validateEmail(request, email, currentPatient, patientId);
+            boolean isValidAddress = validateAddress(request, address);
+            boolean isValidDob = validateDob(request, dobStr);
+            boolean isValidGender = validateGender(request, genderStr);
 
-            // Check email uniqueness if changed
-            if (!email.equalsIgnoreCase(currentPatient.getEmail())) {
-                if (patientDAO.isEmailExistForOtherPatient(email, patientId)) {
-                    errors.add("This email is already in use by another patient");
-                }
-            }
-
-            // If validation errors, return to form
-            if (!errors.isEmpty()) {
-                request.setAttribute("errors", errors);
-                request.setAttribute("patient", currentPatient);
+            // If any validation fails, return to form with user input preserved
+            if (!isValidFirstName || !isValidLastName || !isValidPhoneNumber 
+                    || !isValidEmail || !isValidAddress || !isValidDob || !isValidGender) {
+                PatientDTO formData = createFormDataDTO(currentPatient, firstName, lastName, phoneNumber, email, address, dobStr, genderStr);
+                request.setAttribute("patient", formData);
                 request.getRequestDispatcher(ProfileConstants.URL_EDIT_PROFILE_JSP).forward(request, response);
                 return;
             }
@@ -233,9 +241,11 @@ public class ProfileController extends HttpServlet {
             if (avatarPart != null && avatarPart.getSize() > 0) {
                 // Validate avatar file
                 if (!AvatarValidate.isValidAvatarFile(avatarPart)) {
-                    errors.add("Invalid avatar file (only .jpg, .png, .gif, max 10MB accepted)");
-                    request.setAttribute("errors", errors);
-                    request.setAttribute("patient", currentPatient);
+                    request.setAttribute("avatarErrorMsg", "Avatar file must be JPG, PNG, or GIF format and less than 10MB");
+                    
+                    // Preserve form data
+                    PatientDTO formData = createFormDataDTO(currentPatient, firstName, lastName, phoneNumber, email, address, dobStr, genderStr);
+                    request.setAttribute("patient", formData);
                     request.getRequestDispatcher(ProfileConstants.URL_EDIT_PROFILE_JSP).forward(request, response);
                     return;
                 }
@@ -245,9 +255,11 @@ public class ProfileController extends HttpServlet {
                         avatarPart, currentPatient.getAccountName(), "patient", getServletContext());
 
                 if (newAvatarPath == null) {
-                    errors.add("Upload avatar failed");
-                    request.setAttribute("errors", errors);
-                    request.setAttribute("patient", currentPatient);
+                    request.setAttribute("avatarErrorMsg", "Failed to upload avatar. Please try again");
+                    
+                    // Preserve form data
+                    PatientDTO formData = createFormDataDTO(currentPatient, firstName, lastName, phoneNumber, email, address, dobStr, genderStr);
+                    request.setAttribute("patient", formData);
                     request.getRequestDispatcher(ProfileConstants.URL_EDIT_PROFILE_JSP).forward(request, response);
                     return;
                 }
@@ -258,7 +270,9 @@ public class ProfileController extends HttpServlet {
             currentPatient.setLastName(lastName);
             currentPatient.setPhoneNumber(phoneNumber);
             currentPatient.setEmail(email);
-            currentPatient.setUserAddress(address);
+            // Normalize address: if empty or null, set to null
+            String normalizedAddress = (address != null && !address.trim().isEmpty()) ? address.trim() : null;
+            currentPatient.setUserAddress(normalizedAddress);
             currentPatient.setDob(parseDate(dobStr));
             currentPatient.setGender("Male".equalsIgnoreCase(genderStr));
 
@@ -275,16 +289,26 @@ public class ProfileController extends HttpServlet {
                 session.setAttribute("successMessage", "Profile updated successfully!");
                 response.sendRedirect(request.getContextPath() + "/profile");
             } else {
-                errors.add("Update information failed");
-                request.setAttribute("errors", errors);
-                request.setAttribute("patient", currentPatient);
+                request.setAttribute("generalErrorMsg", "Failed to update profile. Please try again");
+                PatientDTO formData = createFormDataDTO(currentPatient, firstName, lastName, phoneNumber, email, address, dobStr, genderStr);
+                request.setAttribute("patient", formData);
                 request.getRequestDispatcher(ProfileConstants.URL_EDIT_PROFILE_JSP).forward(request, response);
             }
 
         } catch (Exception e) {
             e.printStackTrace();
-            session.setAttribute("errorMessage", "An error occurred!");
-            response.sendRedirect(request.getContextPath() + "/profile?action=edit");
+            
+            // Try to preserve form data if possible
+            if (currentPatient != null) {
+                request.setAttribute("generalErrorMsg", "An unexpected error occurred. Please try again");
+                PatientDTO formData = createFormDataDTO(currentPatient, firstName, lastName, phoneNumber, email, address, dobStr, genderStr);
+                request.setAttribute("patient", formData);
+                request.getRequestDispatcher(ProfileConstants.URL_EDIT_PROFILE_JSP).forward(request, response);
+            } else {
+                // If currentPatient is null, redirect to view profile
+                session.setAttribute("errorMessage", "An unexpected error occurred. Please try again");
+                response.sendRedirect(request.getContextPath() + "/profile");
+            }
         }
     }
 
@@ -301,22 +325,42 @@ public class ProfileController extends HttpServlet {
         String newPassword = request.getParameter("newPassword");
         String confirmPassword = request.getParameter("confirmPassword");
 
-        // Validate new password strength
-        List<String> errors = ProfileValidate.validatePasswordStrength(newPassword);
-        
-        // Check if new password matches confirmation
-        if (!ProfileValidate.isPasswordMatch(newPassword, confirmPassword)) {
-            errors.add("New password and confirmation do not match");
+        // Validate each field and set error message directly (like other validations)
+        boolean isValidCurrentPassword = true;
+        boolean isValidNewPassword = true;
+        boolean isValidConfirmPassword = true;
+        boolean isValidPasswordDifferent = true;
+
+        // Validate current password
+        String currentPasswordError = ProfileValidate.validateCurrentPassword(currentPassword);
+        if (currentPasswordError != null) {
+            request.setAttribute("currentPasswordErrorMsg", currentPasswordError);
+            isValidCurrentPassword = false;
         }
 
-        // Check if new password is different from current password
-        if (currentPassword != null && currentPassword.equals(newPassword)) {
-            errors.add("New password must be different from current password");
+        // Validate new password strength (get all detailed errors)
+        List<String> passwordStrengthErrors = ProfileValidate.validatePasswordStrength(newPassword);
+        if (!passwordStrengthErrors.isEmpty()) {
+            request.setAttribute("newPasswordErrorList", passwordStrengthErrors);
+            isValidNewPassword = false;
         }
 
-        // If validation errors, show them
-        if (!errors.isEmpty()) {
-            request.setAttribute("passwordErrorList", errors);
+        // Validate password match
+        String passwordMatchError = ProfileValidate.validatePasswordMatch(newPassword, confirmPassword);
+        if (passwordMatchError != null) {
+            request.setAttribute("confirmPasswordErrorMsg", passwordMatchError);
+            isValidConfirmPassword = false;
+        }
+
+        // Validate password different
+        String passwordDifferentError = ProfileValidate.validatePasswordDifferent(currentPassword, newPassword);
+        if (passwordDifferentError != null) {
+            request.setAttribute("passwordDifferentErrorMsg", passwordDifferentError);
+            isValidPasswordDifferent = false;
+        }
+
+        // If any validation errors, show them
+        if (!isValidCurrentPassword || !isValidNewPassword || !isValidConfirmPassword || !isValidPasswordDifferent) {
             viewProfile(request, response);
             return;
         }
@@ -328,9 +372,162 @@ public class ProfileController extends HttpServlet {
             session.setAttribute("successMessage", "Password changed successfully!");
             response.sendRedirect(request.getContextPath() + "/profile");
         } else {
-            request.setAttribute("passwordError", "Current password is incorrect");
+            request.setAttribute("currentPasswordErrorMsg", "Current password is incorrect");
             viewProfile(request, response);
         }
+    }
+
+    /**
+     * Validate first name and set error message if invalid
+     */
+    private boolean validateFirstName(HttpServletRequest request, String firstName) {
+        String errorMsg = ProfileValidate.validateFirstName(firstName);
+        if (errorMsg != null) {
+            request.setAttribute("firstNameErrorMsg", errorMsg);
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Validate last name and set error message if invalid
+     */
+    private boolean validateLastName(HttpServletRequest request, String lastName) {
+        String errorMsg = ProfileValidate.validateLastName(lastName);
+        if (errorMsg != null) {
+            request.setAttribute("lastNameErrorMsg", errorMsg);
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Validate phone number and set error message if invalid
+     * Checks format first, then uniqueness if phone number changed
+     */
+    private boolean validatePhoneNumber(HttpServletRequest request, String phoneNumber, PatientDTO currentPatient, int patientId) {
+        // Validate format using ProfileValidate
+        String errorMsg = ProfileValidate.validatePhoneNumberFormat(phoneNumber);
+        if (errorMsg != null) {
+            request.setAttribute("phoneNumberErrorMsg", errorMsg);
+            return false;
+        }
+        
+        // Check uniqueness if phone number changed
+        if (!phoneNumber.equalsIgnoreCase(currentPatient.getPhoneNumber())) {
+            if (patientDAO.isPhoneExistForOtherPatient(phoneNumber, patientId)) {
+                request.setAttribute("phoneNumberErrorMsg", "Phone number is already registered to another account");
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Validate email and set error message if invalid
+     * Checks format first, then uniqueness if email changed
+     */
+    private boolean validateEmail(HttpServletRequest request, String email, PatientDTO currentPatient, int patientId) {
+        // Validate format using ProfileValidate
+        String errorMsg = ProfileValidate.validateEmailFormat(email);
+        if (errorMsg != null) {
+            request.setAttribute("emailErrorMsg", errorMsg);
+            return false;
+        }
+        
+        // Check uniqueness if email changed
+        if (!email.equalsIgnoreCase(currentPatient.getEmail())) {
+            if (patientDAO.isEmailExistForOtherPatient(email, patientId)) {
+                request.setAttribute("emailErrorMsg", "Email is already registered to another account");
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Validate address and set error message if invalid
+     */
+    private boolean validateAddress(HttpServletRequest request, String address) {
+        String errorMsg = ProfileValidate.validateAddress(address);
+        if (errorMsg != null) {
+            request.setAttribute("addressErrorMsg", errorMsg);
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Validate date of birth and set error message if invalid
+     */
+    private boolean validateDob(HttpServletRequest request, String dobStr) {
+        String errorMsg = ProfileValidate.validateDob(dobStr);
+        if (errorMsg != null) {
+            request.setAttribute("dobErrorMsg", errorMsg);
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Validate gender and set error message if invalid
+     */
+    private boolean validateGender(HttpServletRequest request, String genderStr) {
+        String errorMsg = ProfileValidate.validateGender(genderStr);
+        if (errorMsg != null) {
+            request.setAttribute("genderErrorMsg", errorMsg);
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Create PatientDTO with form data to preserve user input when validation fails
+     */
+    private PatientDTO createFormDataDTO(PatientDTO currentPatient, String firstName, String lastName, 
+            String phoneNumber, String email, String address, String dobStr, String genderStr) {
+        PatientDTO formData = new PatientDTO();
+        
+        // Copy unchanged data from current patient
+        formData.setPatientID(currentPatient.getPatientID());
+        formData.setAccountName(currentPatient.getAccountName());
+        formData.setAvatar(currentPatient.getAvatar());
+        
+        // Use new form data if provided, otherwise keep current data
+        formData.setFirstName(getValueOrDefault(firstName, currentPatient.getFirstName()));
+        formData.setLastName(getValueOrDefault(lastName, currentPatient.getLastName()));
+        formData.setPhoneNumber(getValueOrDefault(phoneNumber, currentPatient.getPhoneNumber()));
+        formData.setEmail(getValueOrDefault(email, currentPatient.getEmail()));
+        // Normalize address: if empty or null, use current address or null
+        String normalizedAddress = (address != null && !address.trim().isEmpty()) ? address.trim() : currentPatient.getUserAddress();
+        formData.setUserAddress(normalizedAddress);
+        
+        // Handle date of birth
+        if (dobStr != null && !dobStr.trim().isEmpty()) {
+            try {
+                formData.setDob(parseDate(dobStr));
+            } catch (Exception e) {
+                formData.setDob(currentPatient.getDob());
+            }
+        } else {
+            formData.setDob(currentPatient.getDob());
+        }
+        
+        // Handle gender
+        if (genderStr != null) {
+            formData.setGender("Male".equalsIgnoreCase(genderStr));
+        } else {
+            formData.setGender(currentPatient.isGender());
+        }
+        
+        return formData;
+    }
+    
+    /**
+     * Helper method to get value or default
+     */
+    private String getValueOrDefault(String value, String defaultValue) {
+        return (value != null && !value.trim().isEmpty()) ? value : defaultValue;
     }
 
     /**
