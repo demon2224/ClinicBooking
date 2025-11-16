@@ -162,10 +162,9 @@ AFTER INSERT
 AS
 BEGIN
 	SET NOCOUNT ON;
-    INSERT INTO [dbo].[Invoice] (MedicalRecordID, PaymentType, InvoiceStatus)
+    INSERT INTO [dbo].[Invoice] (MedicalRecordID, InvoiceStatus)
     SELECT
         i.MedicalRecordID,
-        'Cash',
 		'Pending'
     FROM INSERTED i;
 END;
