@@ -44,6 +44,16 @@ public class ManageMyPrescriptionsController extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
+        // Check session login
+        HttpSession session = request.getSession();
+        PatientDTO sessionPatient = (PatientDTO) session.getAttribute("patient");
+
+        if (sessionPatient == null) {
+            session.setAttribute("errorMessage", "Your session has expired. Please log in again.");
+            response.sendRedirect(request.getContextPath() + "/patient-login");
+            return;
+        }
+
         String prescriptionIdParam = request.getParameter("id");
 
         // Check if this is a request for prescription detail
@@ -89,14 +99,9 @@ public class ManageMyPrescriptionsController extends HttpServlet {
             throws ServletException, IOException {
 
         try {
-            // Validate session
+            // Get patient from session
             HttpSession session = request.getSession();
             PatientDTO sessionPatient = (PatientDTO) session.getAttribute("patient");
-
-            if (sessionPatient == null) {
-                response.sendRedirect(request.getContextPath() + "/patient-login");
-                return;
-            }
 
             int prescriptionId = Integer.parseInt(prescriptionIdParam);
 
@@ -110,19 +115,21 @@ public class ManageMyPrescriptionsController extends HttpServlet {
             }
 
             // Verify this prescription belongs to the logged-in patient
-            if (prescription.getAppointmentID() != null
-                    && prescription.getAppointmentID().getPatientID() != null
-                    && prescription.getAppointmentID().getPatientID().getPatientID() != sessionPatient.getPatientID()) {
+            // Verify ownership and doctor exists
+            if (prescription.getAppointmentID() == null
+                    || prescription.getAppointmentID().getPatientID() == null
+                    || prescription.getAppointmentID().getPatientID().getPatientID() != sessionPatient.getPatientID()
+                    || prescription.getAppointmentID().getDoctorID() == null) {
                 response.sendRedirect(request.getContextPath() + ManageMyPrescriptionsConstants.BASE_URL);
                 return;
             }
 
-            // Set attributes for JSP (prescription already contains doctor and patient info)
-            request.setAttribute("prescription", prescription);
-
             // Get doctor rating
             int doctorId = prescription.getAppointmentID().getDoctorID().getDoctorID();
             double averageRating = doctorDAO.getAverageRatingByDoctorId(doctorId);
+
+            //Set attributes
+            request.setAttribute("prescription", prescription);
             request.setAttribute("averageRating", averageRating);
 
             // Forward to detail page

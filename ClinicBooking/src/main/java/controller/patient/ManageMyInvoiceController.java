@@ -65,7 +65,7 @@ public class ManageMyInvoiceController extends HttpServlet {
         }
 
         // Handle invoices list view
-        handleInvoicesList(request, response, patient.getPatientID());
+        handleInvoicesList(request, response);
     }
 
     /**
@@ -87,6 +87,9 @@ public class ManageMyInvoiceController extends HttpServlet {
             throws ServletException, IOException {
 
         try {
+            // Get patient from session
+            HttpSession session = request.getSession();
+            PatientDTO sessionPatient = (PatientDTO) session.getAttribute("patient");
             int invoiceId = Integer.parseInt(invoiceIdParam);
 
             // Get invoice details
@@ -100,34 +103,29 @@ public class ManageMyInvoiceController extends HttpServlet {
             }
 
             // Verify patient ownership through medical record -> appointment -> patient
+            // Verify ownership and data completeness
             if (invoice.getMedicalRecordID() == null
                     || invoice.getMedicalRecordID().getAppointmentID() == null
                     || invoice.getMedicalRecordID().getAppointmentID().getPatientID() == null
-                    || invoice.getMedicalRecordID().getAppointmentID().getPatientID().getPatientID() != patientId) {
-
+                    || invoice.getMedicalRecordID().getAppointmentID().getPatientID().getPatientID() != sessionPatient.getPatientID()
+                    || invoice.getMedicalRecordID().getAppointmentID().getDoctorID() == null) {
                 request.getSession().setAttribute("errorMessage", "You are not authorized to view this invoice.");
                 response.sendRedirect(request.getContextPath() + ManageMyInvoiceConstants.BASE_URL);
                 return;
             }
 
-            // Get doctor's average rating if doctor exists
-            if (invoice.getMedicalRecordID().getAppointmentID().getDoctorID() != null) {
-                int doctorId = invoice.getMedicalRecordID().getAppointmentID().getDoctorID().getDoctorID();
-                double averageRating = doctorDAO.getAverageRatingByDoctorId(doctorId);
-                request.setAttribute("averageRating", averageRating);
-            }
+            // data
+            int doctorId = invoice.getMedicalRecordID().getAppointmentID().getDoctorID().getDoctorID();
+            double averageRating = doctorDAO.getAverageRatingByDoctorId(doctorId);
 
-            // Set attributes for JSP
+            // Set attributes
             request.setAttribute("invoice", invoice);
+            request.setAttribute("averageRating", averageRating);
 
-            // Forward to detail page
+            // Forward
             request.getRequestDispatcher(ManageMyInvoiceConstants.DETAIL_PAGE_JSP).forward(request, response);
 
-        } catch (NumberFormatException e) {
-            request.getSession().setAttribute("errorMessage", "Invalid invoice ID.");
-            response.sendRedirect(request.getContextPath() + ManageMyInvoiceConstants.BASE_URL);
         } catch (Exception e) {
-            request.getSession().setAttribute("errorMessage", "An error occurred while processing your request.");
             response.sendRedirect(request.getContextPath() + ManageMyInvoiceConstants.BASE_URL);
         }
     }
@@ -135,32 +133,32 @@ public class ManageMyInvoiceController extends HttpServlet {
     /**
      * Handle invoices list view
      */
-    private void handleInvoicesList(HttpServletRequest request, HttpServletResponse response, int patientId)
+    private void handleInvoicesList(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        try {
-            // Get search parameters
-            String searchQuery = request.getParameter("search");
-            List<InvoiceDTO> invoiceList;
+        // Get patient from session
+        HttpSession session = request.getSession();
+        PatientDTO patient = (PatientDTO) session.getAttribute("patient");
+        int patientId = patient.getPatientID();
 
-            // Apply search - Use existing DAO methods
-            if (searchQuery != null && !searchQuery.trim().isEmpty()) {
-                invoiceList = invoiceDAO.searchInvoicesByPatientId(patientId, searchQuery);
-            } else {
-                invoiceList = invoiceDAO.getInvoicesByPatientId(patientId);
-            }
+        // Get search parameters
+        String searchQuery = request.getParameter("search");
+        List<InvoiceDTO> invoiceList;
 
-            // Set attributes for JSP
-            request.setAttribute("invoiceList", invoiceList);
-            request.setAttribute("searchQuery", searchQuery);
-
-            // Forward to JSP
-            request.getRequestDispatcher(ManageMyInvoiceConstants.LIST_PAGE_JSP).forward(request, response);
-
-        } catch (Exception e) {
-            request.getSession().setAttribute("errorMessage", "An error occurred while processing your request.");
-            request.getRequestDispatcher(ManageMyInvoiceConstants.LIST_PAGE_JSP).forward(request, response);
+        // Apply search
+        if (searchQuery != null && !searchQuery.trim().isEmpty()) {
+            invoiceList = invoiceDAO.searchInvoicesByPatientId(patientId, searchQuery);
+        } else {
+            invoiceList = invoiceDAO.getInvoicesByPatientId(patientId);
         }
+
+        // Set attributes for JSP
+        request.setAttribute("invoiceList", invoiceList);
+        request.setAttribute("searchQuery", searchQuery);
+
+        // Forward to JSP
+        request.getRequestDispatcher(ManageMyInvoiceConstants.LIST_PAGE_JSP).forward(request, response);
+
     }
 
     @Override

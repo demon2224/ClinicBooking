@@ -10,7 +10,9 @@ import utils.VietQRService;
 import constants.PaymentConstants;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
+import java.util.Date;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -39,15 +41,16 @@ public class PaymentController extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        // 1. Validate login
+        // Check session login
         HttpSession session = request.getSession();
-        PatientDTO patient = (PatientDTO) session.getAttribute("patient");
+        PatientDTO sessionPatient = (PatientDTO) session.getAttribute("patient");
 
-        if (patient == null) {
+        if (sessionPatient == null) {
             session.setAttribute("errorMessage", "Your session has expired. Please log in again.");
             response.sendRedirect(request.getContextPath() + "/patient-login");
             return;
         }
+
         String invoiceIdStr = request.getParameter("id");
         if (invoiceIdStr == null) {
             response.sendRedirect(request.getContextPath() + PaymentConstants.MANAGE_INVOICES_REDIRECT);
@@ -59,8 +62,8 @@ public class PaymentController extends HttpServlet {
             InvoiceDTO invoice = invoiceDAO.getInvoiceById(invoiceId);
 
             if (invoice == null) {
-                request.setAttribute("errorMessage", "Invoice not found");
-                request.getRequestDispatcher(PaymentConstants.PAYMENT_JSP).forward(request, response);
+                session.setAttribute("errorMessage", "Invoice not found");
+                response.sendRedirect(request.getContextPath() + PaymentConstants.MANAGE_INVOICES_REDIRECT);
                 return;
             }
 
@@ -68,15 +71,15 @@ public class PaymentController extends HttpServlet {
             if (invoice.getMedicalRecordID() == null
                     || invoice.getMedicalRecordID().getAppointmentID() == null
                     || invoice.getMedicalRecordID().getAppointmentID().getPatientID() == null
-                    || invoice.getMedicalRecordID().getAppointmentID().getPatientID().getPatientID() != patient.getPatientID()) {
-                session.setAttribute("errorMessage", "You are not authorized to access this invoice.");
+                    || invoice.getMedicalRecordID().getAppointmentID().getPatientID().getPatientID() != sessionPatient.getPatientID()
+                    || invoice.getMedicalRecordID().getAppointmentID().getDoctorID() == null) {
                 response.sendRedirect(request.getContextPath() + PaymentConstants.MANAGE_INVOICES_REDIRECT);
                 return;
             }
 
             // Generate time format for payment reference
-            java.text.SimpleDateFormat timeFormat = new java.text.SimpleDateFormat("HHmm");
-            String currentTime = timeFormat.format(new java.util.Date());
+            SimpleDateFormat timeFormat = new SimpleDateFormat("HHmm");
+            String currentTime = timeFormat.format(new Date());
 
             // Generate QR code URL with new reference format
             String qrDescription = "CLINIC" + currentTime;
@@ -138,7 +141,7 @@ public class PaymentController extends HttpServlet {
             if (patient == null) {
                 jsonResponse.addProperty("success", false);
                 jsonResponse.addProperty("message", "Session expired. Please log in again.");
-                try (PrintWriter out = response.getWriter()) {
+                try ( PrintWriter out = response.getWriter()) {
                     out.print(jsonResponse.toString());
                     out.flush();
                 }
@@ -154,10 +157,11 @@ public class PaymentController extends HttpServlet {
                     || invoice.getMedicalRecordID() == null
                     || invoice.getMedicalRecordID().getAppointmentID() == null
                     || invoice.getMedicalRecordID().getAppointmentID().getPatientID() == null
-                    || invoice.getMedicalRecordID().getAppointmentID().getPatientID().getPatientID() != patient.getPatientID()) {
+                    || invoice.getMedicalRecordID().getAppointmentID().getPatientID().getPatientID() != patient.getPatientID()
+                    || invoice.getMedicalRecordID().getAppointmentID().getDoctorID() == null) {
                 jsonResponse.addProperty("success", false);
                 jsonResponse.addProperty("message", "Unauthorized access to invoice.");
-                try (PrintWriter out = response.getWriter()) {
+                try ( PrintWriter out = response.getWriter()) {
                     out.print(jsonResponse.toString());
                     out.flush();
                 }

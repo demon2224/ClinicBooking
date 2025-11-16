@@ -263,7 +263,7 @@ public class PrescriptionDAO extends DBContext {
         String query = "SELECT p.PrescriptionID, p.PrescriptionStatus, p.DateCreate, p.Note AS PrescriptionNote, "
                 + "a.AppointmentID, a.DateBegin, a.DateEnd, a.Note as AppointmentNote, a.AppointmentStatus, "
                 + "st.FirstName as DoctorFirstName, st.LastName as DoctorLastName, st.PhoneNumber as DoctorPhone, st.Email as DoctorEmail, "
-                + "pt.FirstName as PatientFirstName, pt.LastName as PatientLastName, "
+                + "pt.PatientID, pt.FirstName as PatientFirstName, pt.LastName as PatientLastName, "
                 + "d.DoctorID, d.YearExperience, "
                 + "sp.SpecialtyName "
                 + "FROM [dbo].[Prescription] p "
@@ -290,6 +290,7 @@ public class PrescriptionDAO extends DBContext {
                 staff.setEmail(rs.getString("DoctorEmail"));
 
                 PatientDTO patient = new PatientDTO();
+                patient.setPatientID(rs.getInt("PatientID"));
                 patient.setFirstName(rs.getString("PatientFirstName"));
                 patient.setLastName(rs.getString("PatientLastName"));
 

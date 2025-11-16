@@ -40,7 +40,7 @@ public class CancelAppointmentValidate {
      * @return true if can be cancelled, false otherwise
      */
     public static boolean canBeCancelledByStatus(String appointmentStatus) {
-        return "Pending".equals(appointmentStatus) || "Approved".equals(appointmentStatus);
+        return "Pending".equals(appointmentStatus);
     }
 
     /**

@@ -51,6 +51,15 @@ public class ManageMyAppointmentController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        //Check session login
+        HttpSession session = request.getSession();
+        PatientDTO sessionPatient = (PatientDTO) session.getAttribute("patient");
+
+        if (sessionPatient == null) {
+            session.setAttribute("errorMessage", "Your session has expired. Please log in again.");
+            response.sendRedirect(request.getContextPath() + "/patient-login");
+            return;
+        }
 
         String action = request.getParameter("action");
         String appointmentIdParam = request.getParameter("id");
@@ -141,6 +150,10 @@ public class ManageMyAppointmentController extends HttpServlet {
             throws ServletException, IOException {
 
         try {
+            // Get patient from session (already validated in doGet)
+            HttpSession session = request.getSession();
+            PatientDTO sessionPatient = (PatientDTO) session.getAttribute("patient");
+
             int appointmentId = Integer.parseInt(appointmentIdParam);
 
             // Get appointment details
@@ -152,8 +165,15 @@ public class ManageMyAppointmentController extends HttpServlet {
                 return;
             }
 
-            // Get patient and doctor information
-            PatientDTO patient = patientDAO.getPatientById(appointment.getPatientID().getPatientID());
+            // Verify this appointment belongs to the logged-in patient
+            if (appointment.getPatientID() == null
+                    || appointment.getPatientID().getPatientID() != sessionPatient.getPatientID()
+                    || appointment.getDoctorID() == null) {
+                response.sendRedirect(request.getContextPath() + ManageMyAppointmentConstants.BASE_URL);
+                return;
+            }
+
+            // Doctor information
             DoctorDTO doctor = doctorDAO.getDoctorById(appointment.getDoctorID().getDoctorID());
 
             // Get doctor's average rating
@@ -161,7 +181,6 @@ public class ManageMyAppointmentController extends HttpServlet {
 
             // Set attributes for JSP
             request.setAttribute("appointment", appointment);
-            request.setAttribute("patient", patient);
             request.setAttribute("doctor", doctor);
             request.setAttribute("averageRating", averageRating);
 

@@ -5,7 +5,6 @@
 package controller.patient;
 
 import dao.MedicalRecordDAO;
-import dao.PatientDAO;
 import dao.DoctorDAO;
 import model.MedicalRecordDTO;
 import model.DoctorDTO;
@@ -28,13 +27,11 @@ import jakarta.servlet.http.HttpSession;
 public class ManageMyMedicalRecordController extends HttpServlet {
 
     private MedicalRecordDAO medicalRecordDAO;
-    private PatientDAO patientDAO;
     private DoctorDAO doctorDAO;
 
     @Override
     public void init() throws ServletException {
         medicalRecordDAO = new MedicalRecordDAO();
-        patientDAO = new PatientDAO();
         doctorDAO = new DoctorDAO();
     }
 
@@ -48,6 +45,16 @@ public class ManageMyMedicalRecordController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+
+        // Check session login
+        HttpSession session = request.getSession();
+        PatientDTO sessionPatient = (PatientDTO) session.getAttribute("patient");
+
+        if (sessionPatient == null) {
+            session.setAttribute("errorMessage", "Your session has expired. Please log in again.");
+            response.sendRedirect(request.getContextPath() + "/patient-login");
+            return;
+        }
 
         String medicalRecordIdParam = request.getParameter("id");
 
@@ -94,49 +101,36 @@ public class ManageMyMedicalRecordController extends HttpServlet {
             throws ServletException, IOException {
 
         try {
-
-            //Check session login
+            // Get patient from session
             HttpSession session = request.getSession();
             PatientDTO sessionPatient = (PatientDTO) session.getAttribute("patient");
-
-            if (sessionPatient == null) {
-                session.setAttribute("errorMessage", "Your session has expired. Please log in again.");
-                response.sendRedirect(request.getContextPath() + "/patient-login");
-                return;
-            }
-
-            //Validate param
-            if (medicalRecordIdParam == null || !medicalRecordIdParam.matches("\\d+")) {
-                response.sendRedirect(request.getContextPath() + ManageMyMedicalRecordConstants.BASE_URL);
-                return;
-            }
-
             int medicalRecordId = Integer.parseInt(medicalRecordIdParam);
 
-            //Get medical record
+            // Get medical record
             MedicalRecordDTO medicalRecord = medicalRecordDAO.getMedicalRecordById(medicalRecordId);
+
+            // Redirect if medical record not found
             if (medicalRecord == null) {
                 response.sendRedirect(request.getContextPath() + ManageMyMedicalRecordConstants.BASE_URL);
                 return;
             }
 
-            //Validate record belongs to logged-in patient
-            int recordPatientId = medicalRecord.getAppointmentID().getPatientID().getPatientID();
-            if (recordPatientId != sessionPatient.getPatientID()) {
-                response.sendRedirect(request.getContextPath() + "/403");
+            // Verify this medical record belongs to the logged-in patient and has valid data
+            if (medicalRecord.getAppointmentID() == null
+                    || medicalRecord.getAppointmentID().getPatientID() == null
+                    || medicalRecord.getAppointmentID().getPatientID().getPatientID() != sessionPatient.getPatientID()
+                    || medicalRecord.getAppointmentID().getDoctorID() == null) {
+                response.sendRedirect(request.getContextPath() + ManageMyMedicalRecordConstants.BASE_URL);
                 return;
             }
 
-            //Load patient + doctor data
-            PatientDTO patientInfo = patientDAO.getPatientById(recordPatientId);
+            // Doctor data
             int doctorId = medicalRecord.getAppointmentID().getDoctorID().getDoctorID();
             DoctorDTO doctor = doctorDAO.getDoctorById(doctorId);
-
             double averageRating = doctorDAO.getAverageRatingByDoctorId(doctorId);
 
-            //Set attributes
+            // Set attributes
             request.setAttribute("medicalRecord", medicalRecord);
-            request.setAttribute("patient", patientInfo);
             request.setAttribute("doctor", doctor);
             request.setAttribute("averageRating", averageRating);
 
@@ -176,5 +170,10 @@ public class ManageMyMedicalRecordController extends HttpServlet {
 
         // Forward to JSP
         request.getRequestDispatcher(ManageMyMedicalRecordConstants.LIST_PAGE_JSP).forward(request, response);
+    }
+
+    @Override
+    public String getServletInfo() {
+        return "Manage My Medical Record Controller";
     }
 }
