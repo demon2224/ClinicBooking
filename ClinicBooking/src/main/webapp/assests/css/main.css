@@ -1607,9 +1607,11 @@ h6 {
     overflow: hidden;
 }
 
-/* Disabled state for all action buttons */
-.btn-action:disabled,
-.btn-action[disabled] {
+/* Disabled state ONLY for Edit and Delete buttons in Feedback (NOT Cancel Appointment) */
+.btn-edit:disabled,
+.btn-edit[disabled],
+button.btn-cancel[disabled],
+button.btn-cancel:disabled {
     opacity: 0.5;
     cursor: not-allowed;
     pointer-events: none;

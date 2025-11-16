@@ -78,7 +78,7 @@
         </c:if>
 
         <!-- Confirmation Modal for Cancel Action -->
-        <div id="confirmModal" class="modal-overlay" style="display: none;">
+        <div id="confirmModal" class="modal-overlay">
             <div class="modal-content">
                 <div class="modal-header">
                     <h3 class="modal-title">
@@ -214,8 +214,8 @@
         function closeConfirmModal() {
             const modal = document.getElementById('confirmModal');
             if (modal) {
-                modal.classList.remove('active'); // Remove active class
-                document.body.style.overflow = 'auto'; // Re-enable scrolling
+                modal.classList.remove('active');
+                document.body.style.overflow = 'auto';
             }
         }
 
@@ -224,8 +224,8 @@
             const confirmBtn = document.getElementById('confirmCancelBtn');
 
             if (modal && confirmBtn) {
-                modal.classList.add('active'); // Add active class
-                document.body.style.overflow = 'hidden'; // Disable scrolling
+                modal.classList.add('active');
+                document.body.style.overflow = 'hidden';
 
                 // Store appointment ID for confirmation
                 confirmBtn.setAttribute('data-appointment-id', appointmentId);
