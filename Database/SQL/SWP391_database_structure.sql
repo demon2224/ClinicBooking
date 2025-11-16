@@ -212,6 +212,22 @@ BEGIN
 	JOIN [dbo].[MedicalRecord] mr
 	ON mr.AppointmentID = ap.AppointmentID
 	JOIN inserted i
-	ON mr.MedicalRecordID = mr.MedicalRecordID
+	ON mr.MedicalRecordID = i.MedicalRecordID
 	WHERE i.InvoiceStatus = 'Paid';
 END;
+
+GO
+CREATE TRIGGER TR_Prescription_UpdatePrescriptionStatus
+ON [dbo].[Prescription]
+AFTER UPDATE, INSERT
+AS
+BEGIN
+	SET NOCOUNT ON;
+	UPDATE p
+	SET p.PrescriptionStatus = 'Canceled'
+	FROM inserted i
+	JOIN [dbo].[Prescription] p
+	ON p.PrescriptionID = i.PrescriptionID
+	WHERE DATEDIFF(HOUR, p.DateCreate, GETDATE()) >= 24
+	AND p.PrescriptionStatus = 'Pending';
+END
