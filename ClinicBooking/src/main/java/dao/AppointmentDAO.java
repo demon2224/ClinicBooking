@@ -49,8 +49,7 @@ public class AppointmentDAO extends DBContext {
                 + "JOIN Patient p on p.PatientID = a.PatientID\n"
                 + "Where d.DoctorID = ? "
                 + "and not a.AppointmentStatus = 'Canceled'"
-                + "ORDER BY a.DateBegin ASC";
-        // + "and CAST (a.DateBegin as DATE) = CAST (GETDATE() as DATE)";
+                + "ORDER BY a.DateBegin DESC";
         Object[] params = {doctorID};
         ResultSet rs = executeSelectQuery(sql, params);
         try {
@@ -154,7 +153,7 @@ public class AppointmentDAO extends DBContext {
                 + "Where d.DoctorID = ?"
                 + "and not a.AppointmentStatus = 'Canceled'"
                 + "AND (p.FirstName LIKE ? OR p.LastName LIKE ?)"
-                + "ORDER BY a.DateBegin ASC";
+                + "ORDER BY a.DateBegin DESC";
 
         Object[] params = {
             doctorID,

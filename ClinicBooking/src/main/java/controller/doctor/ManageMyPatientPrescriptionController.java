@@ -31,7 +31,6 @@ public class ManageMyPatientPrescriptionController extends HttpServlet {
 
     private MedicalRecordDAO medicalRecordDAO;
     private PrescriptionDAO prescriptionDAO;
-    private AppointmentDAO appointmentDAO;
     private MedicineDAO medicineDAO;
 
     /**
@@ -43,7 +42,6 @@ public class ManageMyPatientPrescriptionController extends HttpServlet {
     public void init() throws ServletException {
         medicalRecordDAO = new MedicalRecordDAO();
         prescriptionDAO = new PrescriptionDAO();
-        appointmentDAO = new AppointmentDAO();
         medicineDAO = new MedicineDAO();
     }
 
