@@ -126,10 +126,18 @@
                                                 <i class="fas fa-edit"></i> Edit
                                             </button>
                                         </c:if>
-                                        <button class="btn-action btn-cancel"
-                                                data-review-id="${review.doctorReviewID}">
-                                            <i class="fas fa-trash"></i> Delete
-                                        </button>
+                                        <c:if test="${canEditMap[review.doctorReviewID]}">
+                                            <button class="btn-action btn-cancel"
+                                                    data-review-id="${review.doctorReviewID}">
+                                                <i class="fas fa-trash"></i> Delete
+                                            </button>
+                                        </c:if>
+                                        <c:if test="${!canEditMap[review.doctorReviewID]}">
+                                            <button type="button" class="btn-action btn-cancel" disabled
+                                                    title="You can only delete within 24 hours of creating the review">
+                                                <i class="fas fa-trash"></i> Delete
+                                            </button>
+                                        </c:if>
                                     </div>
                                 </div>
                             </c:forEach>
@@ -373,7 +381,7 @@
             function showModal(modalId) {
                 const modal = document.getElementById(modalId);
                 if (modal) {
-                    modal.classList.add('show');
+                    modal.classList.add('active');
                     document.body.style.overflow = 'hidden';
                 }
             }
@@ -381,7 +389,7 @@
             function hideModal(modalId) {
                 const modal = document.getElementById(modalId);
                 if (modal) {
-                    modal.classList.remove('show');
+                    modal.classList.remove('active');
                     document.body.style.overflow = 'auto';
                 }
             }
