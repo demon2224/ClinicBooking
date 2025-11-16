@@ -135,10 +135,9 @@ public class AvatarHandler {
             Path sourceFilePath = Paths.get(sourcePath, newFileName);
             Files.copy(avatarPart.getInputStream(), sourceFilePath, StandardCopyOption.REPLACE_EXISTING);
 
-            // Also save to target folder for immediate display
-            avatarPart.getInputStream().reset();
+            // Copy from source to target folder for immediate display
             Path targetFilePath = Paths.get(targetPath, newFileName);
-            Files.copy(avatarPart.getInputStream(), targetFilePath, StandardCopyOption.REPLACE_EXISTING);
+            Files.copy(sourceFilePath, targetFilePath, StandardCopyOption.REPLACE_EXISTING);
 
             // Return relative path for database (use forward slashes)
             return uploadDir + "/" + newFileName;

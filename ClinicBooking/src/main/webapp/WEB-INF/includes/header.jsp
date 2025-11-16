@@ -77,9 +77,9 @@
                     <div class="profile-avatar-small">
                         <c:choose>
                             <c:when test="${sessionScope.patient.avatar != null && !empty sessionScope.patient.avatar}">
-                                <img src="${pageContext.request.contextPath}${sessionScope.patient.avatar}"
+                                <img src="${pageContext.request.contextPath}/${sessionScope.patient.avatar}"
                                      alt="Profile"
-                                     onerror="this.onerror=null; this.src='${pageContext.request.contextPath}/assests/img/patient1.jpg'">
+                                     onerror="this.onerror=null; this.src='${pageContext.request.contextPath}/assests/img/0.png'">
                             </c:when>
                             <c:otherwise>
                                 <img src="${pageContext.request.contextPath}/assests/img/0.png"

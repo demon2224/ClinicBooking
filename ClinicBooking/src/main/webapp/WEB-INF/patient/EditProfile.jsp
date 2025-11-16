@@ -93,11 +93,11 @@
                                     <div class="profile-avatar-large">
                                         <c:choose>
                                             <c:when test="${patient.avatar != null && !empty patient.avatar}">
-                                                <img src="${pageContext.request.contextPath}${patient.avatar}"
+                                                <img src="${pageContext.request.contextPath}/${patient.avatar}"
                                                      alt="Profile Avatar"
                                                      id="profileAvatar"
                                                      class="profile-avatar-large"
-                                                     onerror="this.onerror=null; this.src='${pageContext.request.contextPath}/assests/img/patient1.jpg'">
+                                                     onerror="this.onerror=null; this.src='${pageContext.request.contextPath}/assests/img/0.png'">
                                             </c:when>
                                             <c:otherwise>
                                                 <img src="${pageContext.request.contextPath}/assests/img/0.png"

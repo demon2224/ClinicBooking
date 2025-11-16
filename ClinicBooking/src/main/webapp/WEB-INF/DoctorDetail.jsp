@@ -39,13 +39,13 @@
                         <div class="doctor-detail-avatar-container">
                             <c:choose>
                                 <c:when test="${doctor.staffID.avatar != null && !empty doctor.staffID.avatar}">
-                                    <img src="${pageContext.request.contextPath}${doctor.staffID.avatar}"
+                                    <img src="${pageContext.request.contextPath}/${doctor.staffID.avatar}"
                                          alt="Dr. ${doctor.staffID.firstName} ${doctor.staffID.lastName}"
                                          class="doctor-detail-avatar"
-                                         onerror="this.onerror=null; this.src='${pageContext.request.contextPath}/assests/img/doctor${(doctor.doctorID % 3) + 1}.jpg'">
+                                         onerror="this.onerror=null; this.src='${pageContext.request.contextPath}/assests/img/0.png'">
                                 </c:when>
                                 <c:otherwise>
-                                    <img src="${pageContext.request.contextPath}/assests/img/doctor${(doctor.doctorID % 3) + 1}.jpg"
+                                    <img src="${pageContext.request.contextPath}/assests/img/0.png"
                                          alt="Dr. ${doctor.staffID.firstName} ${doctor.staffID.lastName}"
                                          class="doctor-detail-avatar"
                                          onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">

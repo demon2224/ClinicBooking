@@ -78,7 +78,6 @@
                         <div class="doctors-empty-state">
                             <i class="fas fa-user-md-times"></i>
                             <h3>No doctors available</h3>
-                            <p>No doctors found matching your criteria. Try adjusting your search.</p>
                         </div>
                     </c:when>
                     <c:otherwise>
@@ -89,14 +88,14 @@
                                     <c:choose>
                                         <c:when test="${doctor.staffID.avatar != null && !empty doctor.staffID.avatar}">
                                             <!-- Display avatar from database -->
-                                            <img src="${pageContext.request.contextPath}${doctor.staffID.avatar}"
+                                            <img src="${pageContext.request.contextPath}/${doctor.staffID.avatar}"
                                                  alt="Dr. ${doctor.staffID.firstName} ${doctor.staffID.lastName}"
                                                  class="doctor-profile-avatar"
-                                                 onerror="this.onerror=null; this.src='${pageContext.request.contextPath}/assests/img/doctor${(doctor.doctorID % 3) + 1}.jpg'">
+                                                 onerror="this.onerror=null; this.src='${pageContext.request.contextPath}/assests/img/0.png'">
                                         </c:when>
                                         <c:otherwise>
                                             <!-- Fallback to default doctor images -->
-                                            <img src="${pageContext.request.contextPath}/assests/img/doctor${(doctor.doctorID % 3) + 1}.jpg"
+                                            <img src="${pageContext.request.contextPath}/assests/img/0.png"
                                                  alt="Dr. ${doctor.staffID.firstName} ${doctor.staffID.lastName}"
                                                  class="doctor-profile-avatar"
                                                  onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">

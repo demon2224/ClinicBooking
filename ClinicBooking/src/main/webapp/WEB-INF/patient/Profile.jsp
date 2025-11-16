@@ -100,11 +100,11 @@
                                 <div class="profile-avatar-large">
                                     <c:choose>
                                         <c:when test="${patient.avatar != null && !empty patient.avatar}">
-                                            <img src="${pageContext.request.contextPath}${patient.avatar}"
+                                            <img src="${pageContext.request.contextPath}/${patient.avatar}"
                                                  alt="Profile Avatar"
                                                  id="profileAvatar"
                                                  class="profile-avatar-large"
-                                                 onerror="this.onerror=null; this.src='${pageContext.request.contextPath}/assests/img/patient1.jpg'">
+                                                 onerror="this.onerror=null;this.src='${pageContext.request.contextPath}/assests/img/0.png'">
                                         </c:when>
                                         <c:otherwise>
                                             <img src="${pageContext.request.contextPath}/assests/img/0.png"
@@ -349,7 +349,7 @@
 
         <script>
             // Wait for DOM to be fully loaded
-            document.addEventListener('DOMContentLoaded', function() {
+            document.addEventListener('DOMContentLoaded', function () {
                 // Modal Controls
                 const modal = document.getElementById('changePasswordModal');
                 const openModalBtn = document.getElementById('changePasswordBtn');
@@ -365,16 +365,16 @@
                 // Add null checks and bind events
                 if (openModalBtn && modal) {
                     console.log('Binding click event to open button');
-                    openModalBtn.addEventListener('click', function(e) {
+                    openModalBtn.addEventListener('click', function (e) {
                         e.preventDefault(); // Prevent any default action
                         console.log('=== MODAL DEBUG START ===');
                         console.log('Open button clicked!');
                         console.log('Modal before:', modal.className);
-                        
+
                         modal.classList.add('active');
-                        
+
                         console.log('Modal after:', modal.className);
-                        
+
                         // Check computed styles
                         const styles = window.getComputedStyle(modal);
                         console.log('Display:', styles.display);
@@ -384,20 +384,22 @@
                         console.log('Position:', styles.position);
                         console.log('Width:', styles.width);
                         console.log('Height:', styles.height);
-                        
+
                         // Check if modal is visible in viewport
                         const rect = modal.getBoundingClientRect();
                         console.log('BoundingRect:', rect);
                         console.log('Is visible:', rect.width > 0 && rect.height > 0);
-                        
+
                         console.log('=== MODAL DEBUG END ===');
-                        
+
                         document.body.style.overflow = 'hidden'; // Prevent background scrolling
                     });
                 } else {
                     console.error('Cannot bind modal: modal or button not found');
-                    if (!openModalBtn) console.error('Button not found!');
-                    if (!modal) console.error('Modal not found!');
+                    if (!openModalBtn)
+                        console.error('Button not found!');
+                    if (!modal)
+                        console.error('Modal not found!');
                 }
 
                 if (closeModalBtn && modal) {
