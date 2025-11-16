@@ -643,7 +643,7 @@ public class AppointmentDAO extends DBContext {
                 }
             }
 
-            // Th�m appointment
+
             String sqlAppointment = "INSERT INTO Appointment "
                     + "(PatientID, DoctorID, AppointmentStatus, DateCreate, DateBegin, DateEnd, Note, Hidden) "
                     + "VALUES (?, ?, 'Approved', GETDATE(), ?, ?, ?, 1)";

@@ -20,7 +20,7 @@
 //    @Test
 //    public void testLoginPage() throws InterruptedException {
 //        System.out.println("Bắt đầu kiểm thử!");
-//        System.setProperty("webdriver.edge.driver", "D:\\Download\\msedgedriver.exe");
+//        System.setProperty("webdriver.edge.driver", "D:\\chuyennganh5\\swp391\\edgedriver_win64\\msedgedriver.exe");
 //
 //        // Thiết lập tùy chọn (chạy yên lặng, tránh pop-up)
 //        EdgeOptions options = new EdgeOptions();

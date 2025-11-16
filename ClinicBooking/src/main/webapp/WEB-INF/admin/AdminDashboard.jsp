@@ -23,7 +23,6 @@
                 padding: 0;
             }
 
-            /* ===== Sidebar (giữ nguyên của Statistics) ===== */
             .sidebar {
                 width: 240px;
                 height: 100vh;
@@ -34,38 +33,34 @@
                 left: 0;
                 z-index: 1000;
             }
-
             .sidebar h4 {
                 text-align: center;
                 margin-top: 1rem;
                 margin-bottom: 1.5rem;
                 font-size: 1.4rem;
                 font-weight: 500;
+                color: white;
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
             }
-
             .sidebar a {
                 display: block;
                 color: white;
                 text-decoration: none;
                 padding: 12px 20px;
-                transition: 0.3s ease;
+                transition: background-color 0.3s ease;
             }
-
+            .sidebar a:hover {
+                background-color: #00D0F1;
+            }
             .sidebar a i {
                 margin-right: 8px;
             }
 
-            .sidebar a:hover {
-                background-color: #00D0F1;
-            }
-
-            /* ===== Main Content giống Statistics ===== */
             .clinic-main-content {
                 margin-left: 240px;
                 padding-bottom: 50px;
             }
 
-            /* ===== Navbar giống Statistics ===== */
             .clinic-navbar {
                 background-color: #ffffff;
                 padding: 15px 20px;
@@ -87,7 +82,6 @@
                 text-decoration: none;
             }
 
-            /* ===== Stats Row giống Statistics ===== */
             .stats-row {
                 display: grid;
                 grid-template-columns: repeat(3, 1fr);

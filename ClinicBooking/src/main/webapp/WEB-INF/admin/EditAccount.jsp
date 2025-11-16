@@ -255,10 +255,10 @@
                             <i class="fa-solid fa-floppy-disk me-1"></i>Save Changes
                         </button>
 
-                        <a href="${pageContext.request.contextPath}/admin-manage-account"
+<!--                        <a href="${pageContext.request.contextPath}/admin-manage-account"
                            class="btn btn-secondary">
                             <i class="fa-solid fa-xmark me-1"></i>Cancel
-                        </a>
+                        </a>-->
                     </div>
                 </form>
             </div>

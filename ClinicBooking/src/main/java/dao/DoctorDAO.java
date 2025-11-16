@@ -603,7 +603,6 @@ public class DoctorDAO extends DBContext {
                 review.setRateScore(rs.getInt("RateScore"));
                 review.setDateCreate(rs.getTimestamp("DateCreate"));
 
-                // Create DoctorDTO with basic info
                 DoctorDTO doctor = new DoctorDTO();
                 doctor.setDoctorID(rs.getInt("DoctorID"));
 
@@ -658,7 +657,6 @@ public class DoctorDAO extends DBContext {
             String[] degreeNames) {
         ResultSet rs = null;
         try {
-            // 1️⃣ Lấy DoctorID từ StaffID
             String sqlGetDoctor = "SELECT DoctorID FROM Doctor WHERE StaffID = ?";
             rs = executeSelectQuery(sqlGetDoctor, new Object[]{staffID});
             int doctorID = -1;
@@ -672,21 +670,17 @@ public class DoctorDAO extends DBContext {
                 return false;
             }
 
-            // 2️⃣ Update bảng Doctor
             String sqlDoctor = "UPDATE Doctor SET SpecialtyID = ?, YearExperience = ? WHERE DoctorID = ?";
             Object[] doctorParams = {specialtyID, yearExperience, doctorID};
             executeQuery(sqlDoctor, doctorParams);
 
-            // 3️⃣ Update bảng Specialty (giá khám)
             String sqlPrice = "UPDATE Specialty SET Price = ? WHERE SpecialtyID = ?";
             Object[] priceParams = {price, specialtyID};
             executeQuery(sqlPrice, priceParams);
 
-            // 4️⃣ Xóa các bằng cấp cũ
             String sqlDelete = "DELETE FROM Degree WHERE DoctorID = ?";
             executeQuery(sqlDelete, new Object[]{doctorID});
 
-            // 5️⃣ Thêm bằng cấp mới (nếu có)
             if (degreeNames != null && degreeNames.length > 0) {
                 String sqlInsert = "INSERT INTO Degree (DoctorID, DegreeName) VALUES (?, ?)";
                 for (String degree : degreeNames) {
@@ -721,12 +715,9 @@ public class DoctorDAO extends DBContext {
             if (rs != null && rs.next()) {
                 doctorID = rs.getInt("DoctorID");
             }
-
-            // 2️⃣ Cập nhật giá chuyên khoa (nếu thay đổi)
             db.executeQuery("UPDATE Specialty SET Price = ? WHERE SpecialtyID = ?",
                     new Object[]{price, specialtyID});
 
-            // 3️⃣ Thêm bằng cấp
             if (degreeNames != null && doctorID > 0) {
                 String sqlInsert = "INSERT INTO Degree (DegreeName, DoctorID) VALUES (?, ?)";
                 for (String degree : degreeNames) {

@@ -168,7 +168,7 @@
 
 
                                             <c:choose>
-                                                <c:when test="${a.statusName eq 'Pending' or a.statusName eq 'Approved'}">
+                                                <c:when test="${a.statusName eq 'Pending'}">
                                                     <button type="button" class="btn btn-sm btn-success btn-approve"
                                                             data-id="${a.appointmentID}" data-bs-toggle="modal"
                                                             data-bs-target="#confirmModal">

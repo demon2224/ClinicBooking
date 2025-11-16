@@ -17,7 +17,6 @@ import model.*;
 import validate.AdminValidate;
 
 public class AdminManageAccountController extends HttpServlet {
-// DAO members để dùng chung
 
     private StaffDAO staffDAO;
     private DoctorDAO doctorDAO;
@@ -37,36 +36,39 @@ public class AdminManageAccountController extends HttpServlet {
         String id = req.getParameter("id");
 
         try {
-            if ("add".equalsIgnoreCase(action)) {
-                showAddPage(req, res);
-                return;
+            switch (action != null ? action.toLowerCase() : "") {
+                case "add":
+                    showAddPage(req, res); // Show add account form
+                    break;
+                case "edit":
+                    showEditPage(req, res, id); // Show edit account form
+                    break;
+                case "view":
+                    showDetailPage(req, res, id); // Show account details
+                    break;
+                default:
+                    showStaffList(req, res); // Show list of all staff accounts
+                    break;
             }
-
-            if ("edit".equalsIgnoreCase(action)) {
-                showEditPage(req, res, id);
-                return;
-            }
-
-            if ("view".equalsIgnoreCase(action)) {
-                showDetailPage(req, res, id);
-                return;
-            }
-
-            // Default: Show all
-            String search = req.getParameter("searchQuery");
-            List<StaffDTO> list = (search != null && !search.trim().isEmpty())
-                    ? staffDAO.searchStaffAccounts(search.trim())
-                    : staffDAO.getAllStaffAccounts();
-            req.setAttribute("staffList", list);
-            req.setAttribute("searchQuery", search);
-            req.getRequestDispatcher("/WEB-INF/admin/AdminManageAccountList.jsp").forward(req, res);
-
         } catch (Exception e) {
             e.printStackTrace();
-            res.sendError(500, "Unexpected error occurred.");
+            res.sendError(500, "Unexpected error occurred."); // Internal server error
         }
     }
 
+    // Display the list of staff accounts
+    private void showStaffList(HttpServletRequest req, HttpServletResponse res)
+            throws ServletException, IOException {
+        String search = req.getParameter("searchQuery");
+        List<StaffDTO> list = (search != null && !search.trim().isEmpty())
+                ? staffDAO.searchStaffAccounts(search.trim())
+                : staffDAO.getAllStaffAccounts();
+        req.setAttribute("staffList", list);
+        req.setAttribute("searchQuery", search);
+        req.getRequestDispatcher("/WEB-INF/admin/AdminManageAccountList.jsp").forward(req, res);
+    }
+
+    // Display add account form
     private void showAddPage(HttpServletRequest req, HttpServletResponse res)
             throws ServletException, IOException {
         req.setAttribute("specialties", doctorDAO.getAllSpecialtiesWithPrice());
@@ -74,6 +76,7 @@ public class AdminManageAccountController extends HttpServlet {
         req.getRequestDispatcher("/WEB-INF/admin/AddAccount.jsp").forward(req, res);
     }
 
+    // Display edit account form
     private void showEditPage(HttpServletRequest req, HttpServletResponse res, String id)
             throws ServletException, IOException {
         int staffID = parseIntSafe(id);
@@ -86,6 +89,7 @@ public class AdminManageAccountController extends HttpServlet {
         req.setAttribute("staff", staff);
         req.setAttribute("specialties", doctorDAO.getAllSpecialtiesWithPrice());
 
+        // If the account is a Doctor, prepare additional doctor info
         if ("Doctor".equalsIgnoreCase(staff.getRole())) {
             prepareDoctorData(req, doctorDAO, staffID);
         }
@@ -93,6 +97,7 @@ public class AdminManageAccountController extends HttpServlet {
         req.getRequestDispatcher("/WEB-INF/admin/EditAccount.jsp").forward(req, res);
     }
 
+    // Display account detail page
     private void showDetailPage(HttpServletRequest req, HttpServletResponse res, String id)
             throws ServletException, IOException {
         int staffID = parseIntSafe(id);
@@ -111,7 +116,7 @@ public class AdminManageAccountController extends HttpServlet {
         req.getRequestDispatcher("/WEB-INF/admin/AccountDetail.jsp").forward(req, res);
     }
 
-    // Gom logic Doctor chung cho Edit & Detail
+    // Prepare Doctor-specific data for edit/detail views
     private void prepareDoctorData(HttpServletRequest req, DoctorDAO doctorDAO, int staffID) {
         DoctorDTO doctor = doctorDAO.getDoctorByStaffID(staffID);
         List<DegreeDTO> degrees = doctorDAO.getDoctorDegrees(doctor != null ? doctor.getDoctorID() : 0);
@@ -119,11 +124,10 @@ public class AdminManageAccountController extends HttpServlet {
 
         if (doctor != null) {
             SpecialtyDTO doctorSpec = doctor.getSpecialtyID();
-
             if (doctorSpec != null) {
                 for (SpecialtyDTO sp : specialties) {
                     if (sp.getSpecialtyID() == doctorSpec.getSpecialtyID()) {
-                        doctor.setSpecialtyID(sp);
+                        doctor.setSpecialtyID(sp); 
                         break;
                     }
                 }
@@ -144,38 +148,45 @@ public class AdminManageAccountController extends HttpServlet {
         String action = req.getParameter("action");
 
         try {
-            if ("delete".equalsIgnoreCase(action)) {
-                int staffID = parseIntSafe(req.getParameter("staffID"));
-                boolean result = staffDAO.deleteStaffAccount(staffID);
-
-                if (result) {
-                    req.getSession().setAttribute("successMessage", "Account deleted successfully!");
-                } else {
-                    req.getSession().setAttribute("successMessage", "Failed to delete account!");
-                }
-
-                res.sendRedirect(req.getContextPath() + "/admin-manage-account");
-                return;
+            switch (action != null ? action.toLowerCase() : "") {
+                case "delete":
+                    handleDelete(req, res); // Delete account
+                    break;
+                case "add":
+                case "update":
+                    handleSave(req, res, action); // Add or update account
+                    break;
+                default:
+                    res.sendError(400, "Invalid action."); // Bad request
+                    break;
             }
-
-            if ("add".equalsIgnoreCase(action) || "update".equalsIgnoreCase(action)) {
-                handleSave(req, res, action);
-            }
-
         } catch (Exception e) {
             e.printStackTrace();
-            res.sendError(500, "Error processing account creation/update.");
+            res.sendError(500, "Error processing account request.");
         }
     }
 
+    // Handle account deletion
+    private void handleDelete(HttpServletRequest req, HttpServletResponse res)
+            throws IOException {
+        int staffID = parseIntSafe(req.getParameter("staffID"));
+        boolean result = staffDAO.deleteStaffAccount(staffID);
+
+        req.getSession().setAttribute("successMessage",
+                result ? "Account deleted successfully!" : "Failed to delete account!");
+        res.sendRedirect(req.getContextPath() + "/admin-manage-account");
+    }
+
+    // ==================== SAVE (ADD/UPDATE) ====================
     private void handleSave(HttpServletRequest req, HttpServletResponse res, String action)
             throws ServletException, IOException {
+
         boolean hasError = validateForm(req, action);
         if (hasError) {
-
+            // If validation fails, reload the form with error messages
             req.setAttribute("specialties", doctorDAO.getAllSpecialtiesWithPrice());
-            if ("update".equalsIgnoreCase(action)) {
 
+            if ("update".equalsIgnoreCase(action)) {
                 int staffID = parseIntSafe(req.getParameter("staffID"));
                 StaffDTO staff = staffDAO.getStaffById(staffID);
                 req.setAttribute("staff", staff);
@@ -185,14 +196,13 @@ public class AdminManageAccountController extends HttpServlet {
                 }
             }
 
-            if ("add".equalsIgnoreCase(action)) {
-                req.getRequestDispatcher("/WEB-INF/admin/AddAccount.jsp").forward(req, res);
-            } else {
-                req.getRequestDispatcher("/WEB-INF/admin/EditAccount.jsp").forward(req, res);
-            }
+            String page = "add".equalsIgnoreCase(action) ? "/WEB-INF/admin/AddAccount.jsp"
+                    : "/WEB-INF/admin/EditAccount.jsp";
+            req.getRequestDispatcher(page).forward(req, res);
             return;
         }
 
+        // Collect form parameters
         int staffID = parseIntSafe(req.getParameter("staffID"));
         String account = req.getParameter("accountName");
         String password = req.getParameter("accountPassword");
@@ -205,14 +215,17 @@ public class AdminManageAccountController extends HttpServlet {
         String address = req.getParameter("userAddress");
         boolean hidden = "1".equals(req.getParameter("hidden"));
 
+        // Add or update staff account
         if ("update".equalsIgnoreCase(action)) {
             staffDAO.updateStaffAccount(staffID, account, fullName, role, phone, job, dob, gender, address, hidden);
             req.getSession().setAttribute("successMessage", "Account updated successfully!");
+            
         } else {
-            staffID = staffDAO.addStaffAccount(account, password, fullName, role, phone, job, dob, gender, address, hidden);
+            staffID = staffDAO.addStaffAccount  (account, password, fullName, role, phone, job, dob, gender, address, hidden);
             req.getSession().setAttribute("successMessage", "Account added successfully!");
         }
 
+        // If the account is a Doctor, update doctor-specific info
         if ("Doctor".equalsIgnoreCase(role)) {
             updateDoctorData(req, doctorDAO, staffID);
         }
@@ -220,6 +233,7 @@ public class AdminManageAccountController extends HttpServlet {
         res.sendRedirect(req.getContextPath() + "/admin-manage-account");
     }
 
+    // Add or update Doctor-specific info
     private void updateDoctorData(HttpServletRequest req, DoctorDAO dao, int staffID) {
         int specialtyID = parseIntSafe(req.getParameter("specialtyID"));
         int exp = parseIntSafe(req.getParameter("yearExperience"));
@@ -235,7 +249,7 @@ public class AdminManageAccountController extends HttpServlet {
         }
     }
 
-// ==================== VALIDATION ====================
+    // ==================== VALIDATION ====================
     private boolean validateForm(HttpServletRequest request, String action) {
 
         clearSessionErrors(request);
@@ -249,14 +263,14 @@ public class AdminManageAccountController extends HttpServlet {
         String address = request.getParameter("userAddress");
         String dobString = request.getParameter("dob");
 
-        // ================= USERNAME =================
+        // Validate username
         if (!AdminValidate.isValidUsername(username)) {
             request.getSession().setAttribute("usernameErrorMsg",
                     "Username must be 8–200 characters, letters and digits only.");
             hasError = true;
         }
 
-        // ================= PASSWORD (Only for ADD) =================
+        // Validate password only for ADD
         if ("add".equalsIgnoreCase(action)) {
             if (!AdminValidate.isValidPassword(password)) {
                 request.getSession().setAttribute("passwordErrorMsg",
@@ -265,106 +279,86 @@ public class AdminManageAccountController extends HttpServlet {
             }
         }
 
-        // ================= FULL NAME =================
+        // Validate full name
         if (!AdminValidate.isValidFullName(fullName)) {
             request.getSession().setAttribute("fullNameErrorMsg",
                     "Full name must contain only letters and spaces.");
             hasError = true;
         }
 
-        // ================= PHONE =================
+        // Validate phone number
         if (!AdminValidate.isValidPhone(phone)) {
             request.getSession().setAttribute("phoneErrorMsg",
                     "Phone number must start with 0 and contain 10–11 digits.");
             hasError = true;
         }
 
-        // ================= ADDRESS =================
+        // Validate address
         if (!AdminValidate.isValidAddress(address)) {
             request.getSession().setAttribute("addressErrorMsg",
                     "Address must contain at least 5 characters.");
             hasError = true;
         }
 
-        // ================= ROLE =================
-        // ❗ IMPORTANT: Only validate role when ADDING
+        // Validate role only for ADD
         if ("add".equalsIgnoreCase(action)) {
             if (!AdminValidate.isValidRole(role)) {
-                request.getSession().setAttribute("roleErrorMsg",
-                        "Please select a valid role.");
+                request.getSession().setAttribute("roleErrorMsg", "Please select a valid role.");
                 hasError = true;
             }
         }
 
-        // ================= DOB =================
+        // Validate date of birth
         LocalDate dob = null;
         try {
             dob = LocalDate.parse(dobString);
             if (!AdminValidate.isValidDOB(dob)) {
-                request.getSession().setAttribute("dobErrorMsg",
-                        "Age must be between 18 and 120.");
+                request.getSession().setAttribute("dobErrorMsg", "Age must be between 18 and 120.");
                 hasError = true;
             }
         } catch (Exception e) {
-            request.getSession().setAttribute("dobErrorMsg",
-                    "Invalid date of birth.");
+            request.getSession().setAttribute("dobErrorMsg", "Invalid date of birth.");
             hasError = true;
         }
 
-        // ================= DUPLICATE CHECK =================
+        // Duplicate checks for username and phone
         if ("add".equalsIgnoreCase(action)) {
-
             if (username != null && staffDAO.isUsernameExists(username)) {
                 request.getSession().setAttribute("usernameErrorMsg", "This username already exists.");
                 hasError = true;
             }
-
             if (phone != null && staffDAO.isPhoneExists(phone)) {
                 request.getSession().setAttribute("phoneErrorMsg", "This phone number already exists.");
                 hasError = true;
             }
-
         } else if ("update".equalsIgnoreCase(action)) {
-
             int staffID = parseIntSafe(request.getParameter("staffID"));
             StaffDTO existing = staffDAO.getStaffById(staffID);
-
             if (existing != null) {
-
-                // Username duplicate check
-                if (!username.equals(existing.getAccountName())
-                        && staffDAO.isUsernameExists(username)) {
-
+                if (!username.equals(existing.getAccountName()) && staffDAO.isUsernameExists(username)) {
                     request.getSession().setAttribute("usernameErrorMsg",
                             "This username already belongs to another account.");
                     hasError = true;
                 }
-
-                // Phone duplicate check
-                if (!phone.equals(existing.getPhoneNumber())
-                        && staffDAO.isPhoneExists(phone)) {
-
+                if (!phone.equals(existing.getPhoneNumber()) && staffDAO.isPhoneExists(phone)) {
                     request.getSession().setAttribute("phoneErrorMsg",
                             "This phone number is already used by another account.");
                     hasError = true;
                 }
-
             } else {
                 request.getSession().setAttribute("usernameErrorMsg", "Invalid staff id.");
                 hasError = true;
             }
         }
 
-        // ================= Doctor Section =================
+        // Doctor-specific validation
         if ("Doctor".equalsIgnoreCase(role)) {
-
             String specialtyID = request.getParameter("specialtyID");
             String exp = request.getParameter("yearExperience");
             String price = request.getParameter("price");
 
             if (AdminValidate.isEmpty(specialtyID)) {
-                request.getSession().setAttribute("specialtyErrorMsg",
-                        "Please select specialty.");
+                request.getSession().setAttribute("specialtyErrorMsg", "Please select specialty.");
                 hasError = true;
             }
 
@@ -375,8 +369,7 @@ public class AdminManageAccountController extends HttpServlet {
             }
 
             if (!AdminValidate.isValidPrice(price)) {
-                request.getSession().setAttribute("priceErrorMsg",
-                        "Price must be a positive number.");
+                request.getSession().setAttribute("priceErrorMsg", "Price must be a positive number.");
                 hasError = true;
             }
         }
@@ -384,7 +377,7 @@ public class AdminManageAccountController extends HttpServlet {
         return hasError;
     }
 
-    // ==================== Utils ====================
+    // ==================== UTILITY METHODS ====================
     private int parseIntSafe(String v) {
         try {
             return (v != null && !v.isBlank()) ? Integer.parseInt(v) : 0;
@@ -401,6 +394,7 @@ public class AdminManageAccountController extends HttpServlet {
         }
     }
 
+    // Clear session error messages before validation
     private void clearSessionErrors(HttpServletRequest req) {
         String[] keys = {"usernameErrorMsg", "passwordErrorMsg", "fullNameErrorMsg",
             "roleErrorMsg", "phoneErrorMsg", "dobErrorMsg", "addressErrorMsg",
