@@ -325,7 +325,7 @@ public class ProfileController extends HttpServlet {
         String newPassword = request.getParameter("newPassword");
         String confirmPassword = request.getParameter("confirmPassword");
 
-        // Validate each field and set error message directly (like other validations)
+        // Validate each field and set error message
         boolean isValidCurrentPassword = true;
         boolean isValidNewPassword = true;
         boolean isValidConfirmPassword = true;
@@ -338,10 +338,11 @@ public class ProfileController extends HttpServlet {
             isValidCurrentPassword = false;
         }
 
-        // Validate new password strength (get all detailed errors)
+        // Validate new password strength
         List<String> passwordStrengthErrors = ProfileValidate.validatePasswordStrength(newPassword);
         if (!passwordStrengthErrors.isEmpty()) {
-            request.setAttribute("newPasswordErrorList", passwordStrengthErrors);
+            // Get first error message for display under input
+            request.setAttribute("newPasswordErrorMsg", passwordStrengthErrors.get(0));
             isValidNewPassword = false;
         }
 
@@ -359,7 +360,7 @@ public class ProfileController extends HttpServlet {
             isValidPasswordDifferent = false;
         }
 
-        // If any validation errors, show them
+        // If any validation errors, forward back to profile
         if (!isValidCurrentPassword || !isValidNewPassword || !isValidConfirmPassword || !isValidPasswordDifferent) {
             viewProfile(request, response);
             return;

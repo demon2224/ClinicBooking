@@ -80,34 +80,6 @@
                 <c:remove var="errorMessage" scope="session"/>
             </c:if>
 
-            <!-- Error Modal for Password Change -->
-            <c:if test="${not empty requestScope.passwordError or not empty requestScope.passwordErrorList}">
-                <div id="passwordErrorModal" class="modal-overlay">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h3 class="modal-title">
-                                <i class="fas fa-exclamation-triangle text-error"></i> Error
-                            </h3>
-                            <button type="button" class="modal-close" onclick="closePasswordErrorModal()">&times;</button>
-                        </div>
-                        <div class="modal-body">
-                            <c:if test="${not empty requestScope.passwordError}">
-                                <p class="error-messages">${requestScope.passwordError}</p>
-                            </c:if>
-                            <c:if test="${not empty requestScope.passwordErrorList}">
-                                <div class="error-messages">
-                                    <c:forEach var="error" items="${requestScope.passwordErrorList}">
-                                        <p><i class="fas fa-exclamation-circle"></i> ${error}</p>
-                                    </c:forEach>
-                                </div>
-                            </c:if>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-danger" onclick="closePasswordErrorModal()">Close</button>
-                        </div>
-                    </div>
-                </div>
-            </c:if>
 
             <!-- Profile Container -->
             <div class="appointments-section">
@@ -229,6 +201,11 @@
                                    class="form-input"
                                    required
                                    autocomplete="current-password">
+                            <c:if test="${not empty requestScope.currentPasswordErrorMsg}">
+                                <div class="text-danger small mt-1" style="font-size: 0.875rem; margin-top: 0.25rem;">
+                                    <i class="fa-solid fa-circle-exclamation me-1"></i>${requestScope.currentPasswordErrorMsg}
+                                </div>
+                            </c:if>
                         </div>
 
                         <!-- New Password -->
@@ -240,26 +217,16 @@
                                    class="form-input"
                                    required
                                    autocomplete="new-password">
-
-                            <!-- Password Strength Indicator -->
-                            <div class="password-strength">
-                                <div class="strength-bar">
-                                    <div id="strengthBarFill" class="strength-bar-fill"></div>
+                            <c:if test="${not empty requestScope.newPasswordErrorMsg}">
+                                <div class="text-danger small mt-1" style="font-size: 0.875rem; margin-top: 0.25rem;">
+                                    <i class="fa-solid fa-circle-exclamation me-1"></i>${requestScope.newPasswordErrorMsg}
                                 </div>
-                                <div id="strengthText" class="strength-text"></div>
-                            </div>
-
-                            <!-- Password Requirements -->
-                            <div class="password-requirements">
-                                <div>Password must contain:</div>
-                                <ul class="password-requirements-list">
-                                    <li id="req-length">At least 8 characters</li>
-                                    <li id="req-upper">At least 1 uppercase letter</li>
-                                    <li id="req-lower">At least 1 lowercase letter</li>
-                                    <li id="req-number">At least 1 number</li>
-                                    <li id="req-special">At least 1 special character (@#$%^&+=!)</li>
-                                </ul>
-                            </div>
+                            </c:if>
+                            <c:if test="${not empty requestScope.passwordDifferentErrorMsg}">
+                                <div class="text-danger small mt-1" style="font-size: 0.875rem; margin-top: 0.25rem;">
+                                    <i class="fa-solid fa-circle-exclamation me-1"></i>${requestScope.passwordDifferentErrorMsg}
+                                </div>
+                            </c:if>
                         </div>
 
                         <!-- Confirm Password -->
@@ -271,6 +238,11 @@
                                    class="form-input"
                                    required
                                    autocomplete="new-password">
+                            <c:if test="${not empty requestScope.confirmPasswordErrorMsg}">
+                                <div class="text-danger small mt-1" style="font-size: 0.875rem; margin-top: 0.25rem;">
+                                    <i class="fa-solid fa-circle-exclamation me-1"></i>${requestScope.confirmPasswordErrorMsg}
+                                </div>
+                            </c:if>
                         </div>
                     </div>
 
@@ -377,50 +349,13 @@
                 const closeModalBtn = document.getElementById('closeModalBtn');
                 const cancelBtn = document.getElementById('cancelBtn');
 
-                // Debug logging
-                console.log('Modal element:', modal);
-                console.log('Open button:', openModalBtn);
-                console.log('Close button:', closeModalBtn);
-                console.log('Cancel button:', cancelBtn);
-
                 // Add null checks and bind events
                 if (openModalBtn && modal) {
-                    console.log('Binding click event to open button');
                     openModalBtn.addEventListener('click', function (e) {
-                        e.preventDefault(); // Prevent any default action
-                        console.log('=== MODAL DEBUG START ===');
-                        console.log('Open button clicked!');
-                        console.log('Modal before:', modal.className);
-
+                        e.preventDefault();
                         modal.classList.add('active');
-
-                        console.log('Modal after:', modal.className);
-
-                        // Check computed styles
-                        const styles = window.getComputedStyle(modal);
-                        console.log('Display:', styles.display);
-                        console.log('Visibility:', styles.visibility);
-                        console.log('Opacity:', styles.opacity);
-                        console.log('Z-index:', styles.zIndex);
-                        console.log('Position:', styles.position);
-                        console.log('Width:', styles.width);
-                        console.log('Height:', styles.height);
-
-                        // Check if modal is visible in viewport
-                        const rect = modal.getBoundingClientRect();
-                        console.log('BoundingRect:', rect);
-                        console.log('Is visible:', rect.width > 0 && rect.height > 0);
-
-                        console.log('=== MODAL DEBUG END ===');
-
                         document.body.style.overflow = 'hidden'; // Prevent background scrolling
                     });
-                } else {
-                    console.error('Cannot bind modal: modal or button not found');
-                    if (!openModalBtn)
-                        console.error('Button not found!');
-                    if (!modal)
-                        console.error('Modal not found!');
                 }
 
                 if (closeModalBtn && modal) {
@@ -450,98 +385,62 @@
                     });
                 }
 
-                // Password Strength Checker
-                const newPasswordInput = document.getElementById('newPassword');
-                const strengthBarFill = document.getElementById('strengthBarFill');
-                const strengthText = document.getElementById('strengthText');
-                const reqLength = document.getElementById('req-length');
-                const reqUpper = document.getElementById('req-upper');
-                const reqLower = document.getElementById('req-lower');
-                const reqNumber = document.getElementById('req-number');
-                const reqSpecial = document.getElementById('req-special');
-
-                newPasswordInput.addEventListener('input', function () {
-                    const password = this.value;
-                    let strength = 0;
-
-                    // Check requirements
-                    const hasLength = password.length >= 8;
-                    const hasUpper = /[A-Z]/.test(password);
-                    const hasLower = /[a-z]/.test(password);
-                    const hasNumber = /[0-9]/.test(password);
-                    const hasSpecial = /[@#$%^&+=!]/.test(password);
-
-                    // Update requirement indicators
-                    updateRequirement(reqLength, hasLength);
-                    updateRequirement(reqUpper, hasUpper);
-                    updateRequirement(reqLower, hasLower);
-                    updateRequirement(reqNumber, hasNumber);
-                    updateRequirement(reqSpecial, hasSpecial);
-
-                    // Calculate strength
-                    if (hasLength)
-                        strength++;
-                    if (hasUpper)
-                        strength++;
-                    if (hasLower)
-                        strength++;
-                    if (hasNumber)
-                        strength++;
-                    if (hasSpecial)
-                        strength++;
-
-                    // Update strength bar
-                    strengthBarFill.className = 'strength-bar-fill';
-                    strengthText.className = 'strength-text';
-
-                    if (password.length === 0) {
-                        strengthBarFill.style.width = '0%';
-                        strengthText.textContent = '';
-                    } else if (strength <= 2) {
-                        strengthBarFill.classList.add('weak');
-                        strengthText.classList.add('weak');
-                        strengthText.textContent = 'Weak password';
-                    } else if (strength === 3 || strength === 4) {
-                        strengthBarFill.classList.add('medium');
-                        strengthText.classList.add('medium');
-                        strengthText.textContent = 'Medium password';
-                    } else if (strength === 5) {
-                        strengthBarFill.classList.add('strong');
-                        strengthText.classList.add('strong');
-                        strengthText.textContent = 'Strong password';
-                    }
-                });
-
-                function updateRequirement(element, isMet) {
-                    if (isMet) {
-                        element.style.color = '#10b981';
-                        element.innerHTML = '<i class="fas fa-check"></i> ' + element.textContent.replace('✓ ', '').replace('✗ ', '');
-                    } else {
-                        element.style.color = '#ef4444';
-                        element.innerHTML = '<i class="fas fa-times"></i> ' + element.textContent.replace('✓ ', '').replace('✗ ', '');
-                    }
-                }
-
-                // Form submission - validation handled by controller
+                // Form submission with client-side validation
                 const form = document.getElementById('changePasswordForm');
                 const errorContainer = document.getElementById('errorContainer');
+                const currentPasswordInput = document.getElementById('currentPassword');
+                const confirmPasswordInput = document.getElementById('confirmPassword');
 
-                // Clear error container on form submit
+                // Password validation regex (same as server-side)
+                const PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[@#$%^&+=!])(?=\S+$).{8,}$/;
+
+                // Validate password format
+                function isValidPasswordFormat(password) {
+                    return password && password.trim() !== '' && PASSWORD_REGEX.test(password);
+                }
+
+                // Validate form before submission - no error messages, just prevent submit if invalid
                 form.addEventListener('submit', function (e) {
-                    errorContainer.classList.add('hidden');
+                    const currentPassword = currentPasswordInput.value;
+                    const newPassword = newPasswordInput.value;
+                    const confirmPassword = confirmPasswordInput.value;
+                    
+                    let hasErrors = false;
+
+                    // Validate current password
+                    if (!currentPassword || currentPassword.trim() === '') {
+                        hasErrors = true;
+                    }
+
+                    // Validate new password format
+                    if (!isValidPasswordFormat(newPassword)) {
+                        hasErrors = true;
+                    }
+
+                    // Validate password match
+                    if (!confirmPassword || confirmPassword.trim() === '') {
+                        hasErrors = true;
+                    } else if (newPassword !== confirmPassword) {
+                        hasErrors = true;
+                    }
+
+                    // Validate password different
+                    if (currentPassword && newPassword && currentPassword === newPassword) {
+                        hasErrors = true;
+                    }
+
+                    // If there are errors, prevent submission (no error messages shown)
+                    if (hasErrors) {
+                        e.preventDefault();
+                        return false;
+                    }
+
+                    // If no errors, allow form submission
                 });
 
                 function resetForm() {
                     form.reset();
                     errorContainer.classList.add('hidden');
-                    strengthBarFill.style.width = '0%';
-                    strengthText.textContent = '';
-
-                    // Reset requirement colors
-                    [reqLength, reqUpper, reqLower, reqSpecial, reqNumber].forEach(el => {
-                        el.style.color = '#64748b';
-                        el.innerHTML = el.textContent.replace('✓ ', '').replace('✗ ', '');
-                    });
                 }
 
                 // Avatar upload preview (only if avatarUpload element exists)
@@ -558,6 +457,14 @@
                         }
                     });
                 }
+
+                // Auto-show change password modal if there are validation errors
+                <c:if test="${not empty requestScope.currentPasswordErrorMsg or not empty requestScope.newPasswordErrorMsg or not empty requestScope.confirmPasswordErrorMsg or not empty requestScope.passwordDifferentErrorMsg}">
+                if (modal) {
+                    modal.classList.add('active');
+                    document.body.style.overflow = 'hidden';
+                }
+                </c:if>
 
                 // Auto-show modals on page load
                 const messageModal = document.getElementById('messageModal');
@@ -582,16 +489,6 @@
                     });
                 }
 
-                const passwordErrorModal = document.getElementById('passwordErrorModal');
-                if (passwordErrorModal) {
-                    passwordErrorModal.classList.add('active');
-                    // Close on backdrop click
-                    passwordErrorModal.addEventListener('click', function(e) {
-                        if (e.target === passwordErrorModal) {
-                            closePasswordErrorModal();
-                        }
-                    });
-                }
             }); // End DOMContentLoaded
 
             // Close modals functions - globally accessible
@@ -607,15 +504,6 @@
                 if (modal) {
                     modal.classList.remove('active');
                 }
-            }
-
-            function closePasswordErrorModal() {
-                const modal = document.getElementById('passwordErrorModal');
-                if (modal) {
-                    modal.classList.remove('active');
-                }
-                // Open change password modal after closing error
-                document.getElementById('changePasswordModal').classList.add('active');
             }
         </script>
     </body>
