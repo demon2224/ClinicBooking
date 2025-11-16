@@ -261,9 +261,46 @@
         </c:if>
         <!-- JavaScript -->
         <script>
+            // Auto show modal on page load if exists
+            document.addEventListener('DOMContentLoaded', function () {
+                const modal = document.getElementById('messageModal');
+
+                if (modal) {
+                    modal.style.display = 'flex';
+                    modal.classList.add('show');
+                    document.body.style.overflow = 'hidden'; // Disable scrolling when modal is open
+
+                    // Clear session messages after modal is shown
+                    fetch('${pageContext.request.contextPath}/home?action=clearMessages', {
+                        method: 'POST'
+                    }).catch(e => {
+                        console.log('Failed to clear messages:', e);
+                    });
+
+                    // Close modal when clicking outside
+                    modal.addEventListener('click', function (e) {
+                        if (e.target === modal) {
+                            closeModal();
+                        }
+                    });
+
+                    // Close modal with Escape key
+                    document.addEventListener('keydown', function (e) {
+                        if (e.key === 'Escape') {
+                            closeModal();
+                        }
+                    });
+                }
+            });
+
             // Modal functionality
             function closeModal() {
-                document.getElementById('messageModal').style.display = 'none';
+                const modal = document.getElementById('messageModal');
+                if (modal) {
+                    modal.classList.remove('show');
+                    modal.style.display = 'none';
+                    document.body.style.overflow = 'auto'; // Re-enable scrolling
+                }
             }
 
             // Close modal when clicking outside

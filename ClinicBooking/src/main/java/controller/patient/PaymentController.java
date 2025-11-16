@@ -64,6 +64,16 @@ public class PaymentController extends HttpServlet {
                 return;
             }
 
+            // Verify invoice ownership - Security check
+            if (invoice.getMedicalRecordID() == null
+                    || invoice.getMedicalRecordID().getAppointmentID() == null
+                    || invoice.getMedicalRecordID().getAppointmentID().getPatientID() == null
+                    || invoice.getMedicalRecordID().getAppointmentID().getPatientID().getPatientID() != patient.getPatientID()) {
+                session.setAttribute("errorMessage", "You are not authorized to access this invoice.");
+                response.sendRedirect(request.getContextPath() + PaymentConstants.MANAGE_INVOICES_REDIRECT);
+                return;
+            }
+
             // Generate time format for payment reference
             java.text.SimpleDateFormat timeFormat = new java.text.SimpleDateFormat("HHmm");
             String currentTime = timeFormat.format(new java.util.Date());
@@ -121,8 +131,38 @@ public class PaymentController extends HttpServlet {
         JsonObject jsonResponse = new JsonObject();
 
         try {
+            // Validate session
+            HttpSession session = request.getSession();
+            PatientDTO patient = (PatientDTO) session.getAttribute("patient");
+
+            if (patient == null) {
+                jsonResponse.addProperty("success", false);
+                jsonResponse.addProperty("message", "Session expired. Please log in again.");
+                try (PrintWriter out = response.getWriter()) {
+                    out.print(jsonResponse.toString());
+                    out.flush();
+                }
+                return;
+            }
+
             String invoiceIdStr = request.getParameter("invoiceId");
             int invoiceId = Integer.parseInt(invoiceIdStr);
+
+            // Verify invoice ownership before processing payment
+            InvoiceDTO invoice = invoiceDAO.getInvoiceById(invoiceId);
+            if (invoice == null
+                    || invoice.getMedicalRecordID() == null
+                    || invoice.getMedicalRecordID().getAppointmentID() == null
+                    || invoice.getMedicalRecordID().getAppointmentID().getPatientID() == null
+                    || invoice.getMedicalRecordID().getAppointmentID().getPatientID().getPatientID() != patient.getPatientID()) {
+                jsonResponse.addProperty("success", false);
+                jsonResponse.addProperty("message", "Unauthorized access to invoice.");
+                try (PrintWriter out = response.getWriter()) {
+                    out.print(jsonResponse.toString());
+                    out.flush();
+                }
+                return;
+            }
 
             if ("processCashPayment".equals(action)) {
                 // Process cash payment

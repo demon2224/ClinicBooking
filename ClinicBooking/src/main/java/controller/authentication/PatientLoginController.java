@@ -100,6 +100,7 @@ public class PatientLoginController extends HttpServlet {
             if (isExistAccount) {
                 HttpSession session = request.getSession();
                 session.setAttribute("patient", patient);
+                session.setAttribute("successMessage", "Welcome back, " + patient.getFullName() + "! You have successfully logged in.");
                 response.sendRedirect(request.getContextPath() + "/home");
             } else {
                 request.setAttribute("loginErrorMsg", "Wrong password or username!");

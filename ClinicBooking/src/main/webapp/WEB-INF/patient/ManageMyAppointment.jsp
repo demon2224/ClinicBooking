@@ -22,8 +22,7 @@
 
         <!-- Custom CSS with cache busting -->
         <link href="${pageContext.request.contextPath}/assests/css/main.css?v=<%= System.currentTimeMillis()%>" rel="stylesheet" type="text/css"/>
-    </style>
-</head>
+    </head>
 <body class="appointment-page">
     <!-- Include Header -->
     <jsp:include page="../includes/header.jsp">
@@ -203,61 +202,6 @@
 
     <!-- JavaScript for interactivity -->
     <script>
-        // Dropdown menu functionality
-        document.addEventListener('DOMContentLoaded', function () {
-            const dropdowns = document.querySelectorAll('.dropdown');
-
-            dropdowns.forEach(dropdown => {
-                const toggle = dropdown.querySelector('.dropdown-toggle');
-                const menu = dropdown.querySelector('.dropdown-menu');
-
-                if (toggle && menu) {
-                    // Handle click for dropdown
-                    toggle.addEventListener('click', function (e) {
-                        e.preventDefault();
-
-                        // Close other dropdowns
-                        dropdowns.forEach(otherDropdown => {
-                            if (otherDropdown !== dropdown) {
-                                const otherMenu = otherDropdown.querySelector('.dropdown-menu');
-                                if (otherMenu) {
-                                    otherMenu.style.opacity = '0';
-                                    otherMenu.style.visibility = 'hidden';
-                                    otherMenu.style.transform = 'translateY(-10px)';
-                                }
-                            }
-                        });
-
-                        // Toggle current dropdown
-                        const isVisible = menu.style.opacity === '1';
-                        if (isVisible) {
-                            menu.style.opacity = '0';
-                            menu.style.visibility = 'hidden';
-                            menu.style.transform = 'translateY(-10px)';
-                        } else {
-                            menu.style.opacity = '1';
-                            menu.style.visibility = 'visible';
-                            menu.style.transform = 'translateY(0)';
-                        }
-                    });
-                }
-            });
-
-            // Close dropdown when clicking outside
-            document.addEventListener('click', function (e) {
-                if (!e.target.closest('.dropdown')) {
-                    dropdowns.forEach(dropdown => {
-                        const menu = dropdown.querySelector('.dropdown-menu');
-                        if (menu) {
-                            menu.style.opacity = '0';
-                            menu.style.visibility = 'hidden';
-                            menu.style.transform = 'translateY(-10px)';
-                        }
-                    });
-                }
-            });
-        });
-
         // Modal functions
         function closeModal() {
             const modal = document.getElementById('messageModal');

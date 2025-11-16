@@ -110,15 +110,13 @@ public class ManageMyPrescriptionsController extends HttpServlet {
             }
 
             // Verify this prescription belongs to the logged-in patient
-            // TEMPORARILY DISABLED FOR TESTING
-            /*
-            if (prescription.getAppointmentID() != null &&
-                prescription.getAppointmentID().getPatientID() != null &&
-                prescription.getAppointmentID().getPatientID().getPatientID() != sessionPatient.getPatientID()) {
+            if (prescription.getAppointmentID() != null
+                    && prescription.getAppointmentID().getPatientID() != null
+                    && prescription.getAppointmentID().getPatientID().getPatientID() != sessionPatient.getPatientID()) {
                 response.sendRedirect(request.getContextPath() + ManageMyPrescriptionsConstants.BASE_URL);
                 return;
             }
-             */
+
             // Set attributes for JSP (prescription already contains doctor and patient info)
             request.setAttribute("prescription", prescription);
 
@@ -131,8 +129,6 @@ public class ManageMyPrescriptionsController extends HttpServlet {
             request.getRequestDispatcher(ManageMyPrescriptionsConstants.DETAIL_PAGE_JSP).forward(request, response);
 
         } catch (Exception e) {
-            // Log the exception for debugging
-            e.printStackTrace();
             response.sendRedirect(request.getContextPath() + ManageMyPrescriptionsConstants.BASE_URL);
         }
     }
