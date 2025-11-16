@@ -5,6 +5,7 @@
 package model;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 /**
  *
@@ -148,6 +149,14 @@ public class AppointmentDTO {
 
     public void setTotalAppointments(int totalAppointments) {
         this.totalAppointments = totalAppointments;
+    }
+
+    public boolean getAble() {
+        LocalDateTime end = this.dateBegin.toLocalDateTime().plusMinutes(30);
+        LocalDateTime begin = this.dateBegin.toLocalDateTime();
+        LocalDateTime now = LocalDateTime.now();
+        return now.isAfter(begin) && now.isBefore(end);
+
     }
 
 }
