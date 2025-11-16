@@ -12,6 +12,7 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>Revenue Report - CLINIC</title>
+        <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/assests/img/logo.png">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
         <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
@@ -173,20 +174,22 @@
             <script>
                 // Payment Method Pie Chart
                 const paymentData = {
-                    labels: [<c:forEach var="entry" items="${paymentMethods}" varStatus="status">'${entry.key}'<c:if test="${!status.last}">,</c:if></c:forEach>],
-                    datasets: [{
-                        data: [<c:forEach var="entry" items="${paymentMethods}" varStatus="status">${entry.value}<c:if test="${!status.last}">,</c:if></c:forEach>],
+                labels
+                        : [<c:forEach var="entry" items="${paymentMethods}" varStatus="status">'${entry.key}'<c:if test="${!status.last}">,</c:if></c:forEach>],
+                datasets: [{
+                data: [<c:forEach var="entry" items="${paymentMethods}" varStatus="status">${entry.value}<c:if test="${!status.last}">,</c:if></c:forEach>],
                         backgroundColor: ['#36A2EB', '#FF6384']
-                    }]
-                };
+                }]
+                }
+                ;
                 new Chart(document.getElementById('paymentChart'), {
                     type: 'pie',
                     data: paymentData,
                     options: {
                         responsive: true,
                         plugins: {
-                            legend: { position: 'top' },
-                            title: { display: false }
+                            legend: {position: 'top'},
+                            title: {display: false}
                         }
                     }
                 });
@@ -194,28 +197,28 @@
                 // Monthly Revenue Timeline
                 const monthLabels = [<c:forEach var="m" items="${monthlyRevenue}" varStatus="status">'<fmt:formatDate value="${m.datePay}" pattern="MM/yyyy"/>'<c:if test="${!status.last}">,</c:if></c:forEach>];
                 const monthRevenue = [<c:forEach var="m" items="${monthlyRevenue}" varStatus="status">${m.totalFee}<c:if test="${!status.last}">,</c:if></c:forEach>];
-                
+
                 new Chart(document.getElementById('timelineChart'), {
                     type: 'line',
                     data: {
                         labels: monthLabels,
                         datasets: [{
-                            label: 'Monthly Revenue (USD)',
-                            data: monthRevenue,
-                            borderColor: '#36A2EB',
-                            backgroundColor: 'rgba(54, 162, 235, 0.1)',
-                            fill: true,
-                            tension: 0.3
-                        }]
+                                label: 'Monthly Revenue (USD)',
+                                data: monthRevenue,
+                                borderColor: '#36A2EB',
+                                backgroundColor: 'rgba(54, 162, 235, 0.1)',
+                                fill: true,
+                                tension: 0.3
+                            }]
                     },
                     options: {
                         responsive: true,
                         plugins: {
-                            legend: { display: true },
-                            title: { display: false }
+                            legend: {display: true},
+                            title: {display: false}
                         },
                         scales: {
-                            y: { beginAtZero: true }
+                            y: {beginAtZero: true}
                         }
                     }
                 });
@@ -223,56 +226,56 @@
                 // Specialty Revenue Bar Chart
                 const specialtyNames = [<c:forEach var="s" items="${specialtyRevenue}" varStatus="status">'${s.specialtyName}'<c:if test="${!status.last}">,</c:if></c:forEach>];
                 const specialtyRevenues = [<c:forEach var="s" items="${specialtyRevenue}" varStatus="status">${s.totalRevenue}<c:if test="${!status.last}">,</c:if></c:forEach>];
-                
+
                 new Chart(document.getElementById('specialtyChart'), {
                     type: 'bar',
                     data: {
                         labels: specialtyNames,
                         datasets: [{
-                            label: 'Revenue (USD)',
-                            data: specialtyRevenues,
-                            backgroundColor: '#4BC0C0'
-                        }]
+                                label: 'Revenue (USD)',
+                                data: specialtyRevenues,
+                                backgroundColor: '#4BC0C0'
+                            }]
                     },
                     options: {
                         indexAxis: 'y',
                         responsive: true,
                         plugins: {
-                            legend: { display: false },
-                            title: { display: false }
+                            legend: {display: false},
+                            title: {display: false}
                         },
                         scales: {
-                            x: { beginAtZero: true }
+                            x: {beginAtZero: true}
                         }
                     }
                 });
 
                 // Doctor Revenue Bar Chart
                 const doctorNames = [<c:forEach var="d" items="${doctorRevenue}" varStatus="status">'${d.staffID.firstName} ${d.staffID.lastName}'<c:if test="${!status.last}">,</c:if></c:forEach>];
-                const doctorRevenues = [<c:forEach var="d" items="${doctorRevenue}" varStatus="status">${d.totalRevenue}<c:if test="${!status.last}">,</c:if></c:forEach>];
-                
-                new Chart(document.getElementById('doctorChart'), {
-                    type: 'bar',
-                    data: {
-                        labels: doctorNames,
-                        datasets: [{
-                            label: 'Revenue (USD)',
-                            data: doctorRevenues,
-                            backgroundColor: '#FFCE56'
-                        }]
-                    },
-                    options: {
-                        indexAxis: 'y',
-                        responsive: true,
-                        plugins: {
-                            legend: { display: false },
-                            title: { display: false }
+                    const doctorRevenues = [<c:forEach var="d" items="${doctorRevenue}" varStatus="status">${d.totalRevenue}<c:if test="${!status.last}">,</c:if></c:forEach>];
+
+                    new Chart(document.getElementById('doctorChart'), {
+                        type: 'bar',
+                        data: {
+                            labels: doctorNames,
+                            datasets: [{
+                                    label: 'Revenue (USD)',
+                                    data: doctorRevenues,
+                                    backgroundColor: '#FFCE56'
+                                }]
                         },
-                        scales: {
-                            x: { beginAtZero: true }
+                        options: {
+                            indexAxis: 'y',
+                            responsive: true,
+                            plugins: {
+                                legend: {display: false},
+                                title: {display: false}
+                            },
+                            scales: {
+                                x: {beginAtZero: true}
+                            }
                         }
-                    }
-                });
+                    });
             </script>
     </body>
 </html>

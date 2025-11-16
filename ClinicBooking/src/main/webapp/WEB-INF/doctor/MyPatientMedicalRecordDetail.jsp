@@ -1,4 +1,4 @@
-<%-- 
+<%--
     Document   : MyPatientMedicalRecordDetail
     Created on : 13 Oct. 2025, 10:29:50 am
     Author     : Le Thien Tri - CE191249
@@ -13,6 +13,7 @@
     <head>
         <meta charset="UTF-8">
         <title>Medical Record Detail</title>
+        <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/assests/img/logo.png">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
         <style>
@@ -175,7 +176,7 @@
                             <tr><th>Date Create</th><td><fmt:formatDate value="${detail.dateCreate}" pattern="yyyy/MM/dd" /></td></tr>
                             <tr><th>Symptoms</th><td class="wrap-text">${detail.symptoms}</td></tr>
                             <tr><th>Diagnosis</th><td class="wrap-text">${detail.diagnosis}</td></tr>
-                            <tr><th>Medical Record Note</th><td class="wrap-text">${detail.note}</td></tr>                    
+                            <tr><th>Medical Record Note</th><td class="wrap-text">${detail.note}</td></tr>
                         </table>
                     </div>
                 </div>
@@ -188,9 +189,9 @@
                         <i class="fa-solid fa-prescription-bottle-medical me-2"></i>Prescription Information
                     </div>
                     <div class="card-body p-4">
-                        <table class="table table-bordered mb-0">       
+                        <table class="table table-bordered mb-0">
                             <c:if test="${ requestScope.isExist}">
-                                <tr><th>Date Create</th><td><fmt:formatDate value="${list[0].prescriptionID.dateCreate}" pattern="yyyy/MM/dd" /></td></tr>                   
+                                <tr><th>Date Create</th><td><fmt:formatDate value="${list[0].prescriptionID.dateCreate}" pattern="yyyy/MM/dd" /></td></tr>
                                 <tr>
                                     <th>Medicines</th>
                                     <td>
@@ -213,14 +214,14 @@
                                         </span>
                                     </td>
                                 </tr>
-                                <tr><th>Prescription Note</th><td>${list[0].prescriptionID.note}</td></tr>  
+                                <tr><th>Prescription Note</th><td>${list[0].prescriptionID.note}</td></tr>
                                 <tr>
-                                </c:if>  
+                                </c:if>
                                 <c:if test="${!requestScope.isExist}">
                                     <td colspan="7" class="text-center text-muted py-4">
                                         <i class="fa-solid fa-circle-info me-2"></i>No medicines.
                                     </td>
-                                </c:if>  
+                                </c:if>
                             </tr>
                         </table>
                     </div>
@@ -266,7 +267,7 @@
                     </div>
                     <div class="card-body p-4">
                         <table class="table table-bordered mb-0">
-                            <tr> <i class="fa-solid fa-circle-info me-2"></i>No medical record.</tr>                    
+                            <tr> <i class="fa-solid fa-circle-info me-2"></i>No medical record.</tr>
                         </table>
                     </div>
                 </div>
@@ -279,7 +280,7 @@
                         <i class="fa-solid fa-prescription-bottle-medical me-2"></i>Prescription Information
                     </div>
                     <div class="card-body p-4">
-                        <table class="table table-bordered mb-0">                                 
+                        <table class="table table-bordered mb-0">
                             <tr>
                                 <td colspan="7" class="text-center text-muted py-4">
                                     <i class="fa-solid fa-circle-info me-2"></i>No medicines.

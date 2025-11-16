@@ -1607,6 +1607,15 @@ h6 {
     overflow: hidden;
 }
 
+/* Disabled state for all action buttons */
+.btn-action:disabled,
+.btn-action[disabled] {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+    filter: grayscale(50%);
+}
+
 .btn-view {
     background: transparent;
     color: #1976d2;
@@ -9253,27 +9262,7 @@ body.appointment-page {
     }
 }
 
-/* Message Modal Styles */
-.modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 10000;
-    backdrop-filter: blur(4px);
-    -webkit-backdrop-filter: blur(4px);
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
-.modal-overlay.show {
-    opacity: 1;
-}
+/* Message Modal Styles - REMOVED (Use .active class from line 11488 instead) */
 
 /* Payment Modal Specific Styles */
 .payment-modal {
@@ -10874,7 +10863,8 @@ body.appointment-page {
     animation: fadeIn 0.3s ease;
 }
 
-.modal.show {
+.modal.show,
+.modal.active {
     display: block;
 }
 

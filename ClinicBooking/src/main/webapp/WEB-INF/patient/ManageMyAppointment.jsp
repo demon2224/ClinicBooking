@@ -206,8 +206,7 @@
         function closeModal() {
             const modal = document.getElementById('messageModal');
             if (modal) {
-                modal.classList.remove('show'); // Remove show class for CSS animation
-                modal.style.display = 'none';
+                modal.classList.remove('active'); // Remove active class
                 document.body.style.overflow = 'auto'; // Re-enable scrolling
             }
         }
@@ -215,8 +214,7 @@
         function closeConfirmModal() {
             const modal = document.getElementById('confirmModal');
             if (modal) {
-                modal.classList.remove('show'); // Remove show class for CSS animation
-                modal.style.display = 'none';
+                modal.classList.remove('active'); // Remove active class
                 document.body.style.overflow = 'auto'; // Re-enable scrolling
             }
         }
@@ -226,8 +224,7 @@
             const confirmBtn = document.getElementById('confirmCancelBtn');
 
             if (modal && confirmBtn) {
-                modal.style.display = 'flex';
-                modal.classList.add('show'); // Add show class for CSS animation
+                modal.classList.add('active'); // Add active class
                 document.body.style.overflow = 'hidden'; // Disable scrolling
 
                 // Store appointment ID for confirmation
@@ -254,8 +251,7 @@
             const modal = document.getElementById('messageModal');
 
             if (modal) {
-                modal.style.display = 'flex';
-                modal.classList.add('show'); // Add show class for CSS animation
+                modal.classList.add('active'); // Add active class
                 document.body.style.overflow = 'hidden'; // Disable scrolling when modal is open
 
                 // Clear session messages after modal is shown

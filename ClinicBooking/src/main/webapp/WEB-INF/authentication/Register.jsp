@@ -1,4 +1,4 @@
-<%-- 
+<%--
     Document   : register
     Created on : Nov 6, 2025, 2:37:21 PM
     Author     : Vu Minh Khang - CE191371
@@ -12,6 +12,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Patient Registration - Clinic Booking</title>
+        <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/assests/img/logo.png">
         <link href="${pageContext.request.contextPath}/assests/css/bootstrap.min.css" rel="stylesheet">
         <link href="${pageContext.request.contextPath}/assests/css/all.min.css" rel="stylesheet">
     </head>
@@ -117,7 +118,7 @@
                     </div>
 
                     <button type="submit" class="btn btn-success w-100 rounded-pill">Register</button>
-                    
+
                     <a href="${pageContext.request.contextPath}/patient-login" class="d-flex text-center">Already have an account. Login here.</a>
 
                 </form>

@@ -1,4 +1,4 @@
-<%-- 
+<%--
     Document   : ForgotPassword
     Created on : Nov 13, 2025, 11:38:34 PM
     Author     : Vu Minh Khang - CE191371
@@ -12,6 +12,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Forgot Password - Clinic Booking</title>
+        <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/assests/img/logo.png">
         <link href="${pageContext.request.contextPath}/assests/css/bootstrap.min.css" rel="stylesheet">
         <link href="${pageContext.request.contextPath}/assests/css/all.min.css" rel="stylesheet">
     </head>

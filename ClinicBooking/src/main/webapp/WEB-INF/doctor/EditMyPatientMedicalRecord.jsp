@@ -1,4 +1,4 @@
-<%-- 
+<%--
     Document   : EditMyPatientMedicalRecord
     Created on : 12 Nov. 2025, 4:07:46 am
     Author     : Le Thien Tri - CE191249
@@ -12,6 +12,7 @@
     <head>
         <meta charset="UTF-8">
         <title>Medical Record Detail</title>
+        <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/assests/img/logo.png">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
         <style>
@@ -157,7 +158,7 @@
             </div>
 
             <!-- Medical Record Information -->
-            <form action="${pageContext.request.contextPath}/manage-my-patient-medical-record?action=edit&medicalRecordID=${detail.medicalRecordID}" 
+            <form action="${pageContext.request.contextPath}/manage-my-patient-medical-record?action=edit&medicalRecordID=${detail.medicalRecordID}"
                   method="post" class="needs-validation" novalidate>
 
                 <!-- Medical Record edit Form -->
@@ -169,7 +170,7 @@
                         <div class="mb-3">
                             <label class="form-label required">Symptoms</label>
                             <textarea name="symptoms" class="form-control" rows="3"
-                                      placeholder="Enter symptoms..." required>${detail.symptoms}</textarea>                         
+                                      placeholder="Enter symptoms..." required>${detail.symptoms}</textarea>
 
                         </div>
 

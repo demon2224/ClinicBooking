@@ -1,4 +1,4 @@
-<%-- 
+<%--
     Document   : EditMyPatientPrescription
     Created on : 12 Nov. 2025, 8:26:11 am
     Author     : Le Thien Tri - CE191249
@@ -12,6 +12,7 @@
     <head>
         <meta charset="UTF-8">
         <title>Create Prescription</title>
+        <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/assests/img/logo.png">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -69,7 +70,7 @@
                 <h2><i class="fa-solid fa-prescription me-2"></i>Edit Prescription</h2>
             </div>
 
-            <form action="${pageContext.request.contextPath}/manage-my-patient-prescription?action=edit&prescriptionID=${prescription.prescriptionID}" 
+            <form action="${pageContext.request.contextPath}/manage-my-patient-prescription?action=edit&prescriptionID=${prescription.prescriptionID}"
                   method="post" class="needs-validation" novalidate>
 
                 <input type="hidden" name="medicalRecordID" value="${medicalRecordID}" />
@@ -96,7 +97,7 @@
                                             <select name="medicineID" class="form-select" required>
                                                 <option value="">-- Select Medicine --</option>
                                                 <c:forEach var="m" items="${medicineList}">
-                                                    <option value="${m.medicineID}" 
+                                                    <option value="${m.medicineID}"
                                                             <c:if test="${item.medicineID.medicineID == m.medicineID}">selected</c:if>>
                                                         ${m.medicineName} — ${m.medicineType} | Stock: ${m.quantity} | $${m.price}
                                                     </option>

@@ -333,7 +333,7 @@
             function closeModal() {
                 const modal = document.getElementById('messageModal');
                 if (modal) {
-                    modal.style.display = 'none';
+                    modal.classList.remove('active'); // Remove active class instead of setting display
                     document.body.style.overflow = 'auto'; // Re-enable scrolling
                 }
             }
@@ -341,7 +341,7 @@
             function closeSuccessModal() {
                 const modal = document.getElementById('successModal');
                 if (modal) {
-                    modal.style.display = 'none';
+                    modal.classList.remove('active'); // Remove active class instead of setting display
                     document.body.style.overflow = 'auto'; // Re-enable scrolling
                 }
             }
@@ -463,15 +463,16 @@
                 document.getElementById('prevMonth').addEventListener('click', () => navigateMonth(-1));
                 document.getElementById('nextMonth').addEventListener('click', () => navigateMonth(1));
 
-                // Auto show modal on page load if exists
-                const modal = document.getElementById('messageModal');
-                if (modal) {
-                    modal.style.display = 'flex';
-                    document.body.style.overflow = 'hidden'; // Disable scrolling when modal is open
+                // Auto show error modal on page load if exists (Fix CSS conflict by using 'active' class)
+                const errorModal = document.getElementById('messageModal');
+                if (errorModal) {
+                    // Add 'active' class to show modal (override display:none in CSS)
+                    errorModal.classList.add('active');
+                    document.body.style.overflow = 'hidden';
 
                     // Close modal when clicking outside
-                    modal.addEventListener('click', function (e) {
-                        if (e.target === modal) {
+                    errorModal.addEventListener('click', function (e) {
+                        if (e.target === errorModal) {
                             closeModal();
                         }
                     });
@@ -487,8 +488,9 @@
                 // Auto show success modal on page load if exists
                 const successModal = document.getElementById('successModal');
                 if (successModal) {
-                    successModal.style.display = 'flex';
-                    document.body.style.overflow = 'hidden'; // Disable scrolling when modal is open
+                    // Add 'active' class to show modal (override display:none in CSS)
+                    successModal.classList.add('active');
+                    document.body.style.overflow = 'hidden';
 
                     // Close modal when clicking outside
                     successModal.addEventListener('click', function (e) {

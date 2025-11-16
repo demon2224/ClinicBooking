@@ -1,4 +1,4 @@
-<%-- 
+<%--
     Document   : login
     Created on : Nov 6, 2025, 2:37:12 PM
     Author     : Vu Minh Khang - CE191371
@@ -12,6 +12,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Staff Login - Clinic Booking</title>
+        <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/assests/img/logo.png">
         <link href="${pageContext.request.contextPath}/assests/css/bootstrap.min.css" rel="stylesheet">
         <link href="${pageContext.request.contextPath}/assests/css/all.min.css" rel="stylesheet">
     </head>
@@ -83,7 +84,7 @@
             </script>
         </c:if>
 
-        <script src="${pageContext.request.contextPath}/assests/js/bootstrap.bundle.min.js"></script> 
+        <script src="${pageContext.request.contextPath}/assests/js/bootstrap.bundle.min.js"></script>
         <script>
                 // Toggle show/hide password
                 const togglePassword = document.getElementById("togglePassword");

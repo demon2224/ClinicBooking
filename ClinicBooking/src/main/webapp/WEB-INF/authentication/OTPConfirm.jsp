@@ -1,4 +1,4 @@
-<%-- 
+<%--
     Document   : OTPConfirm
     Created on : Nov 14, 2025, 12:28:15 AM
     Author     : Vu Minh Khang - CE191371
@@ -12,6 +12,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Confirm OTP - Clinic Booking</title>
+        <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/assests/img/logo.png">
         <link href="${pageContext.request.contextPath}/assests/css/bootstrap.min.css" rel="stylesheet">
         <link href="${pageContext.request.contextPath}/assests/css/all.min.css" rel="stylesheet">
     </head>

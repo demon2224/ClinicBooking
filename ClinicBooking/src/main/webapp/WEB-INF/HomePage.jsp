@@ -266,8 +266,7 @@
                 const modal = document.getElementById('messageModal');
 
                 if (modal) {
-                    modal.style.display = 'flex';
-                    modal.classList.add('show');
+                    modal.classList.add('active');
                     document.body.style.overflow = 'hidden'; // Disable scrolling when modal is open
 
                     // Clear session messages after modal is shown
@@ -297,8 +296,7 @@
             function closeModal() {
                 const modal = document.getElementById('messageModal');
                 if (modal) {
-                    modal.classList.remove('show');
-                    modal.style.display = 'none';
+                    modal.classList.remove('active');
                     document.body.style.overflow = 'auto'; // Re-enable scrolling
                 }
             }

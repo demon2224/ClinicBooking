@@ -1,4 +1,4 @@
-<%-- 
+<%--
     Document   : login
     Created on : Nov 6, 2025, 2:37:12 PM
     Author     : Vu Minh Khang - CE191371
@@ -12,6 +12,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Login - Clinic Booking</title>
+        <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/assests/img/logo.png">
         <link href="${pageContext.request.contextPath}/assests/css/bootstrap.min.css" rel="stylesheet">
         <link href="${pageContext.request.contextPath}/assests/css/all.min.css" rel="stylesheet">
     </head>
@@ -84,7 +85,7 @@
             </div>
 
             <script>
-                document.addEventListener("DOMContentLoaded", function() {
+                document.addEventListener("DOMContentLoaded", function () {
                     var errorModal = new bootstrap.Modal(document.getElementById('loginErrorModal'));
                     errorModal.show();
                 });
@@ -93,16 +94,16 @@
 
         <script src="${pageContext.request.contextPath}/assests/js/bootstrap.bundle.min.js"></script>
         <script>
-            const togglePassword = document.getElementById("togglePassword");
-            const passwordField = document.getElementById("patient-password");
+                const togglePassword = document.getElementById("togglePassword");
+                const passwordField = document.getElementById("patient-password");
 
-            togglePassword.addEventListener("click", function () {
-                const type = passwordField.getAttribute("type") === "password" ? "text" : "password";
-                passwordField.setAttribute("type", type);
-                this.innerHTML = type === "text"
-                    ? '<i class="fas fa-eye-slash"></i>'
-                    : '<i class="fas fa-eye"></i>';
-            });
+                togglePassword.addEventListener("click", function () {
+                    const type = passwordField.getAttribute("type") === "password" ? "text" : "password";
+                    passwordField.setAttribute("type", type);
+                    this.innerHTML = type === "text"
+                            ? '<i class="fas fa-eye-slash"></i>'
+                            : '<i class="fas fa-eye"></i>';
+                });
         </script>
     </body>
 </html>
