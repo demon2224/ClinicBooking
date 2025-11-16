@@ -690,16 +690,8 @@ public class AppointmentDAO extends DBContext {
      */
     public boolean updateStatusAppointment(int appointmentId) {
         String sql = "UPDATE Appointment "
-                + "SET AppointmentStatus = CASE "
-                + "WHEN AppointmentStatus = 'Pending' THEN 'Approved' "
-                + "WHEN AppointmentStatus = 'Approved' THEN 'Completed' "
-                + "ELSE AppointmentStatus "
-                + "END, "
-                + "DateEnd = CASE "
-                + "WHEN AppointmentStatus = 'Approved' THEN GETDATE() "
-                + "ELSE DateEnd "
-                + "END "
-                + "WHERE AppointmentID = ?";
+                + "SET AppointmentStatus = 'Approved' "
+                + "WHERE AppointmentID = ? AND AppointmentStatus = 'Pending' ";
 
         Object[] params = {appointmentId};
         int rowsAffected = executeQuery(sql, params);
