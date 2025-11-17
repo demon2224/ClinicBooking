@@ -451,6 +451,7 @@ public class PrescriptionDAO extends DBContext {
                 + "                JOIN Appointment a ON p.AppointmentID = a.AppointmentID \n"
                 + "                JOIN Patient pa ON pa.PatientID = a.PatientID \n"
                 + "                WHERE a.DoctorID = ?\n"
+                + "                AND not p.PrescriptionStatus = 'Canceled'\n"
                 + "                ORDER BY p.DateCreate DESC";
         Object[] params = {doctorID};
         ResultSet rs = executeSelectQuery(sql, params);
@@ -509,6 +510,7 @@ public class PrescriptionDAO extends DBContext {
                 + "JOIN Appointment a ON p.AppointmentID = a.AppointmentID "
                 + "JOIN Patient pa ON pa.PatientID = a.PatientID "
                 + "WHERE a.DoctorID = ? AND (pa.FirstName LIKE ? OR pa.LastName LIKE ?) "
+                + "AND not p.PrescriptionStatus = 'Canceled'\n"
                 + "ORDER BY p.DateCreate DESC";
 
         ResultSet rs = null;
