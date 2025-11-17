@@ -78,7 +78,6 @@
 
         <div class="main-content">
 
-            <!-- HEADER -->
             <nav class="navbar navbar-light shadow-sm mb-4 d-flex justify-content-between">
                 <h3 class="fw-bold text-primary d-flex align-items-center mb-0">
                     <i class="fa-solid fa-gauge me-2"></i>Pharmacist Dashboard
@@ -108,7 +107,6 @@
                     </div>
                 </div>
 
-                <!-- PENDING -->
                 <div class="col-md-3">
                     <div class="card text-center py-4">
                         <div class="text-danger fs-1"><i class="fa-solid fa-prescription-bottle-medical"></i></div>
@@ -117,7 +115,6 @@
                     </div>
                 </div>
 
-                <!-- DELIVERED TODAY -->
                 <div class="col-md-3">
                     <div class="card text-center py-4">
                         <div class="text-success fs-1"><i class="fa-solid fa-circle-check"></i></div>
@@ -128,7 +125,6 @@
 
             </div>
 
-            <!-- LOW STOCK MEDICINES -->
             <div class="card mb-4">
                 <div class="card-header">
                     <i class="fa-solid fa-triangle-exclamation me-2"></i>Low Stock Medicines
@@ -171,7 +167,6 @@
                 </div>
             </div>
 
-            <!-- PENDING PRESCRIPTIONS -->
             <div class="card mb-4">
                 <div class="card-header">
                     <i class="fa-solid fa-prescription-bottle-medical me-2"></i>Pending Prescriptions
@@ -249,7 +244,6 @@
 
         </div>
 
-        <!-- DELIVER MODAL -->
         <div class="modal fade" id="deliverModal" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content border-success">
@@ -276,7 +270,6 @@
             </div>
         </div>
 
-        <!-- CANCEL MODAL -->
         <div class="modal fade" id="cancelModal" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content border-danger">
@@ -302,6 +295,40 @@
                 </div>
             </div>
         </div>
+
+        <div class="modal fade" id="loginSuccessModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+
+                    <div class="modal-header bg-success text-white">
+                        <h5 class="modal-title">Login Successful</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+
+                    <div class="modal-body text-center">
+                        <c:out value="${sessionScope.loginSuccessMsg}" />
+                    </div>
+
+                    <div class="modal-footer justify-content-center">
+                        <button type="button" class="btn btn-success" data-bs-dismiss="modal">Close</button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+
+        <c:if test="${not empty sessionScope.loginSuccessMsg}">
+            <script>
+                document.addEventListener("DOMContentLoaded", function () {
+                    var modal = new bootstrap.Modal(document.getElementById('loginSuccessModal'));
+                    modal.show();
+                });
+            </script>
+
+            <c:remove var="loginSuccessMsg" scope="session" />
+        </c:if>
+
 
         <script>
             function setDeliverID(id) {

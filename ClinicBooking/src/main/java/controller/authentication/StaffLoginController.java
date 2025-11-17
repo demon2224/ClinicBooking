@@ -70,7 +70,7 @@ public class StaffLoginController extends HttpServlet {
 //        processRequest(request, response);
 
         StaffDTO staff = (StaffDTO) request.getSession().getAttribute("staff");
-        
+
         if (staff != null) {
             redirectToDashboard(request, response);
             return;
@@ -100,7 +100,7 @@ public class StaffLoginController extends HttpServlet {
 
         if (!isValidPatientUsername
                 || !isValidPatientPassword) {
-           request.getRequestDispatcher("/WEB-INF/authentication/StaffLogin.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/authentication/StaffLogin.jsp").forward(request, response);
 
         } else {
             StaffDTO staff = staffDAO.getStaffByUsernameAndPassword(staffUsernameParam.trim(), staffPasswordParam.trim());
@@ -109,6 +109,7 @@ public class StaffLoginController extends HttpServlet {
             if (isExistAccount) {
                 HttpSession session = request.getSession();
                 session.setAttribute("staff", staff);
+                request.getSession().setAttribute("loginSuccessMsg", "Logic successfully!");
                 redirectToDashboard(request, response);
             } else {
                 request.getSession().setAttribute("loginErrorMsg", "Logic failed");
