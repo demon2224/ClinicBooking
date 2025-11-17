@@ -208,6 +208,7 @@
                                         <span class="badge
                                               <c:choose>
                                                   <c:when test="${list[0].prescriptionID.prescriptionStatus eq 'Pending'}">bg-warning text-dark</c:when>
+                                                  <c:when test="${list[0].prescriptionID.prescriptionStatus eq 'Canceled'}">bg-danger text-dark</c:when>
                                                   <c:otherwise>bg-success</c:otherwise>
                                               </c:choose>">
                                             ${list[0].prescriptionID.prescriptionStatus}
