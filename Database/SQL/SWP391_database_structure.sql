@@ -71,7 +71,14 @@ CREATE TABLE DoctorReview (
 	Content NVARCHAR(500),
 	RateScore INT CHECK (RateScore BETWEEN 1 AND 5),
 	DateCreate DATETIME DEFAULT GETDATE(),
-	[Hidden] BIT DEFAULT 0,
+);
+
+CREATE TABLE Patient (
+	PatientID INT PRIMARY KEY IDENTITY(1,1),
+	FirstName NVARCHAR(255),
+	LastName NVARCHAR(255),
+	DOB DATE CHECK(DOB < GETDATE()),
+	Gender BIT DEFAULT 0
 );
 
 CREATE TABLE Appointment (
@@ -83,15 +90,8 @@ CREATE TABLE Appointment (
 	DateBegin DATETIME,
 	DateEnd DATETIME,
 	Note NVARCHAR(550),
-	[Hidden] BIT DEFAULT 0
-);
-
-CREATE TABLE Patient (
-	AppointmentID INT FOREIGN KEY REFERENCES Appointment(AppointmentID) NOT NULL,
-	FirstName NVARCHAR(255),
-	LastName NVARCHAR(255),
-	DOB DATE CHECK(DOB < GETDATE()),
-	Gender BIT DEFAULT 0
+	[Hidden] BIT DEFAULT 0,
+	PatientID INT FOREIGN KEY REFERENCES Patient(PatientID),
 );
 
 CREATE TABLE AppointmentInvoice (
