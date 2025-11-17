@@ -19,17 +19,21 @@ GO
 USE ClinicBookingDatabase
 GO
 
-CREATE TABLE Account (
-	AccountID INT PRIMARY KEY IDENTITY(1,1),
-	Username NVARCHAR(255) UNIQUE,
-	[Password] NVARCHAR(255),
+CREATE TABLE Patient (
+	PatientID INT PRIMARY KEY IDENTITY(1,1),
+	AccountName NVARCHAR(255) UNIQUE,
+	AccountPassword NVARCHAR(255),
 	DayCreated DATETIME DEFAULT GETDATE(),
 	Avatar NVARCHAR(255),
-	[Address] NVARCHAR(255),
+	Bio NVARCHAR(550),
+	FirstName NVARCHAR(255),
+	LastName NVARCHAR(255),
+	DOB DATE,
+	Gender BIT DEFAULT 0,
+	UserAddress NVARCHAR(255),
 	PhoneNumber NVARCHAR(15) UNIQUE,
 	Email NVARCHAR(50) UNIQUE,
-	[Hidden] BIT DEFAULT 0,
-	OTP NVARCHAR(6)
+	[Hidden] BIT DEFAULT 0
 );
 
 CREATE TABLE Specialty (
@@ -42,65 +46,58 @@ CREATE TABLE Staff (
 	StaffID INT PRIMARY KEY IDENTITY(1,1),
 	JobStatus NVARCHAR(50) DEFAULT 'Available' CHECK (JobStatus IN ('Unavailable', 'Available', 'Retired')) NOT NULL,
 	[Role] NVARCHAR(50) CHECK ([Role] IN ('Receptionist', 'Pharmacist', 'Doctor', 'Admin')) NOT NULL,
-	[Username] NVARCHAR(255) UNIQUE,
-	[Password] NVARCHAR(255),
+	AccountName NVARCHAR(255) UNIQUE,
+	AccountPassword NVARCHAR(255),
 	DayCreated DATETIME DEFAULT GETDATE(),
 	Avatar NVARCHAR(255),
+	Bio NVARCHAR(550),
 	FirstName NVARCHAR(255),
 	LastName NVARCHAR(255),
 	DOB DATE,
 	Gender BIT DEFAULT 0,
-	[Address] NVARCHAR(255),
+	UserAddress NVARCHAR(255),
 	PhoneNumber NVARCHAR(15) UNIQUE,
-	Email NVARCHAR(50) UNIQUE,
+	Email NVARCHAR(50),
 	[Hidden] BIT DEFAULT 0,
-	YearExperience INT,
-	SpecialtyID INT FOREIGN KEY REFERENCES Specialty(SpecialtyID)
+	SpecialtyID INT FOREIGN KEY REFERENCES Specialty(SpecialtyID),
+	YearExperience INT
 );
 
 CREATE TABLE Degree (
 	DegreeID INT PRIMARY KEY IDENTITY(1,1),
 	DegreeName NVARCHAR(255),
-	Staff INT FOREIGN KEY REFERENCES Staff(StaffID) NOT NULL
+	StaffID INT FOREIGN KEY REFERENCES Staff(StaffID) NOT NULL
 );
 
 CREATE TABLE DoctorReview (
 	DoctorReviewID INT PRIMARY KEY IDENTITY(1,1),
-	AccountID INT FOREIGN KEY REFERENCES Account(AccountID) NOT NULL,
+	PatientID INT FOREIGN KEY REFERENCES Patient(PatientID) NOT NULL,
 	DoctorID INT FOREIGN KEY REFERENCES Staff(StaffID) NOT NULL,
 	Content NVARCHAR(500),
-	RateScore INT CHECK (RateScore BETWEEN 1 AND 5),
+	RateScore INT,
 	DateCreate DATETIME DEFAULT GETDATE(),
-);
-
-CREATE TABLE Patient (
-	PatientID INT PRIMARY KEY IDENTITY(1,1),
-	FirstName NVARCHAR(255),
-	LastName NVARCHAR(255),
-	DOB DATE CHECK(DOB < GETDATE()),
-	Gender BIT DEFAULT 0
+	[Hidden] BIT DEFAULT 0
 );
 
 CREATE TABLE Appointment (
 	AppointmentID INT PRIMARY KEY IDENTITY(1,1),
-	AccountID INT FOREIGN KEY REFERENCES Account(AccountID) NOT NULL,
+	PatientID INT FOREIGN KEY REFERENCES Patient(PatientID) NOT NULL,
 	DoctorID INT FOREIGN KEY REFERENCES Staff(StaffID) NOT NULL,
-	AppointmentStatus NVARCHAR(50) DEFAULT 'Pending' CHECK (AppointmentStatus IN ('Pending', 'Confirmed', 'Approved', 'Completed', 'Canceled')) NOT NULL,
+	AppointmentStatus NVARCHAR(50) DEFAULT 'Pending' CHECK (AppointmentStatus IN ('Pending', 'Approved', 'Completed', 'Canceled')) NOT NULL,
 	DateCreate DATETIME DEFAULT GETDATE(),
 	DateBegin DATETIME,
 	DateEnd DATETIME,
 	Note NVARCHAR(550),
-	[Hidden] BIT DEFAULT 0,
-	PatientID INT FOREIGN KEY REFERENCES Patient(PatientID),
+	[Hidden] BIT DEFAULT 0
 );
 
-CREATE TABLE AppointmentInvoice (
-	AppointmentInvoiceID INT PRIMARY KEY IDENTITY(1,1),
+CREATE TABLE Prescription (
+	PrescriptionID INT PRIMARY KEY IDENTITY(1,1),
 	AppointmentID INT FOREIGN KEY REFERENCES Appointment(AppointmentID) NOT NULL,
-	PaymentType NVARCHAR(50) CHECK (PaymentType IN ('Cash', 'Credit Card')),
-	InvoiceStatus NVARCHAR(50) CHECK (InvoiceStatus IN ('Pending', 'Paid', 'Canceled')) NOT NULL,
+	PrescriptionStatus NVARCHAR(50) DEFAULT 'Pending' CHECK (PrescriptionStatus IN ('Pending', 'Delivered', 'Canceled')) NOT NULL,
 	DateCreate DATETIME DEFAULT GETDATE(),
-	DatePay DATETIME
+	Note NVARCHAR(550),
+	[Hidden] BIT DEFAULT 0
 );
 
 CREATE TABLE Medicine (
@@ -112,14 +109,6 @@ CREATE TABLE Medicine (
 	Quantity INT DEFAULT 0 CHECK (Quantity >= 0),
 	Price INT DEFAULT 0 CHECK (Price >= 0),
 	DateCreate DATETIME DEFAULT GETDATE(),
-	[Hidden] BIT DEFAULT 0
-);
-
-CREATE TABLE Prescription (
-	PrescriptionID INT PRIMARY KEY IDENTITY(1,1),
-	PrescriptionStatus NVARCHAR(50) DEFAULT 'Pending' CHECK (PrescriptionStatus IN ('Pending', 'Delivered', 'Canceled')) NOT NULL,
-	DateCreate DATETIME DEFAULT GETDATE(),
-	Note NVARCHAR(550),
 	[Hidden] BIT DEFAULT 0
 );
 
@@ -141,9 +130,10 @@ CREATE TABLE MedicalRecord (
 	DateCreate DATETIME DEFAULT GETDATE()
 );
 
-CREATE TABLE PrescriptionInvoice (
-	PrescriptionInvoiceID INT PRIMARY KEY IDENTITY(1,1),
-	PrescriptionID INT FOREIGN KEY REFERENCES Prescription(PrescriptionID) NOT NULL,
+CREATE TABLE Invoice (
+	InvoiceID INT PRIMARY KEY IDENTITY(1,1),
+	MedicalRecordID INT FOREIGN KEY REFERENCES MedicalRecord(MedicalRecordID) NOT NULL,
+	PrescriptionID INT FOREIGN KEY REFERENCES Prescription(PrescriptionID),
 	PaymentType NVARCHAR(50) CHECK (PaymentType IN ('Cash', 'Credit Card')),
 	InvoiceStatus NVARCHAR(50) CHECK (InvoiceStatus IN ('Pending', 'Paid', 'Canceled')) NOT NULL,
 	DateCreate DATETIME DEFAULT GETDATE(),
@@ -151,36 +141,68 @@ CREATE TABLE PrescriptionInvoice (
 );
 
 GO
-CREATE TRIGGER TR_MedicalRecord_CreateAppointmentInvoice
-ON [dbo].[Appointment]
+CREATE TRIGGER TR_MedicalRecord_CreateInvoice
+ON [dbo].[MedicalRecord]
 AFTER INSERT
 AS
 BEGIN
 	SET NOCOUNT ON;
-    INSERT INTO [dbo].[AppointmentInvoice] (AppointmentID, InvoiceStatus)
-		SELECT
-        i.AppointmentID,
+    INSERT INTO [dbo].[Invoice] (MedicalRecordID, InvoiceStatus)
+    SELECT
+        i.MedicalRecordID,
 		'Pending'
-		FROM INSERTED i;
+    FROM INSERTED i;
+END;
+
+GO
+CREATE TRIGGER TR_Invoice_InsertPrescription
+ON [dbo].[MedicalRecord]
+AFTER UPDATE
+AS
+BEGIN
+	SET NOCOUNT ON;
+	UPDATE inv
+	SET inv.PrescriptionID = i.PrescriptionID
+	FROM [dbo].[Invoice] inv
+	JOIN inserted i
+	ON inv.MedicalRecordID = i.MedicalRecordID
+	WHERE i.PrescriptionID IS NOT NULL;
 END;
 
 GO
 CREATE TRIGGER TR_Medicine_UpdateMedicineStatus
 ON [dbo].[Medicine]
-AFTER UPDATE, INSERT
+AFTER UPDATE
 AS
 BEGIN
 	SET NOCOUNT ON; 
 	UPDATE m
     SET m.MedicineStatus = 0
-		FROM [dbo].[Medicine] m
-		JOIN inserted i
-		ON m.MedicineID = i.MedicineID
-		WHERE i.Quantity = 0; 
+    FROM [dbo].[Medicine] m
+    JOIN inserted i
+	ON m.MedicineID = i.MedicineID
+    WHERE i.Quantity = 0; 
 END;
 
 GO
-CREATE TRIGGER TR_Prescription_UpdateOutDatePrescriptionStatus
+CREATE TRIGGER TR_Invoice_UpdateMedicineStatus
+ON [dbo].[Invoice]
+AFTER UPDATE
+AS
+BEGIN
+	SET NOCOUNT ON; 
+	UPDATE ap
+	SET ap.AppointmentStatus = 'Completed'
+	FROM [dbo].[Appointment] ap
+	JOIN [dbo].[MedicalRecord] mr
+	ON mr.AppointmentID = ap.AppointmentID
+	JOIN inserted i
+	ON mr.MedicalRecordID = i.MedicalRecordID
+	WHERE i.InvoiceStatus = 'Paid';
+END;
+
+GO
+CREATE TRIGGER TR_Prescription_UpdatePrescriptionStatus
 ON [dbo].[Prescription]
 AFTER UPDATE, INSERT
 AS
@@ -188,51 +210,9 @@ BEGIN
 	SET NOCOUNT ON;
 	UPDATE p
 	SET p.PrescriptionStatus = 'Canceled'
-		FROM inserted i
-		JOIN [dbo].[Prescription] p
-		ON p.PrescriptionID = i.PrescriptionID
-		WHERE DATEDIFF(HOUR, p.DateCreate, GETDATE()) >= 24
-		AND p.PrescriptionStatus = 'Pending';
+	FROM inserted i
+	JOIN [dbo].[Prescription] p
+	ON p.PrescriptionID = i.PrescriptionID
+	WHERE DATEDIFF(HOUR, p.DateCreate, GETDATE()) >= 24
+	AND p.PrescriptionStatus = 'Pending';
 END
-
-GO
-CREATE TRIGGER TR_Prescription_CreatePrescriptionInvoice
-ON [dbo].[Prescription]
-AFTER INSERT
-AS
-BEGIN
-	SET NOCOUNT ON;
-    INSERT INTO [dbo].[PrescriptionInvoice] (PrescriptionID, InvoiceStatus)
-		SELECT
-        i.PrescriptionID,
-		'Pending'
-		FROM INSERTED i;
-END
-
-GO
-CREATE TRIGGER TR_Prescription_UpdateCancelPrescriptionInvoice
-ON [dbo].[PrescriptionInvoice]
-AFTER UPDATE, INSERT
-AS
-BEGIN
-	SET NOCOUNT ON;
-	UPDATE p
-	SET p.PrescriptionStatus = 'Canceled'
-		FROM inserted i
-		JOIN [dbo].[Prescription] p
-		ON p.PrescriptionID = i.PrescriptionID
-		WHERE i.InvoiceStatus = 'Canceled';
-
-	UPDATE m
-    SET m.Quantity = m.Quantity + pit.Dosage
-		FROM Medicine m
-		JOIN PrescriptionItem pit
-		ON m.MedicineID = pit.MedicineID
-		JOIN inserted i
-		ON pit.PrescriptionID = i.PrescriptionID
-		JOIN deleted d
-		ON d.PrescriptionID = i.PrescriptionID
-		WHERE i.InvoiceStatus = 'Canceled'
-		AND d.InvoiceStatus <> 'Canceled';	
-END
-
