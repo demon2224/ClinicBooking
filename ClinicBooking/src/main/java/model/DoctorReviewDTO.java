@@ -14,7 +14,7 @@ public class DoctorReviewDTO {
 
     private int doctorReviewID;
     private PatientDTO patientID;
-    private DoctorDTO doctorID;
+    private StaffDTO doctorID;
     private String content;
     private int rateScore;
     private Timestamp dateCreate;
@@ -39,11 +39,11 @@ public class DoctorReviewDTO {
         this.patientID = patientID;
     }
 
-    public DoctorDTO getDoctorID() {
+    public StaffDTO getDoctorID() {
         return doctorID;
     }
 
-    public void setDoctorID(DoctorDTO doctorID) {
+    public void setDoctorID(StaffDTO doctorID) {
         this.doctorID = doctorID;
     }
 

@@ -15,7 +15,7 @@ public class AppointmentDTO {
 
     private int appointmentID;
     private PatientDTO patientID;
-    private DoctorDTO doctorID;
+    private StaffDTO doctorID;
     private String appointmentStatus;
     private Timestamp dateCreate;
     private Timestamp dateBegin;
@@ -62,11 +62,11 @@ public class AppointmentDTO {
         this.patientID = patientID;
     }
 
-    public DoctorDTO getDoctorID() {
+    public StaffDTO getDoctorID() {
         return doctorID;
     }
 
-    public void setDoctorID(DoctorDTO doctorID) {
+    public void setDoctorID(StaffDTO doctorID) {
         this.doctorID = doctorID;
     }
 
@@ -119,8 +119,8 @@ public class AppointmentDTO {
     }
 
     public String getDoctorName() {
-        if (doctorID != null && doctorID.getStaffID() != null) {
-            return doctorID.getStaffID().getFirstName() + " " + doctorID.getStaffID().getLastName();
+        if (doctorID != null && doctorID != null) {
+            return doctorID.getFirstName() + " " + doctorID.getLastName();
         }
         return "";
     }

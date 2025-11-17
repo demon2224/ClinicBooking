@@ -28,6 +28,8 @@ public class StaffDTO {
     private String phoneNumber;
     private String email;
     private boolean hidden;
+    private int yearExperience;
+    private SpecialtyDTO specialtyID;
 
     public StaffDTO() {
     }
@@ -177,6 +179,22 @@ public class StaffDTO {
 
     public void setHidden(boolean hidden) {
         this.hidden = hidden;
+    }
+
+    public int getYearExperience() {
+        return yearExperience;
+    }
+
+    public void setYearExperience(int yearExperience) {
+        this.yearExperience = yearExperience;
+    }
+
+    public SpecialtyDTO getSpecialtyID() {
+        return specialtyID;
+    }
+
+    public void setSpecialtyID(SpecialtyDTO specialty) {
+        this.specialtyID = specialty;
     }
 
     public String getFullName() {
