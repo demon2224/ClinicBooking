@@ -94,7 +94,9 @@ public class DoctorDashboardController extends HttpServlet {
             int todayAppointmentCount = appointmentDAO.countTodayAppointmentsByDoctor(doctorID);
             int totalMedicalRecordCount = medicalRecordDAO.countMedicalRecordsByDoctor(doctorID);
             int totalPrescriptionCount = prescriptionDAO.countPrescriptionsByDoctor(doctorID);
+
             int patientCount = medicalRecordDAO.countDistinctPatientsByDoctor(doctorID);
+
             int pendingPrescriptions = prescriptionDAO.countPendingPrescriptionsByDoctor(doctorID);
             int deliveredPrescriptions = prescriptionDAO.countDeliveredPrescriptionsByDoctor(doctorID);
 

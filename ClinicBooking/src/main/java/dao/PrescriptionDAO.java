@@ -451,6 +451,7 @@ public class PrescriptionDAO extends DBContext {
                 + "                JOIN Appointment a ON p.AppointmentID = a.AppointmentID \n"
                 + "                JOIN Patient pa ON pa.PatientID = a.PatientID \n"
                 + "                WHERE a.DoctorID = ?\n"
+                + "                And not p.PrescriptionStatus = 'Canceled'"
                 + "                ORDER BY p.DateCreate DESC";
         Object[] params = {doctorID};
         ResultSet rs = executeSelectQuery(sql, params);
@@ -509,6 +510,7 @@ public class PrescriptionDAO extends DBContext {
                 + "JOIN Appointment a ON p.AppointmentID = a.AppointmentID "
                 + "JOIN Patient pa ON pa.PatientID = a.PatientID "
                 + "WHERE a.DoctorID = ? AND (pa.FirstName LIKE ? OR pa.LastName LIKE ?) "
+                + "                And not p.PrescriptionStatus = 'Canceled'"
                 + "ORDER BY p.DateCreate DESC";
 
         ResultSet rs = null;
@@ -1057,6 +1059,7 @@ public class PrescriptionDAO extends DBContext {
                 + "JOIN Appointment a ON a.AppointmentID = p.AppointmentID "
                 + "JOIN Patient pa ON pa.PatientID = a.PatientID "
                 + "WHERE a.DoctorID = ? "
+                + "And not p.PrescriptionStatus = 'Canceled'"
                 + "ORDER BY p.DateCreate DESC";
 
         Object[] params = {doctorID};
@@ -1096,7 +1099,7 @@ public class PrescriptionDAO extends DBContext {
     public int countPendingPrescriptionsByDoctor(int doctorID) {
         String sql = "SELECT COUNT(*) AS Total FROM Prescription p "
                 + "JOIN Appointment a ON a.AppointmentID = p.AppointmentID "
-                + "WHERE a.DoctorID = ? AND p.PrescriptionStatus = 'Pending'";
+                + "WHERE a.DoctorID = ?";
         Object[] params = {doctorID};
         ResultSet rs = executeSelectQuery(sql, params);
 
