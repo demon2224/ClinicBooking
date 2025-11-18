@@ -207,7 +207,8 @@ AS
 BEGIN
 	SET NOCOUNT ON; 
 	UPDATE ap
-	SET ap.AppointmentStatus = 'Completed'
+	SET ap.AppointmentStatus = 'Completed',
+	ap.DateEnd = GETDATE()
 	FROM [dbo].[Appointment] ap
 	JOIN [dbo].[MedicalRecord] mr
 	ON mr.AppointmentID = ap.AppointmentID
