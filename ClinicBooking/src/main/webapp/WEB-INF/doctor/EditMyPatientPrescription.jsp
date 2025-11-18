@@ -16,6 +16,8 @@
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+        <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
         <style>
             body {
@@ -94,12 +96,12 @@
                                 <c:forEach var="item" items="${itemList}">
                                     <tr class="medicine-row">
                                         <td>
-                                            <select name="medicineID" class="form-select" required>
+                                            <select name="medicineID" class="form-select medicine-select-field" required> 
                                                 <option value="">-- Select Medicine --</option>
                                                 <c:forEach var="m" items="${medicineList}">
                                                     <option value="${m.medicineID}"
                                                             <c:if test="${item.medicineID.medicineID == m.medicineID}">selected</c:if>>
-                                                        ${m.medicineName} — ${m.medicineType} | Stock: ${m.quantity} | $${m.price}
+                                                        ${m.medicineCode} | ${m.medicineName} — ${m.medicineType} | Stock: ${m.quantity} | ${m.price} ₫
                                                     </option>
                                                 </c:forEach>
                                             </select>
@@ -277,6 +279,13 @@
         </c:if>
 
         <script>
+            $(document).ready(function () {
+                $('.medicine-select-field').select2({
+                    placeholder: "-- Select Medicine --",
+                    allowClear: true
+                });
+            });
+
             // SWITCH: Custom → Select
             $(document).on("click", ".switch-to-select", function () {
                 let td = $(this).closest("td");
@@ -346,29 +355,33 @@
                 });
             }
 
-            // Khi load trang → disable các thuốc trùng
+
             $(document).ready(function () {
-                updateMedicineOptions();
 
-                // ADD ROW
                 $('#addRow').click(function () {
+                    let originalRow = $('.medicine-row:first');
 
-                    let newRow = $('.medicine-row:first').clone();
+                    let newRow = originalRow.clone();
+
+                    newRow.find('.select2-container').remove();
+
+                    let newSelect = newRow.find('select[name="medicineID"]');
+                    newSelect.removeClass('select2-hidden-accessible').val('');
 
                     newRow.find('input').val('');
-
                     newRow.find('.instruction-select-wrapper').addClass('d-none');
                     newRow.find('.instruction-custom-wrapper').removeClass('d-none');
-
                     newRow.find('.instruction-select').removeAttr('name');
                     newRow.find('.instruction-input').attr('name', 'instruction').val('');
 
-                    let medSelect = newRow.find('select[name="medicineID"]');
-                    medSelect.val('');
 
                     $('#medicineTable tbody').append(newRow);
 
-                    // 🔥 RẤT QUAN TRỌNG: cập nhật lại disable thuốc
+                    newSelect.select2({
+                        placeholder: "-- Select Medicine --",
+                        allowClear: true
+                    });
+
                     updateMedicineOptions();
                 });
 

@@ -15,6 +15,8 @@
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+        <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
         <style>
             body {
@@ -92,11 +94,11 @@
                             <tbody>
                                 <tr class="medicine-row">
                                     <td>
-                                        <select name="medicineID" class="form-select" required>
+                                        <select name="medicineID" class="form-select medicine-select-field" required> 
                                             <option value="">-- Select Medicine --</option>
                                             <c:forEach var="m" items="${medicineList}">
-                                                <option value="${m.medicineID}">
-                                                    ${m.medicineName} — ${m.medicineType} | Stock: ${m.quantity} | $${m.price}
+                                                <option value="${m.medicineID}" class="align-items-start">
+                                                    ${m.medicineCode} | ${m.medicineName} — ${m.medicineType} | Stock: ${m.quantity} | ${m.price} ₫
                                                 </option>
                                             </c:forEach>
                                         </select>
@@ -245,6 +247,14 @@
             </script>
         </c:if>
         <script>
+            $(document).ready(function () {
+                $('.medicine-select-field').select2({
+                    placeholder: "-- Select Medicine --",
+                    allowClear: true
+                });
+            });
+
+
 
             // DISABLE MEDICINE OPTIONS LIKE EDIT MODE
             function updateMedicineOptions() {
@@ -314,25 +324,31 @@
 
             $(document).ready(function () {
 
-                // Khi trang load → disable thuốc đã chọn
-                updateMedicineOptions();
-
-                // ADD ROW
                 $('#addRow').click(function () {
-                    let newRow = $('.medicine-row:first').clone();
+                    let originalRow = $('.medicine-row:first');
+
+                    let newRow = originalRow.clone();
+
+                    newRow.find('.select2-container').remove();
+
+                    let newSelect = newRow.find('select[name="medicineID"]');
+                    newSelect.removeClass('select2-hidden-accessible').val('');
 
                     newRow.find('input').val('');
-                    newRow.find('select[name="medicineID"]').val('');
-
                     newRow.find('.instruction-select-wrapper').addClass('d-none');
                     newRow.find('.instruction-custom-wrapper').removeClass('d-none');
-
                     newRow.find('.instruction-select').removeAttr('name');
                     newRow.find('.instruction-input').attr('name', 'instruction').val('');
 
+
                     $('#medicineTable tbody').append(newRow);
 
-                    updateMedicineOptions(); // Quan trọng
+                    newSelect.select2({
+                        placeholder: "-- Select Medicine --",
+                        allowClear: true
+                    });
+
+                    updateMedicineOptions();
                 });
 
                 // XÓA ROW
