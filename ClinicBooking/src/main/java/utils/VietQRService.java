@@ -30,6 +30,10 @@ public class VietQRService {
         // Create description with currency information
         String currencyDescription = description;
         try {
+            // URL encode to avoid special character errors
+            String encodedDescription = URLEncoder.encode(currencyDescription, StandardCharsets.UTF_8.toString());
+            String encodedAccountName = URLEncoder.encode(accountName, StandardCharsets.UTF_8.toString());
+
             // Create VietQR URL
             return String.format("%s/%s-%s-%s.%s?amount=%s&addInfo=%s&accountName=%s",
                     apiUrl,
