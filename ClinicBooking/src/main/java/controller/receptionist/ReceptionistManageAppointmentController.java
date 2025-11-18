@@ -1,6 +1,6 @@
 /*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
+     * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+     * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
 package controller.receptionist;
 
@@ -12,12 +12,15 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import model.AppointmentDTO;
 import model.DoctorDTO;
 import model.PatientDTO;
 import validate.AppointmentValidate;
+import validate.BookAppointmentValidate;
 
 /**
  *
@@ -25,8 +28,9 @@ import validate.AppointmentValidate;
  */
 public class ReceptionistManageAppointmentController extends HttpServlet {
 
-    private AppointmentDAO appointmentDAO;;
-    private DoctorDAO doctorDAO;
+    private AppointmentDAO appointmentDAO;
+    ;
+        private DoctorDAO doctorDAO;
     private PatientDAO patientDAO;
 
     @Override
@@ -144,29 +148,36 @@ public class ReceptionistManageAppointmentController extends HttpServlet {
             throws ServletException, IOException {
 
         String existingPatientId = request.getParameter("existingPatientId");
-        String fullName = request.getParameter("patientName");
+        String firstName = request.getParameter("firstName");
+        String lastName = request.getParameter("lastName");
         String phone = request.getParameter("phone");
         String genderStr = request.getParameter("gender");
         boolean gender = genderStr != null ? Boolean.parseBoolean(genderStr) : true;
         String doctorIdStr = request.getParameter("doctorId");
-        String dateBeginStr = request.getParameter("dateBegin");
+        String dateBeginStr = request.getParameter("appointmentDateTime");
         String note = request.getParameter("note");
 
         clearAppointmentErrors(request);
         boolean isValid = true;
 
+        // Validate patient info nếu không chọn existing patient
         if (AppointmentValidate.isEmpty(existingPatientId)) {
-
-            // Validate Full Name
-            if (AppointmentValidate.isEmpty(fullName)) {
-                request.getSession().setAttribute("patientNameErrorMsg", "Full name cannot be empty.");
+            if (AppointmentValidate.isEmpty(firstName)) {
+                request.getSession().setAttribute("firstNameErrorMsg", "First name cannot be empty.");
                 isValid = false;
-            } else if (!AppointmentValidate.isValidName(fullName)) {
-                request.getSession().setAttribute("patientNameErrorMsg", "Full name must contain only English letters and spaces.");
+            } else if (!AppointmentValidate.isValidName(firstName)) {
+                request.getSession().setAttribute("firstNameErrorMsg", "First name must contain only letters and spaces.");
                 isValid = false;
             }
 
-            // Validate Phone
+            if (AppointmentValidate.isEmpty(lastName)) {
+                request.getSession().setAttribute("lastNameErrorMsg", "Last name cannot be empty.");
+                isValid = false;
+            } else if (!AppointmentValidate.isValidName(lastName)) {
+                request.getSession().setAttribute("lastNameErrorMsg", "Last name must contain only letters and spaces.");
+                isValid = false;
+            }
+
             if (AppointmentValidate.isEmpty(phone)) {
                 request.getSession().setAttribute("phoneErrorMsg", "Phone number cannot be empty.");
                 isValid = false;
@@ -174,25 +185,25 @@ public class ReceptionistManageAppointmentController extends HttpServlet {
                 request.getSession().setAttribute("phoneErrorMsg", "Phone must start with 0 and contain 10–11 digits.");
                 isValid = false;
             }
-
         } else {
-            fullName = null;
+            firstName = null;
+            lastName = null;
             phone = null;
         }
 
-        // Validate Doctor
+        // Validate doctor
         if (AppointmentValidate.isEmpty(doctorIdStr)) {
             request.getSession().setAttribute("doctorErrorMsg", "Please select a doctor.");
             isValid = false;
         }
 
-        // Validate Date
+        // Validate date input
         if (AppointmentValidate.isEmpty(dateBeginStr)) {
             request.getSession().setAttribute("dateErrorMsg", "Please select a date and time.");
             isValid = false;
         }
 
-        // Validate Note
+        // Validate note
         if (!AppointmentValidate.isValidNote(note)) {
             request.getSession().setAttribute("noteErrorMsg", "Note cannot exceed 500 characters.");
             isValid = false;
@@ -204,16 +215,54 @@ public class ReceptionistManageAppointmentController extends HttpServlet {
         }
 
         try {
-            LocalDateTime dateBegin = LocalDateTime.parse(dateBeginStr);
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd['T'][ ]H:mm");
+            LocalDateTime dateBegin = LocalDateTime.parse(dateBeginStr, formatter);
+            LocalDateTime dateEnd = dateBegin.plusMinutes(30);
             int doctorId = Integer.parseInt(doctorIdStr);
 
-            boolean success = appointmentDAO.addAppointment(existingPatientId, fullName, phone, gender, doctorId, dateBegin, note);
+            Timestamp appointmentDateTime = Timestamp.valueOf(dateBegin);
+            Timestamp appointmentEndTime = Timestamp.valueOf(dateEnd);
+
+            // Validation thời gian
+            if (!BookAppointmentValidate.isFutureDateTime(appointmentDateTime)) {
+                request.getSession().setAttribute("dateErrorMsg", "Appointment must be in the future.");
+                isValid = false;
+            }
+            if (!BookAppointmentValidate.isWithinWorkingHours(appointmentDateTime)) {
+                request.getSession().setAttribute("dateErrorMsg", "Appointments only allowed between 7:00 AM and 4:30 PM.");
+                isValid = false;
+            }
+            if (!BookAppointmentValidate.isAtLeast24HoursInAdvance(appointmentDateTime)) {
+                request.getSession().setAttribute("dateErrorMsg", "Appointments must be booked at least 24 hours in advance.");
+                isValid = false;
+            }
+            if (!BookAppointmentValidate.isWithin30Days(appointmentDateTime)) {
+                request.getSession().setAttribute("dateErrorMsg", "Appointments can be booked up to 30 days in advance.");
+                isValid = false;
+            }
+            if (!appointmentDAO.isDoctorAvailable(doctorId, appointmentDateTime)) {
+                request.getSession().setAttribute("dateErrorMsg", "This time slot is already booked.");
+                isValid = false;
+            }
+            if (!appointmentDAO.hasValid30MinuteGap(doctorId, appointmentDateTime)) {
+                request.getSession().setAttribute("dateErrorMsg", "Appointments must be at least 30 minutes apart.");
+                isValid = false;
+            }
+
+            if (!isValid) {
+                response.sendRedirect(request.getContextPath() + "/receptionist-manage-appointment?action=add");
+                return;
+            }
+
+            // Gọi DAO thêm appointment (đã sửa thành firstName + lastName)
+            boolean success = appointmentDAO.addAppointment(existingPatientId, firstName, lastName, phone, gender, doctorId, dateBegin, dateEnd, note);
 
             if (success) {
                 request.getSession().setAttribute("successMessage", "Appointment created successfully!");
             } else {
                 request.getSession().setAttribute("errorMessage", "Failed to create appointment.");
             }
+
         } catch (Exception e) {
             e.printStackTrace();
             request.getSession().setAttribute("appointmentCreateErrorMsg", "Error: " + e.getMessage());
