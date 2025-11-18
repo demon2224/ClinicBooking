@@ -95,7 +95,7 @@
             </nav>
 
             <!-- Welcome Section -->
-            <div class="alert alert-primary shadow-sm" role="alert">
+            <div class="alert alert-primary shadow-sm mb-4" role="alert">
                 <i class="fa-solid fa-stethoscope me-2"></i>
                 Welcome back, <strong>${sessionScope.staff.fullName}</strong>!
                 Here’s an overview of your current medical activities.
@@ -107,14 +107,14 @@
                     <div class="card dashboard-card text-center p-3">
                         <i class="fa-solid fa-calendar-check stat-icon mb-2"></i>
                         <div class="stat-value">${todayAppointments}</div>
-                        <p class="mb-0 text-muted">Appointments Today</p>
+                        <p class="mb-0 text-muted">Appointments</p>
                     </div>
                 </div>
                 <div class="col-md-3">
                     <div class="card dashboard-card text-center p-3">
                         <i class="fa-solid fa-prescription-bottle-medical stat-icon mb-2"></i>
                         <div class="stat-value">${pendingPrescriptions}</div>
-                        <p class="mb-0 text-muted">Pending Prescriptions</p>
+                        <p class="mb-0 text-muted">Prescriptions</p>
                     </div>
                 </div>
                 <div class="col-md-3">
@@ -136,7 +136,7 @@
             <!-- Upcoming Appointments Table -->
             <div class="card mb-4">
                 <div class="card-header">
-                    <i class="fa-solid fa-calendar-days me-2"></i>Upcoming Appointments
+                    <i class="fa-solid fa-calendar-days me-2"></i>Appointments
                 </div>
                 <div class="card-body">
                     <c:if test="${empty upcomingAppointments}">
@@ -186,13 +186,13 @@
             </div>
 
             <!-- Recent Prescriptions -->
-            <div class="card">
+            <div class="card mb-4">
                 <div class="card-header">
-                    <i class="fa-solid fa-prescription me-2"></i>Recent Prescriptions
+                    <i class="fa-solid fa-prescription me-2"></i>Prescriptions
                 </div>
                 <div class="card-body">
                     <c:if test="${empty recentPrescriptions}">
-                        <p class="text-muted text-center mb-0">No recent prescriptions.</p>
+                        <p class="text-muted text-center mb-0">No prescriptions.</p>
                     </c:if>
                     <c:if test="${not empty recentPrescriptions}">
                         <table class="table table-striped align-middle">
@@ -235,11 +235,11 @@
                 <!-- Recent Medical Records -->
                 <div class="card mb-4 mt-3">
                     <div class="card-header">
-                        <i class="fa-solid fa-notes-medical me-2"></i>Recent Medical Records
+                        <i class="fa-solid fa-notes-medical me-2"></i>Medical Records
                     </div>
                     <div class="card-body">
                         <c:if test="${empty recentRecords}">
-                            <p class="text-muted text-center mb-0">No recent medical records.</p>
+                            <p class="text-muted text-center mb-0">No medical records.</p>
                         </c:if>
                         <c:if test="${not empty recentRecords}">
                             <table class="table table-striped align-middle">
@@ -267,7 +267,7 @@
                 </div>
 
                 <!-- Top Diagnoses -->
-                <div class="card mb-5">
+                <div class="card mb-4">
                     <div class="card-header">
                         <i class="fa-solid fa-heart-pulse me-2"></i>Top Diagnoses (Most Common Conditions)
                     </div>

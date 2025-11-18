@@ -642,7 +642,6 @@ public class AppointmentDAO extends DBContext {
                 }
             }
 
-
             String sqlAppointment = "INSERT INTO Appointment "
                     + "(PatientID, DoctorID, AppointmentStatus, DateCreate, DateBegin, DateEnd, Note, Hidden) "
                     + "VALUES (?, ?, 'Approved', GETDATE(), ?, ?, ?, 1)";
@@ -952,9 +951,8 @@ public class AppointmentDAO extends DBContext {
      * Count today's appointments for a doctor
      */
     public int countTodayAppointmentsByDoctor(int doctorId) {
-        String sql = "SELECT COUNT(*) AS Total FROM Appointment "
-                + "WHERE DoctorID = ? AND CAST(DateBegin AS DATE) = CAST(GETDATE() AS DATE) "
-                + "AND AppointmentStatus = 'Approved'";
+        String sql = "SELECT COUNT(*) AS Total FROM Appointment a\n"
+                + "WHERE DoctorID = ? and not a.AppointmentStatus = 'Canceled'";
         Object[] params = {doctorId};
         ResultSet rs = executeSelectQuery(sql, params);
         try {
