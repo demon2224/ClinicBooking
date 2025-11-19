@@ -273,6 +273,10 @@ public class ManageMedicineController extends HttpServlet {
                     handleDeleteResponse(request, response);
                     break;
 
+                case "restore":
+                    handleRestoreResponse(request, response);
+                    break;
+
                 case "import":
                     handleImportResponse(request, response);
                     break;
@@ -318,6 +322,27 @@ public class ManageMedicineController extends HttpServlet {
                 }
                 response.sendRedirect(request.getContextPath() + "/manage-medicine");
             }
+        } catch (NumberFormatException e) {
+            response.sendRedirect(request.getContextPath() + "/manage-medicine");
+        }
+    }
+
+    private void handleRestoreResponse(HttpServletRequest request, HttpServletResponse response) throws IOException {
+
+        String medicineIDParam = request.getParameter("medicineID");
+
+        try {
+
+            int medicineID = Integer.parseInt(medicineIDParam);
+            boolean deleteResult = medicineDAO.restoreMedicine(medicineID);
+
+            if (deleteResult) {
+                request.getSession().setAttribute("medicineRestoreSuccessMsg", "Restore medicine successfully.");
+            } else {
+                request.getSession().setAttribute("medicineRestoreSuccessMsg", "Failed to restore medicine.");
+            }
+
+            response.sendRedirect(request.getContextPath() + "/manage-medicine");
         } catch (NumberFormatException e) {
             response.sendRedirect(request.getContextPath() + "/manage-medicine");
         }
@@ -416,6 +441,9 @@ public class ManageMedicineController extends HttpServlet {
                 || !isValidMedicineType
                 || !isValidMedicinePrice
                 || !isValidMedicineStatus) {
+            // Get all the medicine type.
+            String[] medicineTypeList = MedicineInfomationValidate.MEDICINE_TYPE_LIST;
+            request.setAttribute("medicineTypeList", medicineTypeList);
             request.getRequestDispatcher("/WEB-INF/pharmacist/CreateMedicine.jsp").forward(request, response);
         } else {
 

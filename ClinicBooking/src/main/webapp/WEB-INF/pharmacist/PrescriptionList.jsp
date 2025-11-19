@@ -167,40 +167,6 @@
                                                class="btn btn-info text-white btn-sm action-btn">
                                                 <i class="fa-solid fa-eye"></i> View
                                             </a>
-
-                                            <c:choose>
-                                                <c:when test="${prescription.prescriptionStatus eq 'Pending' and not prescription.isExpired}">
-                                                    <button type="button"
-                                                            class="btn btn-success btn-sm action-btn"
-                                                            data-bs-toggle="modal"
-                                                            data-bs-target="#deliverModal"
-                                                            onclick="setDeliverID('${prescription.prescriptionID}')">
-                                                        <i class="fa-solid fa-truck"></i> Deliver
-                                                    </button>
-                                                </c:when>
-                                                <c:otherwise>
-                                                    <button class="btn btn-secondary btn-sm action-btn" disabled>
-                                                        <i class="fa-solid fa-truck"></i> Deliver
-                                                    </button>
-                                                </c:otherwise>
-                                            </c:choose>
-
-                                            <c:choose>
-                                                <c:when test="${prescription.prescriptionStatus eq 'Pending' and not prescription.isExpired}">
-                                                    <button type="button"
-                                                            class="btn btn-danger btn-sm action-btn"
-                                                            data-bs-toggle="modal"
-                                                            data-bs-target="#cancelModal"
-                                                            onclick="setCancelID('${prescription.prescriptionID}')">
-                                                        <i class="fa-solid fa-ban"></i> Cancel
-                                                    </button>
-                                                </c:when>
-                                                <c:otherwise>
-                                                    <button class="btn btn-secondary btn-sm action-btn" disabled>
-                                                        <i class="fa-solid fa-ban"></i> Cancel
-                                                    </button>
-                                                </c:otherwise>
-                                            </c:choose>
                                         </div>
                                     </td>
                                 </tr>

@@ -121,23 +121,7 @@
                                 </c:if>
                             </div>
                         </div>
-
-                        <div class="row mb-4">
-                            <div class="col-md-6">
-                                <label class="form-label required">Status</label>
-                                <select class="form-select" name="medicineStatus" required>
-                                    <option value="1">Available</option>
-                                    <option value="0">Unavailable</option>
-                                </select>
-
-                                <c:if test="${not empty medicineStatusErrorMsg}">
-                                    <div class="text-danger small mt-1">
-                                        <i class="fa-solid fa-circle-exclamation me-1"></i>
-                                        <c:out value="${medicineStatusErrorMsg}" />
-                                    </div>
-                                </c:if>
-                            </div>
-                        </div>
+                        <input type="hidden" name="medicineStatus" value="1">
 
                         <div class="d-flex justify-content-center mt-4">
                             <button class="btn btn-success px-5 py-2 fw-bold"

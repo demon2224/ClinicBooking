@@ -29,7 +29,6 @@ public class MedicineDAO extends DBContext {
 
         String query = "SELECT m.MedicineID, m.MedicineType, m.MedicineStatus, m.MedicineName, m.MedicineCode, m.Quantity, m.Price, m.DateCreate, m.[Hidden]\n"
                 + "FROM [dbo].[Medicine] m\n"
-                + "Where m.Hidden = 0\n"
                 + "ORDER BY Hidden ASC;";
 
         ResultSet rs = null;
@@ -118,7 +117,6 @@ public class MedicineDAO extends DBContext {
                 + "WHERE (m.MedicineCode LIKE ?\n"
                 + "OR m.MedicineType LIKE ?\n"
                 + "OR m.MedicineName LIKE ?)\n"
-                + "AND m.Hidden = 0\n"
                 + "ORDER BY Hidden ASC;";
         Object[] params = {"%" + medicineCode + "%",
             "%" + medicineType + "%",
@@ -186,7 +184,22 @@ public class MedicineDAO extends DBContext {
     public boolean deleteMedicine(int medicineID) {
 
         String query = "UPDATE [dbo].[Medicine]\n"
-                + "SET Hidden = 1\n"
+                + "SET Hidden = 1,\n"
+                + "MedicineStatus = 0\n"
+                + "WHERE MedicineID = ?;";
+        Object[] params = {medicineID};
+
+        int rs = executeQuery(query, params);
+        closeResources(null);
+
+        return rs != 0;
+    }
+    
+    public boolean restoreMedicine(int medicineID) {
+
+        String query = "UPDATE [dbo].[Medicine]\n"
+                + "SET Hidden = 0,\n"
+                + "MedicineStatus = 1\n"
                 + "WHERE MedicineID = ?;";
         Object[] params = {medicineID};
 
