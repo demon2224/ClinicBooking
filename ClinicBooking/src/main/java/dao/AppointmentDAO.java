@@ -866,29 +866,26 @@ public class AppointmentDAO extends DBContext {
     }
 
     /**
-     * Check if doctor is available at the requested time (no conflicting
-     * appointments with status Pending, Approved, or Completed)
+     * Check if doctor is available at exact time (no appointment at same time)
+     * A doctor cannot have 2 appointments with different patients at the same time
      *
      * @param doctorId Doctor's ID
-     * @param newAppointmentTime Requested appointment time
-     * @return true if doctor is available, false if doctor has conflicting
-     * appointment
+     * @param appointmentDateTime Exact appointment time
+     * @return true if available, false if already booked
      */
-    public boolean isDoctorAvailable(int doctorId, Timestamp newAppointmentTime) {
-        // Check for appointments that overlap with the new appointment time
-        // Considering that each appointment is 30 minutes long (DateBegin to DateEnd)
+    public boolean isDoctorAvailableAtExactTime(int doctorId, Timestamp appointmentDateTime) {
         String sql = "SELECT AppointmentID FROM Appointment "
                 + "WHERE DoctorID = ? "
-                + "AND AppointmentStatus IN ('Pending', 'Approved', 'Completed') "
+                + "AND AppointmentStatus IN ('Pending', 'Approved') "
                 + "AND DateBegin = ?";
 
         ResultSet rs = null;
         try {
-            Object[] params = {doctorId, newAppointmentTime};
+            Object[] params = {doctorId, appointmentDateTime};
             rs = executeSelectQuery(sql, params);
 
-            // If any appointment found at the exact time, doctor is not available
-            if (rs.next()) {
+            // If any appointment found at exact time, doctor is not available
+            if (rs != null && rs.next()) {
                 return false;
             }
 
@@ -905,7 +902,7 @@ public class AppointmentDAO extends DBContext {
     /**
      * Check if the new appointment has valid 30-minute gap with doctor's other
      * appointments Appointments must be at least 30 minutes apart for the same
-     * doctor
+     * doctor (includes exact time match)
      *
      * @param doctorId Doctor's ID
      * @param newAppointmentTime New appointment time
@@ -914,7 +911,7 @@ public class AppointmentDAO extends DBContext {
     public boolean hasValid30MinuteGap(int doctorId, Timestamp newAppointmentTime) {
         String sql = "SELECT DateBegin FROM Appointment "
                 + "WHERE DoctorID = ? "
-                + "AND AppointmentStatus IN ('Pending', 'Approved', 'Completed') "
+                + "AND AppointmentStatus IN ('Pending', 'Approved') "
                 + "AND CAST(DateBegin AS DATE) = CAST(? AS DATE) "
                 + "ORDER BY DateBegin";
 
@@ -1316,4 +1313,220 @@ public class AppointmentDAO extends DBContext {
         }
         return appointments;
     }
+
+    /**
+     * Get consultation fee for a doctor (from Specialty)
+     * 
+     * @param doctorId Doctor ID
+     * @return Consultation fee in VND
+     */
+    public double getConsultationFee(int doctorId) {
+        String sql = "SELECT ISNULL(s.Price, 0) AS ConsultationFee "
+                   + "FROM Doctor d "
+                   + "LEFT JOIN Specialty s ON d.SpecialtyID = s.SpecialtyID "
+                   + "WHERE d.DoctorID = ?";
+        
+        ResultSet rs = null;
+        try {
+            Object[] params = {doctorId};
+            rs = executeSelectQuery(sql, params);
+            
+            if (rs != null && rs.next()) {
+                return rs.getDouble("ConsultationFee");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            closeResources(rs);
+        }
+        
+        return 0;
+    }
+
+    /**
+     * Book appointment WITH consultation payment (NGHIỆP VỤ VIỆT NAM)
+     * Status = "Pending" (chờ lễ tân xác nhận)
+     * Note: Lưu thông tin thanh toán vào Note để tracking
+     * 
+     * @param patientId Patient ID
+     * @param doctorId Doctor ID
+     * @param note Patient note
+     * @param appointmentDateTime Appointment date time
+     * @param consultationFee Consultation fee paid
+     * @param paymentType "Cash", "QR", "Card"
+     * @return Appointment ID if success, -1 if failed
+     */
+    public int bookAppointmentWithPayment(int patientId, int doctorId, String note, 
+                                          Timestamp appointmentDateTime, 
+                                          double consultationFee, 
+                                          String paymentType) {
+        // ⭐ WORKFLOW MỚI: Tạo appointment với status "Pending" (chờ lễ tân xác nhận)
+        // Lưu thông tin thanh toán vào Note để tracking
+        String paymentInfo = String.format(" | [PAID: %.0f VND via %s]", consultationFee, paymentType);
+        String fullNote = (note != null && !note.isEmpty()) ? note + paymentInfo : paymentInfo.trim();
+        
+        String sql = "INSERT INTO Appointment "
+                   + "(PatientID, DoctorID, AppointmentStatus, DateBegin, DateEnd, Note, DateCreate) "
+                   + "VALUES (?, ?, ?, ?, NULL, ?, GETDATE())";
+        
+        Connection localConn = null;
+        PreparedStatement localStatement = null;
+        ResultSet rs = null;
+        try {
+            localConn = getConnection();
+            localStatement = localConn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            
+            localStatement.setInt(1, patientId);
+            localStatement.setInt(2, doctorId);
+            localStatement.setString(3, "Pending"); // ⭐ Status "Pending" - chờ lễ tân xác nhận
+            localStatement.setTimestamp(4, appointmentDateTime);
+            localStatement.setString(5, fullNote); // ⭐ Lưu thông tin thanh toán vào Note
+            
+            int rowsAffected = localStatement.executeUpdate();
+            
+            if (rowsAffected > 0) {
+                rs = localStatement.getGeneratedKeys();
+                if (rs != null && rs.next()) {
+                    return rs.getInt(1); // Return appointment ID
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (localStatement != null) {
+                    localStatement.close();
+                }
+                if (localConn != null) {
+                    localConn.close();
+                }
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+        }
+        
+        return -1;
+    }
+
+    /**
+     * ⭐ Get booked time slots for a doctor on a specific date
+     * Dùng để ẩn time slots đã bị book trong UI
+     * 
+     * @param doctorId Doctor ID
+     * @param date Date to check (format: yyyy-MM-dd)
+     * @return List of booked time strings (format: "HH:mm")
+     */
+    public List<String> getBookedTimeSlots(int doctorId, String date) {
+        List<String> bookedSlots = new ArrayList<>();
+        
+        // Convert date to SQL date range
+        String sql = "SELECT FORMAT(DateBegin, 'HH:mm') AS TimeSlot "
+                   + "FROM Appointment "
+                   + "WHERE DoctorID = ? "
+                   + "AND CAST(DateBegin AS DATE) = CAST(? AS DATE) "
+                   + "AND AppointmentStatus IN ('Pending', 'Approved') "
+                   + "ORDER BY DateBegin";
+        
+        ResultSet rs = null;
+        try {
+            Object[] params = {doctorId, date};
+            rs = executeSelectQuery(sql, params);
+            
+            // ⭐ Đọc hết ResultSet vào List TRƯỚC KHI đóng connection
+            if (rs != null) {
+                while (rs.next()) {
+                    try {
+                        String timeSlot = rs.getString("TimeSlot");
+                        if (timeSlot != null) {
+                            bookedSlots.add(timeSlot);
+                        }
+                    } catch (SQLException e) {
+                        // Skip invalid row, continue reading
+                        e.printStackTrace();
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            // ⭐ Đảm bảo đóng connection sau khi đọc hết ResultSet
+            if (rs != null) {
+                try {
+                    closeResources(rs);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        
+        return bookedSlots;
+    }
+
+    /**
+     * ⭐ Get completed appointments (hóa đơn khám đã hoàn thành)
+     * Lấy các appointments có status "Completed" (đã khám xong)
+     * 
+     * @param patientId Patient ID
+     * @return List of completed appointments (hóa đơn khám)
+     */
+    public List<AppointmentDTO> getCompletedAppointmentsByPatientId(int patientId) {
+        List<AppointmentDTO> appointments = new ArrayList<>();
+        
+        String sql = "SELECT a.AppointmentID, a.AppointmentStatus, a.DateCreate, a.DateBegin, a.Note, "
+                   + "d.DoctorID, s.StaffID, s.FirstName AS DoctorFirstName, s.LastName AS DoctorLastName, "
+                   + "sp.SpecialtyID, sp.SpecialtyName, sp.Price AS ConsultationFee "
+                   + "FROM Appointment a "
+                   + "JOIN Doctor d ON a.DoctorID = d.DoctorID "
+                   + "JOIN Staff s ON d.StaffID = s.StaffID "
+                   + "LEFT JOIN Specialty sp ON d.SpecialtyID = sp.SpecialtyID "
+                   + "WHERE a.PatientID = ? "
+                   + "AND a.AppointmentStatus = 'Completed' "
+                   + "ORDER BY a.DateCreate DESC";
+        
+        ResultSet rs = null;
+        try {
+            Object[] params = {patientId};
+            rs = executeSelectQuery(sql, params);
+            
+            while (rs != null && rs.next()) {
+                AppointmentDTO appointment = new AppointmentDTO();
+                appointment.setAppointmentID(rs.getInt("AppointmentID"));
+                appointment.setAppointmentStatus(rs.getString("AppointmentStatus"));
+                appointment.setDateCreate(rs.getTimestamp("DateCreate"));
+                appointment.setDateBegin(rs.getTimestamp("DateBegin"));
+                appointment.setNote(rs.getString("Note"));
+                
+                // Doctor info
+                DoctorDTO doctor = new DoctorDTO();
+                doctor.setDoctorID(rs.getInt("DoctorID"));
+                
+                StaffDTO staff = new StaffDTO();
+                staff.setStaffID(rs.getInt("StaffID"));
+                staff.setFirstName(rs.getString("DoctorFirstName"));
+                staff.setLastName(rs.getString("DoctorLastName"));
+                doctor.setStaffID(staff);
+                
+                SpecialtyDTO specialty = new SpecialtyDTO();
+                specialty.setSpecialtyID(rs.getInt("SpecialtyID"));
+                specialty.setSpecialtyName(rs.getString("SpecialtyName"));
+                specialty.setPrice(rs.getDouble("ConsultationFee"));
+                doctor.setSpecialtyID(specialty);
+                
+                appointment.setDoctorID(doctor);
+                appointments.add(appointment);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            closeResources(rs);
+        }
+        
+        return appointments;
+    }
+
 }
