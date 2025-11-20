@@ -33,7 +33,7 @@ CREATE TABLE Patient (
 	UserAddress NVARCHAR(255),
 	PhoneNumber NVARCHAR(15) UNIQUE,
 	Email NVARCHAR(50) UNIQUE,
-	[Hidden] BIT DEFAULT 0
+	[Hidden] BIT DEFAULT 0,
 );
 
 CREATE TABLE Staff (
@@ -147,8 +147,9 @@ CREATE TABLE MedicalRecord (
 
 CREATE TABLE Invoice (
 	InvoiceID INT PRIMARY KEY IDENTITY(1,1),
-	MedicalRecordID INT FOREIGN KEY REFERENCES MedicalRecord(MedicalRecordID) NOT NULL,
+	MedicalRecordID INT FOREIGN KEY REFERENCES MedicalRecord(MedicalRecordID),
 	PrescriptionID INT FOREIGN KEY REFERENCES Prescription(PrescriptionID),
+	AppointmentID INT FOREIGN KEY REFERENCES Appointment(AppointmentID),
 	PaymentType NVARCHAR(50) CHECK (PaymentType IN ('Cash', 'Credit Card')),
 	InvoiceStatus NVARCHAR(50) CHECK (InvoiceStatus IN ('Pending', 'Paid', 'Canceled')) NOT NULL,
 	DateCreate DATETIME DEFAULT GETDATE(),
@@ -157,14 +158,14 @@ CREATE TABLE Invoice (
 
 GO
 CREATE TRIGGER TR_MedicalRecord_CreateInvoice
-ON [dbo].[MedicalRecord]
+ON [dbo].[Appointment]
 AFTER INSERT
 AS
 BEGIN
 	SET NOCOUNT ON;
-    INSERT INTO [dbo].[Invoice] (MedicalRecordID, InvoiceStatus)
+    INSERT INTO [dbo].[Invoice] (AppointmentID, InvoiceStatus)
     SELECT
-        i.MedicalRecordID,
+        i.AppointmentID,
 		'Pending'
     FROM INSERTED i;
 END;
@@ -198,37 +199,3 @@ BEGIN
 	ON m.MedicineID = i.MedicineID
     WHERE i.Quantity = 0; 
 END;
-
-GO
-CREATE TRIGGER TR_Invoice_UpdateMedicineStatus
-ON [dbo].[Invoice]
-AFTER UPDATE
-AS
-BEGIN
-	SET NOCOUNT ON; 
-	UPDATE ap
-	SET ap.AppointmentStatus = 'Completed',
-	ap.DateEnd = GETDATE()
-	FROM [dbo].[Appointment] ap
-	JOIN [dbo].[MedicalRecord] mr
-	ON mr.AppointmentID = ap.AppointmentID
-	JOIN inserted i
-	ON mr.MedicalRecordID = i.MedicalRecordID
-	WHERE i.InvoiceStatus = 'Paid';
-END;
-
-GO
-CREATE TRIGGER TR_Prescription_UpdatePrescriptionStatus
-ON [dbo].[Prescription]
-AFTER UPDATE, INSERT
-AS
-BEGIN
-	SET NOCOUNT ON;
-	UPDATE p
-	SET p.PrescriptionStatus = 'Canceled'
-	FROM inserted i
-	JOIN [dbo].[Prescription] p
-	ON p.PrescriptionID = i.PrescriptionID
-	WHERE DATEDIFF(HOUR, p.DateCreate, GETDATE()) >= 24
-	AND p.PrescriptionStatus = 'Pending';
-END
