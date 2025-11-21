@@ -11,7 +11,7 @@
 <html>
     <head>
         <meta charset="UTF-8">
-        <title>Create Prescription</title>
+        <title>Edit Prescription</title>
         <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/assests/img/logo.png">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -86,9 +86,9 @@
                         <table class="table table-bordered align-middle text-center" id="medicineTable">
                             <thead class="table-light">
                                 <tr>
-                                    <th width="35%">Medicine</th>
-                                    <th width="15%">Dosage</th>
-                                    <th width="35%">Instruction</th>
+                                    <th width="35%" class="required">Medicine</th>
+                                    <th width="15%" class="required">Dosage</th>
+                                    <th width="35%" class="required">Instruction</th>
                                     <th width="15%">Action</th>
                                 </tr>
                             </thead>
