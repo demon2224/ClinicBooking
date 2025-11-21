@@ -69,6 +69,17 @@
                 background-color: red;
                 color: white;
             }
+            
+            .stat-icon {
+                font-size: 2.3rem;
+                color: #1B5A90;
+            }
+            
+            .navbar {
+                background: white;
+                border-bottom: 1px solid #dee2e6;
+                padding: 12px 24px;
+            }
         </style>
     </head>
 
@@ -92,37 +103,28 @@
 
             <div class="row g-4 mb-4">
 
-                <div class="col-md-3">
+                <div class="col-md-4">
                     <div class="card text-center py-4">
-                        <div class="text-primary fs-1"><i class="fa-solid fa-capsules"></i></div>
-                        <h3 class="fw-bold text-primary mb-0"><c:out value="${totalMedicine}"/></h3>
+                        <div class="text-primary fs-1"><i class="fa-solid fa-capsules stat-icon"></i></div>
+                        <h3 class="fw-bold text-dark mb-0"><c:out value="${totalMedicine}"/></h3>
                         <div class="text-muted">Total Medicines</div>
                     </div>
                 </div>
 
-                <div class="col-md-3">
+                <div class="col-md-4">
                     <div class="card text-center py-4">
-                        <div class="text-warning fs-1"><i class="fa-solid fa-triangle-exclamation"></i></div>
-                        <h3 class="fw-bold text-warning mb-0"><c:out value="${lowStock}"/></h3>
+                        <div class="text-warning fs-1"><i class="fa-solid fa-triangle-exclamation stat-icon"></i></div>
+                        <h3 class="fw-bold text-dark mb-0"><c:out value="${lowStock}"/></h3>
                         <div class="text-muted">Low Stock</div>
                     </div>
                 </div>
 
                 <!-- PENDING -->
-                <div class="col-md-3">
+                <div class="col-md-4">
                     <div class="card text-center py-4">
-                        <div class="text-danger fs-1"><i class="fa-solid fa-prescription-bottle-medical"></i></div>
-                        <h3 class="fw-bold text-danger mb-0"><c:out value="${numberPendingPrecription}"/></h3>
+                        <div class="text-danger fs-1"><i class="fa-solid fa-prescription-bottle-medical stat-icon"></i></div>
+                        <h3 class="fw-bold text-dark mb-0"><c:out value="${numberPendingPrecription}"/></h3>
                         <div class="text-muted">Pending Prescriptions</div>
-                    </div>
-                </div>
-
-                <!-- DELIVERED TODAY -->
-                <div class="col-md-3">
-                    <div class="card text-center py-4">
-                        <div class="text-success fs-1"><i class="fa-solid fa-circle-check"></i></div>
-                        <h3 class="fw-bold text-success mb-0"><c:out value="${numberDeliverPrecriptionToday}"/></h3>
-                        <div class="text-muted">Paid Today</div>
                     </div>
                 </div>
 

@@ -5,7 +5,7 @@
 --%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -117,10 +117,14 @@
                             </div>
 
                             <div class="col-md-6">
-                                <label class="form-label required">Price ($)</label>
+                                <label class="form-label required">Price (đ)</label>
+                                <c:set var="vnd" value="${medicine.price * 25000}" />
+                                <fmt:formatNumber value='${vnd}' type='number' groupingUsed='false' maxFractionDigits="0" var="vndFormatted"/>
                                 <input type="number" step="0.01" min="0"
                                        class="form-control"
-                                       name="price" value="${medicine.price}" required>
+                                       name="price"
+                                       value="${vndFormatted}"
+                                       required>
 
                                 <c:if test="${not empty medicinePriceErrorMsg}">
                                     <div class="text-danger small mt-1">

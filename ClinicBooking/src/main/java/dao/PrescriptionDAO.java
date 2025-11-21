@@ -1264,7 +1264,6 @@ public class PrescriptionDAO extends DBContext {
                 + "ON pt.PatientID = a.PatientID\n"
                 + "WHERE p.Hidden = 0\n"
                 + "AND p.PrescriptionStatus = 'Pending'\n"
-                + "AND CAST(p.DateCreate AS DATE) = GETDATE()\n"
                 + "ORDER BY DateCreate DESC;";
         List<PrescriptionDTO> prescriptionList = new ArrayList<>();
         ResultSet rs = null;

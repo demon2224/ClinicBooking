@@ -401,7 +401,7 @@ public class ManageMedicineController extends HttpServlet {
                 request.getRequestDispatcher("/WEB-INF/pharmacist/EditMedicine.jsp").forward(request, response);
             } else {
 
-                boolean editResult = medicineDAO.editMedicine(medicineTypeParam, Integer.parseInt(medicineStatusParam), medicineNameParam, medicineCodeParam.toUpperCase(), Double.parseDouble(medicinePriceParam), medicineID);
+                boolean editResult = medicineDAO.editMedicine(medicineTypeParam, Integer.parseInt(medicineStatusParam), medicineNameParam, medicineCodeParam.toUpperCase(), (Double.parseDouble(medicinePriceParam) / 25000), medicineID);
 
                 if (editResult) {
                     request.getSession().setAttribute("medicineEditSuccessMsg", "Edit medicine successfully.");
@@ -446,8 +446,7 @@ public class ManageMedicineController extends HttpServlet {
             request.setAttribute("medicineTypeList", medicineTypeList);
             request.getRequestDispatcher("/WEB-INF/pharmacist/CreateMedicine.jsp").forward(request, response);
         } else {
-
-            boolean createResult = medicineDAO.createNewMedicine(medicineNameParam, medicineCodeParam, medicineTypeParam, Double.parseDouble(medicinePriceParam), Integer.parseInt(medicineStatusParam));
+            boolean createResult = medicineDAO.createNewMedicine(medicineNameParam, medicineCodeParam.toUpperCase(), medicineTypeParam, (Double.parseDouble(medicinePriceParam) / 25000), Integer.parseInt(medicineStatusParam));
 
             if (createResult) {
                 request.getSession().setAttribute("medicineCreateSuccessMsg", "Create new medicine successfully.");

@@ -6,7 +6,7 @@
 
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -52,7 +52,7 @@
         <%@include file="../includes/PharmacistDashboardSidebar.jsp" %>
 
         <div class="main-content">
-
+            <c:set var="rate" value="25000" />
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h2 class="fw-bold text-primary">
                     <i class="fa-solid fa-file-import me-2"></i>Import Medicine
@@ -92,7 +92,11 @@
 
                             <tr>
                                 <th>Price</th>
-                                <td>$${medicine.price}</td>
+                                <td>
+                                    <fmt:formatNumber value="${medicine.price * rate}" type="number"
+                                                      groupingUsed="true" maxFractionDigits="0" />
+                                    đ
+                                </td>
                             </tr>
                         </table>
 

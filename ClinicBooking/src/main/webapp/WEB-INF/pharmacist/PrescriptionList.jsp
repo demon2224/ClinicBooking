@@ -101,18 +101,20 @@
                     <i class="fa-solid fa-prescription-bottle-medical me-2"></i>
                     Prescription Management
                 </h3>
-
-                <form class="d-flex w-50" method="get" action="${pageContext.request.contextPath}/pharmacist-manage-prescription">
+                <form class="d-flex align-items-center"
+                      action="${pageContext.request.contextPath}/pharmacist-manage-prescription" method="get">
                     <input type="hidden" name="action" value="search">
                     <input class="form-control me-2" type="search" name="search" placeholder="Search here..." value="${param.search}">
-                    <button class="btn btn-outline-primary" type="submit">
-                        <i class="fa-solid fa-magnifying-glass"></i>
+                    <button class="btn btn-outline-primary me-3 d-flex align-items-center" type="submit">
+                        <i class="fa-solid fa-magnifying-glass me-2"></i>
+                        <span>Search</span>
                     </button>
+                    <a href="${pageContext.request.contextPath}/staff-logout"
+                       class="btn btn-outline-danger d-flex align-items-center" id="Logout">
+                        <i class="fa-solid fa-right-from-bracket me-2"></i>
+                        <span>Logout</span>
+                    </a>
                 </form>
-
-                <a href="${pageContext.request.contextPath}/staff-logout" class="btn btn-outline-danger d-flex align-items-center" id="Logout">
-                    <i class="fa-solid fa-right-from-bracket me-2"></i> Logout
-                </a>
             </nav>
 
             <div class="card mt-4">
@@ -167,6 +169,23 @@
                                                class="btn btn-info text-white btn-sm action-btn">
                                                 <i class="fa-solid fa-eye"></i> View
                                             </a>
+
+                                            <c:choose>
+                                                <c:when test="${prescription.prescriptionStatus eq 'Pending'}">
+                                                    <button type="button"
+                                                            class="btn btn-success btn-sm action-btn"
+                                                            data-bs-toggle="modal"
+                                                            data-bs-target="#deliverModal"
+                                                            onclick="setDeliverID('${prescription.prescriptionID}')">
+                                                        <i class="fa-solid fa-truck"></i> Paid
+                                                    </button>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <button class="btn btn-secondary btn-sm action-btn" disabled>
+                                                        <i class="fa-solid fa-truck"></i> Paid
+                                                    </button>
+                                                </c:otherwise>
+                                            </c:choose>
                                         </div>
                                     </td>
                                 </tr>
@@ -181,11 +200,11 @@
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content border-success">
                     <div class="modal-header bg-success text-white">
-                        <h5 class="modal-title"><i class="fa-solid fa-truck me-2"></i>Confirm Deliver</h5>
+                        <h5 class="modal-title"><i class="fa-solid fa-truck me-2"></i>Confirm Paid</h5>
                         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body text-center fs-5">
-                        Are you sure you want to <b>Deliver</b> this prescription?
+                        Are you sure you want to <b>Paid</b> this prescription?
                     </div>
                     <form method="post" action="${pageContext.request.contextPath}/pharmacist-manage-prescription">
                         <input type="hidden" name="action" value="deliver">

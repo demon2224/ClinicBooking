@@ -109,8 +109,8 @@
                             </div>
 
                             <div class="col-md-6">
-                                <label class="form-label required">Price ($)</label>
-                                <input type="number" step="0.01" min="0"
+                                <label class="form-label required">Price (đ)</label>
+                                <input type="number" min="0"
                                        class="form-control" name="price" required>
 
                                 <c:if test="${not empty medicinePriceErrorMsg}">

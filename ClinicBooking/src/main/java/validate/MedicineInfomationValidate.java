@@ -144,7 +144,7 @@ public class MedicineInfomationValidate {
             if (medicinePrice.length() <= MIN_MEDICINE_PRICE) {
                 throw new NumberFormatException();
             }
-            price = Double.parseDouble(medicinePrice);
+            price = Integer.parseInt(medicinePrice);
         } catch (NumberFormatException ex) {
             return false;
         }

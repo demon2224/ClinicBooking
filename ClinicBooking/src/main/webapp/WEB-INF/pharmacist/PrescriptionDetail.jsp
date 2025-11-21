@@ -57,7 +57,7 @@
         <%@ include file="../includes/PharmacistDashboardSidebar.jsp" %>
 
         <div class="main-content">
-
+            <c:set var="rate" value="25000" />
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h2 class="fw-bold text-primary">
                     <i class="fa-solid fa-prescription-bottle-medical me-2"></i>Prescription Detail
@@ -171,7 +171,9 @@
                                             <td><c:out value="${item.instruction}"/></td>
 
                                             <td class="text-end">
-                                                <fmt:formatNumber value="${item.subTotal}"/>
+                                                <fmt:formatNumber value="${item.subTotal * rate}" type="number"
+                                                                  groupingUsed="true" maxFractionDigits="0" />
+                                                đ
                                             </td>
                                         </tr>
                                     </c:forEach>
@@ -189,7 +191,9 @@
                                     <tr>
                                         <th colspan="7" class="text-end">Total:</th>
                                         <th class="text-end">
-                                            <fmt:formatNumber value="${prescription.totalValue}"/>
+                                            <fmt:formatNumber value="${prescription.totalValue * rate}" type="number"
+                                                              groupingUsed="true" maxFractionDigits="0" />
+                                            đ
                                         </th>
                                     </tr>
                                 </tfoot>

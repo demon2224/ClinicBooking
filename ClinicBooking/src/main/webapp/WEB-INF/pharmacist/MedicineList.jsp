@@ -91,24 +91,25 @@
         <%@include file="../includes/PharmacistDashboardSidebar.jsp" %>
 
         <div class="main-content">
-
+            <c:set var="rate" value="25000" />
             <nav class="navbar navbar-light justify-content-between shadow-sm">
                 <h3 class="fw-bold text-primary mb-0 d-flex align-items-center">
                     <i class="fa-solid fa-capsules me-2"></i> Medicine Management
                 </h3>
-
-                <form class="d-flex" method="get" action="${pageContext.request.contextPath}/manage-medicine">
+                <form class="d-flex align-items-center"
+                      action="${pageContext.request.contextPath}/pharmacist-manage-prescription" method="get">
                     <input type="hidden" name="action" value="search">
-                    <input class="form-control me-2" type="search" name="search" placeholder="Search medicine...">
-                    <button class="btn btn-outline-primary" type="submit">
-                        <i class="fa-solid fa-magnifying-glass"></i>
+                    <input class="form-control me-2" type="search" name="search" placeholder="Search here..." value="${param.search}">
+                    <button class="btn btn-outline-primary me-3 d-flex align-items-center" type="submit">
+                        <i class="fa-solid fa-magnifying-glass me-2"></i>
+                        <span>Search</span>
                     </button>
+                    <a href="${pageContext.request.contextPath}/staff-logout"
+                       class="btn btn-outline-danger d-flex align-items-center" id="Logout">
+                        <i class="fa-solid fa-right-from-bracket me-2"></i>
+                        <span>Logout</span>
+                    </a>
                 </form>
-
-                <a href="${pageContext.request.contextPath}/staff-logout"
-                   class="btn btn-outline-danger d-flex align-items-center" id="Logout">
-                    <i class="fa-solid fa-right-from-bracket me-2"></i> Logout
-                </a>
             </nav>
 
             <div class="card mt-4">
@@ -161,7 +162,11 @@
                                     <td>${med.medicineCode}</td>
                                     <td>${med.quantity}</td>
 
-                                    <td><fmt:formatNumber value="${med.price}" type="currency" currencySymbol="$"/></td>
+                                    <td>
+                                        <fmt:formatNumber value="${med.price * rate}" type="number"
+                                                          groupingUsed="true" maxFractionDigits="0" />
+                                        đ
+                                    </td>
 
                                     <td>
                                         <c:choose>
