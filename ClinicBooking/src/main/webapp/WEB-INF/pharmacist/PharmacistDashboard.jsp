@@ -122,7 +122,7 @@
                     <div class="card text-center py-4">
                         <div class="text-success fs-1"><i class="fa-solid fa-circle-check"></i></div>
                         <h3 class="fw-bold text-success mb-0"><c:out value="${numberDeliverPrecriptionToday}"/></h3>
-                        <div class="text-muted">Delivered Today</div>
+                        <div class="text-muted">Paid Today</div>
                     </div>
                 </div>
 
@@ -226,13 +226,7 @@
                                             <button class="btn btn-success btn-sm"
                                                     data-bs-toggle="modal" data-bs-target="#deliverModal"
                                                     onclick="setDeliverID('${p.prescriptionID}')">
-                                                <i class="fa-solid fa-truck"></i> Deliver
-                                            </button>
-
-                                            <button class="btn btn-danger btn-sm"
-                                                    data-bs-toggle="modal" data-bs-target="#cancelModal"
-                                                    onclick="setCancelID('${p.prescriptionID}')">
-                                                <i class="fa-solid fa-ban"></i> Cancel
+                                                <i class="fa-solid fa-truck"></i> Paid
                                             </button>
 
                                         </div>
@@ -260,7 +254,7 @@
                     </div>
 
                     <div class="modal-body text-center fs-5">
-                        Are you sure you want to <b>Deliver</b> this prescription?
+                        Are you sure you want to <b>Paid</b> this prescription?
                     </div>
 
                     <form method="post" action="${pageContext.request.contextPath}/pharmacist-manage-prescription">
@@ -302,6 +296,38 @@
                 </div>
             </div>
         </div>
+
+        <div class="modal fade" id="loginSuccessModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+
+                    <div class="modal-header bg-success text-white">
+                        <h5 class="modal-title">Login Successful</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+
+                    <div class="modal-body text-center">
+                        <c:out value="${sessionScope.loginSuccessMsg}" />
+                    </div>
+
+                    <div class="modal-footer justify-content-center">
+                        <button type="button" class="btn btn-success" data-bs-dismiss="modal">Close</button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <c:if test="${not empty sessionScope.loginSuccessMsg}">
+            <script>
+                document.addEventListener("DOMContentLoaded", function () {
+                    var modal = new bootstrap.Modal(document.getElementById('loginSuccessModal'));
+                    modal.show();
+                });
+            </script>
+
+            <c:remove var="loginSuccessMsg" scope="session" />
+        </c:if>
 
         <script>
             function setDeliverID(id) {
