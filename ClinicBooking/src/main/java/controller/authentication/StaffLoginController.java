@@ -109,6 +109,7 @@ public class StaffLoginController extends HttpServlet {
             if (isExistAccount) {
                 HttpSession session = request.getSession();
                 session.setAttribute("staff", staff);
+                request.getSession().setAttribute("loginSuccessMsg", "Logic successfully!");
                 redirectToDashboard(request, response);
             } else {
                 request.getSession().setAttribute("loginErrorMsg", "Logic failed");

@@ -240,7 +240,7 @@ public class PharmacistManagePrescriptionController extends HttpServlet {
         LocalDateTime dateCreate = prescription.getDateCreate().toLocalDateTime();
         LocalDateTime now = LocalDateTime.now();
 
-        return dateCreate.plusHours(24).isAfter(now);
+        return true;
     }
 
     /**

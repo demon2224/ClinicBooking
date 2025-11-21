@@ -67,7 +67,7 @@
         <%@include file="../includes/PharmacistDashboardSidebar.jsp" %>
 
         <div class="main-content">
-
+            <c:set var="rate" value="25000" />
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h2 class="fw-bold text-primary">
                     <i class="fa-solid fa-capsules me-2"></i>Medicine Detail
@@ -125,7 +125,11 @@
 
                             <tr>
                                 <th>Price per Unit</th>
-                                <td>$<fmt:formatNumber value="${medicine.price}" pattern="#,##0.00"/></td>
+                                <td>
+                                    <fmt:formatNumber value="${medicine.price * rate}" type="number"
+                                                      groupingUsed="true" maxFractionDigits="0" />
+                                    đ
+                                </td>
                             </tr>
 
                             <tr>

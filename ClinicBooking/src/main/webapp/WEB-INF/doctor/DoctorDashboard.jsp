@@ -103,28 +103,21 @@
 
             <!-- Summary Statistics -->
             <div class="row g-4 mb-4">
-                <div class="col-md-3">
+                <div class="col-md-4">
                     <div class="card dashboard-card text-center p-3">
                         <i class="fa-solid fa-calendar-check stat-icon mb-2"></i>
                         <div class="stat-value">${todayAppointments}</div>
                         <p class="mb-0 text-muted">Appointments</p>
                     </div>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-4">
                     <div class="card dashboard-card text-center p-3">
                         <i class="fa-solid fa-prescription-bottle-medical stat-icon mb-2"></i>
                         <div class="stat-value">${pendingPrescriptions}</div>
                         <p class="mb-0 text-muted">Prescriptions</p>
                     </div>
                 </div>
-                <div class="col-md-3">
-                    <div class="card dashboard-card text-center p-3">
-                        <i class="fa-solid fa-users stat-icon mb-2"></i>
-                        <div class="stat-value">${patientCount}</div>
-                        <p class="mb-0 text-muted">Active Patients</p>
-                    </div>
-                </div>
-                <div class="col-md-3">
+                <div class="col-md-4">
                     <div class="card dashboard-card text-center p-3">
                         <i class="fa-solid fa-file-medical stat-icon mb-2"></i>
                         <div class="stat-value">${totalMedicalRecords}</div>
@@ -173,9 +166,22 @@
                                         </td>
                                         <td>
                                             <a href="${pageContext.request.contextPath}/manage-my-patient-appointment?action=detail&appointmentID=${app.appointmentID}"
-                                               class="btn btn-sm btn-outline-primary">
-                                                <i class="fa-solid fa-eye"></i> View
+                                               class="btn btn-sm btn-info text-white">
+                                                <i class="fa-solid fa-eye"></i> View Detail
                                             </a>
+                                            <c:choose>
+                                                <c:when test="${app.appointmentStatus eq 'Approved' and app.hasRecord}">
+                                                    <a href="${pageContext.request.contextPath}/manage-my-patient-appointment?action=completed&appointmentID=${app.appointmentID}"
+                                                       class="btn btn-sm btn-success text-white">
+                                                        <i class="fa-solid fa-check"></i> Completed
+                                                    </a>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <button class="btn btn-sm btn-secondary" disabled>
+                                                        <i class="fa-solid fa-check"></i> Completed
+                                                    </button>
+                                                </c:otherwise>
+                                            </c:choose>
                                         </td>
                                     </tr>
                                 </c:forEach>
@@ -210,86 +216,75 @@
                                     <tr>
                                         <td>${i.count}</td>
                                         <td>${pres.appointmentID.patientID.firstName} ${pres.appointmentID.patientID.lastName}</td>
-                                        <td><fmt:formatDate value="${pres.dateCreate}" pattern="dd MMM yyyy HH:mm"/></td>
+                                        <td><fmt:formatDate value="${pres.dateCreate}" pattern="dd MMM yyyy"/></td>
                                         <td>
                                             <span class="badge
-                                                  ${pres.prescriptionStatus eq 'Pending' ? 'bg-warning text-dark' :
-                                                    pres.prescriptionStatus eq 'Delivered' ? 'bg-success' :
-                                                    'bg-secondary'}">
-                                                      ${pres.prescriptionStatus}
-                                                  </span>
-                                            </td>
-                                            <td>
-                                                <a href="${pageContext.request.contextPath}/manage-my-patient-prescription?action=detail&prescriptionID=${pres.prescriptionID}"
-                                                   class="btn btn-sm btn-outline-primary">
-                                                    <i class="fa-solid fa-eye"></i> View
-                                                </a>
-                                            </td>
-                                        </tr>
-                                    </c:forEach>
-                                </tbody>
-                            </table>
-                        </c:if>
-                    </div>
-                </div>
-                <!-- Recent Medical Records -->
-                <div class="card mb-4 mt-3">
-                    <div class="card-header">
-                        <i class="fa-solid fa-notes-medical me-2"></i>Medical Records
-                    </div>
-                    <div class="card-body">
-                        <c:if test="${empty recentRecords}">
-                            <p class="text-muted text-center mb-0">No medical records.</p>
-                        </c:if>
-                        <c:if test="${not empty recentRecords}">
-                            <table class="table table-striped align-middle">
-                                <thead class="table-light">
-                                    <tr>
-                                        <th>ID</th>
-                                        <th>Patient</th>
-                                        <th>Diagnosis</th>
-                                        <th>Date</th>
+                                                  <c:choose>
+                                                      <c:when test="${pres.prescriptionStatus eq 'Pending'}">bg-warning text-dark</c:when>
+                                                      <c:otherwise>bg-success</c:otherwise>
+                                                  </c:choose>">
+                                                <c:choose>
+                                                    <c:when test="${pres.prescriptionStatus eq 'Pending'}">${pres.prescriptionStatus}</c:when>
+                                                    <c:otherwise>Paid</c:otherwise>
+                                                </c:choose>
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <a href="${pageContext.request.contextPath}/manage-my-patient-prescription?action=detail&prescriptionID=${pres.prescriptionID}"
+                                               class="btn btn-sm btn-info text-white">
+                                                <i class="fa-solid fa-eye"></i> View Detail
+                                            </a>
+                                        </td>
                                     </tr>
-                                </thead>
-                                <tbody>
-                                    <c:forEach var="record" items="${recentRecords}" varStatus="i">
-                                        <tr>
-                                            <td>${i.count}</td>
-                                            <td>${record.appointmentID.patientID.firstName} ${record.appointmentID.patientID.lastName}</td>
-                                            <td>${record.diagnosis}</td>
-                                            <td><fmt:formatDate value="${record.dateCreate}" pattern="dd MMM yyyy HH:mm"/></td>
-                                        </tr>
-                                    </c:forEach>
-                                </tbody>
-                            </table>
-                        </c:if>
-                    </div>
-                </div>
-
-                <!-- Top Diagnoses -->
-                <div class="card mb-4">
-                    <div class="card-header">
-                        <i class="fa-solid fa-heart-pulse me-2"></i>Top Diagnoses (Most Common Conditions)
-                    </div>
-                    <div class="card-body">
-                        <c:if test="${empty topDiagnoses}">
-                            <p class="text-muted text-center mb-0">No diagnosis data available.</p>
-                        </c:if>
-                        <c:if test="${not empty topDiagnoses}">
-                            <ul class="list-group list-group-flush">
-                                <c:forEach var="diag" items="${topDiagnoses}">
-                                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                                        ${diag}
-                                        <span class="badge bg-primary rounded-pill"><i class="fa-solid fa-check"></i></span>
-                                    </li>
                                 </c:forEach>
-                            </ul>
-                        </c:if>
-                    </div>
+                            </tbody>
+                        </table>
+                    </c:if>
                 </div>
-
+            </div>
+            <!-- Recent Medical Records -->
+            <div class="card mb-4 mt-3">
+                <div class="card-header">
+                    <i class="fa-solid fa-notes-medical me-2"></i>Recent Medical Records
+                </div>
+                <div class="card-body">
+                    <c:if test="${empty recentRecords}">
+                        <p class="text-muted text-center mb-0">No medical records.</p>
+                    </c:if>
+                    <c:if test="${not empty recentRecords}">
+                        <table class="table table-striped align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Patient</th>
+                                    <th>Diagnosis</th>
+                                    <th>Date</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <c:forEach var="record" items="${recentRecords}" varStatus="i">
+                                    <tr>
+                                        <td>${i.count}</td>
+                                        <td>${record.appointmentID.patientID.firstName} ${record.appointmentID.patientID.lastName}</td>
+                                        <td>${record.diagnosis}</td>
+                                        <td><fmt:formatDate value="${record.dateCreate}" pattern="dd MMM yyyy"/></td>
+                                        <td>
+                                            <a href="${pageContext.request.contextPath}/manage-my-patient-medical-record?action=detail&medicalRecordID=${record.medicalRecordID}"
+                                               class="btn btn-sm btn-info text-white">
+                                                <i class="fa-solid fa-eye"></i> View Detail
+                                            </a>                                            
+                                        </td>
+                                    </tr>
+                                </c:forEach>
+                            </tbody>
+                        </table>
+                    </c:if>
+                </div>
             </div>
 
-            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-        </body>
-    </html>
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    </body>
+</html>

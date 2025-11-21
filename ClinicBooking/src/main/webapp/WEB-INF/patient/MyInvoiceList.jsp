@@ -71,34 +71,31 @@
                 </div>
             </div>
 
-            <!-- Invoices Section -->
+            <!-- Only show consultation payments (Completed appointments) -->
             <div class="appointments-section">
                 <div class="appointments-content">
                     <c:choose>
-                        <c:when test="${empty invoiceList}">
-                            <!-- Empty State -->
+                        <c:when test="${empty completedAppointments}">
                             <div class="appointment-empty-state">
                                 <i class="fas fa-file-invoice-dollar"></i>
                                 <h3>No Invoices Found</h3>
-                                <p>You don't have any invoices yet.</p>
+                                <p>You don't have any completed appointments yet.</p>
                             </div>
                         </c:when>
                         <c:otherwise>
-                            <!-- Display Invoices -->
-                            <c:forEach var="invoice" items="${invoiceList}">
+                            <c:forEach var="appointment" items="${completedAppointments}">
                                 <div class="appointment-card">
                                     <div class="appointment-header">
                                         <div class="appointment-info">
                                             <div class="appointment-date">
                                                 <i class="fas fa-calendar"></i>
-                                                <fmt:formatDate value="${invoice.dateCreate}"
-                                                                pattern="EEEE, MMMM dd, yyyy" />
+                                                <fmt:formatDate value="${appointment.dateCreate}" pattern="EEEE, MMMM dd, yyyy" />
                                             </div>
                                             <div class="appointment-doctor">
                                                 <i class="fas fa-user-md"></i>
                                                 <c:choose>
-                                                    <c:when test="${not empty invoice.medicalRecordID.appointmentID.doctorID.staffID.firstName && not empty invoice.medicalRecordID.appointmentID.doctorID.staffID.lastName}">
-                                                        Dr. ${invoice.medicalRecordID.appointmentID.doctorID.staffID.firstName} ${invoice.medicalRecordID.appointmentID.doctorID.staffID.lastName}
+                                                    <c:when test="${not empty appointment.doctorID.staffID.firstName && not empty appointment.doctorID.staffID.lastName}">
+                                                        Dr. ${appointment.doctorID.staffID.firstName} ${appointment.doctorID.staffID.lastName}
                                                     </c:when>
                                                     <c:otherwise>
                                                         Doctor information not available
@@ -108,8 +105,8 @@
                                             <div class="appointment-specialty">
                                                 <i class="fas fa-stethoscope"></i>
                                                 <c:choose>
-                                                    <c:when test="${not empty invoice.specialtyID.specialtyName}">
-                                                        ${invoice.specialtyID.specialtyName}
+                                                    <c:when test="${not empty appointment.doctorID.specialtyID.specialtyName}">
+                                                        ${appointment.doctorID.specialtyID.specialtyName}
                                                     </c:when>
                                                     <c:otherwise>
                                                         Specialty not available
@@ -117,36 +114,26 @@
                                                 </c:choose>
                                             </div>
                                             <div class="appointment-specialty">
-                                                <i class="fas fa-credit-card"></i>
-                                                Payment: ${invoice.paymentType}
-                                            </div>
-                                            <div class="appointment-specialty">
                                                 <i class="fas fa-dollar-sign"></i>
-                                                Total: $<fmt:formatNumber value="${invoice.totalFee}" pattern="#,##0.00"/>
+                                                Consultation Fee: <fmt:formatNumber value="${appointment.doctorID.specialtyID.price}" pattern="#,##0"/> VND
                                             </div>
+                                            <c:set var="medicineFee" value="${appointmentMedicineFeeMap[appointment.appointmentID]}" />
+                                            <c:if test="${medicineFee != null && medicineFee > 0}">
+                                                <div class="appointment-specialty">
+                                                    <i class="fas fa-pills"></i>
+                                                    Total medicine fee: <fmt:formatNumber value="${medicineFee}" pattern="#,##0"/> VND
+                                                </div>
+                                            </c:if>
                                         </div>
-                                        <div class="appointment-status
-                                             <c:choose>
-                                                 <c:when test="${invoice.invoiceStatus == 'Paid'}">status-completed</c:when>
-                                                 <c:otherwise>status-pending</c:otherwise>
-                                             </c:choose>
-                                             ">
-                                            ${invoice.invoiceStatus != null ? invoice.invoiceStatus : 'Pending'}
+                                        <div class="appointment-status status-completed">
+                                            PAID
                                         </div>
                                     </div>
                                     <div class="appointment-actions">
-                                        <a href="${pageContext.request.contextPath}/manage-my-invoices?id=${invoice.invoiceID}" class="btn-action btn-view">
+                                        <a href="${pageContext.request.contextPath}/manage-my-invoices?appointmentId=${appointment.appointmentID}" class="btn-action btn-view">
                                             <i class="fas fa-eye"></i>
                                             View Details
                                         </a>
-
-                                        <!-- Add checkout button for unpaid invoices -->
-                                        <c:if test="${invoice.invoiceStatus == 'Pending'}">
-                                            <a href="${pageContext.request.contextPath}/payment?id=${invoice.invoiceID}" class="btn-action btn-primary">
-                                                <i class="fas fa-credit-card"></i>
-                                                Checkout
-                                            </a>
-                                        </c:if>
                                     </div>
                                 </div>
                             </c:forEach>

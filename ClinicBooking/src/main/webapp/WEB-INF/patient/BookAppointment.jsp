@@ -350,6 +350,12 @@
             let currentDate = new Date();
             let selectedDateStr = '';
             let selectedTimeStr = '';
+            
+            // ⭐ Optimization: Cache và request management
+            let validationCache = new Map(); // Cache validation results
+            let pendingRequests = new Set(); // Track pending requests
+            let debounceTimer = null; // Debounce timer
+            let currentValidationAbortController = null; // Abort controller for current validation
 
             function initCalendar() {
                 renderCalendar();
@@ -376,8 +382,14 @@
                 const firstDay = new Date(year, month, 1).getDay();
                 const daysInMonth = new Date(year, month + 1, 0).getDate();
                 const today = new Date();
-                const minDate = new Date(today.getTime() + 24 * 60 * 60 * 1000); // 24 hours from now
-                const maxDate = new Date(today.getTime() + 30 * 24 * 60 * 60 * 1000); // 30 days from now
+                
+                // Normalize dates to 00:00:00 for proper comparison
+                const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+                // ⭐ Cho phép chọn từ ngày mai trở đi (validation 24h sẽ check ở level time slot)
+                const minDate = new Date(todayStart);
+                minDate.setDate(minDate.getDate() + 1); // Tomorrow - cho phép chọn
+                const maxDate = new Date(todayStart);
+                maxDate.setDate(maxDate.getDate() + 30); // 30 days from today
 
                 // Add empty cells for days before month starts
                 for (let i = 0; i < firstDay; i++) {
@@ -393,9 +405,12 @@
                     dayElement.textContent = day;
 
                     const dayDate = new Date(year, month, day);
+                    // Normalize dayDate to 00:00:00 for comparison
+                    const dayDateNormalized = new Date(year, month, day, 0, 0, 0);
 
-                    // Disable past dates and dates beyond 30 days (visual only)
-                    if (dayDate < minDate || dayDate > maxDate) {
+                    // Disable past dates (today and before) and dates beyond 30 days
+                    // ⭐ Cho phép chọn từ ngày mai trở đi (validation 24h sẽ check ở level time slot)
+                    if (dayDateNormalized < minDate || dayDateNormalized > maxDate) {
                         dayElement.classList.add('disabled');
                     } else {
                         dayElement.addEventListener('click', () => selectDate(dayDate, dayElement));
@@ -414,12 +429,346 @@
                 // Add selection to clicked date
                 element.classList.add('selected');
 
-                // Store selected date
-                selectedDateStr = date.toISOString().split('T')[0];
+                // Store selected date - Dùng toISOString() nhưng set time 12:00:00 để tránh timezone shift
+                // Set time về 12:00:00 (giữa ngày) để khi convert sang UTC không bị lệch ngày
+                const dateAtNoon = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 12, 0, 0);
+                const newDateStr = dateAtNoon.toISOString().split('T')[0];
+                selectedDateStr = newDateStr;
                 document.getElementById('selectedDate').value = selectedDateStr;
+
+                // ⭐ RESET SLOTS NGAY LẬP TỨC khi chọn ngày mới (không đợi debounce)
+                resetAllTimeSlots();
+
+                // ⭐ Debounce validation để tránh gửi quá nhiều request
+                if (debounceTimer) {
+                    clearTimeout(debounceTimer);
+                }
+                
+                // Cancel previous validation if still running
+                if (currentValidationAbortController) {
+                    currentValidationAbortController.abort();
+                    currentValidationAbortController = null;
+                }
+                
+                debounceTimer = setTimeout(() => {
+                    validateAllTimeSlots(newDateStr);
+                }, 300); // Wait 300ms after last date selection
 
                 // Update combined datetime if time is also selected
                 updateDateTime();
+            }
+            
+            // ⭐ Reset tất cả time slots về trạng thái ban đầu
+            function resetAllTimeSlots() {
+                document.querySelectorAll('.time-slot').forEach(slot => {
+                    slot.classList.remove('disabled', 'booked', 'warning', 'selected');
+                    slot.disabled = false;
+                    slot.style.display = 'block';
+                    slot.style.opacity = '1';
+                    slot.style.cursor = 'pointer';
+                    slot.title = '';
+                });
+                // Clear selected time when date changes
+                selectedTimeStr = '';
+                const selectedTimeInput = document.getElementById('selectedTime');
+                if (selectedTimeInput) {
+                    selectedTimeInput.value = '';
+                }
+            }
+            
+            // ⭐ Validate tất cả time slots - Optimized với cache và abort controller
+            function validateAllTimeSlots(date) {
+                const doctorId = '${doctorId}';
+                if (!doctorId || !date) return;
+                
+                // ⭐ RESET TRƯỚC KHI VALIDATE (đảm bảo clean state cho ngày mới)
+                resetAllTimeSlots();
+                
+                // ⭐ Check cache first - Đảm bảo cache date khớp với date hiện tại
+                const cacheKey = `${doctorId}_${date}`;
+                if (validationCache.has(cacheKey)) {
+                    const cachedResult = validationCache.get(cacheKey);
+                    // Verify cached date matches current date
+                    if (cachedResult.date === date) {
+                        applyValidationResults(cachedResult.bookedSlots, cachedResult.validationResults, date);
+                        return;
+                    } else {
+                        // Cache date mismatch - clear and fetch fresh
+                        validationCache.delete(cacheKey);
+                    }
+                }
+                
+                // Create new abort controller for this validation
+                currentValidationAbortController = new AbortController();
+                const signal = currentValidationAbortController.signal;
+                
+                // Reset đã được gọi ở trên, không cần reset lại
+                
+                // ⭐ GỬI 1 REQUEST DUY NHẤT: Lấy tất cả thông tin (booked slots + validation results)
+                fetch('${pageContext.request.contextPath}/manage-my-appointments?action=getTimeSlotsStatus&doctorId=' + doctorId + '&date=' + date, { signal })
+                    .then(response => {
+                        if (signal.aborted) throw new Error('Request aborted');
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (signal.aborted) return;
+                        if (!data || !data.bookedSlots) {
+                            return;
+                        }
+                        
+                        const bookedSlots = data.bookedSlots || [];
+                        const validationResults = data.validationResults || {};
+                        
+                        // Parse booked slots thành Set để check nhanh
+                        const bookedSlotsSet = new Set(bookedSlots.map(slot => normalizeTime(slot)));
+                        
+                        // ⭐ Apply booked slots TRƯỚC (ưu tiên hiển thị ngay)
+                        document.querySelectorAll('.time-slot').forEach(slot => {
+                            const slotTime = normalizeTime(slot.dataset.time);
+                            
+                            // Check nếu đã bị book - làm mờ ngay lập tức
+                            if (bookedSlotsSet.has(slotTime)) {
+                                slot.classList.add('disabled', 'booked', 'warning');
+                                slot.disabled = true;
+                                slot.style.opacity = '0.5';
+                                slot.style.cursor = 'not-allowed';
+                                slot.title = getWarningMessage('already_booked');
+                            }
+                        });
+                        
+                        // ⭐ Sau đó apply các validation khác
+                        document.querySelectorAll('.time-slot').forEach(slot => {
+                            const slotTime = normalizeTime(slot.dataset.time);
+                            
+                            // Skip nếu đã được đánh dấu là booked
+                            if (bookedSlotsSet.has(slotTime)) {
+                                return; // Đã xử lý ở trên
+                            }
+                            
+                            // Tạo slotDateTime với format đúng (local timezone)
+                            // date format: "YYYY-MM-DD", slotTime format: "HH:mm"
+                            const [year, month, day] = date.split('-').map(Number);
+                            const [hour, minute] = slotTime.split(':').map(Number);
+                            const slotDateTime = new Date(year, month - 1, day, hour, minute, 0);
+                            
+                            let shouldDisable = false;
+                            let reason = '';
+                            
+                            // 1. Check quá khứ (client-side check)
+                            const now = new Date();
+                            if (slotDateTime <= now) {
+                                shouldDisable = true;
+                                reason = 'past';
+                            }
+                            // 2. Check ngoài giờ làm việc (client-side check)
+                            else if (!isWithinWorkingHours(slotDateTime)) {
+                                shouldDisable = true;
+                                reason = 'outside_working_hours';
+                            }
+                            // 3. Check quá 30 ngày (client-side check)
+                            else if (isMoreThan30Days(slotDateTime)) {
+                                shouldDisable = true;
+                                reason = 'too_far_future';
+                            }
+                            // 4. Check chưa đủ 24h trước (client-side check)
+                            else if (!isAtLeast24HoursInAdvance(slotDateTime)) {
+                                shouldDisable = true;
+                                reason = 'less_than_24h';
+                            }
+                            // 5. Check validation results từ server (ưu tiên server validation)
+                            // Lưu ý: validationResults có thể dùng format "07:00" hoặc "7:00", cần check cả 2
+                            const normalizedSlotTime = normalizeTime(slotTime);
+                            if (validationResults[slotTime] && validationResults[slotTime].disabled) {
+                                shouldDisable = true;
+                                reason = validationResults[slotTime].reason || '';
+                            } else if (validationResults[normalizedSlotTime] && validationResults[normalizedSlotTime].disabled) {
+                                shouldDisable = true;
+                                reason = validationResults[normalizedSlotTime].reason || '';
+                            }
+                            
+                            // Apply to UI - CHỈ disable nếu thực sự cần
+                            if (shouldDisable) {
+                                slot.classList.add('disabled', 'warning');
+                                slot.disabled = true;
+                                slot.style.opacity = '0.5';
+                                slot.style.cursor = 'not-allowed';
+                                slot.title = getWarningMessage(reason);
+                            } else {
+                                // Đảm bảo slot hợp lệ không bị disable
+                                slot.classList.remove('disabled', 'warning');
+                                slot.disabled = false;
+                                slot.style.opacity = '1';
+                                slot.style.cursor = 'pointer';
+                                slot.title = '';
+                            }
+                        });
+                        
+                        // Cache results - Đảm bảo cache với đúng date
+                        if (!signal.aborted) {
+                            // Validate cache key matches current date
+                            const expectedCacheKey = `${doctorId}_${date}`;
+                            if (cacheKey === expectedCacheKey) {
+                                validationCache.set(cacheKey, {
+                                    bookedSlots: bookedSlots,
+                                    validationResults: validationResults,
+                                    date: date // Store date in cache để verify sau
+                                });
+                                
+                                // Clear cache after 5 minutes
+                                setTimeout(() => {
+                                    validationCache.delete(cacheKey);
+                                }, 5 * 60 * 1000);
+                            }
+                        }
+                    })
+                    .catch(error => {
+                        if (error.name === 'AbortError' || error.message === 'Request aborted') {
+                            return; // Request was cancelled
+                        }
+                    });
+            }
+            
+            // ⭐ Apply validation results to UI (from cache or fresh fetch)
+            function applyValidationResults(bookedSlots, validationResults, date) {
+                // Đảm bảo date được truyền đúng
+                if (!date) {
+                    return;
+                }
+                
+                // Reset trước khi apply (đảm bảo clean state)
+                resetAllTimeSlots();
+                
+                const bookedSlotsSet = new Set(bookedSlots.map(slot => normalizeTime(slot)));
+                
+                // ⭐ Apply booked slots TRƯỚC (ưu tiên hiển thị ngay)
+                document.querySelectorAll('.time-slot').forEach(slot => {
+                    const slotTime = normalizeTime(slot.dataset.time);
+                    
+                    // Check nếu đã bị book - làm mờ ngay lập tức
+                    if (bookedSlotsSet.has(slotTime)) {
+                        slot.classList.add('disabled', 'booked', 'warning');
+                        slot.disabled = true;
+                        slot.style.opacity = '0.5';
+                        slot.style.cursor = 'not-allowed';
+                        slot.title = getWarningMessage('already_booked');
+                    }
+                });
+                
+                // ⭐ Sau đó apply các validation khác
+                document.querySelectorAll('.time-slot').forEach(slot => {
+                    const slotTime = normalizeTime(slot.dataset.time);
+                    
+                    // Skip nếu đã được đánh dấu là booked
+                    if (bookedSlotsSet.has(slotTime)) {
+                        return; // Đã xử lý ở trên
+                    }
+                    
+                    // Tạo slotDateTime với format đúng (local timezone)
+                    // date format: "YYYY-MM-DD", slotTime format: "HH:mm"
+                    // ⭐ QUAN TRỌNG: Phải dùng đúng date được truyền vào, không dùng biến date từ closure
+                    const [year, month, day] = date.split('-').map(Number);
+                    const [hour, minute] = slotTime.split(':').map(Number);
+                    const slotDateTime = new Date(year, month - 1, day, hour, minute, 0);
+                    
+                    let shouldDisable = false;
+                    let reason = '';
+                    
+                    const now = new Date();
+                    if (slotDateTime <= now) {
+                        shouldDisable = true;
+                        reason = 'past';
+                    } else if (!isWithinWorkingHours(slotDateTime)) {
+                        shouldDisable = true;
+                        reason = 'outside_working_hours';
+                    } else if (isMoreThan30Days(slotDateTime)) {
+                        shouldDisable = true;
+                        reason = 'too_far_future';
+                    } else if (!isAtLeast24HoursInAdvance(slotDateTime)) {
+                        shouldDisable = true;
+                        reason = 'less_than_24h';
+                    } else {
+                        // Check validation results từ server (ưu tiên server validation)
+                        // Lưu ý: validationResults có thể dùng format "07:00" hoặc "7:00", cần check cả 2
+                        const normalizedSlotTime = normalizeTime(slotTime);
+                        if (validationResults[slotTime] && validationResults[slotTime].disabled) {
+                            shouldDisable = true;
+                            reason = validationResults[slotTime].reason || '';
+                        } else if (validationResults[normalizedSlotTime] && validationResults[normalizedSlotTime].disabled) {
+                            shouldDisable = true;
+                            reason = validationResults[normalizedSlotTime].reason || '';
+                        }
+                    }
+                    
+                    // Apply to UI - CHỈ disable nếu thực sự cần
+                    if (shouldDisable) {
+                        slot.classList.add('disabled', 'warning');
+                        slot.disabled = true;
+                        slot.style.opacity = '0.5';
+                        slot.style.cursor = 'not-allowed';
+                        slot.title = getWarningMessage(reason);
+                    } else {
+                        // Đảm bảo slot hợp lệ không bị disable
+                        slot.classList.remove('disabled', 'warning');
+                        slot.disabled = false;
+                        slot.style.opacity = '1';
+                        slot.style.cursor = 'pointer';
+                        slot.title = '';
+                    }
+                });
+            }
+            
+            // ⭐ Helper functions cho client-side validation
+            function isWithinWorkingHours(dateTime) {
+                const hour = dateTime.getHours();
+                const minute = dateTime.getMinutes();
+                // 7:00 AM - 4:30 PM
+                if (hour < 7) return false;
+                if (hour > 16) return false;
+                if (hour === 16 && minute > 30) return false;
+                return true;
+            }
+            
+            function isMoreThan30Days(dateTime) {
+                const now = new Date();
+                const maxDate = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
+                return dateTime > maxDate;
+            }
+            
+            function isAtLeast24HoursInAdvance(dateTime) {
+                const now = new Date();
+                const minDate = new Date(now.getTime() + 24 * 60 * 60 * 1000);
+                // Return true nếu dateTime lớn hơn minDate (có thể book)
+                // Return false nếu dateTime nhỏ hơn hoặc bằng minDate (không thể book)
+                return dateTime.getTime() > minDate.getTime();
+            }
+            
+            // ⭐ Function này không còn cần thiết nữa vì đã gộp vào getTimeSlotsStatus
+            // Giữ lại để tương thích ngược nếu có code khác đang dùng
+            
+            // ⭐ Lấy warning message theo reason
+            function getWarningMessage(reason) {
+                const messages = {
+                    'past': 'Past time',
+                    'outside_working_hours': 'Outside working hours (7:00-16:30)',
+                    'too_far_future': 'Can only book up to 30 days in advance',
+                    'already_booked': 'Already booked',
+                    'conflict_30min': 'Conflict with another appointment',
+                    'less_than_24h': 'Must book at least 24 hours in advance',
+                    'patient_24h_gap': 'Must wait 24 hours between appointments'
+                };
+                return messages[reason] || 'Cannot book this slot';
+            }
+            
+            // Normalize time format: "7:00" -> "07:00"
+            function normalizeTime(time) {
+                if (!time) return '';
+                const parts = time.split(':');
+                if (parts.length === 2) {
+                    const hour = parts[0].padStart(2, '0');
+                    const minute = parts[1].padStart(2, '0');
+                    return hour + ':' + minute;
+                }
+                return time;
             }
 
             function setupTimeSlots() {
@@ -427,6 +776,11 @@
 
                 timeSlots.forEach(slot => {
                     slot.addEventListener('click', () => {
+                        // ⭐ Không cho click vào slot đã bị book hoặc disabled
+                        if (slot.classList.contains('disabled') || slot.classList.contains('booked') || slot.disabled) {
+                            return;
+                        }
+                        
                         // Remove previous selection
                         timeSlots.forEach(s => s.classList.remove('selected'));
 
@@ -526,6 +880,8 @@
                         }
                     });
                 }
+
+                // Không cần setup click handlers nữa - validate tất cả khi chọn date
 
                 // Add focus animations to inputs
                 const inputs = document.querySelectorAll('.modern-input, .modern-textarea');

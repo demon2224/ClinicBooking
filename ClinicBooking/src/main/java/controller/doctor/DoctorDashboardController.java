@@ -95,8 +95,6 @@ public class DoctorDashboardController extends HttpServlet {
             int totalMedicalRecordCount = medicalRecordDAO.countMedicalRecordsByDoctor(doctorID);
             int totalPrescriptionCount = prescriptionDAO.countPrescriptionsByDoctor(doctorID);
 
-            int patientCount = medicalRecordDAO.countDistinctPatientsByDoctor(doctorID);
-
             int pendingPrescriptions = prescriptionDAO.countPendingPrescriptionsByDoctor(doctorID);
             int deliveredPrescriptions = prescriptionDAO.countDeliveredPrescriptionsByDoctor(doctorID);
 
@@ -110,7 +108,6 @@ public class DoctorDashboardController extends HttpServlet {
             request.setAttribute("totalPrescriptions", totalPrescriptionCount);
             request.setAttribute("pendingPrescriptions", pendingPrescriptions);
             request.setAttribute("deliveredPrescriptions", deliveredPrescriptions);
-            request.setAttribute("patientCount", patientCount);
             request.setAttribute("upcomingAppointments", upcomingAppointments);
             request.setAttribute("recentPrescriptions", recentPrescriptions);
             request.setAttribute("recentRecords", recentRecords);

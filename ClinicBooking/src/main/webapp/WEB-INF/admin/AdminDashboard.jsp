@@ -57,76 +57,7 @@
                 margin-right: 8px;
             }
 
-            .clinic-main-content {
-                margin-left: 240px;
-                padding-bottom: 50px;
-            }
-
-            .clinic-navbar {
-                background-color: #ffffff;
-                padding: 15px 20px;
-                box-shadow: 0px 2px 5px rgba(0,0,0,0.1);
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-            }
-
-            .clinic-navbar-title {
-                font-size: 1.5rem;
-                font-weight: 600;
-                color: #1B5A90;
-            }
-
-            .clinic-logout-btn {
-                color: #dc3545;
-                font-weight: 500;
-                text-decoration: none;
-            }
-
-            .stats-row {
-                display: grid;
-                grid-template-columns: repeat(3, 1fr);
-                gap: 22px;
-                padding: 25px 30px;
-            }
-
-            .stat-card {
-                background: #ffffff;
-                border-radius: 12px;
-                padding: 20px 25px;
-                box-shadow: 0px 3px 10px rgba(0,0,0,0.08);
-                transition: 0.25s ease;
-            }
-
-            .stat-card:hover {
-                transform: translateY(-4px);
-            }
-
-            .stat-card-content {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-            }
-
-            .stat-card-content h6 {
-                font-size: 0.9rem;
-                margin: 0;
-                color: #6c757d;
-                font-weight: 500;
-            }
-
-            .stat-card-content h3 {
-                margin: 5px 0 0;
-                font-size: 2rem;
-                font-weight: 700;
-                color: #1B5A90;
-            }
-
-            .stat-icon {
-                font-size: 2.5rem;
-                color: #1B5A90;
-                opacity: 0.9;
-            }
+           
         </style>
     </head>
     <body>

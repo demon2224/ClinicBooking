@@ -63,80 +63,7 @@
                 background-color: #00D0F1;
             }
 
-            /* ===== Main Content giống Statistics ===== */
-            .clinic-main-content {
-                margin-left: 240px;
-                padding-bottom: 50px;
-            }
-
-            /* ===== Navbar giống Statistics ===== */
-            .clinic-navbar {
-                background-color: #ffffff;
-                padding: 15px 20px;
-                box-shadow: 0px 2px 5px rgba(0,0,0,0.1);
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-            }
-
-            .clinic-navbar-title {
-                font-size: 1.5rem;
-                font-weight: 600;
-                color: #1B5A90;
-            }
-
-            .clinic-logout-btn {
-                color: #dc3545;
-                font-weight: 500;
-                text-decoration: none;
-            }
-
-            /* ===== Stats Row giống Statistics ===== */
-            .stats-row {
-                display: grid;
-                grid-template-columns: repeat(3, 1fr);
-                gap: 22px;
-                padding: 25px 30px;
-            }
-
-            .stat-card {
-                background: #ffffff;
-                border-radius: 12px;
-                padding: 20px 25px;
-                box-shadow: 0px 3px 10px rgba(0,0,0,0.08);
-                transition: 0.25s ease;
-            }
-
-            .stat-card:hover {
-                transform: translateY(-4px);
-            }
-
-            .stat-card-content {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-            }
-
-            .stat-card-content h6 {
-                font-size: 0.9rem;
-                margin: 0;
-                color: #6c757d;
-                font-weight: 500;
-            }
-
-            .stat-card-content h3 {
-                margin: 5px 0 0;
-                font-size: 2rem;
-                font-weight: 700;
-                color: #1B5A90;
-            }
-
-            /* ===== Icon thống nhất màu giống Statistics ===== */
-            .stat-icon {
-                font-size: 2.5rem;
-                color: #1B5A90 !important;
-                opacity: 0.9;
-            }
+            
         </style>
     </head>
     <body>
@@ -152,7 +79,7 @@
         <!-- Main Content -->
         <div class="clinic-main-content">
 
-            <div class="clinic-navbar">
+            <div class="clinic-navbar mb-4">
                 <h3 class="clinic-navbar-title">
                     <i class="fa-solid fa-clipboard me-2"></i>
                     Receptionist Dashboard
@@ -163,7 +90,7 @@
             </div>
 
             <!-- ===== STATS CARDS ===== -->
-            <div class="stats-row">
+            <div class="stats-row mb-4">
 
                 <!-- Today Appointments -->
                 <div class="stat-card">
@@ -212,7 +139,7 @@
 
                 <!-- Left: Top 5 Doctors by Revenue -->
                 <div class="col-md-6">
-                    <div class="card mb-4 mt-3"
+                    <div class="card mb-4"
                          style="border:none; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.08);">
                         <div class="card-header"
                              style="background-color:#1B5A90; color:white; border-top-left-radius:12px; border-top-right-radius:12px;">
@@ -254,7 +181,7 @@
 
                 <!-- Right: Top 5 Specialties Booked -->
                 <div class="col-md-6">
-                    <div class="card mb-4 mt-3"
+                    <div class="card mb-4"
                          style="border:none; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.08);">
                         <div class="card-header"
                              style="background-color:#1B5A90; color:white; border-top-left-radius:12px; border-top-right-radius:12px;">

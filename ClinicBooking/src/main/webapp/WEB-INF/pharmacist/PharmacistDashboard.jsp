@@ -69,6 +69,17 @@
                 background-color: red;
                 color: white;
             }
+            
+            .stat-icon {
+                font-size: 2.3rem;
+                color: #1B5A90;
+            }
+            
+            .navbar {
+                background: white;
+                border-bottom: 1px solid #dee2e6;
+                padding: 12px 24px;
+            }
         </style>
     </head>
 
@@ -92,37 +103,28 @@
 
             <div class="row g-4 mb-4">
 
-                <div class="col-md-3">
+                <div class="col-md-4">
                     <div class="card text-center py-4">
-                        <div class="text-primary fs-1"><i class="fa-solid fa-capsules"></i></div>
-                        <h3 class="fw-bold text-primary mb-0"><c:out value="${totalMedicine}"/></h3>
+                        <div class="text-primary fs-1"><i class="fa-solid fa-capsules stat-icon"></i></div>
+                        <h3 class="fw-bold text-dark mb-0"><c:out value="${totalMedicine}"/></h3>
                         <div class="text-muted">Total Medicines</div>
                     </div>
                 </div>
 
-                <div class="col-md-3">
+                <div class="col-md-4">
                     <div class="card text-center py-4">
-                        <div class="text-warning fs-1"><i class="fa-solid fa-triangle-exclamation"></i></div>
-                        <h3 class="fw-bold text-warning mb-0"><c:out value="${lowStock}"/></h3>
+                        <div class="text-warning fs-1"><i class="fa-solid fa-triangle-exclamation stat-icon"></i></div>
+                        <h3 class="fw-bold text-dark mb-0"><c:out value="${lowStock}"/></h3>
                         <div class="text-muted">Low Stock</div>
                     </div>
                 </div>
 
                 <!-- PENDING -->
-                <div class="col-md-3">
+                <div class="col-md-4">
                     <div class="card text-center py-4">
-                        <div class="text-danger fs-1"><i class="fa-solid fa-prescription-bottle-medical"></i></div>
-                        <h3 class="fw-bold text-danger mb-0"><c:out value="${numberPendingPrecription}"/></h3>
+                        <div class="text-danger fs-1"><i class="fa-solid fa-prescription-bottle-medical stat-icon"></i></div>
+                        <h3 class="fw-bold text-dark mb-0"><c:out value="${numberPendingPrecription}"/></h3>
                         <div class="text-muted">Pending Prescriptions</div>
-                    </div>
-                </div>
-
-                <!-- DELIVERED TODAY -->
-                <div class="col-md-3">
-                    <div class="card text-center py-4">
-                        <div class="text-success fs-1"><i class="fa-solid fa-circle-check"></i></div>
-                        <h3 class="fw-bold text-success mb-0"><c:out value="${numberDeliverPrecriptionToday}"/></h3>
-                        <div class="text-muted">Delivered Today</div>
                     </div>
                 </div>
 
@@ -226,13 +228,7 @@
                                             <button class="btn btn-success btn-sm"
                                                     data-bs-toggle="modal" data-bs-target="#deliverModal"
                                                     onclick="setDeliverID('${p.prescriptionID}')">
-                                                <i class="fa-solid fa-truck"></i> Deliver
-                                            </button>
-
-                                            <button class="btn btn-danger btn-sm"
-                                                    data-bs-toggle="modal" data-bs-target="#cancelModal"
-                                                    onclick="setCancelID('${p.prescriptionID}')">
-                                                <i class="fa-solid fa-ban"></i> Cancel
+                                                <i class="fa-solid fa-truck"></i> Paid
                                             </button>
 
                                         </div>
@@ -260,7 +256,7 @@
                     </div>
 
                     <div class="modal-body text-center fs-5">
-                        Are you sure you want to <b>Deliver</b> this prescription?
+                        Are you sure you want to <b>Paid</b> this prescription?
                     </div>
 
                     <form method="post" action="${pageContext.request.contextPath}/pharmacist-manage-prescription">
@@ -302,6 +298,38 @@
                 </div>
             </div>
         </div>
+
+        <div class="modal fade" id="loginSuccessModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+
+                    <div class="modal-header bg-success text-white">
+                        <h5 class="modal-title">Login Successful</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+
+                    <div class="modal-body text-center">
+                        <c:out value="${sessionScope.loginSuccessMsg}" />
+                    </div>
+
+                    <div class="modal-footer justify-content-center">
+                        <button type="button" class="btn btn-success" data-bs-dismiss="modal">Close</button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <c:if test="${not empty sessionScope.loginSuccessMsg}">
+            <script>
+                document.addEventListener("DOMContentLoaded", function () {
+                    var modal = new bootstrap.Modal(document.getElementById('loginSuccessModal'));
+                    modal.show();
+                });
+            </script>
+
+            <c:remove var="loginSuccessMsg" scope="session" />
+        </c:if>
 
         <script>
             function setDeliverID(id) {

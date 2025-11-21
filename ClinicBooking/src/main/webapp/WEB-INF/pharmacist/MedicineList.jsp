@@ -91,24 +91,25 @@
         <%@include file="../includes/PharmacistDashboardSidebar.jsp" %>
 
         <div class="main-content">
-
+            <c:set var="rate" value="25000" />
             <nav class="navbar navbar-light justify-content-between shadow-sm">
                 <h3 class="fw-bold text-primary mb-0 d-flex align-items-center">
                     <i class="fa-solid fa-capsules me-2"></i> Medicine Management
                 </h3>
-
-                <form class="d-flex" method="get" action="${pageContext.request.contextPath}/manage-medicine">
+                <form class="d-flex align-items-center"
+                      action="${pageContext.request.contextPath}/pharmacist-manage-prescription" method="get">
                     <input type="hidden" name="action" value="search">
-                    <input class="form-control me-2" type="search" name="search" placeholder="Search medicine...">
-                    <button class="btn btn-outline-primary" type="submit">
-                        <i class="fa-solid fa-magnifying-glass"></i>
+                    <input class="form-control me-2" type="search" name="search" placeholder="Search here..." value="${param.search}">
+                    <button class="btn btn-outline-primary me-3 d-flex align-items-center" type="submit">
+                        <i class="fa-solid fa-magnifying-glass me-2"></i>
+                        <span>Search</span>
                     </button>
+                    <a href="${pageContext.request.contextPath}/staff-logout"
+                       class="btn btn-outline-danger d-flex align-items-center" id="Logout">
+                        <i class="fa-solid fa-right-from-bracket me-2"></i>
+                        <span>Logout</span>
+                    </a>
                 </form>
-
-                <a href="${pageContext.request.contextPath}/staff-logout"
-                   class="btn btn-outline-danger d-flex align-items-center" id="Logout">
-                    <i class="fa-solid fa-right-from-bracket me-2"></i> Logout
-                </a>
             </nav>
 
             <div class="card mt-4">
@@ -145,15 +146,15 @@
                             </c:if>
 
                             <c:forEach var="med" items="${requestScope.medicineList}" varStatus="i">
-                                <tr style="${med.isHidden ? 'opacity:0.5;' : ''}">
+                                <tr>
                                     <td>${i.count}</td>
 
                                     <td>${med.medicineType}</td>
 
                                     <td>
                                         <span class="badge
-                                              ${med.medicineStatus ? 'bg-success' : 'bg-danger'}">
-                                            ${med.medicineStatus ? 'Available' : 'Unavailable'}
+                                              ${(med.medicineStatus and med.quantity gt 0) ? 'bg-success' : 'bg-danger'}">
+                                            ${(med.medicineStatus and med.quantity gt 0) ? 'Available' : 'Unavailable'}
                                         </span>
                                     </td>
 
@@ -161,66 +162,118 @@
                                     <td>${med.medicineCode}</td>
                                     <td>${med.quantity}</td>
 
-                                    <td><fmt:formatNumber value="${med.price}" type="currency" currencySymbol="$"/></td>
+                                    <td>
+                                        <fmt:formatNumber value="${med.price * rate}" type="number"
+                                                          groupingUsed="true" maxFractionDigits="0" />
+                                        đ
+                                    </td>
 
                                     <td>
                                         <c:choose>
                                             <c:when test="${med.isHidden}">
-                                                <span class="text-muted fw-bold">No Action</span>
+                                                <div class="d-flex flex-wrap justify-content-center gap-2">
+
+                                                    <!-- 3 nút mờ -->
+                                                    <button class="btn btn-sm btn-secondary" disabled style="opacity:0.5; min-width:90px;">
+                                                        <i class="fa-solid fa-eye"></i> View
+                                                    </button>
+
+                                                    <button class="btn btn-sm btn-secondary" disabled style="opacity:0.5; min-width:90px;">
+                                                        <i class="fa-solid fa-truck-ramp-box"></i> Import
+                                                    </button>
+
+                                                    <button class="btn btn-sm btn-secondary" disabled style="opacity:0.5; min-width:90px;">
+                                                        <i class="fa-solid fa-pen-to-square"></i> Edit
+                                                    </button>
+
+                                                    <!-- Nút Restore -->
+                                                    <button type="button" class="btn btn-sm btn-success fw-bold" style="min-width:90px;"
+                                                            data-bs-toggle="modal" data-bs-target="#restoreModal${med.medicineID}">
+                                                        <i class="fa-solid fa-rotate-left"></i> Restore
+                                                    </button>
+
+                                                    <!-- Modal confirm Restore -->
+                                                    <div class="modal fade" id="restoreModal${med.medicineID}" tabindex="-1">
+                                                        <div class="modal-dialog modal-dialog-centered">
+                                                            <div class="modal-content border-success">
+                                                                <div class="modal-header bg-success text-white">
+                                                                    <h5 class="modal-title">
+                                                                        <i class="fa-solid fa-rotate-left me-2"></i>Confirm Restore
+                                                                    </h5>
+                                                                    <button class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                                                </div>
+                                                                <div class="modal-body text-center">
+                                                                    Are you sure you want to restore this medicine?
+                                                                </div>
+                                                                <div class="modal-footer justify-content-center">
+                                                                    <form method="post" action="${pageContext.request.contextPath}/manage-medicine">
+                                                                        <input type="hidden" name="action" value="restore">
+                                                                        <input type="hidden" name="medicineID" value="${med.medicineID}">
+                                                                        <button type="submit" class="btn btn-success px-4">
+                                                                            <i class="fa-solid fa-rotate-left me-1"></i> Restore
+                                                                        </button>
+                                                                    </form>
+                                                                    <button type="button" class="btn btn-outline-secondary px-4" data-bs-dismiss="modal">
+                                                                        Cancel
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
                                             </c:when>
 
                                             <c:otherwise>
                                                 <div class="d-flex flex-wrap justify-content-center gap-2">
 
-                                                    <a class="btn btn-sm btn-info text-white"
-                                                       href="${pageContext.request.contextPath}/manage-medicine?action=detail&medicineID=${med.medicineID}">
+                                                    <a class="btn btn-sm btn-info text-white" href="${pageContext.request.contextPath}/manage-medicine?action=detail&medicineID=${med.medicineID}" style="min-width:90px;">
                                                         <i class="fa-solid fa-eye"></i> View
                                                     </a>
 
-                                                    <a class="btn btn-sm btn-warning text-white"
-                                                       href="${pageContext.request.contextPath}/manage-medicine?action=import&medicineID=${med.medicineID}">
+                                                    <a class="btn btn-sm btn-warning text-white" href="${pageContext.request.contextPath}/manage-medicine?action=import&medicineID=${med.medicineID}" style="min-width:90px;">
                                                         <i class="fa-solid fa-truck-ramp-box"></i> Import
                                                     </a>
 
-                                                    <a class="btn btn-sm btn-primary text-white"
-                                                       href="${pageContext.request.contextPath}/manage-medicine?action=edit&medicineID=${med.medicineID}">
+                                                    <a class="btn btn-sm btn-primary text-white" href="${pageContext.request.contextPath}/manage-medicine?action=edit&medicineID=${med.medicineID}" style="min-width:90px;">
                                                         <i class="fa-solid fa-pen-to-square"></i> Edit
                                                     </a>
 
-                                                    <button type="button" class="btn btn-sm btn-danger"
-                                                            data-bs-toggle="modal"
-                                                            data-bs-target="#deleteModal${med.medicineID}">
+                                                    <!-- Nút Delete -->
+                                                    <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal${med.medicineID}" style="min-width:90px;">
                                                         <i class="fa-solid fa-trash"></i> Delete
                                                     </button>
-                                                </div>
 
-                                                <div class="modal fade" id="deleteModal${med.medicineID}" tabindex="-1">
-                                                    <div class="modal-dialog modal-dialog-centered">
-                                                        <div class="modal-content border-danger">
-                                                            <div class="modal-header bg-danger text-white">
-                                                                <h5 class="modal-title">
-                                                                    <i class="fa-solid fa-triangle-exclamation me-2"></i>Confirm Delete
-                                                                </h5>
-                                                                <button class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                                                            </div>
-
-                                                            <div class="modal-body text-center">
-                                                                Are you sure you want to delete this medicine?
-                                                            </div>
-
-                                                            <div class="modal-footer justify-content-center">
-                                                                <form method="post" action="${pageContext.request.contextPath}/manage-medicine">
-                                                                    <input type="hidden" name="action" value="delete">
-                                                                    <input type="hidden" name="medicineID" value="${med.medicineID}">
-                                                                    <button type="submit" class="btn btn-danger px-4">
-                                                                        <i class="fa-solid fa-trash me-1"></i>Delete
+                                                    <!-- Modal confirm Delete -->
+                                                    <div class="modal fade" id="deleteModal${med.medicineID}" tabindex="-1">
+                                                        <div class="modal-dialog modal-dialog-centered">
+                                                            <div class="modal-content border-danger">
+                                                                <div class="modal-header bg-danger text-white">
+                                                                    <h5 class="modal-title">
+                                                                        <i class="fa-solid fa-triangle-exclamation me-2"></i>Confirm Delete
+                                                                    </h5>
+                                                                    <button class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                                                </div>
+                                                                <div class="modal-body text-center">
+                                                                    Are you sure you want to delete this medicine?
+                                                                </div>
+                                                                <div class="modal-footer justify-content-center">
+                                                                    <form method="post" action="${pageContext.request.contextPath}/manage-medicine">
+                                                                        <input type="hidden" name="action" value="delete">
+                                                                        <input type="hidden" name="medicineID" value="${med.medicineID}">
+                                                                        <button type="submit" class="btn btn-danger px-4">
+                                                                            <i class="fa-solid fa-trash me-1"></i> Delete
+                                                                        </button>
+                                                                    </form>
+                                                                    <button type="button" class="btn btn-outline-secondary px-4" data-bs-dismiss="modal">
+                                                                        Cancel
                                                                     </button>
-                                                                </form>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
-                                                </div>
 
+                                                </div>
                                             </c:otherwise>
                                         </c:choose>
                                     </td>
@@ -255,6 +308,10 @@
                             <c:when test="${not empty sessionScope.medicineDeleteSuccessMsg}">
                                 ${sessionScope.medicineDeleteSuccessMsg}
                             </c:when>
+
+                            <c:when test="${not empty sessionScope.medicineRestoreSuccessMsg}">
+                                ${sessionScope.medicineRestoreSuccessMsg}
+                            </c:when>
                         </c:choose>
                     </div>
 
@@ -267,7 +324,8 @@
 
         <c:if test="${not empty sessionScope.medicineEditSuccessMsg
                       or not empty sessionScope.medicineImportSuccessMsg
-                      or not empty sessionScope.medicineDeleteSuccessMsg}">
+                      or not empty sessionScope.medicineDeleteSuccessMsg
+                      or not empty sessionScope.medicineRestoreSuccessMsg}">
               <script>
                   window.onload = function () {
                       var modal = new bootstrap.Modal(document.getElementById('successModal'));
@@ -278,6 +336,7 @@
               <c:remove var="medicineEditSuccessMsg" scope="session" />
               <c:remove var="medicineImportSuccessMsg" scope="session" />
               <c:remove var="medicineDeleteSuccessMsg" scope="session" />
+              <c:remove var="medicineRestoreSuccessMsg" scope="session" />
         </c:if>
 
 

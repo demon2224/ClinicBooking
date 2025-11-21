@@ -156,7 +156,20 @@
                                            class="btn btn-sm btn-info text-white">
                                             <i class="fa-solid fa-eye"></i> View Detail
                                         </a>
-                                    </td>
+                                        <c:choose>
+                                            <c:when test="${list.appointmentStatus eq 'Approved' and list.hasRecord}">
+                                                <a href="${pageContext.request.contextPath}/manage-my-patient-appointment?action=completed&appointmentID=${list.appointmentID}"
+                                                   class="btn btn-sm btn-success text-white">
+                                                    <i class="fa-solid fa-check"></i> Completed
+                                                </a>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <button class="btn btn-sm btn-secondary" disabled>
+                                                    <i class="fa-solid fa-check"></i> Completed
+                                                </button>
+                                            </c:otherwise>
+                                        </c:choose>
+                                    </td>                                  
                                 </tr>
                             </c:forEach>
 

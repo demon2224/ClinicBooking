@@ -5,13 +5,19 @@
 package controller.patient;
 
 import dao.InvoiceDAO;
+import dao.AppointmentDAO;
 import dao.PatientDAO;
 import dao.DoctorDAO;
+import dao.PrescriptionDAO;
 import model.InvoiceDTO;
+import model.AppointmentDTO;
 import model.PatientDTO;
+import model.PrescriptionItemDTO;
 import constants.ManageMyInvoiceConstants;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -26,14 +32,18 @@ import jakarta.servlet.http.HttpSession;
 public class ManageMyInvoiceController extends HttpServlet {
 
     private InvoiceDAO invoiceDAO;
+    private AppointmentDAO appointmentDAO;
     private PatientDAO patientDAO;
     private DoctorDAO doctorDAO;
+    private PrescriptionDAO prescriptionDAO;
 
     @Override
     public void init() throws ServletException {
         invoiceDAO = new InvoiceDAO();
+        appointmentDAO = new AppointmentDAO();
         patientDAO = new PatientDAO();
         doctorDAO = new DoctorDAO();
+        prescriptionDAO = new PrescriptionDAO();
     }
 
     /**
@@ -57,8 +67,15 @@ public class ManageMyInvoiceController extends HttpServlet {
         }
 
         String invoiceIdParam = request.getParameter("id");
+        String appointmentIdParam = request.getParameter("appointmentId");
 
-        // Check if this is a request for invoice detail
+        // Check if this is a request for consultation payment detail (appointmentId)
+        if (appointmentIdParam != null && !appointmentIdParam.trim().isEmpty()) {
+            handleConsultationPaymentDetail(request, response, appointmentIdParam, patient.getPatientID());
+            return;
+        }
+
+        // Check if this is a request for medicine invoice detail (invoiceId)
         if (invoiceIdParam != null && !invoiceIdParam.trim().isEmpty()) {
             handleInvoiceDetail(request, response, invoiceIdParam, patient.getPatientID());
             return;
@@ -80,7 +97,77 @@ public class ManageMyInvoiceController extends HttpServlet {
     }
 
     /**
-     * Handle invoice detail view
+     * Handle consultation payment detail view (consultation fee)
+     * Consultation payment does not have separate invoice, only appointment that has been paid
+     */
+    private void handleConsultationPaymentDetail(HttpServletRequest request, HttpServletResponse response,
+            String appointmentIdParam, int patientId)
+            throws ServletException, IOException {
+
+        try {
+            // Get patient from session
+            HttpSession session = request.getSession();
+            PatientDTO sessionPatient = (PatientDTO) session.getAttribute("patient");
+            int appointmentId = Integer.parseInt(appointmentIdParam);
+
+            // Get appointment details
+            AppointmentDTO appointment = appointmentDAO.getAppointmentById(appointmentId);
+
+            // Check if appointment exists
+            if (appointment == null) {
+                request.getSession().setAttribute("errorMessage", "Appointment not found.");
+                response.sendRedirect(request.getContextPath() + ManageMyInvoiceConstants.BASE_URL);
+                return;
+            }
+
+            // Verify patient ownership
+            if (appointment.getPatientID() == null
+                    || appointment.getPatientID().getPatientID() != sessionPatient.getPatientID()
+                    || appointment.getDoctorID() == null
+                    || !"Completed".equals(appointment.getAppointmentStatus())) {
+                request.getSession().setAttribute("errorMessage", "You are not authorized to view this consultation payment.");
+                response.sendRedirect(request.getContextPath() + ManageMyInvoiceConstants.BASE_URL);
+                return;
+            }
+
+            // Get consultation fee from specialty
+            double consultationFee = appointmentDAO.getConsultationFee(appointment.getDoctorID().getDoctorID());
+            
+            // Get medicine invoice info if exists (fee + status)
+            Object[] medicineInvoiceInfo = invoiceDAO.getMedicineInvoiceInfoByAppointmentId(appointmentId);
+            double medicineFee = 0;
+            String medicineFeeStatus = null;
+            if (medicineInvoiceInfo != null) {
+                medicineFee = (Double) medicineInvoiceInfo[0];
+                medicineFeeStatus = (String) medicineInvoiceInfo[1];
+            }
+            
+            // Get prescription items if exists
+            Integer prescriptionId = prescriptionDAO.getPrescriptionIDByAppointmentID(appointmentId);
+            List<PrescriptionItemDTO> prescriptionItems = null;
+            if (prescriptionId != null) {
+                prescriptionItems = prescriptionDAO.getPrescriptionItemListByPrescriptionID(prescriptionId);
+            }
+
+            // Set attributes - reuse MyInvoiceDetail.jsp
+            request.setAttribute("appointment", appointment);
+            request.setAttribute("consultationFee", consultationFee);
+            request.setAttribute("consultationFeeStatus", "PAID"); // Consultation fee is always paid for completed appointments
+            request.setAttribute("medicineFee", medicineFee);
+            request.setAttribute("medicineFeeStatus", medicineFeeStatus);
+            request.setAttribute("prescriptionItems", prescriptionItems);
+
+            // Forward to existing invoice detail JSP (will handle both appointment and invoice)
+            request.getRequestDispatcher(ManageMyInvoiceConstants.DETAIL_PAGE_JSP).forward(request, response);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.sendRedirect(request.getContextPath() + ManageMyInvoiceConstants.BASE_URL);
+        }
+    }
+
+    /**
+     * Handle invoice detail view (medicine invoice)
      */
     private void handleInvoiceDetail(HttpServletRequest request, HttpServletResponse response,
             String invoiceIdParam, int patientId)
@@ -117,10 +204,27 @@ public class ManageMyInvoiceController extends HttpServlet {
             // data
             int doctorId = invoice.getMedicalRecordID().getAppointmentID().getDoctorID().getDoctorID();
             double averageRating = doctorDAO.getAverageRatingByDoctorId(doctorId);
+            
+            // Get consultation fee
+            int appointmentId = invoice.getMedicalRecordID().getAppointmentID().getAppointmentID();
+            double consultationFee = appointmentDAO.getConsultationFee(doctorId);
+            
+            // Get prescription items if exists
+            // InvoiceDTO already has prescription with items loaded, but we'll get it from appointment to be safe
+            Integer prescriptionId = prescriptionDAO.getPrescriptionIDByAppointmentID(appointmentId);
+            List<PrescriptionItemDTO> prescriptionItems = null;
+            if (prescriptionId != null) {
+                prescriptionItems = prescriptionDAO.getPrescriptionItemListByPrescriptionID(prescriptionId);
+            }
 
             // Set attributes
             request.setAttribute("invoice", invoice);
             request.setAttribute("averageRating", averageRating);
+            request.setAttribute("consultationFee", consultationFee);
+            request.setAttribute("consultationFeeStatus", "PAID"); // Consultation fee is always paid for completed appointments
+            request.setAttribute("medicineFee", invoice.getTotalFee());
+            request.setAttribute("medicineFeeStatus", invoice.getInvoiceStatus());
+            request.setAttribute("prescriptionItems", prescriptionItems);
 
             // Forward
             request.getRequestDispatcher(ManageMyInvoiceConstants.DETAIL_PAGE_JSP).forward(request, response);
@@ -132,6 +236,7 @@ public class ManageMyInvoiceController extends HttpServlet {
 
     /**
      * Handle invoices list view
+     * Only shows consultation payments (completed appointments)
      */
     private void handleInvoicesList(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -143,17 +248,22 @@ public class ManageMyInvoiceController extends HttpServlet {
 
         // Get search parameters
         String searchQuery = request.getParameter("search");
-        List<InvoiceDTO> invoiceList;
+        
+        // Only show consultation payments (Completed appointments)
+        List<AppointmentDTO> completedAppointments = appointmentDAO.getCompletedAppointmentsByPatientId(patientId);
 
-        // Apply search
-        if (searchQuery != null && !searchQuery.trim().isEmpty()) {
-            invoiceList = invoiceDAO.searchInvoicesByPatientId(patientId, searchQuery);
-        } else {
-            invoiceList = invoiceDAO.getInvoicesByPatientId(patientId);
+        // Get medicine fee for each appointment
+        Map<Integer, Double> appointmentMedicineFeeMap = new HashMap<>();
+        for (AppointmentDTO appointment : completedAppointments) {
+            double medicineFee = invoiceDAO.getMedicineFeeByAppointmentId(appointment.getAppointmentID());
+            if (medicineFee > 0) {
+                appointmentMedicineFeeMap.put(appointment.getAppointmentID(), medicineFee);
+            }
         }
 
         // Set attributes for JSP
-        request.setAttribute("invoiceList", invoiceList);
+        request.setAttribute("completedAppointments", completedAppointments);  // Only completed consultation payments
+        request.setAttribute("appointmentMedicineFeeMap", appointmentMedicineFeeMap);  // Map of appointmentId -> medicine fee
         request.setAttribute("searchQuery", searchQuery);
 
         // Forward to JSP

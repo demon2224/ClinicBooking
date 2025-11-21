@@ -37,7 +37,6 @@
         <url-pattern>/manage-my-prescriptions</url-pattern>
         <url-pattern>/manage-my-invoices</url-pattern>
         <url-pattern>/payment</url-pattern>
-
     </filter-mapping>
     <filter-mapping>
         <filter-name>PatientLoginFilter</filter-name>
@@ -199,6 +198,10 @@
     <servlet>
         <servlet-name>AboutController</servlet-name>
         <servlet-class>controller.AboutController</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>ErrorPageController</servlet-name>
+        <servlet-class>controller.ErrorPageController</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>ReceptionistManageAppointmentController</servlet-name>
@@ -378,8 +381,17 @@
         <servlet-name>AboutController</servlet-name>
         <url-pattern>/about</url-pattern>
     </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ErrorPageController</servlet-name>
+        <url-pattern>/error-page</url-pattern>
+    </servlet-mapping>
     <welcome-file-list>
         <welcome-file>index.jsp</welcome-file>
         <welcome-file>home</welcome-file>
     </welcome-file-list>
+    <!-- ================= ERROR PATH ================= -->
+    <error-page>
+        <error-code>404</error-code>
+        <location>/error-page</location>
+    </error-page>
 </web-app>
