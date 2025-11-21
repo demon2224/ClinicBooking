@@ -20,7 +20,6 @@ import model.AppointmentDTO;
 import model.DoctorDTO;
 import model.PatientDTO;
 import validate.AppointmentValidate;
-import validate.BookAppointmentValidate;
 
 /**
  *
@@ -29,8 +28,8 @@ import validate.BookAppointmentValidate;
 public class ReceptionistManageAppointmentController extends HttpServlet {
 
     private AppointmentDAO appointmentDAO;
-    ;
-        private DoctorDAO doctorDAO;
+
+    private DoctorDAO doctorDAO;
     private PatientDAO patientDAO;
 
     @Override
@@ -63,6 +62,12 @@ public class ReceptionistManageAppointmentController extends HttpServlet {
                         break;
                     case "searchPatients":
                         handleSearchPatients(request, response);
+                        break;
+                    case "checkSlot":
+                        handleCheckSlot(request, response);
+                        break;
+                    case "getDoctorBookedSlots":
+                        handleGetDoctorBookedSlots(request, response);
                         break;
                     default:
                         handleViewAppointmentList(request, response, searchQuery);
@@ -153,6 +158,7 @@ public class ReceptionistManageAppointmentController extends HttpServlet {
         String phone = request.getParameter("phone");
         String genderStr = request.getParameter("gender");
         boolean gender = genderStr != null ? Boolean.parseBoolean(genderStr) : true;
+        String specialtyIdStr = request.getParameter("specialtyID"); // ★ NEW
         String doctorIdStr = request.getParameter("doctorId");
         String dateBeginStr = request.getParameter("appointmentDateTime");
         String note = request.getParameter("note");
@@ -160,7 +166,9 @@ public class ReceptionistManageAppointmentController extends HttpServlet {
         clearAppointmentErrors(request);
         boolean isValid = true;
 
-        // Validate patient info nếu không chọn existing patient
+        /**
+         * VALIDATE PATIENT INFO *
+         */
         if (AppointmentValidate.isEmpty(existingPatientId)) {
             if (AppointmentValidate.isEmpty(firstName)) {
                 request.getSession().setAttribute("firstNameErrorMsg", "First name cannot be empty.");
@@ -191,19 +199,38 @@ public class ReceptionistManageAppointmentController extends HttpServlet {
             phone = null;
         }
 
-        // Validate doctor
+        /**
+         * VALIDATE SPECIALTY *
+         */
+        if (AppointmentValidate.isEmpty(specialtyIdStr)) {
+            request.getSession().setAttribute("specialtyErrorMsg", "Please select a specialty.");
+            isValid = false;
+        }
+
+        /**
+         * VALIDATE DOCTOR *
+         */
         if (AppointmentValidate.isEmpty(doctorIdStr)) {
             request.getSession().setAttribute("doctorErrorMsg", "Please select a doctor.");
             isValid = false;
         }
 
-        // Validate date input
+        /**
+         * VALIDATE DATE/TIME *
+         */
         if (AppointmentValidate.isEmpty(dateBeginStr)) {
             request.getSession().setAttribute("dateErrorMsg", "Please select a date and time.");
             isValid = false;
         }
 
-        // Validate note
+        if (!AppointmentValidate.isDateTimeFilled(dateBeginStr)) {
+            request.getSession().setAttribute("dateErrorMsg", "Please select date and time.");
+            isValid = false;
+        }
+
+        /**
+         * VALIDATE NOTE *
+         */
         if (!AppointmentValidate.isValidNote(note)) {
             request.getSession().setAttribute("noteErrorMsg", "Note cannot exceed 500 characters.");
             isValid = false;
@@ -214,48 +241,19 @@ public class ReceptionistManageAppointmentController extends HttpServlet {
             return;
         }
 
+        /**
+         * PROCESS INSERT *
+         */
         try {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd['T'][ ]H:mm");
             LocalDateTime dateBegin = LocalDateTime.parse(dateBeginStr, formatter);
             LocalDateTime dateEnd = dateBegin.plusMinutes(30);
+
             int doctorId = Integer.parseInt(doctorIdStr);
-
-            Timestamp appointmentDateTime = Timestamp.valueOf(dateBegin);
-            Timestamp appointmentEndTime = Timestamp.valueOf(dateEnd);
-
-            // Validation thời gian
-            if (!BookAppointmentValidate.isFutureDateTime(appointmentDateTime)) {
-                request.getSession().setAttribute("dateErrorMsg", "Appointment must be in the future.");
-                isValid = false;
-            }
-            if (!BookAppointmentValidate.isWithinWorkingHours(appointmentDateTime)) {
-                request.getSession().setAttribute("dateErrorMsg", "Appointments only allowed between 7:00 AM and 4:30 PM.");
-                isValid = false;
-            }
-            if (!BookAppointmentValidate.isAtLeast24HoursInAdvance(appointmentDateTime)) {
-                request.getSession().setAttribute("dateErrorMsg", "Appointments must be booked at least 24 hours in advance.");
-                isValid = false;
-            }
-            if (!BookAppointmentValidate.isWithin30Days(appointmentDateTime)) {
-                request.getSession().setAttribute("dateErrorMsg", "Appointments can be booked up to 30 days in advance.");
-                isValid = false;
-            }
-            if (!appointmentDAO.isDoctorAvailableAtExactTime(doctorId, appointmentDateTime)) {
-                request.getSession().setAttribute("dateErrorMsg", "This time slot is already booked.");
-                isValid = false;
-            }
-            if (!appointmentDAO.hasValid30MinuteGap(doctorId, appointmentDateTime)) {
-                request.getSession().setAttribute("dateErrorMsg", "Appointments must be at least 30 minutes apart.");
-                isValid = false;
-            }
-
-            if (!isValid) {
-                response.sendRedirect(request.getContextPath() + "/receptionist-manage-appointment?action=add");
-                return;
-            }
-
-            // Gọi DAO thêm appointment (đã sửa thành firstName + lastName)
-            boolean success = appointmentDAO.addAppointment(existingPatientId, firstName, lastName, phone, gender, doctorId, dateBegin, dateEnd, note);
+            boolean success = appointmentDAO.addAppointment(
+                    existingPatientId, firstName, lastName, phone,
+                    gender, doctorId, dateBegin, dateEnd, note
+            );
 
             if (success) {
                 request.getSession().setAttribute("successMessage", "Appointment created successfully!");
@@ -273,8 +271,9 @@ public class ReceptionistManageAppointmentController extends HttpServlet {
 
     private void clearAppointmentErrors(HttpServletRequest request) {
         String[] keys = {
-            "patientNameErrorMsg", "phoneErrorMsg", "doctorErrorMsg", "dateErrorMsg",
-            "noteErrorMsg", "successMessage", "errorMessage"
+            "patientNameErrorMsg", "firstNameErrorMsg", "lastNameErrorMsg",
+            "phoneErrorMsg", "specialtyErrorMsg", "doctorErrorMsg",
+            "dateErrorMsg", "noteErrorMsg", "successMessage", "errorMessage"
         };
         for (String key : keys) {
             request.getSession().removeAttribute(key);
@@ -357,6 +356,80 @@ public class ReceptionistManageAppointmentController extends HttpServlet {
             request.getSession().setAttribute("errorMessage", "Failed to approve appointment!");
         }
         response.sendRedirect(request.getContextPath() + "/receptionist-manage-appointment");
+    }
+
+    private void handleCheckSlot(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String doctorIdStr = request.getParameter("doctorId");
+        String dateTimeStr = request.getParameter("dateTime"); // yyyy-MM-ddTHH:mm
+
+        if (doctorIdStr == null || dateTimeStr == null) {
+            response.getWriter().write("false");
+            return;
+        }
+
+        try {
+            int doctorId = Integer.parseInt(doctorIdStr);
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd['T'][ ]H:mm");
+            LocalDateTime dateTime = LocalDateTime.parse(dateTimeStr, formatter);
+
+            boolean available = appointmentDAO.isDoctorAvailableAtExactTime(doctorId, Timestamp.valueOf(dateTime))
+                    && appointmentDAO.hasValid30MinuteGap(doctorId, Timestamp.valueOf(dateTime));
+
+            response.getWriter().write(String.valueOf(available));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.getWriter().write("false");
+        }
+    }
+
+    private void handleGetDoctorBookedSlots(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String doctorIdStr = request.getParameter("doctorId");
+        String monthStr = request.getParameter("month");
+        String yearStr = request.getParameter("year");
+
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+
+        if (doctorIdStr == null || monthStr == null || yearStr == null) {
+            response.getWriter().write("[]");
+            return;
+        }
+
+        try {
+            int doctorId = Integer.parseInt(doctorIdStr);
+            int month = Integer.parseInt(monthStr);
+            int year = Integer.parseInt(yearStr);
+
+            List<AppointmentDTO> appointments = appointmentDAO.getAppointmentsByDoctorAndMonth(doctorId, month, year);
+
+            StringBuilder json = new StringBuilder("[");
+            for (int i = 0; i < appointments.size(); i++) {
+                AppointmentDTO appt = appointments.get(i);
+                if (appt.getDateBegin() == null) {
+                    continue;
+                }
+
+                Timestamp ts = appt.getDateBegin();
+                String date = ts.toLocalDateTime().toLocalDate().toString();
+                String time = String.format("%02d:%02d",
+                        ts.toLocalDateTime().getHour(),
+                        ts.toLocalDateTime().getMinute()
+                );
+
+                json.append("{\"date\":\"").append(date).append("\",\"time\":\"").append(time).append("\"}");
+                if (i < appointments.size() - 1) {
+                    json.append(",");
+                }
+            }
+            json.append("]");
+
+            response.getWriter().write(json.toString());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.getWriter().write("[]");
+        }
     }
 
     @Override

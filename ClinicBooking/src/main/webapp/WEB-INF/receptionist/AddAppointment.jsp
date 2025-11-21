@@ -64,19 +64,36 @@
                 padding: 25px;
             }
 
-            /* Cards */
+            /* === MATCH DOCTOR STYLE === */
             .card {
                 border-radius: 10px;
-                box-shadow: 0px 3px 6px rgba(0,0,0,0.1);
+                box-shadow: 0 2px 6px rgba(0,0,0,0.08); /* giống detail */
                 margin-bottom: 30px;
             }
 
             .card-header {
-                background-color: #1B5A90;
-                color: white;
+                background-color: #1B5A90 !important; /* giống detail */
+                color: white !important;             /* chữ trắng */
                 font-weight: bold;
                 border-radius: 10px 10px 0 0;
                 padding: 10px 15px;
+            }
+
+
+            th {
+                background-color: #f1f3f5 !important;
+                font-weight: 600;
+            }
+
+            td {
+                background-color: #ffffff !important;
+            }
+
+            .table-bordered th, .table-bordered td {
+                border: 1px solid #dee2e6 !important;
+            }
+            .fw-bold {
+                font-weight: 700 !important;
             }
 
             /* Patient Suggestions */
@@ -256,6 +273,13 @@
                     gap: 15px;
                 }
             }
+            .time-slot.disabled {
+                background-color: #e9ecef !important;
+                color: #6c757d !important;
+                border-color: #dee2e6 !important;
+                cursor: not-allowed !important;
+            }
+
         </style>
 
     </head>
@@ -272,8 +296,11 @@
         <!-- Main Content -->
         <div class="main-content">
             <div class="d-flex justify-content-between align-items-center mb-4">
-                <h2><i class="fa-solid fa-calendar-plus me-2"></i>Add Appointment</h2>
+                <h2 class="fw-bold text-primary">
+                    <i class="fa-solid fa-calendar-plus me-2"></i>Add Appointment
+                </h2>
             </div>
+
 
             <form action="${pageContext.request.contextPath}/receptionist-manage-appointment" method="post" class="needs-validation" novalidate>
                 <input type="hidden" name="action" value="addAppointment">
@@ -293,6 +320,11 @@
                                         <option value="${s[0]}">${s[1]}</option>
                                     </c:forEach>
                                 </select>
+                                <div class="text-danger">
+                                    <c:if test="${not empty sessionScope.specialtyErrorMsg}">
+                                        <c:out value="${sessionScope.specialtyErrorMsg}"/>
+                                    </c:if>
+                                </div>
                             </div>
                         </div>
 
@@ -362,6 +394,12 @@
                                 <input type="hidden" id="appointmentDateTime" name="appointmentDateTime">
                                 <input type="hidden" id="selectedDate" name="selectedDate">
                                 <input type="hidden" id="selectedTime" name="selectedTime">
+                                <div class="text-danger">
+                                    <c:if test="${not empty sessionScope.dateErrorMsg}">
+                                        <c:out value="${sessionScope.dateErrorMsg}"/>
+                                    </c:if>
+                                </div>
+
                             </div>
                         </div>
 
@@ -454,197 +492,299 @@
                         </div>
                     </div>
                 </div>
-
+                <!-- Buttons -->
+                <div class="d-flex justify-content-end">
+                    <button type="submit" class="btn btn-success me-2">
+                        <i class="fa-solid fa-check"></i>  Add
+                    </button>
+                </div>
+            </form>
         </div>
-
-        <!-- Buttons -->
-        <div class="d-flex justify-content-end">
-            <button type="submit" class="btn btn-success me-2">
-                <i class="fa-solid fa-check"></i>  Add
-            </button>
-        </div>
-    </form>
-</div>
-<!-- Scripts -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
-    $('#specialtySelect').change(function () {
-        var specialtyId = $(this).val();
-        if (specialtyId) {
-            $.ajax({
-                url: '${pageContext.request.contextPath}/receptionist-manage-appointment',
-                type: 'get',
-                data: {action: 'getDoctorsBySpecialty', specialtyID: specialtyId},
-                success: function (data) {
-                    var doctorSelect = $('#doctorSelect');
-                    doctorSelect.empty();
-                    doctorSelect.append('<option value="">-- Select Doctor --</option>');
-                    $.each(data, function (index, doc) {
-                        doctorSelect.append('<option value="' + doc.doctorID + '">' + doc.doctorName + '</option>');
+        <!-- Scripts -->
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script>
+            $('#specialtySelect').change(function () {
+                var specialtyId = $(this).val();
+                if (specialtyId) {
+                    $.ajax({
+                        url: '${pageContext.request.contextPath}/receptionist-manage-appointment',
+                        type: 'get',
+                        data: {action: 'getDoctorsBySpecialty', specialtyID: specialtyId},
+                        success: function (data) {
+                            var doctorSelect = $('#doctorSelect');
+                            doctorSelect.empty();
+                            doctorSelect.append('<option value="">-- Select Doctor --</option>');
+                            $.each(data, function (index, doc) {
+                                doctorSelect.append('<option value="' + doc.doctorID + '">' + doc.doctorName + '</option>');
+                            });
+                        },
+                        error: function () {
+                            alert('Cannot load doctors for this specialty.');
+                        }
                     });
-                },
-                error: function () {
-                    alert('Cannot load doctors for this specialty.');
+                } else {
+                    $('#doctorSelect').empty().append('<option value="">-- Select Doctor --</option>');
                 }
             });
-        } else {
-            $('#doctorSelect').empty().append('<option value="">-- Select Doctor --</option>');
-        }
-    });
 
 
-    function togglePatientFields() {
-        var existingPatient = $('select[name="existingPatientId"]').val();
-        if (existingPatient) {
-            $('#patientName, #phone, #genderSelect').prop('disabled', true);
-        } else {
-            $('#patientName, #phone, #genderSelect').prop('disabled', false);
-        }
-    }
-
-    togglePatientFields();
-    $('select[name="existingPatientId"]').change(function () {
-        togglePatientFields();
-    });
-</script>
-
-<script>
-    $(document).ready(function () {
-        $('#patientSearch').on('input', function () {
-            let query = $(this).val().trim();
-            if (query.length < 2) {
-                $('#patientSuggestions').hide();
-                return;
+            function togglePatientFields() {
+                var existingPatient = $('select[name="existingPatientId"]').val();
+                if (existingPatient) {
+                    $('#patientName, #phone, #genderSelect').prop('disabled', true);
+                } else {
+                    $('#patientName, #phone, #genderSelect').prop('disabled', false);
+                }
             }
 
-            $.ajax({
-                url: '${pageContext.request.contextPath}/receptionist-manage-appointment',
-                type: 'get',
-                data: {action: 'searchPatients', query: query},
-                success: function (data) {
-                    let list = $('#patientSuggestions');
-                    list.empty();
+            togglePatientFields();
+            $('select[name="existingPatientId"]').change(function () {
+                togglePatientFields();
+            });
+        </script>
 
-                    if (data.length === 0) {
-                        list.hide();
+        <script>
+            $(document).ready(function () {
+                $('#patientSearch').on('input', function () {
+                    let query = $(this).val().trim();
+                    if (query.length < 2) {
+                        $('#patientSuggestions').hide();
                         return;
                     }
 
-                    $.each(data, function (i, p) {
-                        list.append('<li class="list-group-item list-group-item-action" data-id="' + p.id + '">'
-                                + p.name + '</li>');
-                    });
+                    $.ajax({
+                        url: '${pageContext.request.contextPath}/receptionist-manage-appointment',
+                        type: 'get',
+                        data: {action: 'searchPatients', query: query},
+                        success: function (data) {
+                            let list = $('#patientSuggestions');
+                            list.empty();
 
-                    list.show();
-                },
-                error: function () {
-                    console.error('Error fetching patients');
+                            if (data.length === 0) {
+                                list.hide();
+                                return;
+                            }
+
+                            $.each(data, function (i, p) {
+                                list.append('<li class="list-group-item list-group-item-action" data-id="' + p.id + '">'
+                                        + p.name + '</li>');
+                            });
+
+                            list.show();
+                        },
+                        error: function () {
+                            console.error('Error fetching patients');
+                        }
+                    });
+                });
+
+                // Khi chọn 1 gợi ý
+                $(document).on('click', '#patientSuggestions li', function () {
+                    const name = $(this).text();
+                    const id = $(this).data('id');
+                    $('#patientSearch').val(name);
+                    $('#existingPatientId').val(id);
+                    $('#patientSuggestions').hide();
+
+                    // Disable nhập mới nếu đã chọn bệnh nhân cũ
+                    $('#FirstName, #LastName, #phone, #genderSelect').prop('disabled', true);
+                });
+
+                // Khi xóa text => bật lại input
+                $('#patientSearch').on('input', function () {
+                    if ($(this).val().trim() === '') {
+                        $('#existingPatientId').val('');
+                        $('#FirstName, #LastName, #phone, #genderSelect').prop('disabled', false);
+                    }
+                });
+            });
+        </script>
+
+        <script>
+            let currentDate = new Date();
+            let selectedDateStr = '';
+            let selectedTimeStr = '';
+            let selectedDoctorId = '';
+            let bookedSlots = []; // mảng chứa slot đã đặt
+            let fullyBookedDates = []; // mảng chứa ngày đã full
+
+            // --- Calendar rendering ---
+            function renderCalendar() {
+                const monthYear = document.getElementById('monthYear');
+                const calendarDays = document.getElementById('calendarDays');
+                const year = currentDate.getFullYear();
+                const month = currentDate.getMonth();
+                monthYear.textContent = new Intl.DateTimeFormat('en-US', {month: 'long', year: 'numeric'}).format(currentDate);
+
+                calendarDays.innerHTML = '';
+                const firstDay = new Date(year, month, 1).getDay();
+                const daysInMonth = new Date(year, month + 1, 0).getDate();
+                const today = new Date();
+                const minDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+                const maxDate = new Date(today.getTime() + 30 * 24 * 60 * 60 * 1000); // 30 days ahead
+
+                for (let i = 0; i < firstDay; i++) {
+                    const emptyDiv = document.createElement('div');
+                    emptyDiv.className = 'calendar-day empty';
+                    calendarDays.appendChild(emptyDiv);
+                }
+
+                for (let day = 1; day <= daysInMonth; day++) {
+                    const dayEl = document.createElement('div');
+                    dayEl.className = 'calendar-day';
+                    dayEl.textContent = day;
+                    const dayDate = new Date(year, month, day);
+                    const dayStr = dayDate.toISOString().split('T')[0];
+
+                    if (dayDate < minDate || dayDate > maxDate || fullyBookedDates.includes(dayStr)) {
+                        dayEl.classList.add('disabled');
+                    } else {
+                        dayEl.addEventListener('click', () => selectDate(dayDate, dayEl));
+                    }
+
+                    calendarDays.appendChild(dayEl);
+                }
+            }
+
+            // --- Select date ---
+            function selectDate(date, element) {
+                document.querySelectorAll('.calendar-day.selected').forEach(e => e.classList.remove('selected'));
+                element.classList.add('selected');
+                selectedDateStr = date.toISOString().split('T')[0];
+                $('#selectedDate').val(selectedDateStr);
+                updateDateTime();
+
+                if (selectedDoctorId && selectedDateStr) {
+                    loadDoctorAppointments(selectedDoctorId, selectedDateStr);
+                } else {
+                    resetTimeSlots();
+                }
+            }
+
+            // --- Time slots ---
+            function setupTimeSlots() {
+                $('.time-slot').off('click').on('click', function () {
+                    if ($(this).prop('disabled'))
+                        return;
+                    $('.time-slot').removeClass('active');
+                    $(this).addClass('active');
+                    selectedTimeStr = $(this).data('time');
+                    $('#selectedTime').val(selectedTimeStr);
+                    updateDateTime();
+                });
+            }
+
+            function updateDateTime() {
+                if (selectedDateStr && selectedTimeStr) {
+                    $('#appointmentDateTime').val(selectedDateStr + 'T' + selectedTimeStr);
+                }
+            }
+
+            // --- Doctor selection ---
+            $('#doctorSelect').change(function () {
+                selectedDoctorId = $(this).val();
+                if (selectedDoctorId) {
+                    // Lấy tất cả slot đã đặt của bác sĩ trong tháng hiện tại
+                    $.ajax({
+                        url: '${pageContext.request.contextPath}/receptionist-manage-appointment',
+                        type: 'get',
+                        data: {action: 'getDoctorBookedSlots', doctorId: selectedDoctorId, month: currentDate.getMonth() + 1, year: currentDate.getFullYear()},
+                        success: function (data) {
+                            bookedSlots = data; // [{date:'YYYY-MM-DD',time:'HH:mm'},...]
+                            fullyBookedDates = getFullyBookedDates();
+                            renderCalendar();
+                            if (selectedDateStr)
+                                loadDoctorAppointments(selectedDoctorId, selectedDateStr);
+                        },
+                        error: function () {
+                            bookedSlots = [];
+                            fullyBookedDates = [];
+                            renderCalendar();
+                        }
+                    });
+                } else {
+                    bookedSlots = [];
+                    fullyBookedDates = [];
+                    renderCalendar();
+                    resetTimeSlots();
                 }
             });
-        });
 
-        // Khi chọn 1 gợi ý
-        $(document).on('click', '#patientSuggestions li', function () {
-            const name = $(this).text();
-            const id = $(this).data('id');
-            $('#patientSearch').val(name);
-            $('#existingPatientId').val(id);
-            $('#patientSuggestions').hide();
-
-            // Disable nhập mới nếu đã chọn bệnh nhân cũ
-            $('#patientName, #phone, #genderSelect').prop('disabled', true);
-        });
-
-        // Khi xóa text => bật lại input
-        $('#patientSearch').on('input', function () {
-            if ($(this).val().trim() === '') {
-                $('#existingPatientId').val('');
-                $('#patientName, #phone, #genderSelect').prop('disabled', false);
+            // --- Load booked slots cho ngày ---
+            function loadDoctorAppointments(doctorId, dateStr) {
+                let slotsToday = bookedSlots.filter(s => s.date === dateStr);
+                disableBookedSlots(slotsToday);
             }
-        });
-    });
-</script>
 
-<script>
-    let currentDate = new Date();
-    let selectedDateStr = '';
-    let selectedTimeStr = '';
 
-    // Render calendar
-    function renderCalendar() {
-        const monthYear = document.getElementById('monthYear');
-        const calendarDays = document.getElementById('calendarDays');
-        const year = currentDate.getFullYear();
-        const month = currentDate.getMonth();
-        monthYear.textContent = new Intl.DateTimeFormat('en-US', {month: 'long', year: 'numeric'}).format(currentDate);
 
-        calendarDays.innerHTML = '';
-        const firstDay = new Date(year, month, 1).getDay();
-        const daysInMonth = new Date(year, month + 1, 0).getDate();
-        const today = new Date();
-        const minDate = new Date(today.getTime() + 24 * 60 * 60 * 1000); // 24h after now
-        const maxDate = new Date(today.getTime() + 30 * 24 * 60 * 60 * 1000); // 30 days ahead
+            function disableBookedSlots(slots) {
+                $('.time-slot').each(function () {
+                    const slotTime = normalizeTime($(this).data('time'));
+                    const isBooked = slots.some(s => normalizeTime(s.time) === slotTime);
 
-        for (let i = 0; i < firstDay; i++) {
-            const emptyDiv = document.createElement('div');
-            emptyDiv.className = 'calendar-day empty';
-            calendarDays.appendChild(emptyDiv);
-        }
+                    if (isBooked) {
+                        $(this).prop('disabled', true).addClass('disabled'); // không thể chọn, mờ đi
+                        if ($(this).hasClass('active')) {
+                            $(this).removeClass('active');
+                            selectedTimeStr = '';
+                            $('#selectedTime').val('');
+                            updateDateTime();
+                        }
+                    } else {
+                        $(this).prop('disabled', false).removeClass('disabled'); // mở slot
+                    }
+                });
+            }
 
-        for (let day = 1; day <= daysInMonth; day++) {
-            const dayEl = document.createElement('div');
-            dayEl.className = 'calendar-day';
-            dayEl.textContent = day;
-            const dayDate = new Date(year, month, day);
-            if (dayDate < minDate || dayDate > maxDate)
-                dayEl.classList.add('disabled');
-            else
-                dayEl.addEventListener('click', () => selectDate(dayDate, dayEl));
-            calendarDays.appendChild(dayEl);
-        }
-    }
-
-    function selectDate(date, element) {
-        document.querySelectorAll('.calendar-day.selected').forEach(e => e.classList.remove('selected'));
-        element.classList.add('selected');
-        selectedDateStr = date.toISOString().split('T')[0];
-        document.getElementById('selectedDate').value = selectedDateStr;
-        updateDateTime();
-    }
-
-    // Setup time slot selection
-    function setupTimeSlots() {
-        document.querySelectorAll('.time-slot').forEach(slot => {
-            slot.addEventListener('click', () => {
-                document.querySelectorAll('.time-slot').forEach(s => s.classList.remove('active'));
-                slot.classList.add('active');
-                selectedTimeStr = slot.dataset.time;
-                document.getElementById('selectedTime').value = selectedTimeStr;
+            function resetTimeSlots() {
+                $('.time-slot').prop('disabled', false).removeClass('disabled active');
+                selectedTimeStr = '';
+                $('#selectedTime').val('');
                 updateDateTime();
+            }
+
+            // --- Normalize time HH:mm ---
+            function normalizeTime(timeStr) {
+                let parts = timeStr.split(':');
+                let h = parts[0].padStart(2, '0');
+                let m = parts[1].padStart(2, '0');
+                return h + ':' + m;
+            }
+
+            // --- Tìm ngày full (tất cả slot bị booked) ---
+            function getFullyBookedDates() {
+                let dateMap = {};
+                bookedSlots.forEach(s => {
+                    if (!dateMap[s.date])
+                        dateMap[s.date] = 0;
+                    dateMap[s.date]++;
+                });
+                // giả sử 10 slot / ngày (7:00->16:30 mỗi 30p) => ngày full = 20 slot
+                const maxSlotsPerDay = 20;
+                return Object.keys(dateMap).filter(d => dateMap[d] >= maxSlotsPerDay);
+            }
+
+            // --- Month navigation ---
+            function navigateMonth(direction) {
+                currentDate.setMonth(currentDate.getMonth() + direction);
+                renderCalendar();
+                if (selectedDoctorId) {
+                    $('#doctorSelect').trigger('change'); // reload slot mới cho tháng
+                }
+            }
+
+            // --- Init ---
+            $(document).ready(function () {
+                renderCalendar();
+                setupTimeSlots();
+                $('#prevMonth').on('click', () => navigateMonth(-1));
+                $('#nextMonth').on('click', () => navigateMonth(1));
             });
-        });
-    }
+        </script>
 
-    function updateDateTime() {
-        if (selectedDateStr && selectedTimeStr) {
-            document.getElementById('appointmentDateTime').value = selectedDateStr + 'T' + selectedTimeStr;
-        }
-    }
 
-    function navigateMonth(direction) {
-        currentDate.setMonth(currentDate.getMonth() + direction);
-        renderCalendar();
-    }
-
-    // Init
-    document.addEventListener('DOMContentLoaded', () => {
-        renderCalendar();
-        setupTimeSlots();
-        document.getElementById('prevMonth').addEventListener('click', () => navigateMonth(-1));
-        document.getElementById('nextMonth').addEventListener('click', () => navigateMonth(1));
-    });
-</script>
-</body>
+    </body>
 </html>
 
 

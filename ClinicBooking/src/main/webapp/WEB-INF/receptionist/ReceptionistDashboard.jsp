@@ -79,7 +79,7 @@
         <!-- Main Content -->
         <div class="clinic-main-content">
 
-            <div class="clinic-navbar">
+            <div class="clinic-navbar mb-4">
                 <h3 class="clinic-navbar-title">
                     <i class="fa-solid fa-clipboard me-2"></i>
                     Receptionist Dashboard
@@ -90,7 +90,7 @@
             </div>
 
             <!-- ===== STATS CARDS ===== -->
-            <div class="stats-row">
+            <div class="stats-row mb-4">
 
                 <!-- Today Appointments -->
                 <div class="stat-card">
@@ -139,7 +139,7 @@
 
                 <!-- Left: Top 5 Doctors by Revenue -->
                 <div class="col-md-6">
-                    <div class="card mb-4 mt-3"
+                    <div class="card mb-4"
                          style="border:none; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.08);">
                         <div class="card-header"
                              style="background-color:#1B5A90; color:white; border-top-left-radius:12px; border-top-right-radius:12px;">
@@ -181,7 +181,7 @@
 
                 <!-- Right: Top 5 Specialties Booked -->
                 <div class="col-md-6">
-                    <div class="card mb-4 mt-3"
+                    <div class="card mb-4"
                          style="border:none; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.08);">
                         <div class="card-header"
                              style="background-color:#1B5A90; color:white; border-top-left-radius:12px; border-top-right-radius:12px;">
