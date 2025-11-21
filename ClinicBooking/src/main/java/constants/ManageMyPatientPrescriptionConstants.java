@@ -14,30 +14,11 @@ import java.util.List;
 public class ManageMyPatientPrescriptionConstants {
 
     public static final List<String> INSTRUCTION_LIST = Arrays.asList(
-            "Take 1 tablet after meal",
-            "Take 1 tablet before meal",
-            "Take 1 tablet with food",
-            "Take 2 tablets before bed",
-            "Take 1 tablet once daily in the morning",
-            "Take 1 tablet at bedtime",
-            "Take 1 tablet twice daily",
-            "Take 1 tablet three times daily",
-            "Take with plenty of water",
-            "Swallow whole, do not crush or chew",
-            "Shake well before use",
-            "Take 5ml twice daily",
-            "Take 10ml three times daily",
-            "Apply externally",
-            "Apply thin layer to affected area",
-            "Apply twice daily",
-            "Avoid contact with eyes",
-            "Use 1–2 drops in affected eye",
-            "Use 1–2 drops in affected ear",
-            "Use every 4 hours",
-            "Take on an empty stomach",
-            "Do not skip doses",
-            "Finish the entire course",
-            "Avoid alcohol during treatment"
+            "Take 1 tablet/capsule 3 times daily after meals",
+            "Take 1 tablets twice daily 30 minutes before meals",
+            "Take 1 tablet in the morning and 1 tablet in the evening",
+            "1 tablet in the morning",
+            "1 tablet at noon",
+            "1 tablet in the afternoon"
     );
-
 }
