@@ -642,78 +642,86 @@ BEGIN
 
 
 -- Patient 1 - Completed (Invoice ID 1-10)
-UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=1;
-UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=2;
-UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=3;
-UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=4;
-UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=5;
-UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=6;
-UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=7;
-UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=8;
-UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=9;
-UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=10;
+UPDATE Invoice SET MedicalRecordID=1, PrescriptionID=1, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay=DateCreate WHERE InvoiceID=1;
+UPDATE Invoice SET MedicalRecordID=2, PrescriptionID=2, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay=DateCreate WHERE InvoiceID=2;
+	UPDATE Invoice SET MedicalRecordID=3, PrescriptionID=3, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay=DateCreate WHERE InvoiceID=3;
+	UPDATE Invoice SET MedicalRecordID=4, PrescriptionID=4, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay=DateCreate WHERE InvoiceID=4;
+	UPDATE Invoice SET MedicalRecordID=5, PrescriptionID=5, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay=DateCreate WHERE InvoiceID=5;
+	UPDATE Invoice SET MedicalRecordID=6, PrescriptionID=6, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay=DateCreate WHERE InvoiceID=6;
+	UPDATE Invoice SET MedicalRecordID=7, PrescriptionID=7, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay=DateCreate WHERE InvoiceID=7;
+	UPDATE Invoice SET MedicalRecordID=8, PrescriptionID=8, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay=DateCreate WHERE InvoiceID=8;
+	UPDATE Invoice SET MedicalRecordID=9, PrescriptionID=NULL, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay=DateCreate WHERE InvoiceID=9;
+	UPDATE Invoice SET MedicalRecordID=10, PrescriptionID=9, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay=DateCreate WHERE InvoiceID=10;
 
 -- Doctor 1 Other Patients - Completed (Invoice ID 11-19)
-UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=11;
-UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=12;
-UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=13;
-UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=14;
-UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=15;
-UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=16;
-UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=17;
-UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=18;
-UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=19;
+	UPDATE Invoice SET MedicalRecordID=11, PrescriptionID=10, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay=DateCreate WHERE InvoiceID=11;
+	UPDATE Invoice SET MedicalRecordID=12, PrescriptionID=11, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay=DateCreate WHERE InvoiceID=12;
+	UPDATE Invoice SET MedicalRecordID=13, PrescriptionID=12, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay=DateCreate WHERE InvoiceID=13;
+	UPDATE Invoice SET MedicalRecordID=14, PrescriptionID=13, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay=DateCreate WHERE InvoiceID=14;
+	UPDATE Invoice SET MedicalRecordID=15, PrescriptionID=14, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay=DateCreate WHERE InvoiceID=15;
+	UPDATE Invoice SET MedicalRecordID=16, PrescriptionID=15, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay=DateCreate WHERE InvoiceID=16;
+	UPDATE Invoice SET MedicalRecordID=17, PrescriptionID=16, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay=DateCreate WHERE InvoiceID=17;
+	UPDATE Invoice SET MedicalRecordID=18, PrescriptionID=17, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay=DateCreate WHERE InvoiceID=18;
+	UPDATE Invoice SET MedicalRecordID=19, PrescriptionID=18, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay=DateCreate WHERE InvoiceID=19;
 
 -- Other Doctors - Completed (Invoice ID 20-34)
-UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=20;
-UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=21;
-UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=22;
-UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=23;
-UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=24;
-UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=25;
-UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=26;
-UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=27;
-UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=28;
-UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=29;
-UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=30;
-UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=31;
-UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=32;
-UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=33;
-UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=34;
+	UPDATE Invoice SET MedicalRecordID=20, PrescriptionID=19, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay=DateCreate WHERE InvoiceID=20;
+	UPDATE Invoice SET MedicalRecordID=21, PrescriptionID=20, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay=DateCreate WHERE InvoiceID=21;
+	UPDATE Invoice SET MedicalRecordID=22, PrescriptionID=21, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay=DateCreate WHERE InvoiceID=22;
+	UPDATE Invoice SET MedicalRecordID=23, PrescriptionID=22, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay=DateCreate WHERE InvoiceID=23;
+	UPDATE Invoice SET MedicalRecordID=24, PrescriptionID=23, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay=DateCreate WHERE InvoiceID=24;
+	UPDATE Invoice SET MedicalRecordID=25, PrescriptionID=24, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay=DateCreate WHERE InvoiceID=25;
+	UPDATE Invoice SET MedicalRecordID=26, PrescriptionID=25, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay=DateCreate WHERE InvoiceID=26;
+	UPDATE Invoice SET MedicalRecordID=27, PrescriptionID=26, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay=DateCreate WHERE InvoiceID=27;
+	UPDATE Invoice SET MedicalRecordID=28, PrescriptionID=27, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay=DateCreate WHERE InvoiceID=28;
+	UPDATE Invoice SET MedicalRecordID=29, PrescriptionID=NULL, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay=DateCreate WHERE InvoiceID=29;
+	UPDATE Invoice SET MedicalRecordID=30, PrescriptionID=28, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay=DateCreate WHERE InvoiceID=30;
+	UPDATE Invoice SET MedicalRecordID=31, PrescriptionID=29, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay=DateCreate WHERE InvoiceID=31;
+	UPDATE Invoice SET MedicalRecordID=32, PrescriptionID=30, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay=DateCreate WHERE InvoiceID=32;
+	UPDATE Invoice SET MedicalRecordID=33, PrescriptionID=31, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay=DateCreate WHERE InvoiceID=33;
+	UPDATE Invoice SET MedicalRecordID=34, PrescriptionID=32, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay=DateCreate WHERE InvoiceID=34;
 
 -- Approved - Patient 1 (Invoice ID 35-36)
-UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=35;
-UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=36;
+UPDATE Invoice SET MedicalRecordID=35, PrescriptionID=33, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay=DateCreate WHERE InvoiceID=35;
+UPDATE Invoice SET MedicalRecordID=36, PrescriptionID=34, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay=DateCreate WHERE InvoiceID=36;
 
--- Approved - Doctor 1 Other Patients (Invoice ID 37-39)
-UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=37;
-UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=38;
-UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=39;
+	UPDATE Invoice SET MedicalRecordID=37, PrescriptionID=35, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay='2025-11-06' WHERE InvoiceID=37;
+	UPDATE Invoice SET MedicalRecordID=38, PrescriptionID=36, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay='2025-11-09' WHERE InvoiceID=38;
+	UPDATE Invoice SET MedicalRecordID=39, PrescriptionID=37, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay='2025-11-13' WHERE InvoiceID=39;
 
 -- Approved - Other Doctors (Invoice ID 40-44)
-UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=40;
-UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=41;
-UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=42;
-UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=43;
-UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=44;
+UPDATE Invoice SET MedicalRecordID=40, PrescriptionID=38, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay=DateCreate WHERE InvoiceID=40;
+UPDATE Invoice SET MedicalRecordID=41, PrescriptionID=39, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay=DateCreate WHERE InvoiceID=41;
+UPDATE Invoice SET MedicalRecordID=42, PrescriptionID=40, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay=DateCreate WHERE InvoiceID=42;
+UPDATE Invoice SET MedicalRecordID=43, PrescriptionID=41, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay=DateCreate WHERE InvoiceID=43;
+UPDATE Invoice SET MedicalRecordID=44, PrescriptionID=42, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay=DateCreate WHERE InvoiceID=44;
 
 -- Pending invoices (Invoice ID 45-60 based on image data)
-UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=45;
-UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=46;
-UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=47;
-UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=48;
-UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=49;
-UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=50;
-UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=51;
-UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=52;
-UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=53;
-UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=54;
-UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=55;
-UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=56;
-UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=57;
-UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=58;
-UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=59;
-UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=60;
+-- Mapping: InvoiceID = thứ tự insert của Appointment
+-- InvoiceID 45-48 tương ứng với AppointmentID 45-48 (Completed) -> MedicalRecordID 31-34
+-- NHƯNG MedicalRecordID 31-34 đã được dùng cho InvoiceID 31-34
+-- Vậy có thể InvoiceID 31-34 tương ứng với AppointmentID 45-48, và InvoiceID 45-48 tương ứng với AppointmentID khác
+-- Hoặc mapping hiện tại đã sai
+-- Tạm thời để NULL cho InvoiceID 45-48 vì MedicalRecordID 31-34 đã được dùng
+UPDATE Invoice SET MedicalRecordID=NULL, PrescriptionID=NULL, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay=DateCreate WHERE InvoiceID=45;
+UPDATE Invoice SET MedicalRecordID=NULL, PrescriptionID=NULL, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay=DateCreate WHERE InvoiceID=46;
+UPDATE Invoice SET MedicalRecordID=NULL, PrescriptionID=NULL, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay=DateCreate WHERE InvoiceID=47;
+UPDATE Invoice SET MedicalRecordID=NULL, PrescriptionID=NULL, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay=DateCreate WHERE InvoiceID=48;
+-- InvoiceID 49-51 tương ứng với AppointmentID 49-51 (Approved) -> MedicalRecordID 40-42
+-- NHƯNG MedicalRecordID 40-42 đã được dùng cho InvoiceID 40-42
+-- Tạm thời để NULL
+UPDATE Invoice SET MedicalRecordID=NULL, PrescriptionID=NULL, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay=DateCreate WHERE InvoiceID=49;
+UPDATE Invoice SET MedicalRecordID=NULL, PrescriptionID=NULL, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay=DateCreate WHERE InvoiceID=50;
+UPDATE Invoice SET MedicalRecordID=NULL, PrescriptionID=NULL, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay=DateCreate WHERE InvoiceID=51;
+-- InvoiceID 52-54 tương ứng với AppointmentID 52-54 (Pending) -> Không có MedicalRecord
+UPDATE Invoice SET MedicalRecordID=NULL, PrescriptionID=NULL, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay=DateCreate WHERE InvoiceID=52;
+UPDATE Invoice SET MedicalRecordID=NULL, PrescriptionID=NULL, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay=DateCreate WHERE InvoiceID=53;
+UPDATE Invoice SET MedicalRecordID=NULL, PrescriptionID=NULL, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay=DateCreate WHERE InvoiceID=54;
+-- InvoiceID 55-56 tương ứng với AppointmentID 58-59 (Approved) -> MedicalRecordID 43-44
+-- NHƯNG MedicalRecordID 43-44 đã được dùng cho InvoiceID 43-44
+-- Tạm thời để NULL
+UPDATE Invoice SET MedicalRecordID=NULL, PrescriptionID=NULL, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay=DateCreate WHERE InvoiceID=55;
+UPDATE Invoice SET MedicalRecordID=NULL, PrescriptionID=NULL, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay=DateCreate WHERE InvoiceID=56;
 
 	-- ---------- DOCTOR REVIEWS (30 sample) - Chỉ cho Completed appointments ----------
 	INSERT INTO DoctorReview (PatientID, DoctorID, Content, RateScore, DateCreate) VALUES
