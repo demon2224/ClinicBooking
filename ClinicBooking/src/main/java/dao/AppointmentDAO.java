@@ -1382,8 +1382,7 @@ public class AppointmentDAO extends DBContext {
 
     /**
      * Book appointment WITH consultation payment (NGHIỆP VỤ VIỆT NAM) Status =
-     * "Pending" (chờ lễ tân xác nhận) Note: Lưu thông tin thanh toán vào Note
-     * để tracking
+     * "Pending" (chờ lễ tân xác nhận)
      *
      * @param patientId Patient ID
      * @param doctorId Doctor ID
@@ -1397,10 +1396,6 @@ public class AppointmentDAO extends DBContext {
             Timestamp appointmentDateTime,
             double consultationFee,
             String paymentType) {
-        // Lưu thông tin thanh toán vào Note để tracking
-        String paymentInfo = String.format(" | [PAID: %.0f VND via %s]", consultationFee, paymentType);
-        String fullNote = (note != null && !note.isEmpty()) ? note + paymentInfo : paymentInfo.trim();
-
         String sql = "INSERT INTO Appointment "
                 + "(PatientID, DoctorID, AppointmentStatus, DateBegin, DateEnd, Note, DateCreate) "
                 + "VALUES (?, ?, ?, ?, NULL, ?, GETDATE())";
@@ -1416,7 +1411,7 @@ public class AppointmentDAO extends DBContext {
             localStatement.setInt(2, doctorId);
             localStatement.setString(3, "Pending"); // Status "Pending" - chờ lễ tân xác nhận
             localStatement.setTimestamp(4, appointmentDateTime);
-            localStatement.setString(5, fullNote); // Lưu thông tin thanh toán vào Note
+            localStatement.setString(5, note); // Save original patient note only
 
             int rowsAffected = localStatement.executeUpdate();
 
