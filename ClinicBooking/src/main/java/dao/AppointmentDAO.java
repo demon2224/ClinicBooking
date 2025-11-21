@@ -42,11 +42,13 @@ public class AppointmentDAO extends DBContext {
                 + "	p.PhoneNumber,\n"
                 + "	a.DateBegin,\n"
                 + "	a.Note,\n"
-                + "	a.AppointmentStatus\n"
+                + "	a.AppointmentStatus,\n"
+                + " CASE WHEN mr.MedicalRecordID IS NOT NULL THEN 1 ELSE 0 END as HasRecord\n"
                 + "FROM Appointment a\n"
                 + "JOIN Doctor d on a.DoctorID = d.DoctorID\n"
                 + "JOIN Staff s on s.StaffID = d.StaffID\n"
                 + "JOIN Patient p on p.PatientID = a.PatientID\n"
+                + "LEFT JOIN MedicalRecord mr on mr.AppointmentID = a.AppointmentID\n"
                 + "Where d.DoctorID = ? "
                 + "and not a.AppointmentStatus = 'Canceled'"
                 + "ORDER BY a.DateBegin DESC";
@@ -67,6 +69,7 @@ public class AppointmentDAO extends DBContext {
                             rs.getTimestamp("DateBegin"),
                             null,
                             rs.getString("Note"));
+                    appointment.setHasRecord(rs.getInt("HasRecord") == 1);
                     appointments.add(appointment);
                 }
             }
@@ -145,11 +148,13 @@ public class AppointmentDAO extends DBContext {
                 + "	p.PhoneNumber,\n"
                 + "	a.DateBegin,\n"
                 + "	a.Note,\n"
-                + "	a.AppointmentStatus\n"
+                + "	a.AppointmentStatus,\n"
+                + " CASE WHEN mr.MedicalRecordID IS NOT NULL THEN 1 ELSE 0 END as HasRecord\n"
                 + "FROM Appointment a\n"
                 + "JOIN Doctor d on a.DoctorID = d.DoctorID\n"
                 + "JOIN Staff s on s.StaffID = d.StaffID\n"
                 + "JOIN Patient p on p.PatientID = a.PatientID\n"
+                + "LEFT JOIN MedicalRecord mr on mr.AppointmentID = a.AppointmentID\n"
                 + "Where d.DoctorID = ?"
                 + "and not a.AppointmentStatus = 'Canceled'"
                 + "AND (p.FirstName LIKE ? OR p.LastName LIKE ?)"
@@ -177,6 +182,7 @@ public class AppointmentDAO extends DBContext {
                             rs.getTimestamp("DateBegin"),
                             null,
                             rs.getString("Note"));
+                    appointment.setHasRecord(rs.getInt("HasRecord") == 1);
                     appointments.add(appointment);
                 }
             }
@@ -1154,9 +1160,11 @@ public class AppointmentDAO extends DBContext {
     public List<AppointmentDTO> getUpcomingAppointmentsByDoctorID(int doctorID) {
         List<AppointmentDTO> appointments = new ArrayList<>();
         String sql = "SELECT TOP 5 a.AppointmentID, a.DateBegin, a.AppointmentStatus, a.Note, "
-                + "p.PatientID, p.FirstName, p.LastName, p.PhoneNumber, p.Email "
+                + "p.PatientID, p.FirstName, p.LastName, p.PhoneNumber, p.Email,"
+                + " CASE WHEN mr.MedicalRecordID IS NOT NULL THEN 1 ELSE 0 END as HasRecord\n"
                 + "FROM Appointment a "
                 + "JOIN Patient p ON a.PatientID = p.PatientID "
+                + "LEFT JOIN MedicalRecord mr on mr.AppointmentID = a.AppointmentID\n"
                 + "WHERE a.DoctorID = ? "
                 + "AND a.AppointmentStatus = 'Approved' "
                 + "  AND DateBegin > DATEADD(MINUTE, -30, GETDATE())"
@@ -1179,7 +1187,7 @@ public class AppointmentDAO extends DBContext {
                 appointment.setAppointmentStatus(rs.getString("AppointmentStatus"));
                 appointment.setDateBegin(rs.getTimestamp("DateBegin"));
                 appointment.setNote(rs.getString("Note"));
-
+                appointment.setHasRecord(rs.getInt("HasRecord") == 1);
                 appointments.add(appointment);
             }
         } catch (SQLException e) {
@@ -1315,4 +1323,33 @@ public class AppointmentDAO extends DBContext {
         }
         return appointments;
     }
+
+    public boolean completedMyAppointment(int appointmentId) {
+        String sql = "UPDATE Appointment SET AppointmentStatus = 'Completed' WHERE AppointmentID = ? and AppointmentStatus = 'Approved'";
+        Object[] params = {appointmentId};
+        int rowsAffected = executeQuery(sql, params);
+        closeResources(null);
+        return rowsAffected > 0;
+    }
+
+    public String getAppointmentStatusByID(int appointmentID) {
+        String status = null;
+        String sql = "SELECT AppointmentStatus FROM Appointment WHERE AppointmentID = ?";
+        Object[] params = {appointmentID};
+
+        ResultSet rs = executeSelectQuery(sql, params);
+
+        try {
+            if (rs != null && rs.next()) {
+                status = rs.getString("AppointmentStatus");
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(AppointmentDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            closeResources(rs);
+        }
+
+        return status;
+    }
+
 }

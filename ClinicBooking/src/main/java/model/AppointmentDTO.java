@@ -23,6 +23,7 @@ public class AppointmentDTO {
     private String note;
     private boolean hidden;
     private int totalAppointments;
+    private boolean hasRecord;
 
     public AppointmentDTO() {
     }
@@ -116,6 +117,14 @@ public class AppointmentDTO {
 
     public void setHidden(boolean hidden) {
         this.hidden = hidden;
+    }
+
+    public boolean isHasRecord() {
+        return hasRecord;
+    }
+
+    public void setHasRecord(boolean hasRecord) {
+        this.hasRecord = hasRecord;
     }
 
     public String getDoctorName() {

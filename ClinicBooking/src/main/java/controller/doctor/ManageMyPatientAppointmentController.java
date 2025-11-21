@@ -84,7 +84,9 @@ public class ManageMyPatientAppointmentController extends HttpServlet {
                 case "detail":
                     showMyPatientAppointmentDetail(request, response, doctorID);
                     break;
-
+                case "completed":
+                    completedAppointment(request, response);
+                    break;
                 default:
                     showMyPatientAppointmentList(request, response, doctorID);
                     break;
@@ -136,6 +138,40 @@ public class ManageMyPatientAppointmentController extends HttpServlet {
             request.setAttribute("isExist", isExist);
             request.getRequestDispatcher("/WEB-INF/doctor/MyPatientAppointmentDetail.jsp").forward(request, response);
         } catch (Exception ex) {
+            response.sendRedirect(request.getContextPath() + "/manage-my-patient-appointment");
+        }
+    }
+
+    private void completedAppointment(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        try {
+            int appointmentID = Integer.parseInt(request.getParameter("appointmentID"));
+
+            // Check has record
+            boolean isExist = medicalRecordDAO.isExistMedicalRecord(appointmentID);
+
+            // Get appointment status
+            String status = appointmentDAO.getAppointmentStatusByID(appointmentID);
+
+            // Condition fail
+            if (!isExist || !"Approved".equals(status)) {
+                request.getSession().setAttribute("error", "Cannot complete this appointment.");
+                response.sendRedirect(request.getContextPath() + "/manage-my-patient-appointment");
+                return;
+            }
+
+            // Update
+            boolean isCompleted = appointmentDAO.completedMyAppointment(appointmentID);
+
+            if (isCompleted) {
+                request.getSession().setAttribute("success", "Appointment marked as completed.");
+            } else {
+                request.getSession().setAttribute("error", "Error! Please try again later.");
+            }
+
+            response.sendRedirect(request.getContextPath() + "/manage-my-patient-appointment");
+
+        } catch (Exception e) {
             response.sendRedirect(request.getContextPath() + "/manage-my-patient-appointment");
         }
     }

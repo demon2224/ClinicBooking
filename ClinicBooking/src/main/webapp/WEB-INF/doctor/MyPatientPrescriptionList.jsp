@@ -147,7 +147,10 @@
                                                   <c:when test="${prescription.prescriptionStatus eq 'Pending'}">bg-warning text-dark</c:when>
                                                   <c:otherwise>bg-success</c:otherwise>
                                               </c:choose>">
-                                            ${prescription.prescriptionStatus}
+                                            <c:choose>
+                                                  <c:when test="${prescription.prescriptionStatus eq 'Pending'}">${prescription.prescriptionStatus}</c:when>
+                                                  <c:otherwise>Paid</c:otherwise>
+                                              </c:choose>
                                         </span>
                                     </td>
                                     <td>

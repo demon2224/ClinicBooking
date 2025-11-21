@@ -89,7 +89,7 @@
                     <h2 class="fw-bold text-primary">
                         <i class="fa-solid fa-file-medical me-2"></i>Medical Record Detail
                     </h2>
-                    <c:if test="${not requestScope.isExist}">
+                    <c:if test="${not requestScope.isExist and detail.appointmentID.appointmentStatus == 'Approved'}">
                         <div class="text-center mt-4">
                             <a href="${pageContext.request.contextPath}/manage-my-patient-prescription?action=create&medicalRecordID=${detail.medicalRecordID}"
                                class="btn btn-create-record">
@@ -211,7 +211,11 @@
                                                   <c:when test="${list[0].prescriptionID.prescriptionStatus eq 'Canceled'}">bg-danger text-White</c:when>
                                                   <c:otherwise>bg-success</c:otherwise>
                                               </c:choose>">
-                                            ${list[0].prescriptionID.prescriptionStatus}
+                                            <c:choose>
+                                                <c:when test="${list[0].prescriptionID.prescriptionStatus eq 'Pending'}">${list[0].prescriptionID.prescriptionStatus}</c:when>
+                                                <c:when test="${list[0].prescriptionID.prescriptionStatus eq 'Canceled'}">${list[0].prescriptionID.prescriptionStatus}</c:when>
+                                                <c:otherwise>Paid</c:otherwise>
+                                            </c:choose>
                                         </span>
                                     </td>
                                 </tr>

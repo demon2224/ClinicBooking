@@ -1053,13 +1053,13 @@ public class PrescriptionDAO extends DBContext {
 
     public List<PrescriptionDTO> getRecentPrescriptionsByDoctorID(int doctorID) {
         List<PrescriptionDTO> prescriptions = new ArrayList<>();
-        String sql = "SELECT TOP 5 p.PrescriptionID, p.DateCreate, p.PrescriptionStatus, "
+        String sql = "SELECT TOP 5 p.PrescriptionID, p.DateCreate, p.PrescriptionStatus, p.[Hidden], "
                 + "p.Note, pa.FirstName, pa.LastName, a.DateBegin "
                 + "FROM Prescription p "
                 + "JOIN Appointment a ON a.AppointmentID = p.AppointmentID "
                 + "JOIN Patient pa ON pa.PatientID = a.PatientID "
                 + "WHERE a.DoctorID = ? "
-                + "And not p.PrescriptionStatus = 'Canceled'"
+                + "And not p.PrescriptionStatus = 'Canceled' And p.[Hidden] = 0"
                 + "ORDER BY p.DateCreate DESC";
 
         Object[] params = {doctorID};
