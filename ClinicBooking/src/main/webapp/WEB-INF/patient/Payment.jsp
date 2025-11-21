@@ -170,9 +170,9 @@
                 `;
                 document.body.appendChild(popup);
 
-                // Redirect after 2 seconds
+                // Redirect after 2 seconds to prescription list
                 setTimeout(() => {
-                    window.location.href = '${contextPath}/manage-my-invoices';
+                    window.location.href = '${contextPath}/manage-my-prescriptions';
                 }, 2000);
             }
 
