@@ -86,13 +86,16 @@
                         <c:otherwise>
                             <!-- Display Prescriptions -->
                             <c:forEach var="prescription" items="${prescriptions}">
+                                <c:set var="invoiceId" value="${prescriptionInvoiceMap[prescription.prescriptionID]}" />
+                                <c:set var="paymentType" value="${prescriptionPaymentMap[prescription.prescriptionID]}" />
+                                <c:set var="totalFee" value="${prescriptionTotalFeeMap[prescription.prescriptionID]}" />
+                                
                                 <div class="appointment-card">
                                     <div class="appointment-header">
                                         <div class="appointment-info">
                                             <div class="appointment-date">
                                                 <i class="fas fa-calendar"></i>
-                                                Delivered Date: <fmt:formatDate value="${prescription.dateCreate}"
-                                                                pattern="EEEE, MMMM dd, yyyy" />
+                                                <fmt:formatDate value="${prescription.dateCreate}" pattern="EEEE, MMMM dd, yyyy" />
                                             </div>
                                             <div class="appointment-doctor">
                                                 <i class="fas fa-user-md"></i>
@@ -106,7 +109,7 @@
                                                 </c:choose>
                                             </div>
                                             <div class="appointment-specialty">
-                                                <i class="fas fa-graduation-cap"></i>
+                                                <i class="fas fa-stethoscope"></i>
                                                 <c:choose>
                                                     <c:when test="${not empty prescription.appointmentID.doctorID.specialtyID.specialtyName}">
                                                         ${prescription.appointmentID.doctorID.specialtyID.specialtyName}
@@ -116,16 +119,25 @@
                                                     </c:otherwise>
                                                 </c:choose>
                                             </div>
+                                            <c:if test="${totalFee != null && totalFee > 0}">
+                                                <div class="appointment-specialty">
+                                                    <i class="fas fa-dollar-sign"></i>
+                                                    Total medicine fee: <fmt:formatNumber value="${totalFee}" pattern="#,##0"/> VND
+                                                </div>
+                                            </c:if>
                                         </div>
                                         <div class="appointment-status
                                              <c:choose>
-                                                 <c:when test="${prescription.prescriptionStatus == 'Delivered'}">status-completed</c:when>
+                                                 <c:when test="${prescription.prescriptionStatus == 'Paid'}">status-completed</c:when>
                                                  <c:when test="${prescription.prescriptionStatus == 'Pending'}">status-pending</c:when>
-                                                 <c:when test="${prescription.prescriptionStatus == 'Canceled'}">status-cancelled</c:when>
                                                  <c:otherwise>status-pending</c:otherwise>
                                              </c:choose>
                                              ">
-                                            ${prescription.prescriptionStatus != null ? prescription.prescriptionStatus : 'Pending'}
+                                            <c:choose>
+                                                <c:when test="${prescription.prescriptionStatus == 'Paid'}">PAID</c:when>
+                                                <c:when test="${prescription.prescriptionStatus == 'Pending'}">PENDING</c:when>
+                                                <c:otherwise>PENDING</c:otherwise>
+                                            </c:choose>
                                         </div>
                                     </div>
                                     <div class="appointment-actions">
@@ -133,6 +145,14 @@
                                             <i class="fas fa-eye"></i>
                                             View Details
                                         </a>
+                                        
+                                        <!-- ⭐ Button Pay cho đơn thuốc có status Pending và có invoice -->
+                                        <c:if test="${prescription.prescriptionStatus == 'Pending' && invoiceId != null && invoiceId > 0}">
+                                            <a href="${pageContext.request.contextPath}/payment?id=${invoiceId}&type=medicine" class="btn-action btn-primary">
+                                                <i class="fas fa-credit-card"></i>
+                                                Checkout
+                                            </a>
+                                        </c:if>
                                     </div>
                                 </div>
                             </c:forEach>

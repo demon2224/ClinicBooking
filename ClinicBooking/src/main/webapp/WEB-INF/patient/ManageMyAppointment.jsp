@@ -77,24 +77,6 @@
             </div>
         </c:if>
 
-        <!-- Confirmation Modal for Cancel Action -->
-        <div id="confirmModal" class="modal-overlay">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3 class="modal-title">
-                        <i class="fas fa-exclamation-triangle text-warning"></i> Confirm Action
-                    </h3>
-                    <button type="button" class="modal-close" onclick="closeConfirmModal()">&times;</button>
-                </div>
-                <div class="modal-body">
-                    <p>Are you sure you want to cancel this appointment? This action cannot be undone.</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" onclick="closeConfirmModal()">Cancel</button>
-                    <button type="button" class="btn btn-danger" id="confirmCancelBtn">Yes</button>
-                </div>
-            </div>
-        </div>
 
         <!-- Search and Filter Section -->
         <div class="search-filter-section">
@@ -181,15 +163,6 @@
                                         <i class="fas fa-eye"></i>
                                         View Details
                                     </a>
-
-                                    <!-- Only show cancel button for pending appointments -->
-                                    <c:if test="${appointment.appointmentStatus == 'Pending'}">
-                                        <button class="btn-action btn-cancel"
-                                                data-appointment-id="${appointment.appointmentID}">
-                                            <i class="fas fa-times"></i>
-                                            Cancel
-                                        </button>
-                                    </c:if>
                                 </div>
                             </div>
                         </c:forEach>
@@ -211,40 +184,6 @@
             }
         }
 
-        function closeConfirmModal() {
-            const modal = document.getElementById('confirmModal');
-            if (modal) {
-                modal.classList.remove('active');
-                document.body.style.overflow = 'auto';
-            }
-        }
-
-        function showConfirmModal(appointmentId) {
-            const modal = document.getElementById('confirmModal');
-            const confirmBtn = document.getElementById('confirmCancelBtn');
-
-            if (modal && confirmBtn) {
-                modal.classList.add('active');
-                document.body.style.overflow = 'hidden';
-
-                // Store appointment ID for confirmation
-                confirmBtn.setAttribute('data-appointment-id', appointmentId);
-
-                // Close modal when clicking outside
-                modal.addEventListener('click', function (e) {
-                    if (e.target === modal) {
-                        closeConfirmModal();
-                    }
-                });
-
-                // Close modal with Escape key
-                document.addEventListener('keydown', function (e) {
-                    if (e.key === 'Escape') {
-                        closeConfirmModal();
-                    }
-                });
-            }
-        }
 
         // Auto show modal on page load if exists
         document.addEventListener('DOMContentLoaded', function () {
@@ -276,42 +215,6 @@
             }
         });
 
-        // Appointment actions
-        document.addEventListener('DOMContentLoaded', function () {
-            // Cancel appointment confirmation
-            document.querySelectorAll('.btn-cancel').forEach(button => {
-                button.addEventListener('click', function (e) {
-                    e.preventDefault();
-                    const appointmentId = this.getAttribute('data-appointment-id');
-                    showConfirmModal(appointmentId);
-                });
-            });
-
-            // Handle confirm button click
-            document.getElementById('confirmCancelBtn').addEventListener('click', function () {
-                const appointmentId = this.getAttribute('data-appointment-id');
-
-                // Create form to submit cancellation
-                const form = document.createElement('form');
-                form.method = 'POST';
-                form.action = '${pageContext.request.contextPath}/manage-my-appointments';
-
-                const actionInput = document.createElement('input');
-                actionInput.type = 'hidden';
-                actionInput.name = 'action';
-                actionInput.value = 'cancel';
-
-                const idInput = document.createElement('input');
-                idInput.type = 'hidden';
-                idInput.name = 'appointmentId';
-                idInput.value = appointmentId;
-
-                form.appendChild(actionInput);
-                form.appendChild(idInput);
-                document.body.appendChild(form);
-                form.submit();
-            });
-        });
     </script>
 </body>
 </html>

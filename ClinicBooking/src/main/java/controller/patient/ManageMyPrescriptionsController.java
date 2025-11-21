@@ -7,11 +7,15 @@ package controller.patient;
 import dao.PrescriptionDAO;
 import dao.PatientDAO;
 import dao.DoctorDAO;
+import dao.InvoiceDAO;
 import model.PrescriptionDTO;
 import model.PatientDTO;
+import model.InvoiceDTO;
 import constants.ManageMyPrescriptionsConstants;
 import java.io.IOException;
 import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -29,12 +33,14 @@ public class ManageMyPrescriptionsController extends HttpServlet {
     private PrescriptionDAO prescriptionDAO;
     private PatientDAO patientDAO;
     private DoctorDAO doctorDAO;
+    private InvoiceDAO invoiceDAO;
 
     @Override
     public void init() throws ServletException {
         prescriptionDAO = new PrescriptionDAO();
         patientDAO = new PatientDAO();
         doctorDAO = new DoctorDAO();
+        invoiceDAO = new InvoiceDAO();
     }
 
     /**
@@ -162,9 +168,33 @@ public class ManageMyPrescriptionsController extends HttpServlet {
             prescriptions = prescriptionDAO.getPrescriptionsByPatientId(patientId);
         }
 
+        // ⭐ Load invoice info for each prescription (ID, PaymentType, TotalFee)
+        Map<Integer, Integer> prescriptionInvoiceMap = new HashMap<>(); // prescriptionId -> invoiceId
+        Map<Integer, String> prescriptionPaymentMap = new HashMap<>(); // prescriptionId -> paymentType
+        Map<Integer, Double> prescriptionTotalFeeMap = new HashMap<>(); // prescriptionId -> totalFee
+        
+        for (PrescriptionDTO prescription : prescriptions) {
+            int invoiceId = invoiceDAO.getInvoiceIdByPrescriptionId(prescription.getPrescriptionID());
+            if (invoiceId > 0) {
+                prescriptionInvoiceMap.put(prescription.getPrescriptionID(), invoiceId);
+                
+                // Load invoice details để lấy PaymentType và TotalFee
+                InvoiceDTO invoice = invoiceDAO.getInvoiceById(invoiceId);
+                if (invoice != null) {
+                    if (invoice.getPaymentType() != null) {
+                        prescriptionPaymentMap.put(prescription.getPrescriptionID(), invoice.getPaymentType());
+                    }
+                    prescriptionTotalFeeMap.put(prescription.getPrescriptionID(), invoice.getTotalFee());
+                }
+            }
+        }
+
         // Set attributes for JSP
         request.setAttribute("prescriptions", prescriptions);
         request.setAttribute("searchQuery", searchQuery);
+        request.setAttribute("prescriptionInvoiceMap", prescriptionInvoiceMap);
+        request.setAttribute("prescriptionPaymentMap", prescriptionPaymentMap); // ⭐ Payment type
+        request.setAttribute("prescriptionTotalFeeMap", prescriptionTotalFeeMap); // ⭐ Total fee
 
         // Forward to JSP
         request.getRequestDispatcher(ManageMyPrescriptionsConstants.LIST_PAGE_JSP).forward(request, response);

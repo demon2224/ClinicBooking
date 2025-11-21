@@ -727,7 +727,7 @@ public class PrescriptionDAO extends DBContext {
                 + "JOIN Doctor d ON a.DoctorID = d.DoctorID "
                 + "JOIN Staff s ON d.StaffID = s.StaffID "
                 + "JOIN Specialty sp ON d.SpecialtyID = sp.SpecialtyID "
-                + "WHERE a.PatientID = ? AND p.PrescriptionStatus = 'Delivered' "
+                + "WHERE a.PatientID = ? AND p.PrescriptionStatus IN ('Pending', 'Paid') "  // ⭐ CHỈ hiển thị Pending và Paid
                 + "ORDER BY p.DateCreate DESC";
 
         Object[] params = {patientId};
@@ -808,7 +808,7 @@ public class PrescriptionDAO extends DBContext {
                 + "JOIN Specialty sp ON d.SpecialtyID = sp.SpecialtyID "
                 + "LEFT JOIN PrescriptionItem pi ON p.PrescriptionID = pi.PrescriptionID "
                 + "LEFT JOIN Medicine m ON pi.MedicineID = m.MedicineID "
-                + "WHERE a.PatientID = ? AND p.PrescriptionStatus = 'Delivered' "
+                + "WHERE a.PatientID = ? AND p.PrescriptionStatus IN ('Pending', 'Paid') "  // ⭐ CHỈ hiển thị Pending và Paid
                 + "AND (s.FirstName LIKE ? OR s.LastName LIKE ? OR sp.SpecialtyName LIKE ?) "
                 + "ORDER BY p.DateCreate DESC";
 
@@ -1209,6 +1209,44 @@ public class PrescriptionDAO extends DBContext {
         return dosage;
     }
 
+    /**
+     * ⭐ Update prescription status
+     * 
+     * @param prescriptionId Prescription ID
+     * @param status New status ('Pending', 'Delivered', 'Paid', 'Canceled')
+     * @return true if successful, false otherwise
+     */
+    public boolean updatePrescriptionStatus(int prescriptionId, String status) {
+        String sql = "UPDATE Prescription SET PrescriptionStatus = ? WHERE PrescriptionID = ?";
+        Object[] params = {status, prescriptionId};
+        try {
+            int rowsAffected = executeQuery(sql, params);
+            return rowsAffected > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+    
+    /**
+     * Update prescription status to 'Paid' only if current status is 'Pending'
+     * Used when medicine payment is completed
+     * 
+     * @param prescriptionId Prescription ID
+     * @return true if successful, false otherwise
+     */
+    public boolean updatePrescriptionStatusToPaid(int prescriptionId) {
+        String sql = "UPDATE Prescription SET PrescriptionStatus = 'Paid' WHERE PrescriptionID = ? AND PrescriptionStatus = 'Pending'";
+        Object[] params = {prescriptionId};
+        try {
+            int rowsAffected = executeQuery(sql, params);
+            return rowsAffected > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+    
     public int getPendingPrecription() {
 
         String query = "SELECT COUNT(p.PrescriptionID) AS TotalPendingPrescription\n"

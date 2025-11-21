@@ -109,7 +109,7 @@ CREATE TABLE Appointment (
 CREATE TABLE Prescription (
 	PrescriptionID INT PRIMARY KEY IDENTITY(1,1),
 	AppointmentID INT FOREIGN KEY REFERENCES Appointment(AppointmentID) NOT NULL,
-	PrescriptionStatus NVARCHAR(50) DEFAULT 'Pending' CHECK (PrescriptionStatus IN ('Pending', 'Delivered', 'Canceled')) NOT NULL,
+	PrescriptionStatus NVARCHAR(50) DEFAULT 'Pending' CHECK (PrescriptionStatus IN ('Pending', 'Canceled', 'Paid')) NOT NULL,
 	DateCreate DATETIME DEFAULT GETDATE(),
 	Note NVARCHAR(550),
 	[Hidden] BIT DEFAULT 0

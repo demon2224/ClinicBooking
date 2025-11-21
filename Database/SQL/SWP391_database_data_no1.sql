@@ -5,18 +5,18 @@ IF EXISTS (SELECT name FROM master.dbo.sysdatabases WHERE name = 'ClinicBookingD
 BEGIN
 	USE ClinicBookingDatabase
 
-	-- 1. Specialties (10) - Không phụ thuộc
+	-- 1. Specialties (10) - Giá khám VND (Rẻ, vừa phải) - Cập nhật 2025
 	INSERT INTO Specialty (SpecialtyName, Price) VALUES
-('General Practice', 0.60),
-('Cardiology', 0.90),
-('Dermatology', 0.50),
-('Pediatrics', 0.45),
-('Orthopedics', 0.70),
-('Neurology', 0.95),
-('Endocrinology', 0.55),
-('Ophthalmology', 0.52),
-('ENT', 0.48),
-('Psychiatry', 0.88);
+('General Practice', 120000),      -- Khám tổng quát: 120,000đ (rẻ nhất)
+('Cardiology', 250000),            -- Tim mạch: 250,000đ (cao vì chuyên khoa nặng)
+('Dermatology', 150000),           -- Da liễu: 150,000đ (vừa phải)
+('Pediatrics', 140000),            -- Nhi khoa: 140,000đ (ưu đãi trẻ em)
+('Orthopedics', 200000),           -- Chỉnh hình: 200,000đ (vừa phải)
+('Neurology', 280000),             -- Thần kinh: 280,000đ (cao vì chuyên khoa nặng)
+('Endocrinology', 180000),         -- Nội tiết: 180,000đ (vừa phải)
+('Ophthalmology', 160000),         -- Mắt: 160,000đ (vừa phải)
+('ENT', 150000),                   -- Tai mũi họng: 150,000đ (vừa phải)
+('Psychiatry', 220000);            -- Tâm thần: 220,000đ (vừa phải)
 
 
 	-- 2. PATIENTS (30) - Không phụ thuộc
@@ -189,39 +189,39 @@ BEGIN
 	-- 7. PHARMACISTS (6) - Phụ thuộc vào Staff (StaffID)
 	INSERT INTO Pharmacist (StaffID) VALUES (11),(12),(13),(14),(15),(28);
 
-	-- 8. MEDICINES (30) - Không phụ thuộc
+	-- 8. MEDICINES (30) - Giá VND (Việt Nam) - Cập nhật 2025
 	INSERT INTO Medicine (MedicineType, MedicineStatus, MedicineName, MedicineCode, Quantity, Price)
 	VALUES
-('Tablet',1,'Paracetamol 500mg','MED001',200,0.19), -- ID 1
-('Capsule',1,'Amoxicillin 500mg','MED002',150,0.35), -- ID 2
-('Syrup',1,'Cough Syrup 100ml','MED003',80,0.49), -- ID 3
-('Ointment',1,'Hydrocortisone 1%','MED004',60,0.39), -- ID 4
-('Drops',1,'Eye Drops 10ml','MED005',50,0.59), -- ID 5
-('Tablet',1,'Ibuprofen 200mg','MED006',180,0.17), -- ID 6
-('Capsule',1,'Omeprazole 20mg','MED007',120,0.79), -- ID 7
-('Tablet',1,'Aspirin 81mg','MED008',300,0.09), -- ID 8
-('Capsule',1,'Metformin 500mg','MED009',160,0.31), -- ID 9
-('Tablet',1,'Loratadine 10mg','MED010',140,0.22), -- ID 10
-('Syrup',1,'Children Multivitamin','MED011',90,0.69), -- ID 11
-('Tablet',1,'Prednisone 10mg','MED012',50,0.29), -- ID 12
-('Capsule',1,'Doxycycline 100mg','MED013',70,0.33), -- ID 13
-('Ointment',1,'Antifungal Cream','MED014',40,0.25), -- ID 14
-('Drops',1,'Ear Drops 10ml','MED015',30,0.59), -- ID 15
-('Tablet',1,'Clopidogrel 75mg','MED016',60,0.89), -- ID 16
-('Capsule',1,'Levothyroxine 50mcg','MED017',90,0.34), -- ID 17
-('Tablet',1,'Zinc Supplement 50mg','MED018',200,0.14), -- ID 18
-('Capsule',1,'Fluconazole 150mg','MED019',45,0.56), -- ID 19
-('Syrup',1,'Antacid Syrup','MED020',110,0.39), -- ID 20
-('Tablet',1,'Losartan 50mg','MED021',75,0.27), -- ID 21
-('Capsule',1,'Albuterol 2mg','MED022',100,0.44), -- ID 22
-('Tablet',1,'Vitamin D 1000IU','MED023',210,0.13), -- ID 23
-('Capsule',1,'Nitrofurantoin 100mg','MED024',55,0.48), -- ID 24
-('Tablet',1,'Tramadol 50mg','MED025',35,0.65), -- ID 25
-('Ointment',1,'Antiseptic Ointment','MED026',40,0.19), -- ID 26
-('Drops',1,'Nasal Drops 15ml','MED027',65,0.33), -- ID 27
-('Capsule',1,'Gabapentin 300mg','MED028',25,0.72), -- ID 28
-('Tablet',1,'Hydrochlorothiazide 25mg','MED029',120,0.21), -- ID 29
-('Capsule',1,'Clarithromycin 500mg','MED030',50,0.50); -- ID 30
+('Tablet',1,'Paracetamol 500mg','MED001',200,3000), -- ID 1 - Thuốc hạ sốt (3,000đ/viên)
+('Capsule',1,'Amoxicillin 500mg','MED002',150,8000), -- ID 2 - Kháng sinh (8,000đ/viên)
+('Syrup',1,'Cough syrup 100ml','MED003',80,35000), -- ID 3 - Siro ho (35,000đ/chai)
+('Ointment',1,'Hydrocortisone 1%','MED004',60,25000), -- ID 4 - Thuốc bôi da (25,000đ/tuýp)
+('Drops',1,'Eye drops 10ml','MED005',50,45000), -- ID 5 - Nhỏ mắt (45,000đ/lọ)
+('Tablet',1,'Ibuprofen 200mg','MED006',180,4000), -- ID 6 - Giảm đau (4,000đ/viên)
+('Capsule',1,'Omeprazole 20mg','MED007',120,12000), -- ID 7 - Dạ dày (12,000đ/viên)
+('Tablet',1,'Aspirin 81mg','MED008',300,2000), -- ID 8 - Chống đông máu (2,000đ/viên)
+('Capsule',1,'Metformin 500mg','MED009',160,6000), -- ID 9 - Tiểu đường (6,000đ/viên)
+('Tablet',1,'Loratadine 10mg','MED010',140,5000), -- ID 10 - Dị ứng (5,000đ/viên)
+('Syrup',1,'Vitamin syrup','MED011',90,55000), -- ID 11 - Vitamin (55,000đ/chai)
+('Tablet',1,'Prednisone 10mg','MED012',50,7000), -- ID 12 - Chống viêm (7,000đ/viên)
+('Capsule',1,'Doxycycline 100mg','MED013',70,9000), -- ID 13 - Kháng sinh (9,000đ/viên)
+('Ointment',1,'Antifungal cream','MED014',40,30000), -- ID 14 - Chống nấm (30,000đ/tuýp)
+('Drops',1,'Ear Drops 10ml','MED015',30,40000), -- ID 15 - Nhỏ tai (40,000đ/lọ)
+('Tablet',1,'Clopidogrel 75mg','MED016',60,15000), -- ID 16 - Tim mạch (15,000đ/viên)
+('Capsule',1,'Levothyroxine 50mcg','MED017',90,8000), -- ID 17 - Tuyến giáp (8,000đ/viên)
+('Tablet',1,'Zinc supplements 50mg','MED018',200,3500), -- ID 18 - Vitamin (3,500đ/viên)
+('Capsule',1,'Fluconazole 150mg','MED019',45,18000), -- ID 19 - Chống nấm (18,000đ/viên)
+('Syrup',1,'Antacid syrup','MED020',110,28000), -- ID 20 - Dạ dày (28,000đ/chai)
+('Tablet',1,'Losartan 50mg','MED021',75,10000), -- ID 21 - Huyết áp (10,000đ/viên)
+('Capsule',1,'Albuterol 2mg','MED022',100,14000), -- ID 22 - Hen suyễn (14,000đ/viên)
+('Tablet',1,'Vitamin D 1000IU','MED023',210,3000), -- ID 23 - Vitamin (3,000đ/viên)
+('Capsule',1,'Nitrofurantoin 100mg','MED024',55,16000), -- ID 24 - Tiết niệu (16,000đ/viên)
+('Tablet',1,'Tramadol 50mg','MED025',35,20000), -- ID 25 - Giảm đau mạnh (20,000đ/viên)
+('Ointment',1,'Disinfectant','MED026',40,15000), -- ID 26 - Sát trùng (15,000đ/tuýp)
+('Drops',1,'Nasal spray 15ml','MED027',65,32000), -- ID 27 - Xịt mũi (32,000đ/lọ)
+('Capsule',1,'Gabapentin 300mg','MED028',25,22000), -- ID 28 - Thần kinh (22,000đ/viên)
+('Tablet',1,'Hydrochlorothiazide 25mg','MED029',120,7000), -- ID 29 - Lợi tiểu (7,000đ/viên)
+('Capsule',1,'Clarithromycin 500mg','MED030',50,13000); -- ID 30 - Kháng sinh (13,000đ/viên)
 
 
 	-- 9. APPOINTMENTS - Current date: 2025-11-03 (Tuân thủ các quy tắc đặt lịch)
@@ -229,6 +229,7 @@ BEGIN
 	INSERT INTO Appointment (PatientID, DoctorID, AppointmentStatus, DateCreate, DateBegin, DateEnd, Note)
 	VALUES
 	-- COMPLETED APPOINTMENTS (Trước 03/11/2025) - Patient 1
+
 	(1,1,'Completed','2025-09-01','2025-09-02 09:00','2025-09-02 09:30','Routine cardiac check'), -- ID 1
 	(1,2,'Completed','2025-09-10','2025-09-11 10:00','2025-09-11 10:30','Skin consultation'), -- ID 2
 	(1,3,'Completed','2025-09-20','2025-09-21 14:00','2025-09-21 14:30','General health check'), -- ID 3
@@ -241,15 +242,12 @@ BEGIN
 	(1,10,'Completed','2025-11-01','2025-11-02 11:00','2025-11-02 11:30','Annual physical'), -- ID 10
 	
 	-- APPROVED/PENDING APPOINTMENTS (04/11 - 03/12/2025) - Patient 1
-	(1,9,'Approved','2025-11-02','2025-11-05 09:00','2025-11-05 09:30','Stress consultation'), -- ID 11
-	(1,2,'Approved','2025-11-02','2025-11-08 13:00','2025-11-08 13:30','Skin follow-up'), -- ID 12
-	(1,3,'Pending','2025-11-02','2025-11-12 10:00','2025-11-12 10:30','Preventive care'), -- ID 13
-	(1,4,'Pending','2025-11-02','2025-11-16 14:00','2025-11-16 14:30','Orthopedic consultation'), -- ID 14
-	(1,5,'Pending','2025-11-02','2025-11-20 11:00','2025-11-20 11:30','Neurology check'), -- ID 15
-	(1,1,'Pending','2025-11-02','2025-11-25 09:00','2025-11-25 09:30','Cardiac screening'), -- ID 16
-	
-	-- CANCELED APPOINTMENT - Patient 1
-	(1,6,'Canceled','2025-10-20','2025-11-06 08:00','2025-11-06 08:30','Patient canceled'), -- ID 17
+(1,9,'Approved','2025-11-02','2025-11-05 09:00',NULL,'Stress consultation'), -- ID 11
+(1,2,'Approved','2025-11-02','2025-11-08 13:00',NULL,'Skin follow-up'), -- ID 12
+(1,3,'Pending','2025-11-02','2025-11-12 10:00',NULL,'Preventive care'), -- ID 13
+(1,4,'Pending','2025-11-02','2025-11-16 14:00',NULL,'Orthopedic consultation'), -- ID 14
+(1,5,'Pending','2025-11-02','2025-11-20 11:00',NULL,'Neurology check'), -- ID 15
+(1,1,'Pending','2025-11-02','2025-11-25 09:00',NULL,'Cardiac screening'), -- ID 16
 	
 	-- DOCTOR 1 (Cardiologist) - Other Patients (Cách nhau 30 phút)
 	(2,1,'Completed','2025-09-03','2025-09-04 09:30','2025-09-04 10:00','Chest pain follow-up'), -- ID 18
@@ -261,13 +259,12 @@ BEGIN
 	(14,1,'Completed','2025-10-27','2025-10-28 14:00','2025-10-28 14:30','Cardiac monitoring'), -- ID 24
 	(16,1,'Completed','2025-10-29','2025-10-30 14:30','2025-10-30 15:00','Post-fracture cardiac'), -- ID 25
 	(19,1,'Completed','2025-10-31','2025-11-01 15:00','2025-11-01 15:30','Heart check'), -- ID 26
-	(22,1,'Approved','2025-11-02','2025-11-06 09:30','2025-11-06 10:00','Anxiety cardiac screen'), -- ID 27
-	(24,1,'Approved','2025-11-02','2025-11-09 10:00','2025-11-09 10:30','Post-op monitoring'), -- ID 28
-	(26,1,'Approved','2025-11-02','2025-11-13 13:00','2025-11-13 13:30','Thyroid heart eval'), -- ID 29
-	(28,1,'Pending','2025-11-02','2025-11-18 09:30','2025-11-18 10:00','Cardiac check'), -- ID 30
-	(29,1,'Pending','2025-11-02','2025-11-22 14:00','2025-11-22 14:30','Smoker recovery'), -- ID 31
-	(30,1,'Pending','2025-11-02','2025-11-27 15:00','2025-11-27 15:30','Heart screening'), -- ID 32
-	(12,1,'Canceled','2025-10-28','2025-11-10 11:00','2025-11-10 11:30','Teen patient - canceled'), -- ID 33
+(22,1,'Approved','2025-11-02','2025-11-06 09:30',NULL,'Anxiety cardiac screen'), -- ID 27
+(24,1,'Approved','2025-11-02','2025-11-09 10:00',NULL,'Post-op monitoring'), -- ID 28
+(26,1,'Approved','2025-11-02','2025-11-13 13:00',NULL,'Thyroid heart eval'), -- ID 29
+(28,1,'Pending','2025-11-02','2025-11-18 09:30',NULL,'Cardiac check'), -- ID 30
+(29,1,'Pending','2025-11-02','2025-11-22 14:00',NULL,'Smoker recovery'), -- ID 31
+(30,1,'Pending','2025-11-02','2025-11-27 15:00',NULL,'Heart screening'), -- ID 32
 	
 	-- OTHER DOCTORS - Various Patients (Completed in past)
 	(3,2,'Completed','2025-09-05','2025-09-06 11:00','2025-09-06 11:30','Skin rash'), -- ID 34
@@ -287,17 +284,16 @@ BEGIN
 	(17,7,'Completed','2025-11-01','2025-11-02 09:00','2025-11-02 09:30','Cataract review'), -- ID 48
 	
 	-- APPROVED/PENDING - Other Doctors (04/11 - 03/12)
-	(18,8,'Approved','2025-11-02','2025-11-07 10:00','2025-11-07 10:30','Sinusitis'), -- ID 49
-	(19,9,'Approved','2025-11-02','2025-11-11 11:00','2025-11-11 11:30','Depression check'), -- ID 50
-	(20,10,'Approved','2025-11-02','2025-11-14 12:00','2025-11-14 12:30','General check'), -- ID 51
-	(21,2,'Pending','2025-11-02','2025-11-19 13:00','2025-11-19 13:30','Skin consultation'), -- ID 52
-	(22,3,'Pending','2025-11-02','2025-11-23 11:00','2025-11-23 11:30','Pediatric review'), -- ID 53
-	(23,4,'Pending','2025-11-02','2025-11-26 14:00','2025-11-26 14:30','Orthopedic therapy'), -- ID 54
-	(25,5,'Pending','2025-11-02','2025-11-29 15:00','2025-11-29 15:30','Neuro follow-up'), -- ID 55
-	(26,6,'Pending','2025-11-02','2025-12-02 08:30','2025-12-02 09:00','Endocrine consult'), -- ID 56
-	(27,7,'Canceled','2025-10-29','2025-11-15 10:00','2025-11-15 10:30','Patient canceled'), -- ID 57
-	(29,9,'Approved','2025-11-02','2025-11-17 12:00','2025-11-17 12:30','Psych consult'), -- ID 58
-	(30,10,'Approved','2025-11-02','2025-11-21 13:00','2025-11-21 13:30','General exam'); -- ID 59
+(18,8,'Approved','2025-11-02','2025-11-07 10:00',NULL,'Sinusitis'), -- ID 49
+(19,9,'Approved','2025-11-02','2025-11-11 11:00',NULL,'Depression check'), -- ID 50
+(20,10,'Approved','2025-11-02','2025-11-14 12:00',NULL,'General check'), -- ID 51
+(21,2,'Pending','2025-11-02','2025-11-19 13:00',NULL,'Skin consultation'), -- ID 52
+(22,3,'Pending','2025-11-02','2025-11-23 11:00',NULL,'Pediatric review'), -- ID 53
+(23,4,'Pending','2025-11-02','2025-11-26 14:00',NULL,'Orthopedic therapy'), -- ID 54
+(25,5,'Pending','2025-11-02','2025-11-29 15:00',NULL,'Neuro follow-up'), -- ID 55
+(26,6,'Pending','2025-11-02','2025-12-02 08:30',NULL,'Endocrine consult'), -- ID 56
+(29,9,'Approved','2025-11-02','2025-11-17 12:00',NULL,'Psych consult'), -- ID 58
+(30,10,'Approved','2025-11-02','2025-11-21 13:00',NULL,'General exam'); -- ID 59
 
 	-- 10. PRESCRIPTIONS - CHỈ cho Completed appointments (đã khám xong)
 	-- Approved/Pending = chưa khám, không có prescription
@@ -305,63 +301,62 @@ BEGIN
 	INSERT INTO Prescription (AppointmentID, PrescriptionStatus, DateCreate, Note)
 	VALUES
 	-- Completed Appointments (Patient 1: ID 1-10)
-	(1,'Delivered','2025-09-02','Cardiac medication'), -- ID 1
-	(2,'Delivered','2025-09-11','Topical cream for skin'), -- ID 2
-	(3,'Delivered','2025-09-21','General vitamins'), -- ID 3
+	(1,'Paid','2025-09-02','Cardiac medication'), -- ID 1
+	(2,'Pending','2025-09-11','Topical cream for skin'), -- ID 2
+	(3,'Paid','2025-09-21','General vitamins'), -- ID 3
 	(4,'Pending','2025-10-02','Anti-inflammatory'), -- ID 4
-	(5,'Delivered','2025-10-11','Migraine medication'), -- ID 5
-	(6,'Delivered','2025-10-19','Heart medication refill'), -- ID 6
-	(7,'Delivered','2025-10-26','Diabetes medication'), -- ID 7
-	(8,'Delivered','2025-10-29','Eye drops'), -- ID 8
+	(5,'Paid','2025-10-11','Migraine medication'), -- ID 5
+	(6,'Pending','2025-10-19','Heart medication refill'), -- ID 6
+	(7,'Paid','2025-10-26','Diabetes medication'), -- ID 7
+	(8,'Pending','2025-10-29','Eye drops'), -- ID 8
 	-- ID 9 (Appt 9) - Không kê đơn thuốc
-	(10,'Delivered','2025-11-02','Annual checkup meds'), -- ID 9
+	(10,'Paid','2025-11-02','Annual checkup meds'), -- ID 10
 	
 	-- Completed (Doctor 1 - Other Patients: ID 18-26)
-	(18,'Delivered','2025-09-04','Cardiac meds'), -- ID 10
-	(19,'Delivered','2025-09-16','Pregnancy vitamins'), -- ID 11
-	(20,'Delivered','2025-09-26','Cholesterol meds'), -- ID 12
+	(18,'Paid','2025-09-04','Cardiac meds'), -- ID 10
+	(19,'Paid','2025-09-16','Pregnancy vitamins'), -- ID 11
+	(20,'Paid','2025-09-26','Cholesterol meds'), -- ID 12
 	(21,'Pending','2025-10-04','Cardiac screening meds - chưa phát'), -- ID 13
-	(22,'Delivered','2025-10-13','Heart medication'), -- ID 14
-	(23,'Delivered','2025-10-21','Stress relief meds'), -- ID 15
-	(24,'Delivered','2025-10-28','Cardiac monitoring meds'), -- ID 16
-	(25,'Delivered','2025-10-30','Post-fracture cardiac meds'), -- ID 17
+	(22,'Paid','2025-10-13','Heart medication'), -- ID 14
+	(23,'Paid','2025-10-21','Stress relief meds'), -- ID 15
+	(24,'Paid','2025-10-28','Cardiac monitoring meds'), -- ID 16
+	(25,'Paid','2025-10-30','Post-fracture cardiac meds'), -- ID 17
 	(26,'Pending','2025-11-01','Heart check prescription - chưa phát'), -- ID 18
 	
 	-- Completed (Other Doctors: ID 34-48)
-	(34,'Delivered','2025-09-06','Skin rash ointment'), -- ID 19
-	(35,'Delivered','2025-09-13','Pediatric fever meds'), -- ID 20
-	(36,'Delivered','2025-09-19','Knee pain medication'), -- ID 21
-	(37,'Delivered','2025-09-23','Headache meds'), -- ID 22
-	(38,'Delivered','2025-09-29','Diabetes control'), -- ID 23
-	(39,'Delivered','2025-10-06','Eye drops'), -- ID 24
+	(34,'Paid','2025-09-06','Skin rash ointment'), -- ID 19
+	(35,'Paid','2025-09-13','Pediatric fever meds'), -- ID 20
+	(36,'Paid','2025-09-19','Knee pain medication'), -- ID 21
+	(37,'Paid','2025-09-23','Headache meds'), -- ID 22
+	(38,'Paid','2025-09-29','Diabetes control'), -- ID 23
+	(39,'Paid','2025-10-06','Eye drops'), -- ID 24
 	(40,'Pending','2025-10-09','Ear antibiotics - chưa phát'), -- ID 25
-	(41,'Delivered','2025-10-15','Mental health meds'), -- ID 26
-	(42,'Delivered','2025-10-17','BP medication'), -- ID 27
+	(41,'Paid','2025-10-15','Mental health meds'), -- ID 26
+	(42,'Paid','2025-10-17','BP medication'), -- ID 27
 	-- ID 43 (Appt 43) - Không kê đơn thuốc
-	(44,'Delivered','2025-10-24','Vaccination vitamins'), -- ID 28
-	(45,'Delivered','2025-10-27','Fracture pain relief'), -- ID 29
+	(44,'Paid','2025-10-24','Vaccination vitamins'), -- ID 28
+	(45,'Paid','2025-10-27','Fracture pain relief'), -- ID 29
 	(46,'Pending','2025-10-29','Neurology meds - chưa phát'), -- ID 30
-	(47,'Delivered','2025-10-31','General vitamins'), -- ID 31
-	(48,'Delivered','2025-11-02','Eye care prescription'), -- ID 32
+	(47,'Paid','2025-10-31','General vitamins'), -- ID 31
+	(48,'Paid','2025-11-02','Eye care prescription'), -- ID 32
 	
 	-- Approved (Patient 1: ID 11, 12)
-	(11,'Delivered','2025-11-05','Stress relief medication'), -- ID 33
-	(12,'Delivered','2025-11-08','Skin treatment'), -- ID 34
+	(11,'Pending','2025-11-05','Stress relief medication'), -- ID 33
+	(12,'Paid','2025-11-08','Skin treatment'), -- ID 34
 	
 	-- Approved (Doctor 1 - Other Patients: ID 27, 28, 29)
-	(27,'Delivered','2025-11-06','Anxiety medication'), -- ID 35
-	(28,'Delivered','2025-11-09','Post-op cardiac meds'), -- ID 36
-	(29,'Delivered','2025-11-13','Thyroid medication'), -- ID 37
+	(27,'Paid','2025-11-06','Anxiety medication'), -- ID 35
+	(28,'Paid','2025-11-09','Post-op cardiac meds'), -- ID 36
+	(29,'Paid','2025-11-13','Thyroid medication'), -- ID 37
 	
-	-- Approved (Other Doctors: ID 49, 50, 51, 58, 59)
-	(49,'Delivered','2025-11-07','Sinus medication'), -- ID 38
-	(50,'Delivered','2025-11-11','Antidepressants'), -- ID 39
-	(51,'Delivered','2025-11-14','General vitamins'), -- ID 40
-	(58,'Delivered','2025-11-17','Mental health meds'), -- ID 41
-	(59,'Delivered','2025-11-21','Preventive meds'); -- ID 42
+	-- Approved (Other Doctors: ID 49, 50, 51, 55, 56)
+	(49,'Paid','2025-11-07','Sinus medication'), -- ID 38
+	(50,'Paid','2025-11-11','Antidepressants'), -- ID 39
+	(51,'Paid','2025-11-14','General vitamins'), -- ID 40
+	(55,'Paid','2025-11-17','Mental health meds'), -- ID 41
+	(56,'Paid','2025-11-21','Preventive meds'); -- ID 42
 	
 	-- KHÔNG TẠO prescription cho Pending (ID 13-16,30-32,52-56) - chưa duyệt
-	-- KHÔNG TẠO prescription cho Canceled (ID 17,33,57) - đã hủy
 
 	-- 11. PRESCRIPTION ITEMS - Phụ thuộc vào Prescription (PrescriptionID) và Medicine (MedicineID)
 	INSERT INTO PrescriptionItem (PrescriptionID, MedicineID, Dosage, Instruction) VALUES
@@ -536,7 +531,7 @@ BEGIN
 	(34,4,1,'Apply for inflammation as needed'),
 	(34,23,30,'1 tablet daily for skin health'),
 	
-	-- Approved (Doctor 1 - Other Patients: ID 35, 36, 37)
+	-- Approved (Doctor 1 - Other Patients: ID 39, 40, 41) - Appointments 27-29
 	-- Prescription 35: Anxiety cardiac care (4 items)
 	(35,21,30,'1 tablet daily for blood pressure'),
 	(35,8,30,'1 tablet daily for heart protection'),
@@ -553,7 +548,7 @@ BEGIN
 	(37,23,30,'1 tablet daily (4 hours after thyroid med)'),
 	(37,18,30,'1 tablet daily for thyroid support'),
 	
-	-- Approved (Other Doctors: ID 38, 39, 40, 41, 42)
+	-- Approved (Other Doctors: ID 38, 39, 40, 41, 42) - Appointments 49, 50, 51, 58, 59
 	-- Prescription 38: Sinus infection (4 items)
 	(38,2,14,'1 capsule twice daily for 7 days'),
 	(38,27,1,'2 drops twice daily for congestion'),
@@ -585,7 +580,6 @@ BEGIN
 	-- Completed = đã khám xong
 	-- Approved = đã duyệt, có thể bắt đầu khám
 	-- Pending = chưa duyệt → KHÔNG có medical record
-	-- Canceled = đã hủy → KHÔNG có medical record
 	INSERT INTO MedicalRecord (AppointmentID, PrescriptionID, Symptoms, Diagnosis, Note, DateCreate)
 	VALUES
 	-- Patient 1 - Completed (ID 1-10)
@@ -637,81 +631,89 @@ BEGIN
 	(28,36,'Post-operative check','Recovery on track','Continue medication','2025-11-09'),
 	(29,37,'Thyroid symptoms','Hypothyroidism','Medication adjustment','2025-11-13'),
 	
-	-- Approved - Other Doctors (ID 49, 50, 51, 58, 59)
+	-- Approved - Other Doctors (ID 49, 50, 51, 55, 56)
 	(49,38,'Sinus pain','Acute sinusitis','Antibiotics prescribed','2025-11-07'),
 	(50,39,'Depression symptoms','Major depressive disorder','Therapy initiated','2025-11-11'),
 	(51,40,'Routine checkup','Healthy','Preventive care','2025-11-14'),
-	(58,41,'Anxiety disorder','Generalized anxiety','Medication started','2025-11-17'),
-	(59,42,'Annual physical','Normal results','Follow-up in 1 year','2025-11-21');
+	(55,41,'Anxiety disorder','Generalized anxiety','Medication started','2025-11-17'),
+	(56,42,'Annual physical','Normal results','Follow-up in 1 year','2025-11-21');
 	
-	-- KHÔNG TẠO Medical Record cho Canceled (ID 17,33,57) - đã hủy
 	-- KHÔNG TẠO Medical Record cho Pending (ID 13-16,30-32,52-56) - chưa duyệt
 
-	-- 13. INVOICES - TỰ ĐỘNG SINH khi có Medical Record
-	-- Completed = đã khám → có Medical Record → có Invoice
-	-- Approved = đã duyệt → có Medical Record → có Invoice
-	-- Pending = chưa duyệt → KHÔNG có Medical Record → KHÔNG có Invoice
-	-- Canceled = đã hủy → KHÔNG có Medical Record → KHÔNG có Invoice
-	-- Invoice với Prescription.Delivered = Paid
-	-- Invoice với Prescription.Pending = Pending (chưa thanh toán do chưa phát thuốc)
-	-- Patient 1 - Completed (MR ID 1-10)
-	UPDATE Invoice SET MedicalRecordID=1, PrescriptionID=1, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay='2025-09-02' WHERE InvoiceID=1;
-	UPDATE Invoice SET MedicalRecordID=2, PrescriptionID=2, PaymentType='Cash', InvoiceStatus='Paid', DatePay='2025-09-11' WHERE InvoiceID=2;
-	UPDATE Invoice SET MedicalRecordID=3, PrescriptionID=3, PaymentType='Cash', InvoiceStatus='Paid', DatePay='2025-09-21' WHERE InvoiceID=3;
-	UPDATE Invoice SET MedicalRecordID=4, PrescriptionID=4, PaymentType=NULL, InvoiceStatus='Pending', DatePay=NULL WHERE InvoiceID=4;
-	UPDATE Invoice SET MedicalRecordID=5, PrescriptionID=5, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay='2025-10-11' WHERE InvoiceID=5;
-	UPDATE Invoice SET MedicalRecordID=6, PrescriptionID=6, PaymentType='Cash', InvoiceStatus='Paid', DatePay='2025-10-19' WHERE InvoiceID=6;
-	UPDATE Invoice SET MedicalRecordID=7, PrescriptionID=7, PaymentType=NULL, InvoiceStatus='Pending', DatePay='2025-10-26' WHERE InvoiceID=7;
-	UPDATE Invoice SET MedicalRecordID=8, PrescriptionID=8, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay='2025-10-29' WHERE InvoiceID=8;
-	UPDATE Invoice SET MedicalRecordID=9, PrescriptionID=NULL, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay='2025-11-01' WHERE InvoiceID=9;
-	UPDATE Invoice SET MedicalRecordID=10, PrescriptionID=9, PaymentType=NULL, InvoiceStatus='Pending', DatePay='2025-11-02' WHERE InvoiceID=10;
 
-	-- Doctor 1 Other Patients - Completed (MR ID 11-19)
-	UPDATE Invoice SET MedicalRecordID=11, PrescriptionID=10, PaymentType='Cash', InvoiceStatus='Paid', DatePay='2025-09-04' WHERE InvoiceID=11;
-	UPDATE Invoice SET MedicalRecordID=12, PrescriptionID=11, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay='2025-09-17' WHERE InvoiceID=12;
-	UPDATE Invoice SET MedicalRecordID=13, PrescriptionID=12, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay='2025-09-26' WHERE InvoiceID=13;
-	UPDATE Invoice SET MedicalRecordID=14, PrescriptionID=13, PaymentType=NULL, InvoiceStatus='Pending', DatePay=NULL WHERE InvoiceID=14;
-	UPDATE Invoice SET MedicalRecordID=15, PrescriptionID=14, PaymentType='Cash', InvoiceStatus='Paid', DatePay='2025-10-13' WHERE InvoiceID=15;
-	UPDATE Invoice SET MedicalRecordID=16, PrescriptionID=15, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay='2025-10-21' WHERE InvoiceID=16;
-	UPDATE Invoice SET MedicalRecordID=17, PrescriptionID=16, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay='2025-10-29' WHERE InvoiceID=17;
-	UPDATE Invoice SET MedicalRecordID=18, PrescriptionID=17, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay='2025-10-30' WHERE InvoiceID=18;
-	UPDATE Invoice SET MedicalRecordID=19, PrescriptionID=18, PaymentType=NULL, InvoiceStatus='Pending', DatePay=NULL WHERE InvoiceID=19;
+-- Patient 1 - Completed (Invoice ID 1-10)
+UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=1;
+UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=2;
+UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=3;
+UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=4;
+UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=5;
+UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=6;
+UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=7;
+UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=8;
+UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=9;
+UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=10;
 
-	-- Other Doctors - Completed (MR ID 20-34)
-	UPDATE Invoice SET MedicalRecordID=20, PrescriptionID=19, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay='2025-09-06' WHERE InvoiceID=20;
-	UPDATE Invoice SET MedicalRecordID=21, PrescriptionID=20, PaymentType='Cash', InvoiceStatus='Paid', DatePay='2025-09-13' WHERE InvoiceID=21;
-	UPDATE Invoice SET MedicalRecordID=22, PrescriptionID=21, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay='2025-09-19' WHERE InvoiceID=22;
-	UPDATE Invoice SET MedicalRecordID=23, PrescriptionID=22, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay='2025-09-24' WHERE InvoiceID=23;
-	UPDATE Invoice SET MedicalRecordID=24, PrescriptionID=23, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay='2025-09-29' WHERE InvoiceID=24;
-	UPDATE Invoice SET MedicalRecordID=25, PrescriptionID=24, PaymentType='Cash', InvoiceStatus='Paid', DatePay='2025-10-06' WHERE InvoiceID=25;
-	UPDATE Invoice SET MedicalRecordID=26, PrescriptionID=25, PaymentType=NULL, InvoiceStatus='Pending', DatePay=NULL WHERE InvoiceID=26;
-	UPDATE Invoice SET MedicalRecordID=27, PrescriptionID=26, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay='2025-10-16' WHERE InvoiceID=27;
-	UPDATE Invoice SET MedicalRecordID=28, PrescriptionID=27, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay='2025-10-17' WHERE InvoiceID=28;
-	UPDATE Invoice SET MedicalRecordID=29, PrescriptionID=NULL, PaymentType='Cash', InvoiceStatus='Paid', DatePay='2025-10-22' WHERE InvoiceID=29;
-	UPDATE Invoice SET MedicalRecordID=30, PrescriptionID=28, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay='2025-10-24' WHERE InvoiceID=30;
-	UPDATE Invoice SET MedicalRecordID=31, PrescriptionID=29, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay='2025-10-28' WHERE InvoiceID=31;
-	UPDATE Invoice SET MedicalRecordID=32, PrescriptionID=30, PaymentType=NULL, InvoiceStatus='Pending', DatePay=NULL WHERE InvoiceID=32;
-	UPDATE Invoice SET MedicalRecordID=33, PrescriptionID=31, PaymentType='Cash', InvoiceStatus='Paid', DatePay='2025-10-31' WHERE InvoiceID=33;
-	UPDATE Invoice SET MedicalRecordID=34, PrescriptionID=32, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay='2025-11-02' WHERE InvoiceID=34;
+-- Doctor 1 Other Patients - Completed (Invoice ID 11-19)
+UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=11;
+UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=12;
+UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=13;
+UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=14;
+UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=15;
+UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=16;
+UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=17;
+UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=18;
+UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=19;
 
-	-- Approved - Patient 1 (MR ID 35-36)
-	UPDATE Invoice SET MedicalRecordID=35, PrescriptionID=33, PaymentType='Cash', InvoiceStatus='Paid', DatePay='2025-11-05' WHERE InvoiceID=35;
-	UPDATE Invoice SET MedicalRecordID=36, PrescriptionID=34, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay='2025-11-08' WHERE InvoiceID=36;
+-- Other Doctors - Completed (Invoice ID 20-34)
+UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=20;
+UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=21;
+UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=22;
+UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=23;
+UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=24;
+UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=25;
+UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=26;
+UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=27;
+UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=28;
+UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=29;
+UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=30;
+UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=31;
+UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=32;
+UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=33;
+UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=34;
 
-	-- Approved - Doctor 1 Other Patients (MR ID 37-39)
-	UPDATE Invoice SET MedicalRecordID=37, PrescriptionID=35, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay='2025-11-06' WHERE InvoiceID=37;
-	UPDATE Invoice SET MedicalRecordID=38, PrescriptionID=36, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay='2025-11-09' WHERE InvoiceID=38;
-	UPDATE Invoice SET MedicalRecordID=39, PrescriptionID=37, PaymentType='Cash', InvoiceStatus='Paid', DatePay='2025-11-13' WHERE InvoiceID=39;
+-- Approved - Patient 1 (Invoice ID 35-36)
+UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=35;
+UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=36;
 
-	-- Approved - Other Doctors (MR ID 40-44)
-	UPDATE Invoice SET MedicalRecordID=40, PrescriptionID=38, PaymentType='Cash', InvoiceStatus='Paid', DatePay='2025-11-07' WHERE InvoiceID=40;
-	UPDATE Invoice SET MedicalRecordID=41, PrescriptionID=39, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay='2025-11-11' WHERE InvoiceID=41;
-	UPDATE Invoice SET MedicalRecordID=42, PrescriptionID=40, PaymentType='Cash', InvoiceStatus='Paid', DatePay='2025-11-14' WHERE InvoiceID=42;
-	UPDATE Invoice SET MedicalRecordID=43, PrescriptionID=41, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay='2025-11-17' WHERE InvoiceID=43;
-	UPDATE Invoice SET MedicalRecordID=44, PrescriptionID=42, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay='2025-11-21' WHERE InvoiceID=44;
-	
-	-- KHÔNG TẠO Invoice cho Pending (ID 13-16,30-32,52-56) - chưa duyệt
-	-- KHÔNG TẠO Invoice cho Canceled (ID 17,33,57) - đã hủy
+-- Approved - Doctor 1 Other Patients (Invoice ID 37-39)
+UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=37;
+UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=38;
+UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=39;
+
+-- Approved - Other Doctors (Invoice ID 40-44)
+UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=40;
+UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=41;
+UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=42;
+UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=43;
+UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=44;
+
+-- Pending invoices (Invoice ID 45-60 based on image data)
+UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=45;
+UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=46;
+UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=47;
+UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=48;
+UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=49;
+UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=50;
+UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=51;
+UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=52;
+UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=53;
+UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=54;
+UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=55;
+UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=56;
+UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=57;
+UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=58;
+UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=59;
+UPDATE Invoice SET PaymentType='Credit Card', DatePay=DateCreate WHERE InvoiceID=60;
 
 	-- ---------- DOCTOR REVIEWS (30 sample) - Chỉ cho Completed appointments ----------
 	INSERT INTO DoctorReview (PatientID, DoctorID, Content, RateScore, DateCreate) VALUES

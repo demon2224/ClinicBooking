@@ -1,7 +1,8 @@
 <%--
-    Document   : Payment
-    Created on : Nov 13, 2025, 10:51:15 PM
+    Document   : ConsultationPayment
+    Created on : Nov 2025
     Author     : Le Anh Tuan - CE180905
+    Consultation Fee Payment - New workflow following Vietnamese business practice
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
@@ -12,7 +13,7 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Payment - CLINIC</title>
+        <title>Consultation Payment - CLINIC</title>
         <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/assests/img/logo.png">
 
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -27,29 +28,41 @@
         <div class="appointment-main-content">
             <!-- Page Header -->
             <div class="appointment-page-header">
-                <h1><i class="fas fa-credit-card"></i> Payment</h1>
+                <h1><i class="fas fa-credit-card"></i> Consultation Payment</h1>
             </div>
 
             <!-- Payment Content -->
             <div class="appointments-section">
-                <!-- Invoice Information -->
+                <!-- Consultation Information -->
                 <div class="appointment-card">
                     <div class="appointment-header">
-                        <h3><i class="fas fa-file-invoice-dollar"></i> Invoice Information</h3>
+                        <h3><i class="fas fa-calendar-check"></i> Consultation Information</h3>
                     </div>
                     <div class="info-grid">
                         <div class="info-item">
                             <i class="fas fa-user-md info-icon"></i>
                             <div class="info-content">
                                 <div class="info-label">Doctor</div>
-                                <div class="info-value">Dr. ${invoice.medicalRecordID.appointmentID.doctorID.staffID.firstName} ${invoice.medicalRecordID.appointmentID.doctorID.staffID.lastName}</div>
+                                <div class="info-value">Dr. ${doctorName != null ? doctorName : '#'}${doctorId}</div>
+                            </div>
+                        </div>
+                        <div class="info-item">
+                            <i class="fas fa-clock info-icon"></i>
+                            <div class="info-content">
+                                <div class="info-label">Appointment Date & Time</div>
+                                <div class="info-value">
+                                    <fmt:parseDate value="${appointmentDateTime}" pattern="yyyy-MM-dd'T'HH:mm" var="parsedDate" />
+                                    <fmt:formatDate value="${parsedDate}" pattern="EEEE, MMMM dd, yyyy HH:mm" />
+                                </div>
                             </div>
                         </div>
                         <div class="info-item">
                             <i class="fas fa-dollar-sign info-icon"></i>
                             <div class="info-content">
-                                <div class="info-label">Total Amount</div>
-                                <div class="info-value amount-highlight">${currencyDisplay}</div>
+                                <div class="info-label">Consultation Fee</div>
+                                <div class="info-value amount-highlight">
+                                    <fmt:formatNumber value="${consultationFee}" pattern="#,##0"/> VND
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -58,7 +71,7 @@
                 <!-- QR Payment Section -->
                 <div class="appointment-card qr-payment-section" id="qr-payment-section">
                     <div class="appointment-header">
-                        <h3><i class="fas fa-credit-card"></i> Credit Card Payment</h3>
+                        <h3><i class="fas fa-qrcode"></i> Bank Transfer Payment</h3>
                     </div>
                     <div class="payment-content">
                         <div class="qr-container">
@@ -91,7 +104,7 @@
                                 </div>
                                 <div class="bank-item">
                                     <span class="bank-label">Amount (VND):</span>
-                                    <span class="bank-value amount-vnd"><fmt:formatNumber value="${vndAmount}" pattern="#,##0"/> VND</span>
+                                    <span class="bank-value amount-vnd"><fmt:formatNumber value="${consultationFee}" pattern="#,##0"/> VND</span>
                                 </div>
                                 <div class="bank-item">
                                     <span class="bank-label">Transfer Note:</span>
@@ -111,7 +124,7 @@
                             </ol>
                             <div class="alert alert-warning" style="margin-top: 15px; padding: 10px; background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 5px;">
                                 <i class="fas fa-exclamation-triangle"></i>
-                                <strong>Note:</strong> Only click the confirm button after you have successfully completed the payment.
+                                <strong>Note:</strong> After successful payment, your appointment will be created and waiting for receptionist confirmation.
                             </div>
                         </div>
 
@@ -127,19 +140,74 @@
         <jsp:include page="../includes/footer.jsp" />
 
         <script>
+            let selectedPaymentMethod = 'qr'; // Default to QR for consultation payment
+
+            // Select payment method
+            function selectPaymentMethod(method) {
+                selectedPaymentMethod = method;
+
+                // Update UI
+                document.querySelectorAll('.payment-method-option').forEach(option => {
+                    option.classList.remove('selected');
+                });
+
+                const radioInput = document.querySelector(`#${method}-method`);
+                if (radioInput) {
+                    radioInput.checked = true;
+                    const paymentOption = radioInput.closest('.payment-method-option');
+                    if (paymentOption) {
+                        paymentOption.classList.add('selected');
+                    }
+                }
+            }
+
+            // Process payment when Continue button is clicked
+            function processPayment() {
+                // For consultation payment, always use QR
+                if (selectedPaymentMethod === 'qr') {
+                    showQRSection();
+                }
+            }
+
             // Mark QR payment as successful
             function markPaymentSuccess() {
                 showLoadingSpinner('Confirming payment...');
 
-                const contextPath = '${contextPath}';
-                const invoiceId = '${invoiceId}';
+                const contextPath = '${pageContext.request.contextPath}';
+                const doctorId = '${doctorId}';
+                const appointmentDateTime = '${appointmentDateTime}';
+                const note = '${note}' || '';
+
+                // Validate before sending
+                if (!doctorId || doctorId.trim() === '') {
+                    hideLoadingSpinner();
+                    alert('Error: Missing doctor information. Please try again.');
+                    return;
+                }
+
+                if (!appointmentDateTime || appointmentDateTime.trim() === '') {
+                    hideLoadingSpinner();
+                    alert('Error: Missing appointment date and time. Please try again.');
+                    return;
+                }
+
+                // Use URLSearchParams to ensure servlet can read parameters
+                const params = new URLSearchParams();
+                params.append('action', 'markPaymentSuccess');
+                params.append('paymentType', 'consultation');
+                params.append('doctorId', doctorId);
+                params.append('appointmentDateTime', appointmentDateTime);
+                if (note) {
+                    params.append('note', note);
+                }
+                params.append('method', 'QR');
 
                 fetch(contextPath + '/payment', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded',
                     },
-                    body: `action=markPaymentSuccess&invoiceId=${invoiceId}`
+                    body: params.toString()
                 })
                         .then(response => response.json())
                         .then(data => {
@@ -172,7 +240,7 @@
 
                 // Redirect after 2 seconds
                 setTimeout(() => {
-                    window.location.href = '${contextPath}/manage-my-invoices';
+                    window.location.href = '${pageContext.request.contextPath}/manage-my-appointments';
                 }, 2000);
             }
 
@@ -200,3 +268,4 @@
         </script>
     </body>
 </html>
+
