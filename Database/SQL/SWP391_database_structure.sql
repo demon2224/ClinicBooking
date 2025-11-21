@@ -31,7 +31,7 @@ CREATE TABLE Patient (
 	DOB DATE,
 	Gender BIT DEFAULT 0,
 	UserAddress NVARCHAR(255),
-	PhoneNumber NVARCHAR(15) UNIQUE,
+	PhoneNumber NVARCHAR(15),
 	Email NVARCHAR(50) UNIQUE,
 	[Hidden] BIT DEFAULT 0,
 );

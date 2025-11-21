@@ -413,7 +413,8 @@ public class PatientDAO extends DBContext {
     public boolean isExistPhoneNumber(String phoneNumber) {
         String query = "SELECT TOP 1 pt.PhoneNumber\n"
                 + "FROM [dbo].[Patient] pt\n"
-                + "WHERE pt.PhoneNumber = ?";
+                + "WHERE pt.PhoneNumber = ?\n"
+                + "AND pt.Hidden = 0;";
         Object[] params = {phoneNumber};
         ResultSet rs = executeSelectQuery(query, params);
         boolean isExist = false;
