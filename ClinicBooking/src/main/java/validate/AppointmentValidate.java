@@ -54,4 +54,12 @@ public class AppointmentValidate {
     public static boolean areRequiredFieldsFilled(String name, String phone, String dateBegin, String doctorId) {
         return !isEmpty(name) && !isEmpty(phone) && !isEmpty(dateBegin) && !isEmpty(doctorId);
     }
+
+    /**0
+     * Validate date/time input (only check required).
+     */
+    public static boolean isDateTimeFilled(String dateBegin) {
+        return !isEmpty(dateBegin);
+    }
+
 }

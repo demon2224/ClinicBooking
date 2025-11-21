@@ -1560,4 +1560,38 @@ public class AppointmentDAO extends DBContext {
         return appointments;
     }
 
+    /**
+     * Lấy danh sách appointment của bác sĩ theo tháng/năm Chỉ lấy những slot
+     * Pending hoặc Approved
+     */
+    public List<AppointmentDTO> getAppointmentsByDoctorAndMonth(int doctorId, int month, int year) {
+        List<AppointmentDTO> list = new ArrayList<>();
+        String sql = "SELECT AppointmentID, PatientID, DoctorID, AppointmentStatus, DateBegin, DateEnd, Note "
+                + "FROM Appointment "
+                + "WHERE DoctorID = ? "
+                + "AND MONTH(DateBegin) = ? "
+                + "AND YEAR(DateBegin) = ? "
+                + "AND AppointmentStatus IN ('Pending', 'Approved')";
+
+        ResultSet rs = null;
+        try {
+            rs = executeSelectQuery(sql, new Object[]{doctorId, month, year});
+            while (rs.next()) {
+                AppointmentDTO appt = new AppointmentDTO();
+                appt.setAppointmentID(rs.getInt("AppointmentID"));
+                appt.setAppointmentStatus(rs.getString("AppointmentStatus"));
+                appt.setDateBegin(rs.getTimestamp("DateBegin"));
+                appt.setDateEnd(rs.getTimestamp("DateEnd"));
+                appt.setNote(rs.getString("Note"));
+                list.add(appt);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            closeResources(rs);
+        }
+
+        return list;
+    }
+
 }
