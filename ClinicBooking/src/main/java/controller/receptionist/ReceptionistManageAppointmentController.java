@@ -240,7 +240,7 @@ public class ReceptionistManageAppointmentController extends HttpServlet {
                 request.getSession().setAttribute("dateErrorMsg", "Appointments can be booked up to 30 days in advance.");
                 isValid = false;
             }
-            if (!appointmentDAO.isDoctorAvailable(doctorId, appointmentDateTime)) {
+            if (!appointmentDAO.isDoctorAvailableAtExactTime(doctorId, appointmentDateTime)) {
                 request.getSession().setAttribute("dateErrorMsg", "This time slot is already booked.");
                 isValid = false;
             }

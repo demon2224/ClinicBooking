@@ -596,51 +596,47 @@ public class AppointmentDAO extends DBContext {
         return appointments;
     }
 
-    public boolean addAppointment(String existingPatientIdStr, String fullName, String phone,
-            boolean gender, int doctorId, LocalDateTime dateBegin, String note) {
+    public boolean addAppointment(String existingPatientIdStr, String firstName, String lastName, String phone,
+            boolean gender, int doctorId, LocalDateTime dateBegin, LocalDateTime dateEnd, String note) {
+
+        String sqlCheck = "SELECT PatientID FROM Patient WHERE PhoneNumber = ?";
+        String sqlInsertPatient = "INSERT INTO Patient (FirstName, LastName, PhoneNumber, Gender, Hidden) VALUES (?, ?, ?, ?, 1)";
+        String sqlAppointment = "INSERT INTO Appointment "
+                + "(PatientID, DoctorID, AppointmentStatus, DateCreate, DateBegin, DateEnd, Note, Hidden) "
+                + "VALUES (?, ?, ?, GETDATE(), ?, ?, ?, 1)";
 
         try ( Connection conn = getConnection()) {
             conn.setAutoCommit(false);
-
             int patientId = 0;
 
-            if (existingPatientIdStr != null && !existingPatientIdStr.isEmpty()) {
+            // Nếu có existingPatientId -> dùng luôn
+            if (existingPatientIdStr != null && !existingPatientIdStr.trim().isEmpty()) {
                 patientId = Integer.parseInt(existingPatientIdStr);
             } else {
-                String sqlCheck = "SELECT PatientID FROM Patient WHERE PhoneNumber = ?";
-                try ( PreparedStatement psCheck = conn.prepareStatement(sqlCheck)) {
-                    psCheck.setString(1, phone);
-                    try ( ResultSet rs = psCheck.executeQuery()) {
-                        if (rs.next()) {
-                            patientId = rs.getInt("PatientID");
-                        } else {
-                            String firstName = "";
-                            String lastName = "";
-                            if (fullName != null && !fullName.trim().isEmpty()) {
-                                String[] nameParts = fullName.trim().split("\\s+");
-                                if (nameParts.length == 1) {
-                                    firstName = nameParts[0];
-                                    lastName = "";
-                                } else {
-                                    firstName = nameParts[0];
-                                    lastName = fullName.substring(firstName.length()).trim();
-                                }
+                // check theo phone xem patient có tồn tại chưa
+                if (phone != null && !phone.trim().isEmpty()) {
+                    try ( PreparedStatement psCheck = conn.prepareStatement(sqlCheck)) {
+                        psCheck.setString(1, phone);
+                        try ( ResultSet rs = psCheck.executeQuery()) {
+                            if (rs.next()) {
+                                patientId = rs.getInt("PatientID");
                             }
+                        }
+                    }
+                }
 
-                            String sqlInsert = "INSERT INTO Patient (FirstName, LastName, PhoneNumber, Gender, Hidden) "
-                                    + "VALUES (?, ?, ?, ?, 1)";
-                            try ( PreparedStatement psInsert = conn.prepareStatement(sqlInsert,
-                                    Statement.RETURN_GENERATED_KEYS)) {
-                                psInsert.setString(1, firstName);
-                                psInsert.setString(2, lastName);
-                                psInsert.setString(3, phone);
-                                psInsert.setBoolean(4, gender);
-                                psInsert.executeUpdate();
-
-                                try ( ResultSet rsGen = psInsert.getGeneratedKeys()) {
-                                    if (rsGen.next()) {
-                                        patientId = rsGen.getInt(1);
-                                    }
+                // nếu patient chưa có -> insert mới
+                if (patientId == 0) {
+                    try ( PreparedStatement psInsert = conn.prepareStatement(sqlInsertPatient, Statement.RETURN_GENERATED_KEYS)) {
+                        psInsert.setString(1, firstName);
+                        psInsert.setString(2, lastName);
+                        psInsert.setString(3, phone);
+                        psInsert.setBoolean(4, gender);
+                        int rows = psInsert.executeUpdate();
+                        if (rows > 0) {
+                            try ( ResultSet rsGen = psInsert.getGeneratedKeys()) {
+                                if (rsGen.next()) {
+                                    patientId = rsGen.getInt(1);
                                 }
                             }
                         }
@@ -648,27 +644,32 @@ public class AppointmentDAO extends DBContext {
                 }
             }
 
-            String sqlAppointment = "INSERT INTO Appointment "
-                    + "(PatientID, DoctorID, AppointmentStatus, DateCreate, DateBegin, DateEnd, Note, Hidden) "
-                    + "VALUES (?, ?, 'Approved', GETDATE(), ?, ?, ?, 1)";
-            try ( PreparedStatement psAppt = conn.prepareStatement(sqlAppointment)) {
-                Timestamp tsBegin = Timestamp.valueOf(dateBegin);
-                Timestamp tsEnd = null;
+            if (patientId == 0) {
+                conn.rollback();
+                return false;
+            }
 
+            // Thêm appointment
+            try ( PreparedStatement psAppt = conn.prepareStatement(sqlAppointment)) {
                 psAppt.setInt(1, patientId);
                 psAppt.setInt(2, doctorId);
-                psAppt.setTimestamp(3, tsBegin);
-                psAppt.setTimestamp(4, tsEnd);
-                psAppt.setString(5, note);
+                psAppt.setString(3, "Pending");
+                psAppt.setTimestamp(4, Timestamp.valueOf(dateBegin));
+                psAppt.setTimestamp(5, Timestamp.valueOf(dateEnd));
+                psAppt.setString(6, note);
 
-                psAppt.executeUpdate();
+                int inserted = psAppt.executeUpdate();
+                if (inserted <= 0) {
+                    conn.rollback();
+                    return false;
+                }
             }
 
             conn.commit();
             return true;
 
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
             return false;
         }
     }

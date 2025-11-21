@@ -20,7 +20,7 @@ public class DBContext {
 
     private final String DB_URL = "jdbc:sqlserver://127.0.0.1:1433;databaseName=clinicbookingdatabase;encrypt=false";
     private final String DB_USER = "sa";
-    private final String DB_PWD = "18122005";
+    private final String DB_PWD = "123456";
 
     private Connection conn;
     private PreparedStatement statement;
