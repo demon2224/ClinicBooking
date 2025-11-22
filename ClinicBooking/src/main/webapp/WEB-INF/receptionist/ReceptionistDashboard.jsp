@@ -114,7 +114,12 @@
                     <i class="fa-solid fa-right-from-bracket"></i> Logout
                 </a>
             </nav>
-
+            <!-- Welcome Section -->
+            <div class="alert alert-primary shadow-sm mb-4" role="alert">
+                <i class="fa-solid fa-stethoscope me-2"></i>
+                Welcome back, <strong>${sessionScope.staff.fullName}</strong>!
+                Here’s an overview of your current medical activities.
+            </div>
             <!-- Summary Stats -->
             <div class="row g-4 mb-4">
                 <div class="col-md-4">
@@ -137,9 +142,9 @@
                         <div class="stat-value">
                             <c:choose>
                                 <c:when test="${todayRevenue != null && todayRevenue > 0}">
-                                    <fmt:formatNumber value="${todayRevenue}" type="currency" currencySymbol="$"/>
+                                    <fmt:formatNumber value="${invoiceDetail.totalFee}" type="number"/> VND
                                 </c:when>
-                                <c:otherwise>0 $</c:otherwise>
+                                <c:otherwise>0 VND</c:otherwise>
                             </c:choose>
                         </div>
                         <p class="mb-0 text-muted">Revenue Today</p>
@@ -177,7 +182,7 @@
                                                 <td>${d.doctorName}</td>
                                                 <td>${d.specialtyName}</td>
                                                 <td class="text-end">
-                                                    <fmt:formatNumber value="${d.totalRevenue}" type="currency" currencySymbol="$"/>
+                                                    <fmt:formatNumber value="${d.totalRevenue}" type="number"/> VND
                                                 </td>
                                             </tr>
                                         </c:forEach>

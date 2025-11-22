@@ -140,7 +140,7 @@
                                     <td>${inv.medicalRecordID.appointmentID.doctorID.staffID.firstName} ${inv.medicalRecordID.appointmentID.doctorID.staffID.lastName}</td>
                                     <td>${inv.specialtyID.specialtyName}</td>
                                     <td><fmt:formatDate value="${inv.dateCreate}" pattern="yyyy/MM/dd HH:mm"/></td>
-                                    <td><fmt:formatNumber value="${inv.specialtyID.price}" type="currency" currencySymbol="$"/></td>
+                                    <td><fmt:formatNumber value="${inv.specialtyID.price}" type="number"/> VND
                                     <td>${inv.paymentType}</td>
                                     <td>
                                         <span class="badge
