@@ -1323,7 +1323,7 @@ public class AppointmentDAO extends DBContext {
     }
 
     public boolean completedMyAppointment(int appointmentId) {
-        String sql = "UPDATE Appointment SET AppointmentStatus = 'Completed' WHERE AppointmentID = ? and AppointmentStatus = 'Approved'";
+        String sql = "UPDATE Appointment SET AppointmentStatus = 'Completed', DateEnd = GETDATE()  WHERE AppointmentID = ? and AppointmentStatus = 'Approved'";
         Object[] params = {appointmentId};
         int rowsAffected = executeQuery(sql, params);
         closeResources(null);
