@@ -94,7 +94,7 @@
                                         <span class="badge
                                               <c:choose>
                                                   <c:when test="${prescription.prescriptionStatus eq 'Pending'}">bg-warning text-dark</c:when>
-                                                  <c:when test="${prescription.prescriptionStatus eq 'Delivered'}">bg-success</c:when>
+                                                  <c:when test="${prescription.prescriptionStatus eq 'Paid'}">bg-success</c:when>
                                                   <c:otherwise>bg-danger</c:otherwise>
                                               </c:choose>">
                                             <c:out value="${prescription.prescriptionStatus}"/>
@@ -171,7 +171,7 @@
                                             <td><c:out value="${item.instruction}"/></td>
 
                                             <td class="text-end">
-                                                <fmt:formatNumber value="${item.subTotal * rate}" type="number"
+                                                <fmt:formatNumber value="${item.subTotal}" type="number"
                                                                   groupingUsed="true" maxFractionDigits="0" />
                                                 đ
                                             </td>
@@ -191,7 +191,7 @@
                                     <tr>
                                         <th colspan="7" class="text-end">Total:</th>
                                         <th class="text-end">
-                                            <fmt:formatNumber value="${prescription.totalValue * rate}" type="number"
+                                            <fmt:formatNumber value="${prescription.totalValue}" type="number"
                                                               groupingUsed="true" maxFractionDigits="0" />
                                             đ
                                         </th>

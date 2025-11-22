@@ -69,12 +69,12 @@
                 background-color: red;
                 color: white;
             }
-            
+
             .stat-icon {
                 font-size: 2.3rem;
                 color: #1B5A90;
             }
-            
+
             .navbar {
                 background: white;
                 border-bottom: 1px solid #dee2e6;
@@ -100,6 +100,12 @@
                     <i class="fa-solid fa-right-from-bracket me-2"></i>Logout
                 </a>
             </nav>
+
+            <div class="alert alert-primary shadow-sm mb-4" role="alert">
+                <i class="fa-solid fa-stethoscope me-2"></i>
+                Welcome back, <strong>${sessionScope.staff.fullName}</strong>!
+                Here’s an overview of your current medical activities.
+            </div> 
 
             <div class="row g-4 mb-4">
 
