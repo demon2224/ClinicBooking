@@ -5,7 +5,7 @@
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <!DOCTYPE html>
 <html>
     <head>
@@ -98,7 +98,7 @@
                                             <option value="">-- Select Medicine --</option>
                                             <c:forEach var="m" items="${medicineList}">
                                                 <option value="${m.medicineID}" class="align-items-start">
-                                                    ${m.medicineCode} | ${m.medicineName} — ${m.medicineType} | Stock: ${m.quantity} | ${m.price} ₫
+                                                    ${m.medicineCode} | ${m.medicineName} — ${m.medicineType} | Stock: ${m.quantity} |  <fmt:formatNumber value="${m.price}"/> ₫
                                                 </option>
                                             </c:forEach>
                                         </select>

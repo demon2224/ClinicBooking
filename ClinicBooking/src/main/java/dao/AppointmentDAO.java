@@ -956,9 +956,8 @@ public class AppointmentDAO extends DBContext {
      * Count today's appointments for a doctor
      */
     public int countTodayAppointmentsByDoctor(int doctorId) {
-        String sql = "SELECT COUNT(*) AS Total FROM Appointment "
-                + "WHERE DoctorID = ? AND CAST(DateBegin AS DATE) = CAST(GETDATE() AS DATE) "
-                + "AND AppointmentStatus = 'Approved'";
+        String sql = "SELECT COUNT(*) AS Total FROM Appointment \n"
+                + "                WHERE DoctorID = ? ";
         Object[] params = {doctorId};
         ResultSet rs = executeSelectQuery(sql, params);
         try {

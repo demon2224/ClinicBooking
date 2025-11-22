@@ -158,10 +158,14 @@
                                         </a>
                                         <c:choose>
                                             <c:when test="${list.appointmentStatus eq 'Approved' and list.hasRecord}">
-                                                <a href="${pageContext.request.contextPath}/manage-my-patient-appointment?action=completed&appointmentID=${list.appointmentID}"
-                                                   class="btn btn-sm btn-success text-white">
+                                                <button type="button"
+                                                        class="btn btn-sm btn-success text-white"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#confirmCompleteModal"
+                                                        data-appointment-id="${list.appointmentID}">
                                                     <i class="fa-solid fa-check"></i> Completed
-                                                </a>
+                                                </button>
+
                                             </c:when>
                                             <c:otherwise>
                                                 <button class="btn btn-sm btn-secondary" disabled>
@@ -185,5 +189,98 @@
                 </div>
             </div>
         </div>
-    </body>
+        <!-- Bootstrap notice Modal -->
+        <div class="modal fade" id="success" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header bg-success text-white">
+                        <h5 class="modal-title"><i class="fa-solid fa-circle-exclamation me-2"></i>Successfully</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        ${sessionScope.message}
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bootstrap Error Modal -->
+        <div class="modal fade" id="errorModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header bg-danger text-white">
+                        <h5 class="modal-title"><i class="fa-solid fa-circle-exclamation me-2"></i>Error</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        ${sessionScope.error}
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Confirm Complete Modal -->
+    <div class="modal fade" id="confirmCompleteModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-success text-dark">
+                    <h5 class="modal-title text-white">
+                        <i class="fa-solid fa-circle-question me-2"></i>Confirm Completion
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
+                    Are you sure you want to mark this appointment as <b>Completed</b>?
+                </div>
+
+                <div class="modal-footer">       
+
+                    <a id="confirmCompleteBtn" href="#" class="btn btn-success">
+                        Yes, Complete
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        var confirmModal = document.getElementById('confirmCompleteModal');
+        confirmModal.addEventListener('show.bs.modal', function (event) {
+
+            var button = event.relatedTarget;
+            var appointmentID = button.getAttribute('data-appointment-id');
+
+            var confirmBtn = document.getElementById('confirmCompleteBtn');
+            confirmBtn.href = "${pageContext.request.contextPath}/manage-my-patient-appointment?action=completed&appointmentID=" + appointmentID;
+        });
+    </script>
+
+    <c:if test="${not empty sessionScope.message}">
+        <script>
+            window.onload = function () {
+                var myModal = new bootstrap.Modal(document.getElementById('success'));
+                myModal.show();
+            };
+        </script>
+        <c:remove var="message" scope="session" />
+    </c:if>
+    <c:if test="${not empty sessionScope.error}">
+        <script>
+            window.onload = function () {
+                var myModal = new bootstrap.Modal(document.getElementById('errorModal'));
+                myModal.show();
+            };
+        </script>
+        <c:remove var="error" scope="session" />
+    </c:if>
+</body>
+
 </html>

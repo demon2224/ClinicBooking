@@ -188,7 +188,7 @@
                                         <td class="text-end"><fmt:formatNumber value="${item.medicineID.price}" /></td>
                                         <td class="text-center"><c:out value="${item.dosage}"/></td>
                                         <td><c:out value="${item.instruction}"/></td>
-                                        <td class="text-end"><c:out value="${item.subTotal}"/></td>
+                                        <td class="text-end"><fmt:formatNumber value="${item.subTotal}"/> ₫</td>
                                     </tr>
                                 </c:forEach>
 
@@ -204,7 +204,7 @@
                                 <tr>
                                     <th colspan="7" class="text-end">Total:</th>
                                     <th class="text-end">
-                                        <c:out value="${prescription.totalValue}"/>
+                                        <fmt:formatNumber value="${prescription.totalValue}" /> ₫
                                     </th>
                                 </tr>
                             </tfoot>
