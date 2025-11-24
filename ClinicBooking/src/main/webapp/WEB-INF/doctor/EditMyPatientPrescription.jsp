@@ -102,7 +102,7 @@
                                                 <c:forEach var="m" items="${medicineList}">
                                                     <option value="${m.medicineID}"
                                                             <c:if test="${item.medicineID.medicineID == m.medicineID}">selected</c:if>>
-                                                        ${m.medicineCode} | ${m.medicineName} — ${m.medicineType} | Stock: ${m.quantity} | <fmt:formatNumber value="${m.price}"/> ₫
+                                                        ${m.medicineCode} | ${m.medicineName} — ${m.medicineType} | Stock: ${m.quantity} | <fmt:formatNumber value="${m.price}"/> VND
                                                     </option>
                                                 </c:forEach>
                                             </select>

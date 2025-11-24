@@ -172,7 +172,7 @@
                                     <th>Medicine Name</th>
                                     <th>Code</th>
                                     <th>Type</th>
-                                    <th>Price (₫)</th>
+                                    <th>Price (VND)</th>
                                     <th>Dosage</th>
                                     <th>Instruction</th>
                                     <th>Subtotal</th>
@@ -188,7 +188,7 @@
                                         <td class="text-end"><fmt:formatNumber value="${item.medicineID.price}" /></td>
                                         <td class="text-center"><c:out value="${item.dosage}"/></td>
                                         <td><c:out value="${item.instruction}"/></td>
-                                        <td class="text-end"><fmt:formatNumber value="${item.subTotal}"/> ₫</td>
+                                        <td class="text-end"><fmt:formatNumber value="${item.subTotal}"/> VND</td>
                                     </tr>
                                 </c:forEach>
 
@@ -204,7 +204,7 @@
                                 <tr>
                                     <th colspan="7" class="text-end">Total:</th>
                                     <th class="text-end">
-                                        <fmt:formatNumber value="${prescription.totalValue}" /> ₫
+                                        <fmt:formatNumber value="${prescription.totalValue}" /> VND
                                     </th>
                                 </tr>
                             </tfoot>

@@ -193,7 +193,7 @@
                                                 </c:otherwise>
                                             </c:choose>
                                         </c:if>
-                                        <c:if test="${prescription.prescriptionStatus eq 'Delivered'}">
+                                        <c:if test="${prescription.prescriptionStatus eq 'Paid'}">
                                             <button type="button" class="btn btn-sm btn-secondary text-white disabled" tabindex="-1" aria-disabled="true">
                                                 <i class="fa-solid fa-trash"></i> Delete
                                             </button>

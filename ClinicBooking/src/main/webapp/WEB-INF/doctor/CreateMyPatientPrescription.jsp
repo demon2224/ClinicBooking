@@ -98,7 +98,7 @@
                                             <option value="">-- Select Medicine --</option>
                                             <c:forEach var="m" items="${medicineList}">
                                                 <option value="${m.medicineID}" class="align-items-start">
-                                                    ${m.medicineCode} | ${m.medicineName} — ${m.medicineType} | Stock: ${m.quantity} |  <fmt:formatNumber value="${m.price}"/> ₫
+                                                    ${m.medicineCode} | ${m.medicineName} — ${m.medicineType} | Stock: ${m.quantity} |  <fmt:formatNumber value="${m.price}"/> VND
                                                 </option>
                                             </c:forEach>
                                         </select>
