@@ -165,7 +165,7 @@
                                     <td>
                                         <fmt:formatNumber value="${med.price}" type="number"
                                                           groupingUsed="true" maxFractionDigits="0" />
-                                        đ
+                                        VND
                                     </td>
 
                                     <td>

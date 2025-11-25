@@ -128,7 +128,7 @@
                                 <td>
                                     <fmt:formatNumber value="${medicine.price}" type="number"
                                                       groupingUsed="true" maxFractionDigits="0" />
-                                    đ
+                                    VND
                                 </td>
                             </tr>
 

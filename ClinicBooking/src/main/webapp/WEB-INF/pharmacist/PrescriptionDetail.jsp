@@ -173,7 +173,7 @@
                                             <td class="text-end">
                                                 <fmt:formatNumber value="${item.subTotal}" type="number"
                                                                   groupingUsed="true" maxFractionDigits="0" />
-                                                đ
+                                                VND
                                             </td>
                                         </tr>
                                     </c:forEach>
@@ -193,7 +193,7 @@
                                         <th class="text-end">
                                             <fmt:formatNumber value="${prescription.totalValue}" type="number"
                                                               groupingUsed="true" maxFractionDigits="0" />
-                                            đ
+                                            VND
                                         </th>
                                     </tr>
                                 </tfoot>

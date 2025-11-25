@@ -117,7 +117,7 @@
                             </div>
 
                             <div class="col-md-6">
-                                <label class="form-label required">Price (đ)</label>
+                                <label class="form-label required">Price (VND)</label>
                                 <c:set var="vnd" value="${medicine.price}" />
                                 <fmt:formatNumber value='${vnd}' type='number' groupingUsed='false' maxFractionDigits="0" var="vndFormatted"/>
                                 <input type="number" step="0.01" min="0"

@@ -109,7 +109,7 @@
                             </div>
 
                             <div class="col-md-6">
-                                <label class="form-label required">Price (đ)</label>
+                                <label class="form-label required">Price (VND)</label>
                                 <input type="number" min="0"
                                        class="form-control" name="price" required>
 
