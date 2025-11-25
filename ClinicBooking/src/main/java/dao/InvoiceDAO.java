@@ -453,8 +453,9 @@ public class InvoiceDAO extends DBContext {
      * @return true if update successful, false otherwise
      */
     /**
-     * Update invoice payment and status information with LocalDateTime
-     * ⭐ For medicine payment: Only update if invoice status is 'Pending' (change to 'Paid')
+     * Update invoice payment and status information with LocalDateTime ⭐ For
+     * medicine payment: Only update if invoice status is 'Pending' (change to
+     * 'Paid')
      *
      * @param invoiceId Invoice ID to update
      * @param paymentType Payment method (Cash, QR Transfer, etc.)
@@ -713,7 +714,8 @@ public class InvoiceDAO extends DBContext {
      * Get medicine invoice info (fee and status) for a specific appointment
      *
      * @param appointmentId The appointment ID
-     * @return Object array: [0] = medicine fee (Double), [1] = invoice status (String), null if no invoice exists
+     * @return Object array: [0] = medicine fee (Double), [1] = invoice status
+     * (String), null if no invoice exists
      */
     public Object[] getMedicineInvoiceInfoByAppointmentId(int appointmentId) {
         String sql = "SELECT "
@@ -746,12 +748,13 @@ public class InvoiceDAO extends DBContext {
         return null;
     }
 
-    // ⭐ Doanh thu hôm nay CHỈ TỪ THUỐC - KHÔNG BAO GỒM TIỀN KHÁM
     public double sumRevenueToday() {
-        String sql = "SELECT ISNULL(SUM(sub.Total), 0) AS revenue "
-                + "FROM ( "
-                + "    SELECT DISTINCT i.InvoiceID, "
-                + "        ISNULL(SUM(pi.Dosage * m.Price), 0) AS Total "
+        String sql
+                = "WITH InvoiceCost AS ( "
+                + "    SELECT i.InvoiceID, "
+                + "           s.Price AS ExamPrice, "
+                + "           SUM(ISNULL(pi.Dosage * m.Price, 0)) AS MedicineTotal "
+                + "    FROM Invoice i "
                 + "    JOIN MedicalRecord mr ON i.MedicalRecordID = mr.MedicalRecordID "
                 + "    JOIN Appointment a ON mr.AppointmentID = a.AppointmentID "
                 + "    JOIN Doctor d ON a.DoctorID = d.DoctorID "
@@ -762,7 +765,10 @@ public class InvoiceDAO extends DBContext {
                 + "    WHERE i.InvoiceStatus = 'Paid' "
                 + "      AND i.DatePay >= CAST(GETDATE() AS DATE) "
                 + "      AND i.DatePay < DATEADD(DAY, 1, CAST(GETDATE() AS DATE)) "
-                + "    GROUP BY i.InvoiceID) sub;";
+                + "    GROUP BY i.InvoiceID, s.Price "
+                + ") "
+                + "SELECT SUM(ExamPrice + MedicineTotal) AS revenue "
+                + "FROM InvoiceCost;";
         try ( ResultSet rs = executeSelectQuery(sql)) {
             if (rs != null && rs.next()) {
                 return rs.getDouble("revenue");
@@ -1213,8 +1219,8 @@ public class InvoiceDAO extends DBContext {
     }
 
     /**
-     *  Get Invoice ID by Prescription ID Dùng để tìm invoice từ prescription
-     * để thanh toán
+     * Get Invoice ID by Prescription ID Dùng để tìm invoice từ prescription để
+     * thanh toán
      *
      * @param prescriptionId Prescription ID
      * @return Invoice ID if exists, -1 if not found
@@ -1240,9 +1246,9 @@ public class InvoiceDAO extends DBContext {
     }
 
     /**
-     * Get Invoice ID by Appointment ID
-     * Used to find invoice related to appointment for consultation payment
-     * Invoice is created automatically by trigger when appointment is created
+     * Get Invoice ID by Appointment ID Used to find invoice related to
+     * appointment for consultation payment Invoice is created automatically by
+     * trigger when appointment is created
      *
      * @param appointmentId Appointment ID
      * @return Invoice ID if exists, null if not found

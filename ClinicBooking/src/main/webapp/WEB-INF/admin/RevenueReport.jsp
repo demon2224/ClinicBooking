@@ -78,7 +78,7 @@
                         <div class="card shadow-sm bg-success text-white">
                             <div class="card-body">
                                 <h6><i class="fa-solid fa-check-circle me-2"></i>Paid Revenue</h6>
-                                <h3>$<fmt:formatNumber value="${paidRevenue}" pattern="#,##0.00"/></h3>
+                                <h3><fmt:formatNumber value="${paidRevenue}" type="number"/> VND</h3>
                             </div>
                         </div>
                     </div>
@@ -86,7 +86,7 @@
                         <div class="card shadow-sm bg-warning text-dark">
                             <div class="card-body">
                                 <h6><i class="fa-solid fa-clock me-2"></i>Pending Revenue</h6>
-                                <h3>$<fmt:formatNumber value="${pendingRevenue}" pattern="#,##0.00"/></h3>
+                                <h3><fmt:formatNumber value="${pendingRevenue}" type="number"/> VND</h3>
                             </div>
                         </div>
                     </div>
@@ -161,7 +161,7 @@
                                             <tr>
                                                 <td>${m.medicineName}</td>
                                                 <td><fmt:formatNumber value="${m.totalQuantitySold}"/></td>
-                                                <td>$<fmt:formatNumber value="${m.totalRevenue}" pattern="#,##0.00"/></td>
+                                                <td>$<fmt:formatNumber value="${m.totalRevenue}" type="number"/> VND
                                             </tr>
                                         </c:forEach>
                                     </tbody>
