@@ -767,7 +767,7 @@ public class InvoiceDAO extends DBContext {
                 + "      AND i.DatePay < DATEADD(DAY, 1, CAST(GETDATE() AS DATE)) "
                 + "    GROUP BY i.InvoiceID, s.Price "
                 + ") "
-                + "SELECT SUM(ExamPrice + MedicineTotal) AS revenue "
+                + "SELECT ExamPrice AS revenue "
                 + "FROM InvoiceCost;";
         try ( ResultSet rs = executeSelectQuery(sql)) {
             if (rs != null && rs.next()) {

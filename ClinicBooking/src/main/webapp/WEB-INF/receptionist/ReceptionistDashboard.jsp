@@ -142,7 +142,7 @@
                         <div class="stat-value">
                             <c:choose>
                                 <c:when test="${todayRevenue != null && todayRevenue > 0}">
-                                    <fmt:formatNumber value="${invoiceDetail.totalFee}" type="number"/> VND
+                                    <fmt:formatNumber value="${todayRevenue}" type="number"/> VND
                                 </c:when>
                                 <c:otherwise>0 VND</c:otherwise>
                             </c:choose>
