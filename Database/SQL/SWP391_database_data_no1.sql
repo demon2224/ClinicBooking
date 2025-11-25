@@ -250,50 +250,50 @@ BEGIN
 (1,1,'Pending','2025-11-02','2025-11-25 09:00',NULL,'Cardiac screening'), -- ID 16
 	
 	-- DOCTOR 1 (Cardiologist) - Other Patients (Cách nhau 30 phút)
-	(2,1,'Completed','2025-09-03','2025-09-04 09:30','2025-09-04 10:00','Chest pain follow-up'), -- ID 18
-	(5,1,'Completed','2025-09-15','2025-09-16 10:00','2025-09-16 10:30','Pregnancy heart check'), -- ID 19
-	(6,1,'Completed','2025-09-25','2025-09-26 10:30','2025-09-26 11:00','High cholesterol'), -- ID 20
-	(7,1,'Completed','2025-10-03','2025-10-04 11:00','2025-10-04 11:30','Smoker cardiac screening'), -- ID 21
-	(8,1,'Completed','2025-10-12','2025-10-13 11:30','2025-10-13 12:00','Young adult heart check'), -- ID 22
-	(11,1,'Completed','2025-10-20','2025-10-21 13:30','2025-10-21 14:00','Stress-related heart'), -- ID 23
-	(14,1,'Completed','2025-10-27','2025-10-28 14:00','2025-10-28 14:30','Cardiac monitoring'), -- ID 24
-	(16,1,'Completed','2025-10-29','2025-10-30 14:30','2025-10-30 15:00','Post-fracture cardiac'), -- ID 25
-	(19,1,'Completed','2025-10-31','2025-11-01 15:00','2025-11-01 15:30','Heart check'), -- ID 26
-(22,1,'Approved','2025-11-02','2025-11-06 09:30',NULL,'Anxiety cardiac screen'), -- ID 27
-(24,1,'Approved','2025-11-02','2025-11-09 10:00',NULL,'Post-op monitoring'), -- ID 28
-(26,1,'Approved','2025-11-02','2025-11-13 13:00',NULL,'Thyroid heart eval'), -- ID 29
-(28,1,'Pending','2025-11-02','2025-11-18 09:30',NULL,'Cardiac check'), -- ID 30
-(29,1,'Pending','2025-11-02','2025-11-22 14:00',NULL,'Smoker recovery'), -- ID 31
-(30,1,'Pending','2025-11-02','2025-11-27 15:00',NULL,'Heart screening'), -- ID 32
+	(2,1,'Completed','2025-09-03','2025-09-04 09:30','2025-09-04 10:00','Chest pain follow-up'), -- ID 17
+	(5,1,'Completed','2025-09-15','2025-09-16 10:00','2025-09-16 10:30','Pregnancy heart check'), -- ID 18
+	(6,1,'Completed','2025-09-25','2025-09-26 10:30','2025-09-26 11:00','High cholesterol'), -- ID 19
+	(7,1,'Completed','2025-10-03','2025-10-04 11:00','2025-10-04 11:30','Smoker cardiac screening'), -- ID 20
+	(8,1,'Completed','2025-10-12','2025-10-13 11:30','2025-10-13 12:00','Young adult heart check'), -- ID 21
+	(11,1,'Completed','2025-10-20','2025-10-21 13:30','2025-10-21 14:00','Stress-related heart'), -- ID 22
+	(14,1,'Completed','2025-10-27','2025-10-28 14:00','2025-10-28 14:30','Cardiac monitoring'), -- ID 23
+	(16,1,'Completed','2025-10-29','2025-10-30 14:30','2025-10-30 15:00','Post-fracture cardiac'), -- ID 24
+	(19,1,'Completed','2025-10-31','2025-11-01 15:00','2025-11-01 15:30','Heart check'), -- ID 25
+(22,1,'Approved','2025-11-02','2025-11-06 09:30',NULL,'Anxiety cardiac screen'), -- ID 26
+(24,1,'Approved','2025-11-02','2025-11-09 10:00',NULL,'Post-op monitoring'), -- ID 27
+(26,1,'Approved','2025-11-02','2025-11-13 13:00',NULL,'Thyroid heart eval'), -- ID 28
+(28,1,'Pending','2025-11-02','2025-11-18 09:30',NULL,'Cardiac check'), -- ID 29
+(29,1,'Pending','2025-11-02','2025-11-22 14:00',NULL,'Smoker recovery'), -- ID 30
+(30,1,'Pending','2025-11-02','2025-11-27 15:00',NULL,'Heart screening'), -- ID 31
 	
 	-- OTHER DOCTORS - Various Patients (Completed in past)
-	(3,2,'Completed','2025-09-05','2025-09-06 11:00','2025-09-06 11:30','Skin rash'), -- ID 34
-	(4,3,'Completed','2025-09-12','2025-09-13 09:30','2025-09-13 10:00','Child fever'), -- ID 35
-	(5,4,'Completed','2025-09-18','2025-09-19 14:00','2025-09-19 14:30','Knee pain'), -- ID 36
-	(6,5,'Completed','2025-09-22','2025-09-23 15:00','2025-09-23 15:30','Headache review'), -- ID 37
-	(7,6,'Completed','2025-09-28','2025-09-29 08:00','2025-09-29 08:30','Diabetes review'), -- ID 38
-	(8,7,'Completed','2025-10-05','2025-10-06 10:00','2025-10-06 10:30','Eye check'), -- ID 39
-	(9,8,'Completed','2025-10-08','2025-10-09 11:00','2025-10-09 11:30','Ear pain'), -- ID 40
-	(10,9,'Completed','2025-10-14','2025-10-15 16:00','2025-10-15 16:30','Mental health'), -- ID 41
-	(11,10,'Completed','2025-10-16','2025-10-17 09:00','2025-10-17 09:30','Blood pressure'), -- ID 42
-	(12,2,'Completed','2025-10-21','2025-10-22 10:00','2025-10-22 10:30','Acne treatment'), -- ID 43
-	(13,3,'Completed','2025-10-23','2025-10-24 11:30','2025-10-24 12:00','Child vaccination'), -- ID 44
-	(14,4,'Completed','2025-10-26','2025-10-27 14:30','2025-10-27 15:00','Fracture check'), -- ID 45
-	(15,5,'Completed','2025-10-28','2025-10-29 15:30','2025-10-29 16:00','Neurology consult'), -- ID 46
-	(16,10,'Completed','2025-10-30','2025-10-31 08:00','2025-10-31 08:30','General check'), -- ID 47
-	(17,7,'Completed','2025-11-01','2025-11-02 09:00','2025-11-02 09:30','Cataract review'), -- ID 48
+	(3,2,'Completed','2025-09-05','2025-09-06 11:00','2025-09-06 11:30','Skin rash'), -- ID 32
+	(4,3,'Completed','2025-09-12','2025-09-13 09:30','2025-09-13 10:00','Child fever'), -- ID 33
+	(5,4,'Completed','2025-09-18','2025-09-19 14:00','2025-09-19 14:30','Knee pain'), -- ID 34
+	(6,5,'Completed','2025-09-22','2025-09-23 15:00','2025-09-23 15:30','Headache review'), -- ID 35
+	(7,6,'Completed','2025-09-28','2025-09-29 08:00','2025-09-29 08:30','Diabetes review'), -- ID 36
+	(8,7,'Completed','2025-10-05','2025-10-06 10:00','2025-10-06 10:30','Eye check'), -- ID 37
+	(9,8,'Completed','2025-10-08','2025-10-09 11:00','2025-10-09 11:30','Ear pain'), -- ID 38
+	(10,9,'Completed','2025-10-14','2025-10-15 16:00','2025-10-15 16:30','Mental health'), -- ID 39
+	(11,10,'Completed','2025-10-16','2025-10-17 09:00','2025-10-17 09:30','Blood pressure'), -- ID 40
+	(12,2,'Completed','2025-10-21','2025-10-22 10:00','2025-10-22 10:30','Acne treatment'), -- ID 41
+	(13,3,'Completed','2025-10-23','2025-10-24 11:30','2025-10-24 12:00','Child vaccination'), -- ID 42
+	(14,4,'Completed','2025-10-26','2025-10-27 14:30','2025-10-27 15:00','Fracture check'), -- ID 43
+	(15,5,'Completed','2025-10-28','2025-10-29 15:30','2025-10-29 16:00','Neurology consult'), -- ID 44
+	(16,10,'Completed','2025-10-30','2025-10-31 08:00','2025-10-31 08:30','General check'), -- ID 45
+	(17,7,'Completed','2025-11-01','2025-11-02 09:00','2025-11-02 09:30','Cataract review'), -- ID 46
 	
 	-- APPROVED/PENDING - Other Doctors (04/11 - 03/12)
-(18,8,'Approved','2025-11-02','2025-11-07 10:00',NULL,'Sinusitis'), -- ID 49
-(19,9,'Approved','2025-11-02','2025-11-11 11:00',NULL,'Depression check'), -- ID 50
-(20,10,'Approved','2025-11-02','2025-11-14 12:00',NULL,'General check'), -- ID 51
-(21,2,'Pending','2025-11-02','2025-11-19 13:00',NULL,'Skin consultation'), -- ID 52
-(22,3,'Pending','2025-11-02','2025-11-23 11:00',NULL,'Pediatric review'), -- ID 53
-(23,4,'Pending','2025-11-02','2025-11-26 14:00',NULL,'Orthopedic therapy'), -- ID 54
-(25,5,'Pending','2025-11-02','2025-11-29 15:00',NULL,'Neuro follow-up'), -- ID 55
-(26,6,'Pending','2025-11-02','2025-12-02 08:30',NULL,'Endocrine consult'), -- ID 56
-(29,9,'Approved','2025-11-02','2025-11-17 12:00',NULL,'Psych consult'), -- ID 58
-(30,10,'Approved','2025-11-02','2025-11-21 13:00',NULL,'General exam'); -- ID 59
+(18,8,'Approved','2025-11-02','2025-11-07 10:00',NULL,'Sinusitis'), -- ID 47
+(19,9,'Approved','2025-11-02','2025-11-11 11:00',NULL,'Depression check'), -- ID 48
+(20,10,'Approved','2025-11-02','2025-11-14 12:00',NULL,'General check'), -- ID 49
+(21,2,'Pending','2025-11-02','2025-11-19 13:00',NULL,'Skin consultation'), -- ID 50
+(22,3,'Pending','2025-11-02','2025-11-23 11:00',NULL,'Pediatric review'), -- ID 51
+(23,4,'Pending','2025-11-02','2025-11-26 14:00',NULL,'Orthopedic therapy'), -- ID 52
+(25,5,'Pending','2025-11-02','2025-11-29 15:00',NULL,'Neuro follow-up'), -- ID 53
+(26,6,'Pending','2025-11-02','2025-12-02 08:30',NULL,'Endocrine consult'), -- ID 54
+(29,9,'Approved','2025-11-02','2025-11-17 12:00',NULL,'Psych consult'), -- ID 55
+(30,10,'Approved','2025-11-02','2025-11-21 13:00',NULL,'General exam'); -- ID 56
 
 	-- 10. PRESCRIPTIONS - CHỈ cho Completed appointments (đã khám xong)
 	-- Approved/Pending = chưa khám, không có prescription
@@ -310,18 +310,18 @@ BEGIN
 	(7,'Paid','2025-10-26','Diabetes medication'), -- ID 7
 	(8,'Pending','2025-10-29','Eye drops'), -- ID 8
 	-- ID 9 (Appt 9) - Không kê đơn thuốc
-	(10,'Paid','2025-11-02','Annual checkup meds'), -- ID 10
+	(10,'Paid','2025-11-02','Annual checkup meds'), -- ID 09
 	
-	-- Completed (Doctor 1 - Other Patients: ID 18-26)
-	(18,'Paid','2025-09-04','Cardiac meds'), -- ID 10
-	(19,'Paid','2025-09-16','Pregnancy vitamins'), -- ID 11
-	(20,'Paid','2025-09-26','Cholesterol meds'), -- ID 12
-	(21,'Pending','2025-10-04','Cardiac screening meds - chưa phát'), -- ID 13
-	(22,'Paid','2025-10-13','Heart medication'), -- ID 14
-	(23,'Paid','2025-10-21','Stress relief meds'), -- ID 15
-	(24,'Paid','2025-10-28','Cardiac monitoring meds'), -- ID 16
-	(25,'Paid','2025-10-30','Post-fracture cardiac meds'), -- ID 17
-	(26,'Pending','2025-11-01','Heart check prescription - chưa phát'), -- ID 18
+	-- Completed (Doctor 1 - Other Patients: ID 17-25)
+	(17,'Paid','2025-09-04','Cardiac meds'), -- ID 10
+	(18,'Paid','2025-09-16','Pregnancy vitamins'), -- ID 11
+	(19,'Paid','2025-09-26','Cholesterol meds'), -- ID 12
+	(20,'Pending','2025-10-04','Cardiac screening meds'), -- ID 13
+	(21,'Paid','2025-10-13','Heart medication'), -- ID 14
+	(22,'Paid','2025-10-21','Stress relief meds'), -- ID 15
+	(23,'Paid','2025-10-28','Cardiac monitoring meds'), -- ID 16
+	(24,'Paid','2025-10-30','Post-fracture cardiac meds'), -- ID 17
+	(25,'Pending','2025-11-01','Heart check prescription'), -- ID 18
 	
 	-- Completed (Other Doctors: ID 34-48)
 	(34,'Paid','2025-09-06','Skin rash ointment'), -- ID 19
@@ -344,19 +344,15 @@ BEGIN
 	(11,'Pending','2025-11-05','Stress relief medication'), -- ID 33
 	(12,'Paid','2025-11-08','Skin treatment'), -- ID 34
 	
-	-- Approved (Doctor 1 - Other Patients: ID 27, 28, 29)
+	-- Approved (Doctor 1 - Other Patients: ID 27, 28)
 	(27,'Paid','2025-11-06','Anxiety medication'), -- ID 35
 	(28,'Paid','2025-11-09','Post-op cardiac meds'), -- ID 36
-	(29,'Paid','2025-11-13','Thyroid medication'), -- ID 37
 	
-	-- Approved (Other Doctors: ID 49, 50, 51, 55, 56)
-	(49,'Paid','2025-11-07','Sinus medication'), -- ID 38
-	(50,'Paid','2025-11-11','Antidepressants'), -- ID 39
-	(51,'Paid','2025-11-14','General vitamins'), -- ID 40
-	(55,'Paid','2025-11-17','Mental health meds'), -- ID 41
-	(56,'Paid','2025-11-21','Preventive meds'); -- ID 42
+	-- Approved (Other Doctors: ID 49, 55, 56)
+	(49,'Paid','2025-11-07','Sinus medication'), -- ID 37
+	(55,'Paid','2025-11-17','Mental health meds'), -- ID 38
+	(56,'Paid','2025-11-21','Preventive meds'); -- ID 39
 	
-	-- KHÔNG TẠO prescription cho Pending (ID 13-16,30-32,52-56) - chưa duyệt
 
 	-- 11. PRESCRIPTION ITEMS - Phụ thuộc vào Prescription (PrescriptionID) và Medicine (MedicineID)
 	INSERT INTO PrescriptionItem (PrescriptionID, MedicineID, Dosage, Instruction) VALUES
@@ -543,38 +539,23 @@ BEGIN
 	(36,8,60,'1 tablet daily for cardiac protection'),
 	(36,23,30,'1 tablet daily for healing support'),
 	
-	-- Prescription 37: Thyroid treatment (3 items)
-	(37,17,90,'1 capsule daily on empty stomach'),
-	(37,23,30,'1 tablet daily (4 hours after thyroid med)'),
-	(37,18,30,'1 tablet daily for thyroid support'),
-	
 	-- Approved (Other Doctors: ID 38, 39, 40, 41, 42) - Appointments 49, 50, 51, 58, 59
-	-- Prescription 38: Sinus infection (4 items)
-	(38,2,14,'1 capsule twice daily for 7 days'),
-	(38,27,1,'2 drops twice daily for congestion'),
-	(38,1,20,'1 tablet twice daily for pain'),
-	(38,10,14,'1 tablet daily for allergic component'),
+	-- Prescription 37: Sinus infection (4 items)
+	(37,2,14,'1 capsule twice daily for 7 days'),
+	(37,27,1,'2 drops twice daily for congestion'),
+	(37,1,20,'1 tablet twice daily for pain'),
+	(37,10,14,'1 tablet daily for allergic component'),
 	
-	-- Prescription 39: Depression treatment (3 items)
-	(39,28,30,'1 capsule daily for depression anxiety'),
-	(39,23,90,'1 tablet daily for mood support'),
-	(39,11,3,'1 bottle monthly nutritional support'),
+	-- Prescription 38: Anxiety disorder (4 items)
+	(38,28,30,'1 capsule at bedtime for anxiety'),
+	(38,10,30,'1 tablet daily for stress allergies'),
+	(38,23,30,'1 tablet daily for mood stabilization'),
+	(38,1,20,'1 tablet as needed for tension headaches'),
 	
-	-- Prescription 40: General wellness (3 items)
-	(40,23,90,'1 tablet daily for 3 months'),
-	(40,18,60,'1 tablet daily for 2 months'),
-	(40,11,1,'1 bottle for overall health'),
-	
-	-- Prescription 41: Anxiety disorder (4 items)
-	(41,28,30,'1 capsule at bedtime for anxiety'),
-	(41,10,30,'1 tablet daily for stress allergies'),
-	(41,23,30,'1 tablet daily for mood stabilization'),
-	(41,1,20,'1 tablet as needed for tension headaches'),
-	
-	-- Prescription 42: Preventive care (3 items)
-	(42,23,90,'1 tablet daily for bone health'),
-	(42,18,60,'1 tablet daily for immune support'),
-	(42,11,3,'1 bottle for comprehensive nutrition');
+	-- Prescription 39: Preventive care (3 items)
+	(39,23,90,'1 tablet daily for bone health'),
+	(39,18,60,'1 tablet daily for immune support'),
+	(39,11,3,'1 bottle for comprehensive nutrition');
 
 	-- 12. MEDICAL RECORDS - Cho Completed và Approved appointments
 	-- Completed = đã khám xong
@@ -595,15 +576,15 @@ BEGIN
 	(10,9,'Annual physical','Healthy','All tests normal','2025-11-02'),
 	
 	-- Doctor 1 Other Patients - Completed (ID 18-26)
-	(18,11,'Chest pain','Angina','Cardiac medication','2025-09-04'),
-	(19,12,'Pregnancy checkup','Normal','Vitamins prescribed','2025-09-16'),
-	(20,13,'High cholesterol','Hyperlipidemia','Medication started','2025-09-26'),
-	(21,14,'Cardiac screening','Normal','Preventive care','2025-10-04'),
-	(22,15,'Heart check','Healthy','Continue monitoring','2025-10-13'),
-	(23,16,'Stress-related','Anxiety','Medication prescribed','2025-10-21'),
-	(24,17,'Cardiac monitoring','Stable','Continue treatment','2025-10-28'),
-	(25,18,'Post-fracture check','Healing well','Pain management','2025-10-30'),
-	(26,19,'Heart screening','Normal','Routine checkup','2025-11-01'),
+	(17,10,'Chest pain','Angina','Cardiac medication','2025-09-04'),
+	(18,11,'Pregnancy checkup','Normal','Vitamins prescribed','2025-09-16'),
+	(19,12,'High cholesterol','Hyperlipidemia','Medication started','2025-09-26'),
+	(20,13,'Cardiac screening','Normal','Preventive care','2025-10-04'),
+	(21,14,'Heart check','Healthy','Continue monitoring','2025-10-13'),
+	(22,15,'Stress-related','Anxiety','Medication prescribed','2025-10-21'),
+	(23,16,'Cardiac monitoring','Stable','Continue treatment','2025-10-28'),
+	(24,17,'Post-fracture check','Healing well','Pain management','2025-10-30'),
+	(25,18,'Heart screening','Normal','Routine checkup','2025-11-01'),
 	
 	-- Other Doctors - Completed (ID 34-48)
 	(34,19,'Skin rash','Contact dermatitis','Ointment prescribed','2025-09-06'),
@@ -629,14 +610,11 @@ BEGIN
 	-- Approved - Doctor 1 Other Patients (ID 27, 28, 29)
 	(27,35,'Heart palpitations','Anxiety-induced','Cardiac monitoring','2025-11-06'),
 	(28,36,'Post-operative check','Recovery on track','Continue medication','2025-11-09'),
-	(29,37,'Thyroid symptoms','Hypothyroidism','Medication adjustment','2025-11-13'),
 	
-	-- Approved - Other Doctors (ID 49, 50, 51, 55, 56)
-	(49,38,'Sinus pain','Acute sinusitis','Antibiotics prescribed','2025-11-07'),
-	(50,39,'Depression symptoms','Major depressive disorder','Therapy initiated','2025-11-11'),
-	(51,40,'Routine checkup','Healthy','Preventive care','2025-11-14'),
-	(55,41,'Anxiety disorder','Generalized anxiety','Medication started','2025-11-17'),
-	(56,42,'Annual physical','Normal results','Follow-up in 1 year','2025-11-21');
+	-- Approved - Other Doctors (ID 49, 55, 56)
+	(49,37,'Sinus pain','Acute sinusitis','Antibiotics prescribed','2025-11-07'),
+	(55,38,'Anxiety disorder','Generalized anxiety','Medication started','2025-11-17'),
+	(56,39,'Annual physical','Normal results','Follow-up in 1 year','2025-11-21');
 	
 	-- KHÔNG TẠO Medical Record cho Pending (ID 13-16,30-32,52-56) - chưa duyệt
 
@@ -684,17 +662,13 @@ UPDATE Invoice SET MedicalRecordID=2, PrescriptionID=2, PaymentType='Credit Card
 -- Approved - Patient 1 (Invoice ID 35-36)
 UPDATE Invoice SET MedicalRecordID=35, PrescriptionID=33, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay=DateCreate WHERE InvoiceID=35;
 UPDATE Invoice SET MedicalRecordID=36, PrescriptionID=34, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay=DateCreate WHERE InvoiceID=36;
-
-	UPDATE Invoice SET MedicalRecordID=37, PrescriptionID=35, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay='2025-11-06' WHERE InvoiceID=37;
-	UPDATE Invoice SET MedicalRecordID=38, PrescriptionID=36, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay='2025-11-09' WHERE InvoiceID=38;
-	UPDATE Invoice SET MedicalRecordID=39, PrescriptionID=37, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay='2025-11-13' WHERE InvoiceID=39;
+UPDATE Invoice SET MedicalRecordID=37, PrescriptionID=35, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay='2025-11-09' WHERE InvoiceID=38;
 
 -- Approved - Other Doctors (Invoice ID 40-44)
-UPDATE Invoice SET MedicalRecordID=40, PrescriptionID=38, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay=DateCreate WHERE InvoiceID=40;
-UPDATE Invoice SET MedicalRecordID=41, PrescriptionID=39, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay=DateCreate WHERE InvoiceID=41;
-UPDATE Invoice SET MedicalRecordID=42, PrescriptionID=40, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay=DateCreate WHERE InvoiceID=42;
-UPDATE Invoice SET MedicalRecordID=43, PrescriptionID=41, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay=DateCreate WHERE InvoiceID=43;
-UPDATE Invoice SET MedicalRecordID=44, PrescriptionID=42, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay=DateCreate WHERE InvoiceID=44;
+UPDATE Invoice SET MedicalRecordID=38, PrescriptionID=36, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay=DateCreate WHERE InvoiceID=41;
+UPDATE Invoice SET MedicalRecordID=39, PrescriptionID=37, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay=DateCreate WHERE InvoiceID=42;
+UPDATE Invoice SET MedicalRecordID=40, PrescriptionID=38, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay=DateCreate WHERE InvoiceID=43;
+UPDATE Invoice SET MedicalRecordID=41, PrescriptionID=39, PaymentType='Credit Card', InvoiceStatus='Paid', DatePay=DateCreate WHERE InvoiceID=44;
 
 -- Pending invoices (Invoice ID 45-60 based on image data)
 -- Mapping: InvoiceID = thứ tự insert của Appointment
