@@ -104,7 +104,7 @@
                         <i class="fa-solid fa-magnifying-glass me-2"></i>
                         <span>Search</span>
                     </button>
-                    <a href="${pageContext.request.contextPath}/logout"
+                    <a href="${pageContext.request.contextPath}/staff-logout"
                        class="btn btn-outline-danger d-flex align-items-center" id="Logout">
                         <i class="fa-solid fa-right-from-bracket me-2"></i>
                         <span>Logout</span>
@@ -140,7 +140,7 @@
                                     <td>${inv.medicalRecordID.appointmentID.doctorID.staffID.firstName} ${inv.medicalRecordID.appointmentID.doctorID.staffID.lastName}</td>
                                     <td>${inv.specialtyID.specialtyName}</td>
                                     <td><fmt:formatDate value="${inv.dateCreate}" pattern="yyyy/MM/dd HH:mm"/></td>
-                                    <td><fmt:formatNumber value="${inv.specialtyID.price}" type="currency" currencySymbol="$"/></td>
+                                    <td><fmt:formatNumber value="${inv.specialtyID.price}" type="number"/> VND
                                     <td>${inv.paymentType}</td>
                                     <td>
                                         <span class="badge

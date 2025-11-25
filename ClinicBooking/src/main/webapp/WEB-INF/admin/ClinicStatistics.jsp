@@ -17,7 +17,8 @@
         <link href="${pageContext.request.contextPath}/assests/css/main.css" rel="stylesheet" type="text/css"/>
         <style>
             body {
-                background-color: #f8f9fa;
+                background-color: #f4f7fb;
+                font-family: "Poppins", sans-serif;
                 margin: 0;
                 padding: 0;
             }
@@ -53,6 +54,47 @@
             .sidebar a i {
                 margin-right: 8px;
             }
+           /* Cards */
+            .card {
+                border: none;
+                border-radius: 12px;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            }
+            .card-header {
+                background-color: #1B5A90;
+                color: white;
+                border-top-left-radius: 12px;
+                border-top-right-radius: 12px;
+                font-weight: 500;
+            }
+            .dashboard-card {
+                transition: transform 0.2s ease, box-shadow 0.2s ease;
+            }
+            .dashboard-card:hover {
+                transform: translateY(-4px);
+                box-shadow: 0 6px 14px rgba(0,0,0,0.15);
+            }
+            .stat-icon {
+                font-size: 2.3rem;
+                color: #1B5A90;
+            }
+            .stat-value {
+                font-size: 1.8rem;
+                font-weight: 600;
+            }
+
+            .row {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 1rem;
+            }
+
+            .col-md-4 {
+                flex: 0 0 calc(33.333% - 1rem); /* 3 card 1 hàng */
+                box-sizing: border-box;
+            }
+
+
         </style>
     </head>
     <body class="clinic-stats-body">
@@ -67,74 +109,55 @@
                     <i class="fa-solid fa-right-from-bracket"></i>Logout
                 </a>
             </div>
-            <!-- KPI CARDS - 6 CARDS -->
-            <div class="stats-row">
-                <!-- Card 1: Total Doctors -->
-                <div class="stat-card">
-                    <div class="stat-card-content">
-                        <div>
-                            <h6>Total Doctors</h6>
-                            <h3>${totalDoctors}</h3>
-                        </div>
-                        <i class="fa-solid fa-user-md stat-icon"></i>
+
+            <div class="row g-4 mb-4">
+                <!-- Hàng 1 -->
+                <div class="col-md-4">
+                    <div class="card dashboard-card text-center p-3">
+                        <i class="fa-solid fa-user-md stat-icon mb-2"></i>
+                        <div class="stat-value">${totalDoctors}</div>
+                        <p class="mb-0 text-muted">Total Doctors</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card dashboard-card text-center p-3">
+                        <i class="fa-solid fa-users stat-icon mb-2"></i>
+                        <div class="stat-value">${totalPatients}</div>
+                        <p class="mb-0 text-muted">Total Patients</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card dashboard-card text-center p-3">
+                        <i class="fa-solid fa-calendar-check stat-icon mb-2"></i>
+                        <div class="stat-value">${totalAppointments}</div>
+                        <p class="mb-0 text-muted">Total Appointments</p>
                     </div>
                 </div>
 
-                <!-- Card 2: Total Patients -->
-                <div class="stat-card">
-                    <div class="stat-card-content">
-                        <div>
-                            <h6>Total Patients</h6>
-                            <h3>${totalPatients}</h3>
-                        </div>
-                        <i class="fa-solid fa-users stat-icon"></i>
+                <!-- Hàng 2 -->
+                <div class="col-md-4">
+                    <div class="card dashboard-card text-center p-3">
+                        <i class="fa-solid fa-prescription stat-icon mb-2"></i>
+                        <div class="stat-value">${totalPrescriptions}</div>
+                        <p class="mb-0 text-muted">Total Prescriptions</p>
                     </div>
                 </div>
-
-                <!-- Card 3: Total Appointments -->
-                <div class="stat-card">
-                    <div class="stat-card-content">
-                        <div>
-                            <h6>Total Appointments</h6>
-                            <h3>${totalAppointments}</h3>
-                        </div>
-                        <i class="fa-solid fa-calendar-check stat-icon"></i>
+                <div class="col-md-4">
+                    <div class="card dashboard-card text-center p-3">
+                        <i class="fa-solid fa-file-invoice-dollar stat-icon mb-2"></i>
+                        <div class="stat-value">${totalInvoices}</div>
+                        <p class="mb-0 text-muted">Total Invoices</p>
                     </div>
                 </div>
-
-                <!-- Card 4: Total Prescriptions -->
-                <div class="stat-card">
-                    <div class="stat-card-content">
-                        <div>
-                            <h6>Total Prescriptions</h6>
-                            <h3>${totalPrescriptions}</h3>
-                        </div>
-                        <i class="fa-solid fa-prescription stat-icon"></i>
-                    </div>
-                </div>
-
-                <!-- Card 5: Total Invoices -->
-                <div class="stat-card">
-                    <div class="stat-card-content">
-                        <div>
-                            <h6>Total Invoices</h6>
-                            <h3>${totalInvoices}</h3>
-                        </div>
-                        <i class="fa-solid fa-file-invoice-dollar stat-icon"></i>
-                    </div>
-                </div>
-
-                <!-- Card 6: Low Stock Medicines -->
-                <div class="stat-card">
-                    <div class="stat-card-content">
-                        <div>
-                            <h6>Low Stock Medicines</h6>
-                            <h3>${lowStockCount}</h3>
-                        </div>
-                        <i class="fa-solid fa-pills stat-icon"></i>
+                <div class="col-md-4">
+                    <div class="card dashboard-card text-center p-3">
+                        <i class="fa-solid fa-pills stat-icon mb-2"></i>
+                        <div class="stat-value">${lowStockCount}</div>
+                        <p class="mb-0 text-muted">Low Stock Medicines</p>
                     </div>
                 </div>
             </div>
+
 
             <!-- CHARTS - 3 BIỂU ĐỒ TRÒN -->
             <div class="charts-row">

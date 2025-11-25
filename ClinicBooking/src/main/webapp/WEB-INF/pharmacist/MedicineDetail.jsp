@@ -126,7 +126,7 @@
                             <tr>
                                 <th>Price per Unit</th>
                                 <td>
-                                    <fmt:formatNumber value="${medicine.price * rate}" type="number"
+                                    <fmt:formatNumber value="${medicine.price}" type="number"
                                                       groupingUsed="true" maxFractionDigits="0" />
                                     đ
                                 </td>

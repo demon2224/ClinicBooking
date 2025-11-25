@@ -164,7 +164,7 @@ public class ManageMyPatientAppointmentController extends HttpServlet {
             boolean isCompleted = appointmentDAO.completedMyAppointment(appointmentID);
 
             if (isCompleted) {
-                request.getSession().setAttribute("success", "Appointment marked as completed.");
+                request.getSession().setAttribute("message", "Appointment marked as completed.");
             } else {
                 request.getSession().setAttribute("error", "Error! Please try again later.");
             }

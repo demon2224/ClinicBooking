@@ -186,6 +186,11 @@
                                                 <i class="fa-solid fa-wrench"></i> Edit
                                             </button>
                                         </c:if>
+                                            <c:if test="${record.appointmentID.appointmentStatus eq 'Pending'}">
+                                            <button type="button" class="btn btn-sm btn-secondary text-white disabled" tabindex="-1" aria-disabled="true">
+                                                <i class="fa-solid fa-wrench"></i> Edit
+                                            </button>
+                                        </c:if>
                                     </td>
                                 </tr>
                             </c:forEach>

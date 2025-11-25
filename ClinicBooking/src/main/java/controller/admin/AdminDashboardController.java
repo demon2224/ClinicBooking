@@ -4,17 +4,15 @@
  */
 package controller.admin;
 
-
-import dao.AppointmentDAO;
 import dao.StaffDAO;
-import dao.DoctorDAO;
-import dao.PatientDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.List;
+import model.StaffDTO;
 
 /**
  *
@@ -76,6 +74,10 @@ public class AdminDashboardController extends HttpServlet {
         request.setAttribute("activeAccounts", activeAccounts);
         request.setAttribute("inactiveAccounts", inactiveAccounts);
 
+        // Lấy danh sách các tài khoản mới nhất
+        int recentLimit = 10; 
+        List<StaffDTO> recentStaffList = staffDAO.getRecentStaffList(recentLimit);
+        request.setAttribute("recentStaffList", recentStaffList);
 
         request.getRequestDispatcher("/WEB-INF/admin/AdminDashboard.jsp")
                 .forward(request, response);

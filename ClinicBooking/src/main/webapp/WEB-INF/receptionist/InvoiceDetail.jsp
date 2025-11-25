@@ -143,7 +143,7 @@
 
                         <tr>
                             <th>Total Fee</th>
-                            <td><fmt:formatNumber value="${invoiceDetail.totalFee}" type="currency" currencySymbol="$"/></td>
+                            <td><fmt:formatNumber value="${invoiceDetail.totalFee}" type="number"/> VND</td>
                         </tr>
                     </table>
                 </div>
@@ -186,7 +186,7 @@
                         </tr>
                         <tr>
                             <th>Consultation Fee</th>
-                            <td><fmt:formatNumber value="${invoiceDetail.specialtyID.price}" type="currency" currencySymbol="$"/></td>
+                            <td><fmt:formatNumber value="${invoiceDetail.specialtyID.price}" type="number"/> VND
                         </tr>
                     </table>
                 </div>

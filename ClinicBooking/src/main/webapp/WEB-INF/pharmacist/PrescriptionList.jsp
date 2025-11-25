@@ -154,7 +154,7 @@
                                         <span class="badge
                                               <c:choose>
                                                   <c:when test="${prescription.prescriptionStatus eq 'Pending'}">bg-warning text-dark</c:when>
-                                                  <c:when test="${prescription.prescriptionStatus eq 'Delivered'}">bg-success text-white</c:when>
+                                                  <c:when test="${prescription.prescriptionStatus eq 'Paid'}">bg-success text-white</c:when>
                                                   <c:otherwise>bg-danger text-white</c:otherwise>
                                               </c:choose>">
                                             <c:out value="${prescription.prescriptionStatus}"/>

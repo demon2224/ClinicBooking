@@ -959,8 +959,8 @@ public class AppointmentDAO extends DBContext {
      * Count today's appointments for a doctor
      */
     public int countTodayAppointmentsByDoctor(int doctorId) {
-        String sql = "SELECT COUNT(*) AS Total FROM Appointment a\n"
-                + "WHERE DoctorID = ? and not a.AppointmentStatus = 'Canceled'";
+        String sql = "SELECT COUNT(*) AS Total FROM Appointment \n"
+                + "                WHERE DoctorID = ? ";
         Object[] params = {doctorId};
         ResultSet rs = executeSelectQuery(sql, params);
         try {
@@ -1326,7 +1326,7 @@ public class AppointmentDAO extends DBContext {
     }
 
     public boolean completedMyAppointment(int appointmentId) {
-        String sql = "UPDATE Appointment SET AppointmentStatus = 'Completed' WHERE AppointmentID = ? and AppointmentStatus = 'Approved'";
+        String sql = "UPDATE Appointment SET AppointmentStatus = 'Completed', DateEnd = GETDATE()  WHERE AppointmentID = ? and AppointmentStatus = 'Approved'";
         Object[] params = {appointmentId};
         int rowsAffected = executeQuery(sql, params);
         closeResources(null);

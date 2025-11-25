@@ -7,6 +7,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <!DOCTYPE html>
 <html>
     <head>
@@ -101,7 +102,7 @@
                                                 <c:forEach var="m" items="${medicineList}">
                                                     <option value="${m.medicineID}"
                                                             <c:if test="${item.medicineID.medicineID == m.medicineID}">selected</c:if>>
-                                                        ${m.medicineCode} | ${m.medicineName} — ${m.medicineType} | Stock: ${m.quantity} | ${m.price} ₫
+                                                        ${m.medicineCode} | ${m.medicineName} — ${m.medicineType} | Stock: ${m.quantity} | <fmt:formatNumber value="${m.price}"/> VND
                                                     </option>
                                                 </c:forEach>
                                             </select>

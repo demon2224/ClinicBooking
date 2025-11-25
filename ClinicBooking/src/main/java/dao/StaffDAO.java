@@ -113,6 +113,42 @@ public class StaffDAO extends DBContext {
         return list;
     }
 
+    public List<StaffDTO> getRecentStaffList(int limit) {
+        List<StaffDTO> list = new ArrayList<>();
+        // Giới hạn limit để an toàn
+        if (limit <= 0) {
+            limit = 10;
+        }
+        if (limit > 100) {
+            limit = 100;
+        }
+
+        String sql = "SELECT TOP (" + limit + ") StaffID, AccountName, FirstName, LastName, Role, PhoneNumber, DayCreated, Hidden "
+                + "FROM Staff "
+                + "ORDER BY Hidden ASC, DayCreated DESC;";
+        ResultSet rs = null;
+        try {
+            rs = executeSelectQuery(sql);
+            while (rs.next()) {
+                StaffDTO s = new StaffDTO();
+                s.setStaffID(rs.getInt("StaffID"));
+                s.setAccountName(rs.getString("AccountName"));
+                s.setFirstName(rs.getString("FirstName"));
+                s.setLastName(rs.getString("LastName"));
+                s.setRole(rs.getString("Role"));
+                s.setPhoneNumber(rs.getString("PhoneNumber"));
+                s.setDaycreated(rs.getTimestamp("DayCreated"));
+                s.setHidden(rs.getBoolean("Hidden"));
+                list.add(s);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            closeResources(rs);
+        }
+        return list;
+    }
+
     public StaffDTO getStaffById(int staffID) {
         StaffDTO s = null;
         String sql = "SELECT StaffID, JobStatus, Role, AccountName, DayCreated, Avatar, \n"

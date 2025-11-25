@@ -392,7 +392,7 @@ public class PrescriptionDAO extends DBContext {
     public boolean deliverPrescription(int prescriptionID) {
 
         String query = "UPDATE [dbo].[Prescription]\n"
-                + "SET PrescriptionStatus = 'Delivered'\n"
+                + "SET PrescriptionStatus = 'Paid'\n"
                 + "WHERE PrescriptionID = ?;";
         Object[] params = {prescriptionID};
 

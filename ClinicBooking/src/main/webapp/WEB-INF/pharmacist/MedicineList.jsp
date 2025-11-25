@@ -97,7 +97,7 @@
                     <i class="fa-solid fa-capsules me-2"></i> Medicine Management
                 </h3>
                 <form class="d-flex align-items-center"
-                      action="${pageContext.request.contextPath}/pharmacist-manage-prescription" method="get">
+                      action="${pageContext.request.contextPath}/manage-medicine" method="get">
                     <input type="hidden" name="action" value="search">
                     <input class="form-control me-2" type="search" name="search" placeholder="Search here..." value="${param.search}">
                     <button class="btn btn-outline-primary me-3 d-flex align-items-center" type="submit">
@@ -163,7 +163,7 @@
                                     <td>${med.quantity}</td>
 
                                     <td>
-                                        <fmt:formatNumber value="${med.price * rate}" type="number"
+                                        <fmt:formatNumber value="${med.price}" type="number"
                                                           groupingUsed="true" maxFractionDigits="0" />
                                         đ
                                     </td>
