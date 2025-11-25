@@ -103,7 +103,7 @@
                                                         ${prescriptionItem.medicineID.medicineType != null ? prescriptionItem.medicineID.medicineType : 'N/A'}
                                                     </div>
                                                     <div class="table-cell price-cell">
-                                                        $<fmt:formatNumber value="${itemPrice}" pattern="#,##0.00"/>
+                                                        <fmt:formatNumber value="${itemPrice}" pattern="#,##0"/> VND
                                                     </div>
                                                     <div class="table-cell">
                                                         ${prescriptionItem.dosage != null ? prescriptionItem.dosage : 'N/A'}
@@ -112,7 +112,7 @@
                                                         ${prescriptionItem.instruction != null ? prescriptionItem.instruction : 'No specific instructions'}
                                                     </div>
                                                     <div class="table-cell price-cell">
-                                                        $<fmt:formatNumber value="${subtotal}" pattern="#,##0.00"/>
+                                                        <fmt:formatNumber value="${subtotal}" pattern="#,##0"/> VND
                                                     </div>
                                                 </div>
                                             </c:forEach>
